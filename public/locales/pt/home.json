@@ -1,0 +1,21 @@
+{
+    "manifesto": {
+      "line1": "Desconstruir o ordinário.",
+      "line2": "Reconstruir o extraordinário."
+    },
+    "cta": {
+      "shop": "Entrar na loja",
+      "manifesto": "Manifesto"
+    },
+    "scrollToExplore": "Role para explorar",
+    "aria": {
+      "carousel": "Carrossel de coleções"
+    },
+    "carousel": {
+      "dropZero": "Drop Zero",
+      "oversizedClassic": "Oversized Classic",
+      "regatas": "Regatas",
+      "acessorios": "Acessórios"
+    }
+  }
+  

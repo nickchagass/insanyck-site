@@ -1,0 +1,21 @@
+{
+    "manifesto": {
+      "line1": "Deconstruct the ordinary.",
+      "line2": "Rebuild the extraordinary."
+    },
+    "cta": {
+      "shop": "Enter the store",
+      "manifesto": "Manifest"
+    },
+    "scrollToExplore": "Scroll to explore",
+    "aria": {
+      "carousel": "Collections carousel"
+    },
+    "carousel": {
+      "dropZero": "Drop Zero",
+      "oversizedClassic": "Oversized Classic",
+      "regatas": "Tank Tops",
+      "acessorios": "Accessories"
+    }
+  }
+  

@@ -1,0 +1,283 @@
+/* INSANYCK — GLOBALS (Design System Premium, Tailwind v4) */
+@import "tailwindcss";
+
+/* =========================================================
+   TOKENS (CSS Vars) — cores, tipografia, motion, etc.
+   ========================================================= */
+:root {
+  /* Surfaces */
+  --bg-0: #0b0b0b;
+  --bg-1: #111213;
+  --bg-2: #1a1a1a;
+
+  /* Texto */
+  --text-primary: rgba(255,255,255,.95);
+  --text-secondary: rgba(255,255,255,.75);
+  --text-muted: rgba(255,255,255,.55);
+
+  /* Stroke / Glass */
+  --stroke-default: rgba(255,255,255,.12);
+  --stroke-hover: rgba(255,255,255,.20);
+  --glass-weak: rgba(255,255,255,.04);
+  --glass-medium: rgba(255,255,255,.08);
+  --glass-strong: rgba(255,255,255,.12);
+
+  /* Brand (Gold) */
+  --gold-300: #fde047;
+  --gold-400: #facc15; /* primária */
+  --gold-500: #eab308;
+  --brand: var(--gold-400);
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.15);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,.20), 0 2px 4px -1px rgba(0,0,0,.10);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,.25), 0 4px 6px -2px rgba(0,0,0,.15);
+  --shadow-xl: 0 20px 25px -5px rgba(0,0,0,.30), 0 10px 10px -5px rgba(0,0,0,.15);
+  --shadow-glow: 0 0 30px rgba(250,204,21,.15);
+  --shadow-glow-strong: 0 0 60px rgba(250,204,21,.25);
+
+  /* Tipografia (usa sua variável se existir) */
+  --font-display: var(--font-brand, ui-sans-serif, system-ui);
+  --font-body: var(--font-brand, ui-sans-serif, system-ui);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --ease-out: cubic-bezier(.25,.46,.45,.94);
+  --ease-in-out: cubic-bezier(.4,0,.2,1);
+  --spring: cubic-bezier(.34,1.56,.64,1);
+
+  /* ===== Aliases p/ retrocompatibilidade (seu CSS antigo) ===== */
+  --text: var(--text-primary);
+  --muted: var(--text-secondary);
+  --stroke: var(--stroke-default);
+  --ghost: var(--glass-weak);
+  --cta: #f3f3f3;
+}
+
+/* =========================================================
+   MAPEAMENTO PARA TAILWIND v4 (@theme inline)
+   ========================================================= */
+@theme inline {
+  --color-bg-0: var(--bg-0);
+  --color-bg-1: var(--bg-1);
+  --color-text: var(--text-primary);
+  --color-text-muted: var(--text-secondary);
+  --color-stroke: var(--stroke-default);
+  --color-brand: var(--brand);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html, body, #__next { height: 100%; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  background:
+    radial-gradient(ellipse 1400px 800px at 20% -20%, rgba(250,204,21,.06), transparent 60%),
+    radial-gradient(ellipse 1000px 600px at 80% 120%, rgba(255,255,255,.03), transparent 50%),
+    var(--bg-0);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* A11y */
+*:focus-visible {
+  outline: 2px solid var(--gold-400);
+  outline-offset: 2px;
+}
+
+/* Scrollbar (WebKit) */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-1); }
+::-webkit-scrollbar-thumb { background: var(--stroke-default); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--stroke-hover); }
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  html { scroll-behavior: auto !important; }
+}
+
+/* =========================================================
+   TIPOGRAFIA UTIL (para títulos/manifesto, compatível com seu mock)
+   ========================================================= */
+.text-display-2xl {
+  font-family: var(--font-display);
+  font-size: clamp(56px, 9vw, 112px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: .24em; /* tracking do mock */
+}
+
+.text-display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 5vw, 72px);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.text-body-lg { font-size: 1.125rem; line-height: 1.7; color: var(--text-secondary); }
+.text-body    { font-size: 1rem;    line-height: 1.6; color: var(--text-secondary); }
+.text-caption { font-size: .875rem; line-height: 1.5; color: var(--text-muted); }
+
+/* =========================================================
+   CONTAINERS / LAYOUT
+   ========================================================= */
+.insanyck-container { min-height: 100vh; position: relative; }
+
+.insanyck-section {
+  padding: 4rem 1rem; /* mobile */
+  max-width: 1280px;
+  margin-inline: auto;
+}
+@media (min-width: 768px)  { .insanyck-section { padding: 4rem 2rem; } }
+@media (min-width: 1200px) { .insanyck-section { padding: 4rem 3rem; } }
+
+/* Pequeno halo auxiliar pra qualquer seção */
+.section-halo {
+  position: relative;
+}
+.section-halo::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(60% 60% at 50% 35%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 60%);
+  pointer-events: none;
+}
+
+/* =========================================================
+   BOTÕES (padrão: usar duas classes no JSX, ex.: "btn btn--primary")
+   ========================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+  position: relative;
+  transition: transform var(--duration-normal) var(--ease-out), box-shadow var(--duration-normal) var(--ease-out), background var(--duration-normal) var(--ease-out);
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, var(--gold-400), var(--gold-500));
+  color: var(--bg-0);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+}
+.btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg), var(--shadow-glow-strong);
+  background: linear-gradient(135deg, var(--gold-300), var(--gold-400));
+}
+.btn--primary:active { transform: translateY(0); transition-duration: var(--duration-fast); }
+
+.btn--ghost {
+  background: var(--glass-weak);
+  border: 1px solid var(--stroke-default);
+  color: var(--text-primary);
+  backdrop-filter: blur(12px);
+}
+.btn--ghost:hover {
+  background: var(--glass-medium);
+  border-color: var(--stroke-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* === Alias para compatibilidade com código antigo === */
+.btn-ghost { /* se em algum ponto do projeto só tiver "btn-ghost" */
+  background: var(--glass-weak);
+  border: 1px solid var(--stroke-default);
+  color: var(--text-primary);
+}
+
+/* =========================================================
+   GLASS SURFACES / NAV / MODAL
+   ========================================================= */
+.glass-card {
+  background: var(--glass-weak);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--stroke-default);
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-lg);
+}
+.glass-navbar {
+  background: rgba(11,11,11,.85);
+  backdrop-filter: blur(24px) saturate(1.2);
+  /* Remova/adicione a hairline conforme a tela de referência */
+  /* border-bottom: 1px solid var(--stroke-default); */
+}
+.glass-modal {
+  background: rgba(17,18,19,.95);
+  backdrop-filter: blur(32px);
+  border: 1px solid var(--stroke-default);
+  border-radius: 1rem;
+}
+
+/* =========================================================
+   GRADIENTES / TEXTO DOURADO
+   ========================================================= */
+.gradient-gold { background: linear-gradient(135deg, var(--gold-400), var(--gold-500)); }
+.gradient-text-gold {
+  background: linear-gradient(135deg, var(--gold-300), var(--gold-500));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* =========================================================
+   ANIMAÇÕES (cinematográficas base)
+   ========================================================= */
+@keyframes fadeInUp   { from { opacity:0; transform: translateY(30px) } to { opacity:1; transform:none } }
+@keyframes fadeInScal { from { opacity:0; transform: scale(.95) }     to { opacity:1; transform:scale(1) } }
+@keyframes pulseGlow  { 0%,100% { opacity:.6; transform:scale(1) } 50% { opacity:1; transform:scale(1.02) } }
+@keyframes shimmer    { from { transform: translateX(-100%) } to { transform: translateX(100%) } }
+
+.animate-fade-in-up    { animation: fadeInUp var(--duration-slow) var(--ease-out) both; }
+.animate-fade-in-scale { animation: fadeInScal var(--duration-slow) var(--ease-out) both; }
+.animate-pulse-glow    { animation: pulseGlow 2s var(--ease-in-out) infinite; }
+
+.shimmer-effect { position: relative; overflow: hidden; }
+.shimmer-effect::after {
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+  animation: shimmer 2s infinite;
+}
+
+/* =========================================================
+   MOBILE TUNING
+   ========================================================= */
+@media (max-width: 768px) {
+  .text-display-2xl { font-size: 2.5rem; letter-spacing: .18em; }
+  .insanyck-section { padding: 2rem 1rem; }
+  .btn { padding: .75rem 1rem; min-height: 44px; }
+}
+
+/* =========================================================
+   PRINT (segurança)
+   ========================================================= */
+@media print {
+  * { background: #fff !important; color: #000 !important; box-shadow: none !important; }
+}
