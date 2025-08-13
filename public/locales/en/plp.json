@@ -1,0 +1,17 @@
+{
+    "title": "INSANYCK Store",
+    "subtitle": "6 product(s) • Light glass • hairline border",
+    "filters": {
+      "category": "Category",
+      "price": "Price",
+      "sort": "Relevance"
+    },
+    "badge": {
+      "new": "New",
+      "soldout": "Sold out"
+    },
+    "viewDetails": "View details",
+    "loadMore": "Load more",
+    "empty": "No products found."
+  }
+  

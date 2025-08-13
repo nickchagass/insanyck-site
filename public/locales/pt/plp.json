@@ -1,0 +1,17 @@
+{
+    "title": "Loja INSANYCK",
+    "subtitle": "6 produto(s) • Vidro leve • borda hairline",
+    "filters": {
+      "category": "Categoria",
+      "price": "Preço",
+      "sort": "Relevância"
+    },
+    "badge": {
+      "new": "Novo",
+      "soldout": "Esgotado"
+    },
+    "viewDetails": "Ver detalhes",
+    "loadMore": "Carregar mais",
+    "empty": "Nenhum produto encontrado."
+  }
+  
