@@ -6,10 +6,17 @@ import { useRouter } from "next/router"; // INSANYCK STEP 4
 import { Search, ShoppingBag } from "lucide-react";
 import { useTranslation } from "next-i18next"; // INSANYCK STEP 4
 
+// INSANYCK STEP 6 (imports novos)
+import dynamic from "next/dynamic";
+import { useCartCount, useCartStore } from "@/store/cart";
+
 export default function Navbar() {
   const router = useRouter(); // INSANYCK STEP 4
   const { t, i18n } = useTranslation(["nav"]); // INSANYCK STEP 4
   const currentLocale = i18n?.language || router.locale || "pt"; // INSANYCK STEP 4
+
+  // INSANYCK STEP 6 — lazy-load do MiniCart; não afeta SSR nem LCP
+  const MiniCart = dynamic(() => import("@/components/MiniCart"), { ssr: false });
 
   // INSANYCK STEP 4 — Switcher de idioma discreto (preserva rota atual)
   function switchLocale(nextLocale: "pt" | "en") {
@@ -17,6 +24,10 @@ export default function Navbar() {
     const asPath = router.asPath || "/";
     router.push(asPath, asPath, { locale: nextLocale });
   }
+
+  // INSANYCK STEP 6 — estado do carrinho (badge + abrir drawer)
+  const count = useCartCount();
+  const toggleCart = useCartStore((s) => s.toggle);
 
   return (
     <header
@@ -96,16 +107,27 @@ export default function Navbar() {
             <Search size={22} strokeWidth={1.5} />
           </Link>
 
-          {/* Sacola exatamente como na referência: ícone leve, traço fino, sem fill */}
-          <Link
-            href="/carrinho"
-            aria-label={t("nav:aria.cart", "Carrinho") /* INSANYCK STEP 4 */}
-            className="text-white/80 hover:text-white transition-colors"
+          {/* INSANYCK STEP 6 — Sacola vira botão (mesmo visual) + badge e abre MiniCart */}
+          <button
+            type="button"
+            onClick={() => toggleCart(true)}
+            aria-label={t("nav:aria.cart", "Carrinho")}
+            className="relative text-white/80 hover:text-white transition-colors"
           >
             <ShoppingBag size={22} strokeWidth={1.5} />
-          </Link>
+            {count > 0 && (
+              <span
+                className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-white text-black text-[10px] leading-4 font-semibold ring-1 ring-black/10 text-center"
+              >
+                {count}
+              </span>
+            )}
+          </button>
         </div>
       </div>
+
+      {/* INSANYCK STEP 6 — Drawer do Mini-Cart (lazy, SSR off) */}
+      <MiniCart />
     </header>
   );
 }

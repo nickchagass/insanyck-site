@@ -1,4 +1,3 @@
-
 // INSANYCK STEP 5
 // src/pages/produto/[slug].tsx
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next";
@@ -15,15 +14,14 @@ import ProductHeroImageKit from "@/components/ProductHeroImageKit"; // INSANYCK 
 import { products, Product } from "@/data/products.mock";           // INSANYCK STEP 5
 
 // 3D fica preservado atrás da flag
-const Product3DView = dynamic(() => import("@/components/Product3DView").catch(() => ({ default: () => null })), {
-  ssr: false,
-}); // INSANYCK STEP 5
+const Product3DView = dynamic(
+  () => import("@/components/Product3DView").catch(() => ({ default: () => null })),
+  { ssr: false }
+); // INSANYCK STEP 5
 
 const USE_IMAGE_KIT = true; // trocar para false quando quiser ativar o 3D futuramente // INSANYCK STEP 5
 
-type Props = {
-  product: Product;
-};
+type Props = { product: Product };
 
 export default function PDP({ product }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();

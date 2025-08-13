@@ -1,32 +1,66 @@
-import { useCart } from "@/store/useCart";
+// INSANYCK STEP 6
+// src/components/AddToCartButton.tsx
+"use client";
 
-type AddToCartButtonProps = {
-  product: {
-    id: string;
-    nome: string;
-    preco: number;
-    cor: string;
-    tamanho: string;
-    image?: string;
-    variantId?: string;
-  };
+import { useCartStore } from "@/store/cart";
+import { parseToCents } from "@/lib/price";
+import { useTranslation } from "next-i18next";
+import { ReactNode } from "react";
+
+type MinimalProduct = {
+  slug: string;
+  title: string;
+  image?: string;
+  price?: string | number;   // opcional se vier como string "R$199"
+  priceCents?: number;       // preferido
+  variant?: string;
 };
 
-export default function AddToCartButton({ product }: AddToCartButtonProps) {
-  const add = useCart((s) => s.add);
+type Props = {
+  product: MinimalProduct;
+  qty?: number;
+  openMiniCart?: boolean;
+  className?: string;
+  children?: ReactNode; // permite manter seu visual existente
+};
+
+export default function AddToCartButton({
+  product,
+  qty = 1,
+  openMiniCart = true,
+  className,
+  children,
+}: Props) {
+  const addItem = useCartStore((s) => s.addItem);
+  const toggle = useCartStore((s) => s.toggle);
+  const { t } = useTranslation(["cart"]);
+
+  const handle = () => {
+    const priceCents =
+      typeof product.priceCents === "number"
+        ? product.priceCents
+        : parseToCents(product.price ?? 0);
+
+    addItem({
+      slug: product.slug,
+      title: product.title,
+      image: product.image,
+      priceCents,
+      qty,
+      variant: product.variant,
+    });
+
+    if (openMiniCart) toggle(true);
+  };
 
   return (
     <button
-      className="bg-yellow-400 px-4 py-2 rounded-xl font-bold hover:bg-yellow-500 transition"
-      onClick={() =>
-        add({
-          ...product,
-          quantidade: 1,
-          currency: "BRL", // ou "USD", "EUR"
-        })
-      }
+      type="button"
+      onClick={handle}
+      className={className || "bg-white text-black rounded-xl px-6 py-3 font-semibold hover:brightness-95 transition"}
+      aria-label={t("cart:addToCart", "Adicionar ao carrinho")}
     >
-      Adicionar ao carrinho
+      {children || t("cart:addToCart", "Adicionar ao carrinho")}
     </button>
   );
 }
