@@ -1,0 +1,25 @@
+{
+    "title": "Your bag",
+    "description": "Review your items before checkout.",
+    "items": "Items",
+    "empty": "Your bag is empty.",
+    "goShop": "Go to store",
+    "qty": "Qty",
+    "remove": "Remove",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "shipping": "Shipping",
+    "free": "Free",
+    "total": "Total",
+    "installments": "Pay in up to 6x interest-free (mock)",
+    "coupon": {
+      "label": "Discount coupon",
+      "apply": "Apply"
+    },
+    "shipping.simulate": "Estimate shipping",
+    "shipping.cep": "ZIP code",
+    "checkoutCta": "Go to checkout",
+    "continue": "Continue shopping",
+    "summary": "Order summary"
+  }
+  

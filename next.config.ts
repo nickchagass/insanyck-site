@@ -1,16 +1,15 @@
-// INSANYCK STEP 4
-// Mantém o withPWA e adiciona i18n do next-i18next
+// next.config.ts
+// INSANYCK — PWA + i18n + imagens modernas
 import withPWA from "@ducanh2912/next-pwa";
 import type { NextConfig } from "next";
-
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { i18n } = require("./next-i18next.config.js");
 
 const isProd = process.env.NODE_ENV === "production";
 
-// Caching do seu Step 3 (mantido)
+// Mesmo runtimeCaching que você já usa (mantém Stripe em NetworkOnly)
 const runtimeCaching = [
-  // HTML/Documentos: NetworkFirst
+  // HTML: NetworkFirst
   {
     urlPattern: ({ request }: any) => request.mode === "navigate",
     handler: "NetworkFirst",
@@ -20,12 +19,9 @@ const runtimeCaching = [
       expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 },
     },
   },
-  // APIs internas sensíveis (cart/stripe): NetworkOnly
-  {
-    urlPattern: /\/api\/(cart|stripe)\//,
-    handler: "NetworkOnly",
-  },
-  // Imagens: CacheFirst (30 dias)
+  // APIs sensíveis (cart/stripe): NetworkOnly
+  { urlPattern: /\/api\/(cart|stripe)\//, handler: "NetworkOnly" },
+  // Imagens: CacheFirst
   {
     urlPattern: ({ request }: any) => request.destination === "image",
     handler: "CacheFirst",
@@ -34,7 +30,7 @@ const runtimeCaching = [
       expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
     },
   },
-  // GLB/Fontes: StaleWhileRevalidate
+  // GLB/Fonts: SWR
   {
     urlPattern: ({ url }: any) => url.pathname.match(/\.(glb|gltf|hdr|bin|woff2?|ttf)$/),
     handler: "StaleWhileRevalidate",
@@ -50,17 +46,22 @@ const runtimeCaching = [
 
 const baseConfig: NextConfig = {
   reactStrictMode: true,
-  images: { remotePatterns: [] },
-
-  // 👉 i18n do next-i18next (mantém Pages Router com prefix /en)
   i18n,
+  images: {
+    // Ganho grátis em qualidade/tamanho; não muda seu código
+    formats: ["image/avif", "image/webp"],
+    remotePatterns: [], // adicione domínios se for exibir imagens externas
+  },
 };
 
 export default withPWA({
   dest: "public",
   register: true,
   skipWaiting: true,
-  disable: !isProd,
+  disable: !isProd,               // PWA só em produção (igual ao seu)
   cacheOnFrontEndNav: true,
-  workboxOptions: { runtimeCaching, navigateFallback: "/offline.html" },
+  workboxOptions: {
+    runtimeCaching,
+    navigateFallback: "/offline.html",
+  },
 })(baseConfig);

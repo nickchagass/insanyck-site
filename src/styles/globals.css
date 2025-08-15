@@ -281,3 +281,15 @@ body {
 @media print {
   * { background: #fff !important; color: #000 !important; box-shadow: none !important; }
 }
+/* INSANYCK STEP 7.1 PATCH — defensivo para textos que apareçam verticais por engano */
+.insanyck-reset-text {
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+}
+
+/* INSANYCK STEP 7.1 PATCH — acessibilidade: melhora foco em fundo escuro com hairline */
+:focus-visible {
+  outline-color: var(--gold-400);
+  outline-width: 2px;
+  outline-offset: 2px;
+}

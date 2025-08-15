@@ -1,5 +1,4 @@
-// INSANYCK STEP 5
-// src/components/ProductCard.tsx
+// INSANYCK STEP 5 + STEP 6 + STEP 7.1 PATCH
 "use client";
 
 import Link from "next/link";
@@ -48,7 +47,9 @@ export default function ProductCard({ product }: Props) {
       {/* Conteúdo textual + ações */}
       <div className="p-4">
         <div className="flex items-start justify-between">
-          <h3 className="text-white/90 text-lg font-semibold">{product.title}</h3>
+          <h3 className="text-white/90 text-lg font-semibold insanyck-reset-text">
+            {product.title}
+          </h3>
           {product.status === "new" ? (
             <span className="ml-3 text-xs rounded-full px-2 py-1 bg-white/10 text-white/80">
               {t("plp:badge.new", "Novo")}

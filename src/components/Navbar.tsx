@@ -1,3 +1,4 @@
+// INSANYCK STEP 4 + STEP 6 + STEP 7.1 PATCH
 "use client";
 
 import React from "react";
@@ -41,7 +42,7 @@ export default function Navbar() {
       aria-label={t("nav:aria.mainNav", "Principal") /* INSANYCK STEP 4 */}
     >
       <div className="mx-auto max-w-[1280px] px-6 py-4 flex items-center justify-between">
-        {/* Logo - Agora menor e branco igual o central */}
+        {/* Logo */}
         <Link
           href="/"
           aria-label={t("nav:aria.goHome", "Ir para a Home") /* INSANYCK STEP 4 */}
@@ -51,27 +52,26 @@ export default function Navbar() {
             className="text-[20px] font-medium text-white/90 tracking-[0.15em] select-none"
             style={{ textTransform: "uppercase" }}
           >
-            {/* NÃO alterar visual do wordmark */}
             INSANYCK
           </span>
         </Link>
 
-        {/* Links centrais (textos extraídos para i18n) */}
+        {/* Links centrais */}
         <nav className="hidden md:flex items-center gap-12 text-[16px] text-white/82">
           <Link href="/novidades" className="hover:text-white transition-colors">
-            {t("nav:links.novidades", "Novidades") /* INSANYCK STEP 4 */}
+            {t("nav:links.novidades", "Novidades")}
           </Link>
           <Link href="/loja" className="hover:text-white transition-colors">
-            {t("nav:links.loja", "Loja") /* INSANYCK STEP 4 */}
+            {t("nav:links.loja", "Loja")}
           </Link>
           <Link href="/colecao" className="hover:text-white transition-colors">
-            {t("nav:links.colecao", "Coleção") /* INSANYCK STEP 4 */}
+            {t("nav:links.colecao", "Coleção")}
           </Link>
         </nav>
 
         {/* Ações (direita) */}
         <div className="flex items-center gap-6">
-          {/* INSANYCK STEP 4 — Switcher mínimo, sem reflow perceptível */}
+          {/* Switcher idioma */}
           <div
             className="hidden sm:flex items-center gap-2 text-white/70 text-[12px] leading-none select-none"
             aria-label={t("nav:aria.language", "Idioma")}
@@ -107,7 +107,7 @@ export default function Navbar() {
             <Search size={22} strokeWidth={1.5} />
           </Link>
 
-          {/* INSANYCK STEP 6 — Sacola vira botão (mesmo visual) + badge e abre MiniCart */}
+          {/* Sacola */}
           <button
             type="button"
             onClick={() => toggleCart(true)}
@@ -126,7 +126,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* INSANYCK STEP 6 — Drawer do Mini-Cart (lazy, SSR off) */}
+      {/* Mini-Cart (lazy) */}
       <MiniCart />
     </header>
   );

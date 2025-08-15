@@ -1,0 +1,25 @@
+{
+    "title": "Sua sacola",
+    "description": "Revise seus itens antes do checkout.",
+    "items": "Itens",
+    "empty": "Sua sacola está vazia.",
+    "goShop": "Ir para a loja",
+    "qty": "Qtd",
+    "remove": "Remover",
+    "subtotal": "Subtotal",
+    "discount": "Desconto",
+    "shipping": "Frete",
+    "free": "Grátis",
+    "total": "Total",
+    "installments": "Parcele em até 6x sem juros (mock)",
+    "coupon": {
+      "label": "Cupom de desconto",
+      "apply": "Aplicar"
+    },
+    "shipping.simulate": "Simular frete",
+    "shipping.cep": "CEP",
+    "checkoutCta": "Ir para checkout",
+    "continue": "Continuar comprando",
+    "summary": "Resumo do pedido"
+  }
+  

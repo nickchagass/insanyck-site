@@ -1,0 +1,42 @@
+{
+  "title": "Checkout",
+  "subtitle": "Finalize sua compra com segurança.",
+  "sections": {
+    "customer": "Seus dados",
+    "shipping": "Entrega",
+    "payment": "Pagamento"
+  },
+  "fields": {
+    "fullName": "Nome completo",
+    "email": "E-mail",
+    "phone": "Telefone",
+    "cep": "CEP",
+    "street": "Rua",
+    "number": "Número",
+    "complement": "Complemento",
+    "district": "Bairro",
+    "city": "Cidade",
+    "state": "UF",
+    "country": "País"
+  },
+  "shipping": {
+    "standard": "Padrão",
+    "express": "Expresso",
+    "eta5": "5 dias úteis",
+    "eta2": "2 dias úteis"
+  },
+  "payment": {
+    "fake": "Modo demonstração: o pagamento é simulado."
+  },
+  "placeOrder": "Finalizar pedido",
+  "coupon": {
+    "applied10": "Cupom de 10% aplicado",
+    "freeShipping": "Frete grátis aplicado"
+  },
+  "errors": {
+    "required": "Campo obrigatório",
+    "email": "E-mail inválido",
+    "couponInvalid": "Cupom inválido",
+    "couponEmpty": "Informe um cupom"
+  }
+}

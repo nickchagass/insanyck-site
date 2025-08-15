@@ -1,4 +1,4 @@
-// INSANYCK STEP 6
+// INSANYCK STEP 6 — Botão Add to Cart
 // src/components/AddToCartButton.tsx
 "use client";
 
@@ -11,8 +11,8 @@ type MinimalProduct = {
   slug: string;
   title: string;
   image?: string;
-  price?: string | number;   // opcional se vier como string "R$199"
-  priceCents?: number;       // preferido
+  price?: string | number;
+  priceCents?: number;
   variant?: string;
 };
 
@@ -57,7 +57,10 @@ export default function AddToCartButton({
     <button
       type="button"
       onClick={handle}
-      className={className || "bg-white text-black rounded-xl px-6 py-3 font-semibold hover:brightness-95 transition"}
+      className={
+        className ||
+        "bg-white text-black rounded-xl px-6 py-3 font-semibold hover:brightness-95 transition"
+      }
       aria-label={t("cart:addToCart", "Adicionar ao carrinho")}
     >
       {children || t("cart:addToCart", "Adicionar ao carrinho")}
