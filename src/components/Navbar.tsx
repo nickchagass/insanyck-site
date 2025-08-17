@@ -1,4 +1,4 @@
-// INSANYCK STEP 4 + STEP 6 + STEP 7.1 PATCH
+// INSANYCK STEP 4 + STEP 6 + STEP 7.1 PATCH + STEP 8.1
 "use client";
 
 import React from "react";
@@ -14,14 +14,16 @@ import { useCartCount, useCartStore } from "@/store/cart";
 // ======================= INSANYCK STEP 8 (imports novos) =======================
 import { useSession } from "next-auth/react"; // INSANYCK STEP 8
 const SearchBox = dynamic(() => import("@/components/SearchBox"), { ssr: false }); // INSANYCK STEP 8
+const MiniCart = dynamic(() => import("@/components/MiniCart"), { ssr: false }); // keep lazy
 
 export default function Navbar() {
   const router = useRouter(); // INSANYCK STEP 4
   const { t, i18n } = useTranslation(["nav"]); // INSANYCK STEP 4
   const currentLocale = i18n?.language || (router as any).locale || "pt"; // INSANYCK STEP 4
 
-  // INSANYCK STEP 6 — lazy-load do MiniCart; não afeta SSR nem LCP
-  const MiniCart = dynamic(() => import("@/components/MiniCart"), { ssr: false });
+  // INSANYCK STEP 8.1 — esconder sacola nas rotas de checkout/pagamento
+  const { pathname } = useRouter();
+  const hideCart = pathname.startsWith("/checkout") || pathname.startsWith("/conta/pagamento");
 
   // INSANYCK STEP 4 — Switcher de idioma discreto (preserva rota atual)
   function switchLocale(nextLocale: "pt" | "en") {
@@ -117,24 +119,26 @@ export default function Navbar() {
           </Link>
 
           {/* Sacola */}
-          <button
-            type="button"
-            onClick={() => toggleCart(true)}
-            aria-label={t("nav:aria.cart", "Carrinho")}
-            className="relative text-white/80 hover:text-white transition-colors"
-          >
-            <ShoppingBag size={22} strokeWidth={1.5} />
-            {count > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-white text-black text-[10px] leading-4 font-semibold ring-1 ring-black/10 text-center">
-                {count}
-              </span>
-            )}
-          </button>
+          {!hideCart && (
+            <button
+              type="button"
+              onClick={() => toggleCart(true)}
+              aria-label={t("nav:aria.cart", "Carrinho")}
+              className="relative text-white/80 hover:text-white transition-colors"
+            >
+              <ShoppingBag size={22} strokeWidth={1.5} />
+              {count > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-white text-black text-[10px] leading-4 font-semibold ring-1 ring-black/10 text-center">
+                  {count}
+                </span>
+              )}
+            </button>
+          )}
         </div>
       </div>
 
       {/* Mini-Cart (lazy) */}
-      <MiniCart />
+      {!hideCart && <MiniCart />}
     </header>
   );
 }

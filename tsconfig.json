@@ -16,13 +16,15 @@
     "incremental": true,
     "baseUrl": ".",
     "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["src/*"] }
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "src/types/**/*.d.ts",      // << ADICIONE ESTA LINHA
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/types/**/*.d.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules"]

@@ -1,6 +1,5 @@
-// src/pages/api/stripe/webhook.ts
+// INSANYCK — Webhook Stripe unificado usando versão do .env
 import type { NextApiRequest, NextApiResponse } from "next";
-import type Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripeServer";
 
@@ -22,23 +21,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!sig) return res.status(400).json({ error: "Missing stripe-signature" });
 
   const buf = await readBuffer(req);
-
-  let event: Stripe.Event;
+  let event;
   try {
-    event = stripe.webhooks.constructEvent(buf, sig.toString(), process.env.STRIPE_WEBHOOK_SECRET as string);
+    event = stripe.webhooks.constructEvent(buf, sig.toString(), process.env.STRIPE_WEBHOOK_SECRET!);
   } catch (err: any) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
   try {
     if (event.type === "checkout.session.completed") {
-      const session = event.data.object as Stripe.Checkout.Session;
+      const session = event.data.object as any;
 
       // Idempotência
       const exists = await prisma.order.findFirst({ where: { stripeSessionId: session.id } });
       if (exists) return res.status(200).json({ ok: true, skipped: "duplicate" });
 
-      // Puxa line_items com product expandido (mantendo seu contrato)
       const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
         expand: ["data.price.product"],
       });
@@ -57,16 +54,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           currency,
           amountTotal,
           items: {
-            create: (lineItems.data || []).map((li) => {
+            create: (lineItems.data || []).map((li: any) => {
               const qty = li.quantity ?? 1;
               const title = (li.description ?? "Produto").toString();
-              const unit = Math.max(0, Math.floor((li.amount_total ?? 0) / Math.max(1, qty)));
+              const unit = Math.max(0, Math.floor((li.amount_total ?? 0) / qty));
               const product = (li.price?.product as any) || {};
               const slug =
                 product?.metadata?.slug ||
                 title.toLowerCase().replace(/[^\w]+/g, "-").replace(/(^-|-$)/g, "");
               const image = Array.isArray(product?.images) ? product.images[0] : undefined;
-
               return { slug, title, priceCents: unit, qty, image, variant: product?.metadata?.variant || undefined };
             }),
           },
@@ -75,9 +71,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       return res.status(200).json({ ok: true, orderId: order.id });
     }
-
     return res.status(200).json({ received: true });
   } catch (err: any) {
+    // eslint-disable-next-line no-console
     console.error("[stripe/webhook]", err);
     return res.status(500).json({ error: err?.message || "Webhook handler error" });
   }
