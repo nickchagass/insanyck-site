@@ -1,0 +1,47 @@
+{
+    "dashboard": {
+      "title": "My account",
+      "hello": "Hello",
+      "lastOrders": "Recent orders",
+      "noOrders": "You have no orders yet.",
+      "viewAll": "View all",
+      "quick": "Quick access"
+    },
+    "nav": {
+      "overview": "Overview",
+      "addresses": "Addresses",
+      "orders": "Orders",
+      "wishlist": "Favorites",
+      "signout": "Sign out"
+    },
+    "addresses": {
+      "title": "Addresses",
+      "subtitle": "Manage your shipping addresses.",
+      "add": "Add address",
+      "empty": "You haven’t added addresses yet.",
+      "default": "Default",
+      "setDefault": "Make default",
+      "remove": "Remove"
+    },
+    "orders": {
+      "title": "Orders",
+      "empty": "You don’t have orders yet."
+    },
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Access your INSANYCK account",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in"
+    },
+    "signup": {
+      "title": "Create account",
+      "subtitle": "Join INSANYCK",
+      "name": "Full name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create account",
+      "mock": "Mock signup — configure via NextAuth"
+    }
+  }
+  

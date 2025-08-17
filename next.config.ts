@@ -19,8 +19,14 @@ const runtimeCaching = [
       expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 },
     },
   },
+
   // APIs sensíveis (cart/stripe): NetworkOnly
   { urlPattern: /\/api\/(cart|stripe)\//, handler: "NetworkOnly" },
+
+  // INSANYCK STEP 8 — PWA NetworkOnly para rotas sensíveis (sem cache)
+  { urlPattern: /\/api\/auth\//, handler: "NetworkOnly" },    // NextAuth
+  { urlPattern: /\/api\/account\//, handler: "NetworkOnly" }, // Suas rotas protegidas
+
   // Imagens: CacheFirst
   {
     urlPattern: ({ request }: any) => request.destination === "image",
@@ -30,12 +36,14 @@ const runtimeCaching = [
       expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
     },
   },
+
   // GLB/Fonts: SWR
   {
     urlPattern: ({ url }: any) => url.pathname.match(/\.(glb|gltf|hdr|bin|woff2?|ttf)$/),
     handler: "StaleWhileRevalidate",
     options: { cacheName: "assets-3d-fonts" },
   },
+
   // Outros GET: SWR
   {
     urlPattern: ({ request }: any) => request.method === "GET",

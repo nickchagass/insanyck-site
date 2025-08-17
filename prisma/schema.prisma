@@ -66,3 +66,66 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+// ===============================
+// INSANYCK STEP 8 — Account & Orders & Wishlist
+// Acrescente estes modelos ao FINAL do seu prisma/schema.prisma
+// ===============================
+
+model Address {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  name       String
+  phone      String
+  cep        String
+  street     String
+  number     String
+  complement String?
+  district   String
+  city       String
+  state      String
+  country    String
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId], map: "idx_address_user")
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  userId          String?
+  user            User?       @relation(fields: [userId], references: [id])
+  email           String
+  stripeSessionId String      @unique
+  status          String
+  currency        String
+  amountTotal     Int
+  createdAt       DateTime    @default(now())
+  items           OrderItem[]
+}
+
+model OrderItem {
+  id         String  @id @default(cuid())
+  orderId    String
+  order      Order   @relation(fields: [orderId], references: [id])
+  slug       String
+  title      String
+  priceCents Int
+  qty        Int
+  image      String?
+  variant    String?
+}
+
+model WishlistItem {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  slug       String
+  title      String
+  priceCents Int
+  image      String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId], map: "idx_wishlist_user")
+}

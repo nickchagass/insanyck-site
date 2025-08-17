@@ -1,14 +1,21 @@
-// INSANYCK STEP 4
+// INSANYCK STEP 4 + STEP 8
 import type { AppProps } from "next/app";
 import { appWithTranslation } from "next-i18next";
 import "../styles/globals.css";
 
-// ⚠️ Removemos o import de src/lib/i18n.ts (client-only).
-// O next-i18next cuida do i18n no servidor e no cliente.
-// Se quiser, pode deletar src/lib/i18n.ts depois de validar este passo.
+// INSANYCK STEP 8 — NextAuth Provider
+import { SessionProvider } from "next-auth/react";
+import type { Session } from "next-auth";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+function MyApp({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps<{ session: Session | null }>) {
+  return (
+    <SessionProvider session={session}>
+      <Component {...pageProps} />
+    </SessionProvider>
+  );
 }
 
 export default appWithTranslation(MyApp);

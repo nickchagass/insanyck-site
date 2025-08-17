@@ -10,6 +10,9 @@ import { useTranslation } from "next-i18next";
 // INSANYCK STEP 6 — botão de carrinho
 import AddToCartButton from "@/components/AddToCartButton";
 
+// INSANYCK STEP 8 — botão de favoritos
+import WishlistButton from "@/components/WishlistButton"; // INSANYCK STEP 8
+
 type Props = { product: Product };
 
 export default function ProductCard({ product }: Props) {
@@ -19,6 +22,20 @@ export default function ProductCard({ product }: Props) {
     product.thumbs?.front ||
     product.images?.front ||
     "/products/placeholder/front.webp";
+
+  // INSANYCK STEP 8 — converte preço para centavos (aceita string "R$ 199,90" ou number)
+  const priceCents =
+    typeof product.price === "number"
+      ? Math.round(product.price * 100)
+      : (() => {
+          const val = Number(
+            String(product.price)
+              .replace(/[^\d,.-]/g, "") // remove símbolos e espaços
+              .replace(/\./g, "")        // remove separadores de milhar
+              .replace(",", ".")         // vírgula -> ponto decimal
+          );
+          return Number.isFinite(val) ? Math.round(val * 100) : 0;
+        })(); // INSANYCK STEP 8
 
   return (
     <motion.article
@@ -65,7 +82,7 @@ export default function ProductCard({ product }: Props) {
         <div className="mt-2 text-white/70">{product.price}</div>
 
         {/* Ações – mantém visual; adiciona carrinho sem alterar layout */}
-        <div className="mt-4 flex gap-3">
+        <div className="mt-4 flex gap-3 items-center">
           <Link
             href={`/produto/${product.slug}`}
             prefetch
@@ -80,12 +97,20 @@ export default function ProductCard({ product }: Props) {
               slug: product.slug,
               title: product.title,
               image: img,
-              price: product.price, // pode ser "R$199"; o componente converte p/ centavos
+              price: product.price, // componente converte se for string
             }}
             className="rounded-xl px-4 py-2 text-sm font-semibold border border-white/15 text-white hover:bg-white/5 transition"
           >
             {t("cart:addToCart", "Adicionar ao carrinho")}
           </AddToCartButton>
+
+          {/* INSANYCK STEP 8 — Wishlist inline (ao lado dos CTAs) */}
+          <WishlistButton
+            slug={product.slug}
+            title={product.title}
+            priceCents={priceCents}
+            image={img}
+          />
         </div>
       </div>
     </motion.article>

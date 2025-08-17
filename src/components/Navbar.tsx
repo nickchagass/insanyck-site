@@ -11,10 +11,14 @@ import { useTranslation } from "next-i18next"; // INSANYCK STEP 4
 import dynamic from "next/dynamic";
 import { useCartCount, useCartStore } from "@/store/cart";
 
+// ======================= INSANYCK STEP 8 (imports novos) =======================
+import { useSession } from "next-auth/react"; // INSANYCK STEP 8
+const SearchBox = dynamic(() => import("@/components/SearchBox"), { ssr: false }); // INSANYCK STEP 8
+
 export default function Navbar() {
   const router = useRouter(); // INSANYCK STEP 4
   const { t, i18n } = useTranslation(["nav"]); // INSANYCK STEP 4
-  const currentLocale = i18n?.language || router.locale || "pt"; // INSANYCK STEP 4
+  const currentLocale = i18n?.language || (router as any).locale || "pt"; // INSANYCK STEP 4
 
   // INSANYCK STEP 6 — lazy-load do MiniCart; não afeta SSR nem LCP
   const MiniCart = dynamic(() => import("@/components/MiniCart"), { ssr: false });
@@ -22,8 +26,8 @@ export default function Navbar() {
   // INSANYCK STEP 4 — Switcher de idioma discreto (preserva rota atual)
   function switchLocale(nextLocale: "pt" | "en") {
     if (nextLocale === currentLocale) return;
-    const asPath = router.asPath || "/";
-    router.push(asPath, asPath, { locale: nextLocale });
+    const asPath = (router as any).asPath || "/";
+    (router as any).push(asPath, asPath, { locale: nextLocale });
   }
 
   // INSANYCK STEP 6 — estado do carrinho (badge + abrir drawer)
@@ -80,9 +84,9 @@ export default function Navbar() {
               type="button"
               onClick={() => switchLocale("pt")}
               className={`px-2 py-1 rounded-[6px] border border-white/10 hover:border-white/20 hover:text-white transition-colors ${
-                currentLocale.startsWith("pt") ? "text-white" : ""
+                String(currentLocale).startsWith("pt") ? "text-white" : ""
               }`}
-              aria-pressed={currentLocale.startsWith("pt")}
+              aria-pressed={String(currentLocale).startsWith("pt")}
             >
               PT
             </button>
@@ -91,13 +95,18 @@ export default function Navbar() {
               type="button"
               onClick={() => switchLocale("en")}
               className={`px-2 py-1 rounded-[6px] border border-white/10 hover:border-white/20 hover:text-white transition-colors ${
-                currentLocale.startsWith("en") ? "text-white" : ""
+                String(currentLocale).startsWith("en") ? "text-white" : ""
               }`}
-              aria-pressed={currentLocale.startsWith("en")}
+              aria-pressed={String(currentLocale).startsWith("en")}
             >
               EN
             </button>
           </div>
+
+          {/* =================== INSANYCK STEP 8 — adicionados =================== */}
+          <SearchBox />      {/* INSANYCK STEP 8 */}
+          <UserMenu />       {/* INSANYCK STEP 8 */}
+          {/* ================================================================ */}
 
           <Link
             href="/buscar"
@@ -116,9 +125,7 @@ export default function Navbar() {
           >
             <ShoppingBag size={22} strokeWidth={1.5} />
             {count > 0 && (
-              <span
-                className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-white text-black text-[10px] leading-4 font-semibold ring-1 ring-black/10 text-center"
-              >
+              <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-white text-black text-[10px] leading-4 font-semibold ring-1 ring-black/10 text-center">
                 {count}
               </span>
             )}
@@ -129,5 +136,47 @@ export default function Navbar() {
       {/* Mini-Cart (lazy) */}
       <MiniCart />
     </header>
+  );
+}
+
+/* ======================= INSANYCK STEP 8 — UserMenu ======================= */
+function UserMenu() {
+  const { data: session, status } = useSession();
+
+  if (status !== "authenticated") {
+    return (
+      <a
+        href="/conta/login"
+        className="text-white/80 hover:text-white transition-colors px-2 py-1 rounded-lg border border-white/10 hover:border-white/20"
+      >
+        Entrar
+      </a>
+    );
+  }
+
+  const name = session?.user?.name ?? session?.user?.email ?? "Conta";
+
+  return (
+    <div className="relative group">
+      <button className="text-white/80 hover:text-white transition-colors px-2 py-1 rounded-lg border border-white/10 hover:border-white/20">
+        {String(name).split(" ")[0]}
+      </button>
+      <div className="absolute right-0 mt-2 hidden group-hover:block rounded-2xl border border-white/10 bg-black/70 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] p-2 w-[220px] z-[60]">
+        <a className="block px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg" href="/conta">
+          Minha conta
+        </a>
+        <a className="block px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg" href="/conta/pedidos">
+          Pedidos
+        </a>
+        <a className="block px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg" href="/favoritos">
+          Favoritos
+        </a>
+        <form method="post" action="/api/auth/signout" className="mt-1">
+          <button className="w-full text-left px-3 py-2 text-white/70 hover:text-white hover:bg-white/5 rounded-lg">
+            Sair
+          </button>
+        </form>
+      </div>
+    </div>
   );
 }

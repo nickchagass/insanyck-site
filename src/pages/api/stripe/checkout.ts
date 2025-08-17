@@ -1,73 +1,72 @@
-// INSANYCK STEP 7 — Stripe Checkout Sessions (BRL/EN-safe)
 // src/pages/api/stripe/checkout.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2025-07-30.basil",
-});
-
-type BodyItem = {
-  title: string;
-  priceCents: number;
-  qty: number;
-  image?: string;
-};
+import type Stripe from "stripe";
+import { stripe } from "@/lib/stripeServer";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
 
   try {
-    const origin =
-      (process.env.NEXT_PUBLIC_SITE_URL as string) ||
-      `${req.headers["x-forwarded-proto"] || "http"}://${req.headers.host}`;
+    const { items, shippingCents = 0, locale = "pt", email } = (req.body ?? {}) as {
+      items: Array<{ qty: number; priceCents: number; title: string; image?: string; slug?: string; variant?: string }>;
+      shippingCents?: number;
+      locale?: "pt" | "en";
+      email?: string;
+    };
 
-    const { items, locale = "pt", shippingCents = 0 } = req.body || {};
     if (!Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ error: "Items required" });
+      return res.status(400).json({ error: "No items" });
     }
 
-    const currency = locale?.toString().startsWith("en") ? "USD" : "BRL";
+    const currency = locale === "en" ? "usd" : "brl";
+
+    // Origem segura (Vercel/Proxy-friendly)
+    const proto = (req.headers["x-forwarded-proto"] as string) || "https";
+    const host = (req.headers["x-forwarded-host"] as string) || req.headers.host || "localhost:3000";
+    const origin = `${proto}://${host}`;
 
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
-      ...items.map((it: BodyItem) => ({
-        quantity: it.qty || 1,
+      ...items.map((it) => ({
+        quantity: Math.max(1, Number(it.qty) || 1),
         price_data: {
           currency,
+          unit_amount: Math.max(0, Math.floor(Number(it.priceCents) || 0)), // sempre inteiro
           product_data: {
-            name: it.title,
+            name: it.title || "Produto",
             images: it.image ? [it.image] : undefined,
+            metadata: { slug: it.slug || "", variant: it.variant || "" },
           },
-          unit_amount: Math.max(0, Math.round(it.priceCents || 0)),
         },
       })),
+      ...(shippingCents > 0
+        ? [
+            {
+              quantity: 1,
+              price_data: {
+                currency,
+                unit_amount: Math.max(0, Math.floor(Number(shippingCents) || 0)),
+                product_data: { name: "Frete" },
+              },
+            } as Stripe.Checkout.SessionCreateParams.LineItem,
+          ]
+        : []),
     ];
-
-    if (shippingCents && shippingCents > 0) {
-      line_items.push({
-        quantity: 1,
-        price_data: {
-          currency,
-          product_data: { name: locale?.startsWith("en") ? "Shipping" : "Frete" },
-          unit_amount: Math.max(0, Math.round(shippingCents)),
-        },
-      });
-    }
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      payment_method_types: ["card"],
+      customer_email: email || undefined,
+      // Stripe aceita 'pt-BR' — mantém sua UX
+      locale: locale === "en" ? "en" : ("pt-BR" as any),
       line_items,
       allow_promotion_codes: true,
-      locale: locale?.startsWith("en") ? "en" : "pt",
-      success_url: `${origin}/pedido/sucesso?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/pedido/{CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/sacola`,
-      shipping_address_collection: { allowed_countries: ["BR", "US"] },
+      metadata: { locale },
     });
 
-    return res.status(200).json({ url: session.url, sessionId: session.id });
+    return res.status(200).json({ sessionId: session.id });
   } catch (err: any) {
-    console.error("Stripe checkout error", err);
-    return res.status(500).json({ error: "Stripe error" });
+    console.error("[stripe/checkout]", err);
+    return res.status(500).json({ error: err?.message || "Checkout error" });
   }
 }

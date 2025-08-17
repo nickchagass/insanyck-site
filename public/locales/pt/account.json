@@ -1,0 +1,47 @@
+{
+    "dashboard": {
+      "title": "Minha conta",
+      "hello": "Olá",
+      "lastOrders": "Últimos pedidos",
+      "noOrders": "Você ainda não tem pedidos.",
+      "viewAll": "Ver todos",
+      "quick": "Acessos rápidos"
+    },
+    "nav": {
+      "overview": "Visão geral",
+      "addresses": "Endereços",
+      "orders": "Pedidos",
+      "wishlist": "Favoritos",
+      "signout": "Sair"
+    },
+    "addresses": {
+      "title": "Endereços",
+      "subtitle": "Gerencie seus endereços de entrega.",
+      "add": "Adicionar endereço",
+      "empty": "Você ainda não adicionou endereços.",
+      "default": "Padrão",
+      "setDefault": "Tornar padrão",
+      "remove": "Remover"
+    },
+    "orders": {
+      "title": "Pedidos",
+      "empty": "Você ainda não possui pedidos."
+    },
+    "login": {
+      "title": "Entrar",
+      "subtitle": "Acesse sua conta INSANYCK",
+      "email": "E-mail",
+      "password": "Senha",
+      "submit": "Entrar"
+    },
+    "signup": {
+      "title": "Criar conta",
+      "subtitle": "Junte-se à INSANYCK",
+      "name": "Nome completo",
+      "email": "E-mail",
+      "password": "Senha",
+      "submit": "Criar conta",
+      "mock": "Cadastro mock — configure no NextAuth"
+    }
+  }
+  

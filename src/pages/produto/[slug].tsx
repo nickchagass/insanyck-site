@@ -13,6 +13,9 @@ import ProductHeroImageKit from "@/components/ProductHeroImageKit";
 import { products, Product } from "@/data/products.mock";
 import AddToCartButton from "@/components/AddToCartButton";
 
+// INSANYCK STEP 8 — botão de favoritos (adição)
+import WishlistButton from "@/components/WishlistButton"; // INSANYCK STEP 8
+
 type Props = { product: Product };
 
 export default function PDP({ product }: InferGetStaticPropsType<typeof getStaticProps>) {
@@ -112,6 +115,21 @@ export default function PDP({ product }: InferGetStaticPropsType<typeof getStati
                     >
                       {t("pdp:ctaDetails", "Ver detalhes")}
                     </Link>
+
+                    {/* INSANYCK STEP 8 — botão de favoritos no hero (glow sutil cinematográfico) */}
+                    <div className="ml-2 inline-flex align-middle drop-shadow-[0_0_14px_rgba(255,255,255,0.08)] hover:drop-shadow-[0_0_22px_rgba(255,255,255,0.14)] transition-all">
+                      <WishlistButton
+                        slug={product.slug}
+                        title={product.title}
+                        priceCents={
+                          Math.round(
+                            Number((product.price ?? "0").replace(/[^\d,]/g, "").replace(",", ".")) * 100
+                          ) || 0
+                        }
+                        image={product.images?.front}
+                      />
+                    </div>
+                    {/* FIM INSANYCK STEP 8 */}
                   </div>
                 </div>
               }

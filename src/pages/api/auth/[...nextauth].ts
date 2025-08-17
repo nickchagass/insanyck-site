@@ -1,55 +1,41 @@
-// pages/api/auth/[...nextauth].ts
-import NextAuth, { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
+// INSANYCK — NextAuth (JWT) + PrismaAdapter
+import NextAuth, { type NextAuthOptions } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import prisma from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import { prisma } from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!
-    }),
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
-        const user = await prisma.user.findUnique({ where: { email: credentials.email } });
-        if (!user || !user.password) return null;
-        const isValid = await bcrypt.compare(credentials.password, user.password);
-        if (!isValid) return null;
-        return user;
-      }
-    })
-  ],
   session: { strategy: "jwt" },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.role = user.role;
-        token.id = user.id;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-      }
-      return session;
-    }
-  },
+  secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: "/login",
-    error: "/login"
-  }
+    signIn: "/conta/login",
+    error: "/conta/login",
+  },
+  providers: [
+    // Dev-friendly: autentica por email (sem senha). Em produção, troque por OAuth/Email.
+    Credentials({
+      name: "Email",
+      credentials: { email: { label: "Email", type: "email" } },
+      async authorize(creds) {
+        const email = creds?.email?.toLowerCase().trim();
+        if (!email) return null;
+        let user = await prisma.user.findUnique({ where: { email } });
+        if (!user) {
+          user = await prisma.user.create({
+            data: { email, name: email.split("@")[0] },
+          });
+        }
+        return { id: user.id, name: user.name, email: user.email, image: user.image ?? null };
+      },
+    }),
+  ],
+  callbacks: {
+    async session({ session, token }) {
+      if (session.user && token.sub) (session.user as any).id = token.sub;
+      return session;
+    },
+  },
 };
 
 export default NextAuth(authOptions);
