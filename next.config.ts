@@ -1,15 +1,13 @@
-// next.config.ts
-// INSANYCK — PWA + i18n + imagens modernas
+// INSANYCK STEP 9 — withPWA + i18n (next-i18next) + NetworkOnly para APIs sensíveis
 import withPWA from "@ducanh2912/next-pwa";
 import type { NextConfig } from "next";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+// Reaproveita sua config real do next-i18next (não inline)
 const { i18n } = require("./next-i18next.config.js");
 
 const isProd = process.env.NODE_ENV === "production";
 
-// Mesmo runtimeCaching que você já usa (mantém Stripe em NetworkOnly)
 const runtimeCaching = [
-  // HTML: NetworkFirst
+  // HTML
   {
     urlPattern: ({ request }: any) => request.mode === "navigate",
     handler: "NetworkFirst",
@@ -19,15 +17,14 @@ const runtimeCaching = [
       expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 },
     },
   },
+  // APIs sensíveis — NetworkOnly
+  { urlPattern: /^\/api\/auth\/?.*/i, handler: "NetworkOnly" },
+  { urlPattern: /^\/api\/account\/?.*/i, handler: "NetworkOnly" },
+  { urlPattern: /^\/api\/stripe\/?.*/i, handler: "NetworkOnly" },
+  // INSANYCK STEP 10 — Admin APIs também em NetworkOnly
+  { urlPattern: /^\/api\/admin\/?.*/i, handler: "NetworkOnly" },
 
-  // APIs sensíveis (cart/stripe): NetworkOnly
-  { urlPattern: /\/api\/(cart|stripe)\//, handler: "NetworkOnly" },
-
-  // INSANYCK STEP 8 — PWA NetworkOnly para rotas sensíveis (sem cache)
-  { urlPattern: /\/api\/auth\//, handler: "NetworkOnly" },    // NextAuth
-  { urlPattern: /\/api\/account\//, handler: "NetworkOnly" }, // Suas rotas protegidas
-
-  // Imagens: CacheFirst
+  // Imagens
   {
     urlPattern: ({ request }: any) => request.destination === "image",
     handler: "CacheFirst",
@@ -36,15 +33,13 @@ const runtimeCaching = [
       expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
     },
   },
-
-  // GLB/Fonts: SWR
+  // 3D/Fontes
   {
     urlPattern: ({ url }: any) => url.pathname.match(/\.(glb|gltf|hdr|bin|woff2?|ttf)$/),
     handler: "StaleWhileRevalidate",
     options: { cacheName: "assets-3d-fonts" },
   },
-
-  // Outros GET: SWR
+  // Outros GET
   {
     urlPattern: ({ request }: any) => request.method === "GET",
     handler: "StaleWhileRevalidate",
@@ -54,22 +49,15 @@ const runtimeCaching = [
 
 const baseConfig: NextConfig = {
   reactStrictMode: true,
+  images: { remotePatterns: [] },
   i18n,
-  images: {
-    // Ganho grátis em qualidade/tamanho; não muda seu código
-    formats: ["image/avif", "image/webp"],
-    remotePatterns: [], // adicione domínios se for exibir imagens externas
-  },
 };
 
 export default withPWA({
   dest: "public",
   register: true,
   skipWaiting: true,
-  disable: !isProd,               // PWA só em produção (igual ao seu)
+  disable: !isProd,
   cacheOnFrontEndNav: true,
-  workboxOptions: {
-    runtimeCaching,
-    navigateFallback: "/offline.html",
-  },
+  workboxOptions: { runtimeCaching, navigateFallback: "/offline.html" },
 })(baseConfig);

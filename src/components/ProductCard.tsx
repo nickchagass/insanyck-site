@@ -49,7 +49,8 @@ export default function ProductCard({ product }: Props) {
         className="block group"
         aria-label={`${t("plp:viewDetails", "Ver detalhes")} — ${product.title}`}
       >
-        <div className="relative w-full aspect-[4/5] overflow-hidden">
+        {/* INSANYCK STEP A — aspect 3/4 para consistência PLP */}
+        <div className="relative w-full aspect-[3/4] overflow-hidden">
           <Image
             src={img}
             alt={product.title}

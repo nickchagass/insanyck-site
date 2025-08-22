@@ -1,5 +1,5 @@
 // INSANYCK STEP 5 — PDP com hero cinematográfico + thumbs
-// src/pages/produto/[slug].tsx
+// + INSANYCK STEP 9 (opcional: bloom sutil no wrapper externo)
 import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -12,8 +12,6 @@ import { useTranslation } from "next-i18next";
 import ProductHeroImageKit from "@/components/ProductHeroImageKit";
 import { products, Product } from "@/data/products.mock";
 import AddToCartButton from "@/components/AddToCartButton";
-
-// INSANYCK STEP 8 — botão de favoritos (adição)
 import WishlistButton from "@/components/WishlistButton"; // INSANYCK STEP 8
 
 type Props = { product: Product };
@@ -65,7 +63,8 @@ export default function PDP({ product }: InferGetStaticPropsType<typeof getStati
       </Head>
 
       {/* HERO */}
-      <div className="relative">
+      {/* INSANYCK STEP 9 — opcional: adiciona bloom sutil sem alterar layout */}
+      <div className="relative insanyck-bloom insanyck-bloom--soft">
         <AnimatePresence mode="wait">
           <motion.div
             key={view}
@@ -86,7 +85,6 @@ export default function PDP({ product }: InferGetStaticPropsType<typeof getStati
                 </div>
               }
               left={
-                // Troca “Comprar agora” por AddToCartButton (mesmo look)
                 <div className="text-center lg:text-left">
                   <h1
                     id="pdp-hero-title"
@@ -116,14 +114,18 @@ export default function PDP({ product }: InferGetStaticPropsType<typeof getStati
                       {t("pdp:ctaDetails", "Ver detalhes")}
                     </Link>
 
-                    {/* INSANYCK STEP 8 — botão de favoritos no hero (glow sutil cinematográfico) */}
+                    {/* INSANYCK STEP 8 — favoritos no hero */}
                     <div className="ml-2 inline-flex align-middle drop-shadow-[0_0_14px_rgba(255,255,255,0.08)] hover:drop-shadow-[0_0_22px_rgba(255,255,255,0.14)] transition-all">
                       <WishlistButton
                         slug={product.slug}
                         title={product.title}
                         priceCents={
                           Math.round(
-                            Number((product.price ?? "0").replace(/[^\d,]/g, "").replace(",", ".")) * 100
+                            Number(
+                              (product.price ?? "0")
+                                .replace(/[^\d,]/g, "")
+                                .replace(",", ".")
+                            ) * 100
                           ) || 0
                         }
                         image={product.images?.front}

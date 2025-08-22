@@ -10,7 +10,10 @@ export type CartItem = {
   priceCents: number;    // preço sempre em centavos
   qty: number;
   image?: string;
-  variant?: string;      // cor/tamanho (opcional)
+  variant?: string;      // cor/tamanho (opcional) - MANTIDO para compatibilidade
+  // INSANYCK STEP 10 — Novos campos para integração com variantes
+  variantId?: string;    // ID da variante no banco
+  sku?: string;          // SKU da variante
 };
 
 type CartState = {
@@ -36,13 +39,19 @@ export const useCartStore = create<CartState>()(
       hydrated: false,
       isOpen: false,
 
-      // De-dupe por slug+variant: acumula qty
+      // INSANYCK STEP 10 — De-dupe por variantId (se disponível) ou slug+variant (retrocompatível)
       addItem: (it) => {
         set((state) => {
-          const idx = state.items.findIndex(
-            (x) => x.slug === it.slug && x.variant === it.variant
-          );
-        if (idx >= 0) {
+          const idx = state.items.findIndex((x) => {
+            // Priorizar variantId se disponível
+            if (it.variantId && x.variantId) {
+              return x.variantId === it.variantId;
+            }
+            // Fallback para compatibilidade com método antigo
+            return x.slug === it.slug && x.variant === it.variant;
+          });
+          
+          if (idx >= 0) {
             const next = [...state.items];
             next[idx] = { ...next[idx], qty: next[idx].qty + it.qty };
             return { items: next };

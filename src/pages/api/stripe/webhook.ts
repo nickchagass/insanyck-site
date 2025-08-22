@@ -1,4 +1,6 @@
-// INSANYCK — Webhook Stripe unificado usando versão do .env
+// INSANYCK STEP 10 — Webhook Stripe com gestão de estoque
+// INSANYCK STEP 8 + decrementar inventory por variantId
+// Webhook unificado usando versão do .env
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripeServer";
@@ -45,28 +47,76 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const amountTotal = session.amount_total ?? 0;
       const user = email ? await prisma.user.findFirst({ where: { email } }) : null;
 
-      const order = await prisma.order.create({
-        data: {
-          userId: user?.id ?? null,
-          email,
-          stripeSessionId: session.id,
-          status: "paid",
-          currency,
-          amountTotal,
-          items: {
-            create: (lineItems.data || []).map((li: any) => {
-              const qty = li.quantity ?? 1;
-              const title = (li.description ?? "Produto").toString();
-              const unit = Math.max(0, Math.floor((li.amount_total ?? 0) / qty));
-              const product = (li.price?.product as any) || {};
-              const slug =
-                product?.metadata?.slug ||
-                title.toLowerCase().replace(/[^\w]+/g, "-").replace(/(^-|-$)/g, "");
-              const image = Array.isArray(product?.images) ? product.images[0] : undefined;
-              return { slug, title, priceCents: unit, qty, image, variant: product?.metadata?.variant || undefined };
-            }),
+      // INSANYCK STEP 10 — Criar pedido e decrementar estoque em transação
+      const order = await prisma.$transaction(async (tx) => {
+        // Criar o pedido
+        const newOrder = await tx.order.create({
+          data: {
+            userId: user?.id ?? null,
+            email,
+            stripeSessionId: session.id,
+            status: "paid",
+            currency,
+            amountTotal,
+            items: {
+              create: (lineItems.data || []).map((li: any) => {
+                const qty = li.quantity ?? 1;
+                const title = (li.description ?? "Produto").toString();
+                const unit = Math.max(0, Math.floor((li.amount_total ?? 0) / qty));
+                const product = (li.price?.product as any) || {};
+                const slug =
+                  product?.metadata?.slug ||
+                  title.toLowerCase().replace(/[^\w]+/g, "-").replace(/(^-|-$)/g, "");
+                const image = Array.isArray(product?.images) ? product.images[0] : undefined;
+                
+                // INSANYCK STEP 10 — Capturar variantId e sku do metadata
+                const variantId = product?.metadata?.variantId;
+                const sku = product?.metadata?.sku;
+                
+                return { 
+                  slug, 
+                  title, 
+                  priceCents: unit, 
+                  qty, 
+                  image, 
+                  variant: product?.metadata?.variant || undefined,
+                  // Novos campos
+                  variantId,
+                  sku
+                };
+              }),
+            },
           },
-        },
+        });
+
+        // Decrementar estoque para cada item com variantId
+        for (const li of lineItems.data || []) {
+          const product = (li.price?.product as any) || {};
+          const variantId = product?.metadata?.variantId;
+          const qty = li.quantity ?? 1;
+
+          if (variantId) {
+            try {
+              // Decrementar estoque da variante
+              await tx.inventory.updateMany({
+                where: { 
+                  variantId: variantId,
+                  quantity: { gte: qty } // Só decrementa se há estoque suficiente
+                },
+                data: {
+                  quantity: { decrement: qty }
+                }
+              });
+
+              console.log(`Estoque decrementado: variantId=${variantId}, qty=${qty}`);
+            } catch (error) {
+              console.warn(`Erro ao decrementar estoque para variantId ${variantId}:`, error);
+              // Não falha a transação, apenas loga o erro
+            }
+          }
+        }
+
+        return newOrder;
       });
 
       return res.status(200).json({ ok: true, orderId: order.id });

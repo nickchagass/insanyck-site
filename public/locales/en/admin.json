@@ -1,0 +1,88 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "INSANYCK system overview",
+    "stats": {
+      "products": "Products",
+      "categories": "Categories", 
+      "orders": "Orders",
+      "variants": "Variants"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "newProduct": "New Product",
+      "manageCategories": "Manage Categories",
+      "viewOrders": "View Orders"
+    }
+  },
+  "products": {
+    "title": "Products",
+    "subtitle": "Manage product catalog",
+    "newProduct": "New Product",
+    "search": "Search products...",
+    "searchButton": "Search",
+    "loading": "Loading products...",
+    "table": {
+      "product": "Product",
+      "status": "Status",
+      "category": "Category",
+      "variants": "Variants",
+      "updated": "Updated",
+      "actions": "Actions"
+    },
+    "actions": {
+      "view": "View product",
+      "edit": "Edit product",
+      "delete": "Delete product"
+    },
+    "status": {
+      "active": "Active",
+      "draft": "Draft",
+      "archived": "Archived"
+    },
+    "pagination": {
+      "showing": "Showing {{count}} of {{total}} products",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "variants": {
+    "title": "Variants",
+    "newVariant": "New Variant",
+    "sku": "SKU",
+    "options": "Options",
+    "price": "Price",
+    "inventory": "Inventory",
+    "available": "{{count}} available",
+    "outOfStock": "Out of stock",
+    "inStock": "In stock"
+  },
+  "categories": {
+    "title": "Categories",
+    "newCategory": "New Category",
+    "name": "Name",
+    "slug": "Slug",
+    "description": "Description",
+    "parent": "Parent category",
+    "products": "Products"
+  },
+  "forms": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "create": "Create",
+    "update": "Update",
+    "required": "Required field",
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "deleting": "Deleting..."
+  },
+  "navigation": {
+    "products": "Products",
+    "categories": "Categories",
+    "orders": "Orders",
+    "reports": "Reports",
+    "settings": "Settings",
+    "logout": "Logout"
+  }
+}

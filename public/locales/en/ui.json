@@ -1,0 +1,14 @@
+{
+    "buttons": {
+      "primary": "Confirm",
+      "ghost": "View details"
+    },
+    "favorites": {
+      "tooltip": "Favorites"
+    },
+    "cart": {
+      "tooltip": "Cart"
+    },
+    "loading": "Loading…"
+  }
+  

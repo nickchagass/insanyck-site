@@ -1,0 +1,26 @@
+{
+  "critical": [
+    "next.config.ts",
+    "postcss.config.mjs",
+    "tsconfig.json",
+    "package.json",
+    "next-i18next.config.js",
+    "src/styles/globals.css",
+    "src/components/Navbar.tsx",
+    "src/pages/checkout.tsx",
+    "src/lib/stripeServer.ts"
+  ],
+  "product_pages": [
+    "src/pages/produto/[slug].tsx",
+    "src/components/ProductHeroImageKit.tsx",
+    "src/components/ProductCard.tsx",
+    "src/components/ProductGrid.tsx"
+  ],
+  "plp_pages": [
+    "src/pages/loja.tsx",
+    "src/components/ProductGrid.tsx",
+    "src/components/ProductCard.tsx"
+  ],
+  "i18n_namespaces": ["public/locales/pt", "public/locales/en"],
+  "notes": "Mapa espelha sua árvore src/*; não mover/renomear sem aprovação."
+}

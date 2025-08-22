@@ -23,7 +23,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               product_data: {
                 name: it.title || "Produto",
                 images: it.image ? [it.image] : undefined,
-                metadata: { slug: it.slug || "", variant: it.variant || "" },
+                metadata: { 
+                  slug: it.slug || "", 
+                  variant: it.variant || "",
+                  // INSANYCK STEP 10 — Metadados para o webhook decrementar estoque
+                  variantId: it.variantId || "",
+                  sku: it.sku || "",
+                  title: it.title || ""
+                },
               },
             },
           }))

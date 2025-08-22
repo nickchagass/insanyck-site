@@ -293,6 +293,7 @@ body {
   outline-width: 2px;
   outline-offset: 2px;
 }
+
 /* INSANYCK STEP 9 — halo cinematográfico leve */
 .halo-cinema {
   position: relative;
@@ -310,3 +311,88 @@ body {
   pointer-events: none;
   filter: blur(8px);
 }
+
+/* =========================================================
+   INSANYCK STEP 9 — Botões premium (glass + hairline + micro-elevation)
+   (Compatível com Tailwind v4: sem @apply de classe custom)
+   ========================================================= */
+   @layer components {
+    /* Base (se quiser usar junto no futuro) */
+    .btn-insanyck {
+      @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5
+             text-[14px] font-semibold tracking-wide select-none
+             border transition-all duration-150 ease-out
+             focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30
+             disabled:opacity-60 disabled:cursor-not-allowed;
+    }
+  
+    /* Variante PRIMARY — inclui a base inteira (não precisa usar duas classes no HTML) */
+    .btn-insanyck--primary {
+      @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5
+             text-[14px] font-semibold tracking-wide select-none
+             border transition-all duration-150 ease-out
+             focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30
+             disabled:opacity-60 disabled:cursor-not-allowed
+             border-white/10 bg-white/90 text-black
+             hover:bg-white hover:-translate-y-px active:translate-y-0;
+    }
+  
+    /* Variante GHOST — inclui a base inteira (não precisa usar duas classes no HTML) */
+    .btn-insanyck--ghost {
+      @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5
+             text-[14px] font-semibold tracking-wide select-none
+             border transition-all duration-150 ease-out
+             focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30
+             disabled:opacity-60 disabled:cursor-not-allowed
+             border-white/10 bg-white/5 text-white/90
+             hover:bg-white/10 hover:border-white/20 hover:-translate-y-px active:translate-y-0;
+    }
+  }
+  
+
+/* =========================================================
+   INSANYCK STEP 9 — Cinematic Bloom (não usar em checkout/pagamento)
+   ========================================================= */
+.insanyck-bloom {
+  position: relative;
+  isolation: isolate;
+}
+.insanyck-bloom::before {
+  content: "";
+  position: absolute;
+  inset: -10%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0; /* base neutra; variantes ajustam */
+  transition: opacity .3s ease-out;
+  background:
+    radial-gradient(60% 60% at 50% 30%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 50%),
+    radial-gradient(40% 40% at 80% 10%, rgba(250,204,21,.08) 0%, rgba(250,204,21,0) 60%); /* usa o dourado do projeto */
+  filter: blur(12px);
+  mix-blend-mode: screen;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .insanyck-bloom--soft::before { opacity: .24; }
+  .insanyck-bloom--edge::before { opacity: .18; filter: blur(10px) saturate(1.05); }
+}
+
+/* =========================================================
+   INSANYCK STEP 9 — Skeletons (grid/list/text/thumb)
+   ========================================================= */
+@keyframes insanyck-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.skl {
+  border-radius: 14px;
+  background: linear-gradient(90deg,
+               rgba(255,255,255,.05) 25%,
+               rgba(255,255,255,.09) 37%,
+               rgba(255,255,255,.05) 63%);
+  background-size: 400% 100%;
+  animation: insanyck-shimmer 1400ms linear infinite;
+  border: 1px solid rgba(255,255,255,.08);
+}
+.skl--text    { height: 1rem; }
+.skl--text-lg { height: 1.25rem; }
+.skl--thumb   { aspect-ratio: 4 / 5; width: 100%; }

@@ -1,0 +1,59 @@
+{
+  "filters": {
+    "all_categories": "Todas Categorias",
+    "category": "Categoria",
+    "size": "Tamanho",
+    "color": "Cor",
+    "price": "Preço",
+    "in_stock": "Em Estoque",
+    "out_of_stock": "Fora de Estoque",
+    "clear_filters": "Limpar Filtros",
+    "apply_filters": "Aplicar Filtros"
+  },
+  "sort": {
+    "newest": "Mais Recentes",
+    "oldest": "Mais Antigos",
+    "name": "Nome A-Z",
+    "name_desc": "Nome Z-A",
+    "price_asc": "Menor Preço",
+    "price_desc": "Maior Preço",
+    "featured": "Destaques"
+  },
+  "product": {
+    "price_from": "A partir de {{price}}",
+    "price_range": "{{min}} - {{max}}",
+    "variants": "{{count}} variante",
+    "variants_plural": "{{count}} variantes",
+    "out_of_stock": "Fora de estoque",
+    "low_stock": "Últimas unidades",
+    "featured": "Destaque",
+    "new": "Novo"
+  },
+  "options": {
+    "size": "Tamanho",
+    "color": "Cor",
+    "material": "Material",
+    "style": "Estilo",
+    "select_option": "Selecione {{option}}",
+    "unavailable": "Indisponível"
+  },
+  "inventory": {
+    "in_stock": "Em estoque",
+    "out_of_stock": "Fora de estoque",
+    "low_stock": "Poucas unidades",
+    "available": "{{count}} disponível",
+    "available_plural": "{{count}} disponíveis"
+  },
+  "actions": {
+    "view_details": "Ver detalhes",
+    "select_options": "Selecionar opções",
+    "quick_add": "Adicionar rapidamente"
+  },
+  "pagination": {
+    "showing": "Mostrando {{start}}-{{end}} de {{total}} produtos",
+    "load_more": "Carregar mais",
+    "previous": "Anterior",
+    "next": "Próxima",
+    "page": "Página {{current}} de {{total}}"
+  }
+}

@@ -1,6 +1,8 @@
 // INSANYCK STEP 4 + STEP 8
 import type { AppProps } from "next/app";
 import { appWithTranslation } from "next-i18next";
+
+// importa o CSS global
 import "../styles/globals.css";
 
 // INSANYCK STEP 8 — NextAuth Provider

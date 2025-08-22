@@ -7,6 +7,10 @@
     "addToCart": "Adicionar ao carrinho",
     "added": "Adicionado à sacola",
     "qty": "Qtd",
-    "remove": "Remover"
+    "remove": "Remover",
+    "outOfStock": "Fora de estoque",
+    "selectVariant": "Selecione as opções",
+    "lowStock": "Últimas {{count}} unidades",
+    "inStock": "Em estoque"
   }
   

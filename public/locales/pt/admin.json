@@ -1,0 +1,88 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Visão geral do sistema INSANYCK",
+    "stats": {
+      "products": "Produtos",
+      "categories": "Categorias", 
+      "orders": "Pedidos",
+      "variants": "Variantes"
+    },
+    "quickActions": {
+      "title": "Ações Rápidas",
+      "newProduct": "Novo Produto",
+      "manageCategories": "Gerenciar Categorias",
+      "viewOrders": "Ver Pedidos"
+    }
+  },
+  "products": {
+    "title": "Produtos",
+    "subtitle": "Gerencie o catálogo de produtos",
+    "newProduct": "Novo Produto",
+    "search": "Buscar produtos...",
+    "searchButton": "Buscar",
+    "loading": "Carregando produtos...",
+    "table": {
+      "product": "Produto",
+      "status": "Status",
+      "category": "Categoria",
+      "variants": "Variantes",
+      "updated": "Atualizado",
+      "actions": "Ações"
+    },
+    "actions": {
+      "view": "Ver produto",
+      "edit": "Editar produto",
+      "delete": "Deletar produto"
+    },
+    "status": {
+      "active": "Ativo",
+      "draft": "Rascunho",
+      "archived": "Arquivado"
+    },
+    "pagination": {
+      "showing": "Mostrando {{count}} de {{total}} produtos",
+      "previous": "Anterior",
+      "next": "Próximo"
+    }
+  },
+  "variants": {
+    "title": "Variantes",
+    "newVariant": "Nova Variante",
+    "sku": "SKU",
+    "options": "Opções",
+    "price": "Preço",
+    "inventory": "Estoque",
+    "available": "{{count}} disponível",
+    "outOfStock": "Fora de estoque",
+    "inStock": "Em estoque"
+  },
+  "categories": {
+    "title": "Categorias",
+    "newCategory": "Nova Categoria",
+    "name": "Nome",
+    "slug": "Slug",
+    "description": "Descrição",
+    "parent": "Categoria pai",
+    "products": "Produtos"
+  },
+  "forms": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Deletar",
+    "create": "Criar",
+    "update": "Atualizar",
+    "required": "Campo obrigatório",
+    "loading": "Carregando...",
+    "saving": "Salvando...",
+    "deleting": "Deletando..."
+  },
+  "navigation": {
+    "products": "Produtos",
+    "categories": "Categorias",
+    "orders": "Pedidos",
+    "reports": "Relatórios",
+    "settings": "Configurações",
+    "logout": "Sair"
+  }
+}

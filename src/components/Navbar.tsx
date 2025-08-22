@@ -1,40 +1,54 @@
-// INSANYCK STEP 4 + STEP 6 + STEP 7.1 PATCH + STEP 8.1
+// INSANYCK STEP 9 — Navbar com favoritos + hideCart (FIX hooks)
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router"; // INSANYCK STEP 4
-import { Search, ShoppingBag } from "lucide-react";
-import { useTranslation } from "next-i18next"; // INSANYCK STEP 4
+import { useRouter } from "next/router";
+import { Search, ShoppingBag, Heart } from "lucide-react";
+import { useTranslation } from "next-i18next";
 
-// INSANYCK STEP 6 (imports novos)
 import dynamic from "next/dynamic";
 import { useCartCount, useCartStore } from "@/store/cart";
 
-// ======================= INSANYCK STEP 8 (imports novos) =======================
-import { useSession } from "next-auth/react"; // INSANYCK STEP 8
-const SearchBox = dynamic(() => import("@/components/SearchBox"), { ssr: false }); // INSANYCK STEP 8
-const MiniCart = dynamic(() => import("@/components/MiniCart"), { ssr: false }); // keep lazy
+// Mantidos (SearchBox/MiniCart)
+const SearchBox = dynamic(() => import("@/components/SearchBox"), { ssr: false });
+const MiniCart = dynamic(() => import("@/components/MiniCart"), { ssr: false });
+
+// Wishlist (seu store real)
+import { useWishlist } from "@/store/wishlist";
+
+// NextAuth (UserMenu usa)
+import { useSession } from "next-auth/react";
 
 export default function Navbar() {
-  const router = useRouter(); // INSANYCK STEP 4
-  const { t, i18n } = useTranslation(["nav"]); // INSANYCK STEP 4
-  const currentLocale = i18n?.language || (router as any).locale || "pt"; // INSANYCK STEP 4
+  const router = useRouter();
+  const { t, i18n } = useTranslation(["nav"]);
+  const currentLocale = i18n?.language || (router as any).locale || "pt";
 
-  // INSANYCK STEP 8.1 — esconder sacola nas rotas de checkout/pagamento
+  // esconder sacola/favoritos em rotas sensíveis
   const { pathname } = useRouter();
-  const hideCart = pathname.startsWith("/checkout") || pathname.startsWith("/conta/pagamento");
+  const hideCart =
+    pathname.startsWith("/checkout") || pathname.startsWith("/conta/pagamento");
 
-  // INSANYCK STEP 4 — Switcher de idioma discreto (preserva rota atual)
+  // Idioma
   function switchLocale(nextLocale: "pt" | "en") {
     if (nextLocale === currentLocale) return;
     const asPath = (router as any).asPath || "/";
     (router as any).push(asPath, asPath, { locale: nextLocale });
   }
 
-  // INSANYCK STEP 6 — estado do carrinho (badge + abrir drawer)
+  // Carrinho
   const count = useCartCount();
   const toggleCart = useCartStore((s) => s.toggle);
+
+  // ---------- FIX CRÍTICO DE HOOKS ----------
+  // Chame o hook SEMPRE (nunca condicional)
+  const wishlistLen = useWishlist((s) => s.items.length);
+  // Hidratação: só exibimos o número depois de montar
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const wishlistCount = mounted ? wishlistLen : 0;
+  // -----------------------------------------
 
   return (
     <header
@@ -45,13 +59,13 @@ export default function Navbar() {
         border-b border-[rgba(255,255,255,.08)]
       "
       role="navigation"
-      aria-label={t("nav:aria.mainNav", "Principal") /* INSANYCK STEP 4 */}
+      aria-label={t("nav:aria.mainNav", "Principal")}
     >
       <div className="mx-auto max-w-[1280px] px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="/"
-          aria-label={t("nav:aria.goHome", "Ir para a Home") /* INSANYCK STEP 4 */}
+          aria-label={t("nav:aria.goHome", "Ir para a Home")}
           className="flex items-center"
         >
           <span
@@ -105,20 +119,36 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* =================== INSANYCK STEP 8 — adicionados =================== */}
-          <SearchBox />      {/* INSANYCK STEP 8 */}
-          <UserMenu />       {/* INSANYCK STEP 8 */}
-          {/* ================================================================ */}
+          {/* Mantidos do seu projeto */}
+          <SearchBox />
+          <UserMenu />
 
+          {/* Link para buscar (mantido) */}
           <Link
             href="/buscar"
-            aria-label={t("nav:aria.search", "Pesquisar") /* INSANYCK STEP 4 */}
+            aria-label={t("nav:aria.search", "Pesquisar")}
             className="text-white/80 hover:text-white transition-colors"
           >
             <Search size={22} strokeWidth={1.5} />
           </Link>
 
-          {/* Sacola */}
+          {/* Favoritos (com contador) — oculta em checkout/pagamento */}
+          {!hideCart && (
+            <Link
+              href="/favoritos"
+              aria-label="Favoritos"
+              className="relative text-white/80 hover:text-white transition-colors"
+            >
+              <Heart size={22} strokeWidth={1.5} />
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-white text-black text-[10px] leading-4 font-semibold ring-1 ring-black/10 text-center">
+                  {wishlistCount}
+                </span>
+              )}
+            </Link>
+          )}
+
+          {/* Sacola (drawer) — oculta em checkout/pagamento */}
           {!hideCart && (
             <button
               type="button"
@@ -137,13 +167,13 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mini-Cart (lazy) */}
+      {/* Drawer Mini-Cart (lazy) */}
       {!hideCart && <MiniCart />}
     </header>
   );
 }
 
-/* ======================= INSANYCK STEP 8 — UserMenu ======================= */
+/* ======================= Mantido — UserMenu ======================= */
 function UserMenu() {
   const { data: session, status } = useSession();
 

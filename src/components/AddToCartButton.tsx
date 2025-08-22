@@ -14,6 +14,9 @@ type MinimalProduct = {
   price?: string | number;
   priceCents?: number;
   variant?: string;
+  // INSANYCK STEP 10 — Novos campos para integração com variantes
+  variantId?: string;
+  sku?: string;
 };
 
 type Props = {
@@ -22,6 +25,7 @@ type Props = {
   openMiniCart?: boolean;
   className?: string;
   children?: ReactNode; // permite manter seu visual existente
+  disabled?: boolean; // INSANYCK STEP 10 — Para desabilitar quando sem estoque
 };
 
 export default function AddToCartButton({
@@ -30,6 +34,7 @@ export default function AddToCartButton({
   openMiniCart = true,
   className,
   children,
+  disabled = false,
 }: Props) {
   const addItem = useCartStore((s) => s.addItem);
   const toggle = useCartStore((s) => s.toggle);
@@ -48,6 +53,9 @@ export default function AddToCartButton({
       priceCents,
       qty,
       variant: product.variant,
+      // INSANYCK STEP 10 — Novos campos
+      variantId: product.variantId,
+      sku: product.sku,
     });
 
     if (openMiniCart) toggle(true);
@@ -57,9 +65,10 @@ export default function AddToCartButton({
     <button
       type="button"
       onClick={handle}
+      disabled={disabled}
       className={
         className ||
-        "bg-white text-black rounded-xl px-6 py-3 font-semibold hover:brightness-95 transition"
+        "bg-white text-black rounded-xl px-6 py-3 font-semibold hover:brightness-95 transition disabled:opacity-50 disabled:cursor-not-allowed"
       }
       aria-label={t("cart:addToCart", "Adicionar ao carrinho")}
     >
