@@ -38,14 +38,19 @@ export default function CheckoutPage() {
     if (!canPay) return;
     setLoading(true);
     try {
-      const res = await fetch("/api/stripe/checkout", {
+      // ETAPA 11D — Adaptar para nova API /api/checkout com variantId/sku/qty do cart v2
+      const checkoutItems = items.map(item => ({
+        variantId: item.variantId,
+        sku: item.sku,
+        qty: item.qty
+      }));
+
+      const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items,
-          shippingCents,
-          locale,
-          address, // (opcional, para metadata futura)
+          items: checkoutItems,
+          currency: "BRL"
         }),
       });
       if (!res.ok) throw new Error("Checkout API error");
@@ -132,7 +137,7 @@ export default function CheckoutPage() {
                       />
                       <div className="flex-1">
                         <div className="text-white/80 text-sm">{it.title}</div>
-                        {it.variant ? <div className="text-white/50 text-xs">{it.variant}</div> : null}
+                        {it.options?.variant ? <div className="text-white/50 text-xs">{it.options.variant}</div> : null}
                       </div>
                       <div className="text-white/70 text-sm">
                         {new Intl.NumberFormat(locale === "en" ? "en-US" : "pt-BR", {

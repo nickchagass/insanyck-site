@@ -17,6 +17,7 @@ type MinimalProduct = {
   // INSANYCK STEP 10 — Novos campos para integração com variantes
   variantId?: string;
   sku?: string;
+  currency?: string;
 };
 
 type Props = {
@@ -51,11 +52,12 @@ export default function AddToCartButton({
       title: product.title,
       image: product.image,
       priceCents,
+      currency: 'BRL',
       qty,
-      variant: product.variant,
       // INSANYCK STEP 10 — Novos campos
       variantId: product.variantId,
       sku: product.sku,
+      options: product.variant ? { variant: product.variant } : undefined,
     });
 
     if (openMiniCart) toggle(true);

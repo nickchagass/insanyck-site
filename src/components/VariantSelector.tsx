@@ -1,5 +1,7 @@
 // INSANYCK STEP 10 — Seletor de Variantes
 // src/components/VariantSelector.tsx
+"use client";
+
 import { useState, useEffect } from 'react';
 
 interface OptionValue {
@@ -12,6 +14,7 @@ interface Option {
   slug: string;
   name: string;
   values: OptionValue[];
+  type?: 'color' | 'size' | 'select'; // INSANYCK STEP 10 — Tipagem para renderização
 }
 
 interface Variant {
@@ -94,7 +97,10 @@ export default function VariantSelector({
     
     let baseClass = "border border-white/20 transition-all duration-200 ";
 
-    if (option.type === 'color') {
+    // INSANYCK STEP 10 — Detectar cor por type ou slug (retrocompatíbvel)
+    const isColorFilter = option.type === 'color' || option.slug === 'color';
+
+    if (isColorFilter) {
       // Seletor de cor como círculo
       baseClass += "w-8 h-8 rounded-full cursor-pointer ";
       
@@ -133,7 +139,10 @@ export default function VariantSelector({
             {option.values.map((value) => {
               const isAvailable = isOptionValueAvailable(option.slug, value.slug);
               
-              if (option.slug === 'color') {
+              // INSANYCK STEP 10 — Detectar cor por type ou slug (retrocompatíbvel)
+              const isColorOption = option.type === 'color' || option.slug === 'color';
+              
+              if (isColorOption) {
                 // Seletor de cor
                 return (
                   <button

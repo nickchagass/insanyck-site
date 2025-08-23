@@ -73,7 +73,7 @@ export default function FavoritosPage() {
             <p className="mt-8 text-white/70">{t("wishlist:empty", "Nenhum favorito ainda.")}</p>
           ) : (
             <div className="mt-8">
-              <ProductGrid products={products as any} />
+              <ProductGrid items={products as any} />
             </div>
           )}
         </div>

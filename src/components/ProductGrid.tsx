@@ -1,15 +1,38 @@
-// INSANYCK STEP 5
+// INSANYCK STEP 5 + HOTFIX
 // src/components/ProductGrid.tsx
 import ProductCard from "@/components/ProductCard";
+import Skeleton from "@/components/Skeleton";
 import { Product } from "@/data/products.mock";
 
-type Props = { items: Product[] };
+type Props = { items?: Product[]; className?: string; showSkeleton?: boolean; skeletonCount?: number };
 
-export default function ProductGrid({ items }: Props) {
+export default function ProductGrid({ items = [], className, showSkeleton = false, skeletonCount = 8 }: Props) {
+  const list = Array.isArray(items) ? items : [];
+  
+  if (showSkeleton && !list.length) {
+    return (
+      <section className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ${className || ''}`} aria-live="polite">
+        {Array.from({ length: skeletonCount }).map((_, i) => (
+          <article key={i} className="rounded-2xl border border-white/10 bg-black/30 p-3">
+            <Skeleton.Thumb />
+            <div className="mt-3 space-y-2">
+              <Skeleton.TextLg className="w-4/5" />
+              <Skeleton.Text className="w-2/5" />
+            </div>
+          </article>
+        ))}
+      </section>
+    );
+  }
+  
+  if (!list.length) {
+    return <section className={className} aria-live="polite" />;
+  }
+  
   return (
-    <section className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {items.map((p) => (
-        <ProductCard key={p.id} product={p} />
+    <section className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ${className || ''}`}>
+      {list.map((p) => (
+        <ProductCard key={p.id ?? p.slug} product={p} />
       ))}
     </section>
   );

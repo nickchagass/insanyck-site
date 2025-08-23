@@ -29,6 +29,27 @@
     "fake": "Modo demonstração: o pagamento é simulado."
   },
   "placeOrder": "Finalizar pedido",
+  "processing": "Processando...",
+  "error": "Não foi possível iniciar o pagamento.",
+  "success": {
+    "title": "Pedido Confirmado!",
+    "description": "Seu pedido foi processado com sucesso",
+    "message": "Seu pedido foi processado com sucesso.",
+    "sessionId": "ID da sessão:",
+    "emailSent": "Em breve você receberá um email com os detalhes do pedido.",
+    "continueShopping": "Continuar comprando",
+    "viewOrders": "Meus pedidos",
+    "support": "Dúvidas? Entre em contato conosco através do"
+  },
+  "cancel": {
+    "title": "Checkout Cancelado",
+    "description": "O processo de checkout foi cancelado",
+    "message": "Não se preocupe, nenhuma cobrança foi realizada.",
+    "itemsSaved": "Seus itens continuam salvos na sacola.",
+    "backToBag": "Voltar para sacola",
+    "continueShopping": "Continuar comprando",
+    "needHelp": "Precisa de ajuda?"
+  },
   "coupon": {
     "applied10": "Cupom de 10% aplicado",
     "freeShipping": "Frete grátis aplicado"

@@ -1,207 +1,280 @@
-// INSANYCK STEP 5 — PDP com hero cinematográfico + thumbs
-// + INSANYCK STEP 9 (opcional: bloom sutil no wrapper externo)
-import { GetStaticPaths, GetStaticProps, InferGetStaticPropsType } from "next";
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useState, useMemo } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useTranslation } from "next-i18next";
+// INSANYCK STEP 10 — PDP robusto (SSR seguro + mapeamento compatível)
+import Head from 'next/head';
+import Link from 'next/link';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
+import { useState } from 'react';
+import VariantSelector from '@/components/VariantSelector';
+import AddToCartButton from '@/components/AddToCartButton';
 
-import ProductHeroImageKit from "@/components/ProductHeroImageKit";
-import { products, Product } from "@/data/products.mock";
-import AddToCartButton from "@/components/AddToCartButton";
-import WishlistButton from "@/components/WishlistButton"; // INSANYCK STEP 8
+type OptionValue = { slug: string; name: string; value: string };
+type Option = { slug: string; name: string; type?: 'color'|'size'|'select'; values: OptionValue[] };
 
-type Props = { product: Product };
+type PDPVariant = {
+  id: string;
+  sku: string;
+  title?: string;
+  priceCents: number;
+  currency: string;
+  inventory: { quantity: number; reserved: number; available: number };
+  options: { option: string; value: string }[];
+};
 
-export default function PDP({ product }: InferGetStaticPropsType<typeof getStaticProps>) {
-  const router = useRouter();
-  const { t, i18n } = useTranslation(["pdp", "common", "cart"]);
-  const [view, setView] = useState<"front" | "back" | "detail">("front");
+type PDPProps = {
+  product: { id: string; slug: string; title: string; description: string | null; image: string | null };
+  options: Option[];
+  variants: PDPVariant[];
+};
 
-  const currentImage = useMemo(() => {
-    return (
-      product.images?.[view] ||
-      product.images?.front ||
-      "/products/placeholder/front.webp"
-    );
-  }, [product.images, view]);
+export default function ProdutoPage({
+  product,
+  options,
+  variants,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const { t } = useTranslation(['pdp', 'common', 'cart']);
+  const [selectedVariant, setSelectedVariant] = useState<PDPVariant | null>(null);
 
-  const title = product.title;
-  const subtitle = t("pdp:subtitle", "Drop-shoulder • 100% algodão premium");
-  const price = product.price;
-
-  const jsonLd = {
-    "@context": "https://schema.org/",
-    "@type": "Product",
-    name: product.title,
-    image: Object.values(product.images || {}).filter(Boolean),
-    brand: { "@type": "Brand", name: "INSANYCK" },
-    offers: {
-      "@type": "Offer",
-      priceCurrency: i18n.language?.startsWith("en") ? "USD" : "BRL",
-      price: price.replace(/[^\d,]/g, "").replace(",", "."),
-      availability: "https://schema.org/InStock",
-      url: `https://insanyck.com/produto/${product.slug}`,
-    },
+  const handleVariantChange = (variant: PDPVariant | null) => {
+    setSelectedVariant(variant);
   };
+
+  const displayPrice = selectedVariant 
+    ? (selectedVariant.priceCents / 100).toLocaleString('pt-BR', { style: 'currency', currency: selectedVariant.currency })
+    : variants.length > 0 
+    ? (variants[0].priceCents / 100).toLocaleString('pt-BR', { style: 'currency', currency: variants[0].currency })
+    : '';
 
   return (
     <>
       <Head>
-        <title>{product.title} — INSANYCK</title>
-        <meta name="description" content={subtitle} />
-        <meta property="og:title" content={`${product.title} — INSANYCK`} />
-        <meta property="og:description" content={subtitle} />
-        <meta property="og:image" content={product.images?.front || ""} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <title>{product.title} • INSANYCK</title>
+        <meta name="description" content={product.description ?? product.title} />
+        <meta property="og:title" content={`${product.title} • INSANYCK`} />
+        <meta property="og:description" content={product.description ?? product.title} />
+        <meta property="og:image" content={product.image || ''} />
       </Head>
 
-      {/* HERO */}
-      {/* INSANYCK STEP 9 — opcional: adiciona bloom sutil sem alterar layout */}
-      <div className="relative insanyck-bloom insanyck-bloom--soft">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={view}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.28, ease: "easeOut" }}
+      <main className="mx-auto max-w-[1200px] px-6 pt-24 pb-16 insanyck-bloom insanyck-bloom--soft">
+        {/* Link voltar */}
+        <div className="mb-8">
+          <Link
+            href="/loja"
+            className="text-white/80 underline underline-offset-4 hover:text-white transition"
           >
-            <ProductHeroImageKit
-              title={title}
-              subtitle={subtitle}
-              price={price}
-              image={currentImage}
-              imageAlt={`${title} – ${t(`pdp:${view}`, view)}`}
-              right={
-                <div className="hidden lg:flex items-center justify-end gap-3 pr-2 text-white/50">
-                  <span className="text-xs tracking-wide">60 FPS</span>
-                </div>
-              }
-              left={
-                <div className="text-center lg:text-left">
-                  <h1
-                    id="pdp-hero-title"
-                    className="text-white/95 text-[44px] leading-tight font-semibold tracking-[-0.01em]"
-                  >
-                    {title}
-                  </h1>
-                  <p className="mt-3 text-white/70 text-lg">{subtitle}</p>
-                  <div className="mt-5 text-white/85 text-xl font-semibold">{price}</div>
-                  <div className="mt-6 flex items-center gap-3 justify-center lg:justify-start">
-                    <AddToCartButton
-                      product={{
-                        slug: product.slug,
-                        title: product.title,
-                        image: product.images?.front,
-                        price: product.price,
-                      }}
-                      className="bg-white text-black rounded-xl px-6 py-3 font-semibold hover:brightness-95 transition"
-                    >
-                      {t("cart:addToCart", "Adicionar ao carrinho")}
-                    </AddToCartButton>
+            ← {t('common:back', 'Voltar para loja')}
+          </Link>
+        </div>
 
-                    <Link
-                      href="#detalhes"
-                      className="rounded-xl px-6 py-3 font-semibold border border-white/20 text-white hover:bg-white/5 transition"
-                    >
-                      {t("pdp:ctaDetails", "Ver detalhes")}
-                    </Link>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          {/* Imagem */}
+          <div className="aspect-square bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+            {product.image ? (
+              <img 
+                src={product.image} 
+                alt={product.title} 
+                className="w-full h-full object-cover" 
+                loading="eager"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-white/40">
+                {t('pdp:noImage', 'Sem imagem')}
+              </div>
+            )}
+          </div>
 
-                    {/* INSANYCK STEP 8 — favoritos no hero */}
-                    <div className="ml-2 inline-flex align-middle drop-shadow-[0_0_14px_rgba(255,255,255,0.08)] hover:drop-shadow-[0_0_22px_rgba(255,255,255,0.14)] transition-all">
-                      <WishlistButton
-                        slug={product.slug}
-                        title={product.title}
-                        priceCents={
-                          Math.round(
-                            Number(
-                              (product.price ?? "0")
-                                .replace(/[^\d,]/g, "")
-                                .replace(",", ".")
-                            ) * 100
-                          ) || 0
-                        }
-                        image={product.images?.front}
-                      />
-                    </div>
-                    {/* FIM INSANYCK STEP 8 */}
-                  </div>
-                </div>
-              }
-            />
-          </motion.div>
-        </AnimatePresence>
+          {/* Detalhes */}
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-white text-3xl font-semibold tracking-tight">{product.title}</h1>
+              {product.description && (
+                <p className="text-white/70 mt-3 text-lg">{product.description}</p>
+              )}
+            </div>
 
-        {/* Miniaturas */}
-        <div className="mx-auto max-w-[1200px] px-6 mt-6 lg:mt-2">
-          <div className="flex items-center justify-end gap-3">
-            {(["front", "back", "detail"] as const).map((v) => {
-              const src =
-                product.thumbs?.[v] ??
-                product.images?.[v] ??
-                product.images?.front;
-              if (!src) return null;
-              return (
-                <button
-                  key={v}
-                  onClick={() => setView(v)}
-                  className={`w-16 h-16 rounded-xl border overflow-hidden transition ${
-                    view === v
-                      ? "border-white/40 ring-2 ring-white/20"
-                      : "border-white/15 hover:border-white/25"
-                  }`}
-                  aria-label={t(`pdp:${v}`, v)}
+            {displayPrice && (
+              <div className="text-white text-2xl font-semibold">
+                {displayPrice}
+              </div>
+            )}
+
+            {/* Seletor de Variantes */}
+            {options.length > 0 && variants.length > 0 && (
+              <div className="space-y-6">
+                <VariantSelector
+                  options={options}
+                  variants={variants}
+                  onVariantChange={handleVariantChange}
+                />
+              </div>
+            )}
+
+            {/* Ações */}
+            <div className="flex items-center gap-4 pt-4">
+              {selectedVariant && (
+                <AddToCartButton
+                  product={{
+                    slug: product.slug,
+                    title: product.title,
+                    image: product.image || undefined,
+                    variantId: selectedVariant.id,
+                    sku: selectedVariant.sku,
+                    priceCents: selectedVariant.priceCents,
+                    currency: selectedVariant.currency,
+                  }}
+                  className="bg-white text-black rounded-xl px-8 py-3 font-semibold hover:brightness-95 transition flex-1"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={src}
-                    alt={t(`pdp:${v}`, v)}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </button>
-              );
-            })}
+                  {t('cart:addToCart', 'Adicionar ao carrinho')}
+                </AddToCartButton>
+              )}
+              
+              {!selectedVariant && variants.length > 0 && (
+                <div className="flex-1 bg-white/10 text-white/60 rounded-xl px-8 py-3 font-semibold text-center">
+                  {t('pdp:selectVariant', 'Selecione as opções')}
+                </div>
+              )}
+
+              {variants.length === 0 && (
+                <div className="flex-1 bg-white/10 text-white/60 rounded-xl px-8 py-3 font-semibold text-center">
+                  {t('pdp:outOfStock', 'Produto indisponível')}
+                </div>
+              )}
+            </div>
+
+            {/* Estoque */}
+            {selectedVariant && (
+              <div className="text-white/60 text-sm">
+                {selectedVariant.inventory.available > 0 
+                  ? t('pdp:inStock', `${selectedVariant.inventory.available} em estoque`)
+                  : t('pdp:outOfStock', 'Fora de estoque')
+                }
+              </div>
+            )}
           </div>
         </div>
-      </div>
-
-      {/* Voltar loja */}
-      <div className="mx-auto max-w-[1200px] px-6 my-14">
-        <Link
-          href="/loja"
-          prefetch
-          className="text-white/80 underline underline-offset-4 hover:text-white"
-          onMouseEnter={() => router.prefetch("/loja")}
-        >
-          {t("pdp:backToStore", "Voltar à loja")}
-        </Link>
-      </div>
+      </main>
     </>
   );
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = products.map((p) => ({ params: { slug: p.slug } }));
-  return { paths, fallback: false };
-};
+export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params, locale, res }) => {
+  res.setHeader('Cache-Control','public, s-maxage=3600, stale-while-revalidate=86400');
+  
+  try {
+    const slugParam = params?.slug;
+    const slug = Array.isArray(slugParam) ? slugParam[0] : String(slugParam ?? '');
+    
+    if (!slug) {
+      console.warn('PDP: Slug não fornecido');
+      return { notFound: true };
+    }
 
-export const getStaticProps: GetStaticProps<Props> = async ({ params, locale }) => {
-  const slug = String(params?.slug);
-  const product = products.find((p) => p.slug === slug);
-  if (!product) return { notFound: true };
-  return {
-    props: {
-      ...(await serverSideTranslations(locale ?? "pt", ["common", "nav", "pdp", "cart"])),
-      product,
-    },
-  };
+    // INSANYCK STEP 10 — Import dinâmico do Prisma
+    const { prisma } = await import('@/lib/prisma');
+
+    const product = await prisma.product.findUnique({
+      where: { slug },
+      include: {
+        category: true,
+        images: { orderBy: { order: 'asc' } },
+        variants: {
+          where: { status: 'active' },
+          include: {
+            price: true,
+            inventory: true,
+            options: {
+              include: { 
+                optionValue: { 
+                  include: { option: true } 
+                } 
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!product) {
+      console.warn(`PDP: Produto não encontrado para slug: ${slug}`);
+      return { notFound: true };
+    }
+
+    // INSANYCK STEP 10 — Construir options (size, color, etc.)
+    const byOption = new Map<string, Option>();
+    
+    for (const variant of product.variants) {
+      for (const option of variant.options) {
+        const opt = option.optionValue.option;      // { id, slug, name }
+        const val = option.optionValue;             // { slug?, name?, value }
+        const key = opt.slug;
+
+        if (!byOption.has(key)) {
+          byOption.set(key, {
+            slug: opt.slug,
+            name: opt.name ?? opt.slug,
+            type: opt.slug === 'color' ? 'color' : opt.slug === 'size' ? 'size' : 'select',
+            values: [],
+          });
+        }
+        
+        const bucket = byOption.get(key)!;
+        const vSlug = val.slug ?? val.value;
+        
+        if (!bucket.values.some(x => x.slug === vSlug)) {
+          bucket.values.push({ 
+            slug: vSlug, 
+            name: val.name ?? val.value, 
+            value: val.value 
+          });
+        }
+      }
+    }
+    
+    const options: Option[] = Array.from(byOption.values());
+
+    // INSANYCK STEP 10 — Variants no shape do VariantSelector
+    const variants: PDPVariant[] = product.variants.map(variant => {
+      const available = Math.max(0, (variant.inventory?.quantity ?? 0) - (variant.inventory?.reserved ?? 0));
+      
+      return {
+        id: variant.id,
+        sku: variant.sku ?? '',
+        title: variant.title ?? undefined,
+        priceCents: variant.price?.cents ?? 0,
+        currency: variant.price?.currency ?? 'BRL',
+        inventory: {
+          quantity: variant.inventory?.quantity ?? 0,
+          reserved: variant.inventory?.reserved ?? 0,
+          available,
+        },
+        options: variant.options.map(o => ({
+          option: o.optionValue.option.slug,
+          value: o.optionValue.slug ?? o.optionValue.value,
+        })),
+      };
+    });
+
+    const heroImage =
+      product.images.find(i => i.order === 1)?.url ??
+      product.images[0]?.url ??
+      null;
+
+    return {
+      props: {
+        product: {
+          id: product.id,
+          slug: product.slug,
+          title: product.title,
+          description: product.description ?? null,
+          image: heroImage,
+        },
+        options,
+        variants,
+        ...(await serverSideTranslations(locale ?? 'pt', ['common','nav','pdp','product','catalog','cart'])),
+      },
+    };
+  } catch (err) {
+    console.error('PDP GSSP error:', err);
+    return { redirect: { destination: '/loja', permanent: false } };
+  }
 };

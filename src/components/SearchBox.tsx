@@ -1,11 +1,11 @@
-// INSANYCK STEP 8
+// INSANYCK STEP 11 — SearchBox with DB Integration
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
-import { products } from "@/data/products.mock";
 import { track } from "@/lib/analytics";
+import { ProductCard } from "@/lib/catalog";
 
 type Suggestion = {
   slug: string;
@@ -31,24 +31,45 @@ export default function SearchBox() {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const [idx, setIdx] = useState(0);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const data: Suggestion[] = useMemo(() => {
-    const arr = products.map((p) => ({
-      slug: p.slug,
-      title: p.title,
-      price: p.price,
-      thumb:
-        p.thumbs?.front ?? p.images?.front ?? "/products/placeholder/front.webp",
-    }));
-    if (!q) return arr.slice(0, 6);
-    return arr
-      .map((s) => ({ s, sc: score(q, s.title) }))
-      .filter((x) => x.sc > 0)
-      .sort((a, b) => b.sc - a.sc)
-      .map((x) => x.s)
-      .slice(0, 8);
+  // INSANYCK STEP 11 — Fetch suggestions from API
+  useEffect(() => {
+    if (!q.trim()) {
+      setSuggestions([]);
+      return;
+    }
+
+    const fetchSuggestions = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/search?q=${encodeURIComponent(q)}&limit=8`);
+        if (!response.ok) throw new Error('Search failed');
+        
+        const data = await response.json();
+        const mapped: Suggestion[] = (data.results || []).map((p: ProductCard) => ({
+          slug: p.slug,
+          title: p.title,
+          price: p.price,
+          thumb: p.images?.front || "/products/placeholder/front.webp",
+        }));
+        
+        setSuggestions(mapped);
+      } catch (error) {
+        console.error('[SearchBox] Error:', error);
+        setSuggestions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const timeoutId = setTimeout(fetchSuggestions, 300); // Debounce
+    return () => clearTimeout(timeoutId);
   }, [q]);
+
+  const data = suggestions;
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

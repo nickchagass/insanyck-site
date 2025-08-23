@@ -8,7 +8,6 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import ProductGrid from "@/components/ProductGrid";
-import { prisma } from "@/lib/prisma";
 
 interface Product {
   id: string;
@@ -57,16 +56,19 @@ export default function Loja({
     fetchProducts();
   }, [router.query]);
 
+  // INSANYCK STEP 10 — Normalizar tipos de query (evitar string[])
+  const asStr = (v: string | string[] | undefined) => Array.isArray(v) ? v[0] : (v ?? '');
+
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       
-      if (category) params.set("category", category as string);
-      if (size) params.set("size", size as string);
-      if (color) params.set("color", color as string);
-      if (inStock) params.set("inStock", inStock as string);
-      if (sort) params.set("sort", sort as string);
+      if (category) params.set("category", asStr(category));
+      if (size)     params.set("size",     asStr(size));
+      if (color)    params.set("color",    asStr(color));
+      if (inStock)  params.set("inStock",  asStr(inStock));
+      if (sort)     params.set("sort",     asStr(sort));
 
       const response = await fetch(`/api/products?${params}`);
       if (response.ok) {
@@ -98,12 +100,12 @@ export default function Loja({
     return router.query[key] === value;
   };
 
-  // Converter produtos para formato do ProductGrid existente
+  // INSANYCK STEP 10 — Converter produtos para formato do ProductGrid existente
   const gridProducts = products.map((product) => ({
     id: product.id,
     slug: product.slug,
     title: product.title,
-    price: `R$${(product.pricing.minCents / 100).toFixed(0)}`,
+    price: (product.pricing.minCents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
     status: product.availability.inStock ? undefined : ("soldout" as const),
     images: {
       front: product.image,
@@ -136,7 +138,7 @@ export default function Loja({
         <div className="mt-8 flex flex-wrap items-center gap-3 text-white/75">
           {/* Categorias */}
           <select
-            value={category || ""}
+            value={Array.isArray(category) ? category[0] : (category ?? "")}
             onChange={(e) => updateFilter("category", e.target.value || null)}
             className="rounded-full px-4 py-2 border border-white/15 bg-black/50 hover:bg-white/5 text-white"
           >
@@ -177,7 +179,7 @@ export default function Loja({
 
           {/* Ordenação */}
           <select
-            value={sort}
+            value={String(sort ?? 'newest')}
             onChange={(e) => updateFilter("sort", e.target.value)}
             className="rounded-full px-4 py-2 border border-white/15 bg-black/50 hover:bg-white/5 text-white"
           >
@@ -215,6 +217,9 @@ export const getServerSideProps: GetServerSideProps<LojaProps> = async ({
 
   try {
     const { category, size, color, inStock, sort = "newest" } = query;
+
+    // INSANYCK STEP 10 — Import dinâmico (server-only)  
+    const { prisma } = await import('@/lib/prisma');
 
     // Construir filtros
     const where: any = { status: "active" };

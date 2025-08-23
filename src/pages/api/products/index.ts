@@ -46,60 +46,67 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ];
     }
 
-    // Filtros por variantes (preço, tamanho, cor, estoque)
+    // INSANYCK STEP 10 — Filtros por variantes com lógica AND correta
     if (minPrice || maxPrice || size || color || inStock === 'true') {
-      where.variants = {
-        some: {
-          status: 'active',
-          ...(minPrice || maxPrice ? {
-            price: {
-              cents: {
-                ...(minPrice ? { gte: parseInt(minPrice as string) * 100 } : {}),
-                ...(maxPrice ? { lte: parseInt(maxPrice as string) * 100 } : {}),
+      const andConditions: any[] = [{ status: 'active' }];
+
+      if (minPrice || maxPrice) {
+        andConditions.push({
+          price: {
+            cents: {
+              ...(minPrice ? { gte: parseInt(minPrice as string) * 100 } : {}),
+              ...(maxPrice ? { lte: parseInt(maxPrice as string) * 100 } : {}),
+            },
+          },
+        });
+      }
+
+      if (size) {
+        andConditions.push({
+          options: {
+            some: {
+              optionValue: {
+                option: { slug: 'size' },
+                value: String(size),
               },
             },
-          } : {}),
-          ...(size ? {
-            options: {
-              some: {
-                optionValue: {
-                  option: { slug: 'size' },
-                  value: size as string,
-                },
+          },
+        });
+      }
+
+      if (color) {
+        andConditions.push({
+          options: {
+            some: {
+              optionValue: {
+                option: { slug: 'color' },
+                slug: String(color),
               },
             },
-          } : {}),
-          ...(color ? {
-            options: {
-              some: {
-                optionValue: {
-                  option: { slug: 'color' },
-                  slug: color as string,
-                },
-              },
-            },
-          } : {}),
-          ...(inStock === 'true' ? {
-            inventory: {
-              quantity: { gt: 0 },
-            },
-          } : {}),
-        },
-      };
+          },
+        });
+      }
+
+      if (inStock === 'true') {
+        andConditions.push({
+          inventory: {
+            quantity: { gt: 0 },
+          },
+        });
+      }
+
+      where.variants = { some: { AND: andConditions } };
     }
 
-    // Ordenação
+    // INSANYCK STEP 10 — Ordenação (price em memória, outros diretos)
     let orderBy: any = { updatedAt: 'desc' }; // newest
-    if (sort === 'price_asc') {
-      // Para ordenar por preço, precisamos de um join mais complexo
-      orderBy = { variants: { _count: 'desc' } }; // fallback
-    } else if (sort === 'price_desc') {
-      orderBy = { variants: { _count: 'desc' } }; // fallback
-    } else if (sort === 'name') {
+    if (sort === 'name') {
       orderBy = { title: 'asc' };
     }
+    // price_asc/price_desc será feito em memória após buscar os dados
 
-    const [products, total] = await Promise.all([
+    // INSANYCK STEP 10 — Buscar produtos (sem skip/take para ordenação por preço)
+    const [allProducts, total] = await Promise.all([
       prisma.product.findMany({
         where,
         include: {
@@ -126,14 +133,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           },
         },
         orderBy,
-        skip,
-        take: limitNum,
       }),
       prisma.product.count({ where }),
     ]);
 
-    // Transformar dados para frontend
-    const productsWithPricing = products.map((product) => {
+    // INSANYCK STEP 10 — Transformar dados para frontend com cálculo de preços
+    const productsWithPricing = allProducts.map((product) => {
       const activeVariants = product.variants.filter(v => v.status === 'active');
       const prices = activeVariants.map(v => v.price?.cents || 0).filter(p => p > 0);
       
@@ -163,13 +168,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
         variantCount: activeVariants.length,
         isFeatured: product.isFeatured,
+        _sortPrice: minPrice, // Para ordenação
       };
     });
+
+    // INSANYCK STEP 10 — Ordenação por preço em memória
+    let sortedProducts = productsWithPricing;
+    if (sort === 'price_asc') {
+      sortedProducts = productsWithPricing.sort((a, b) => a._sortPrice - b._sortPrice);
+    } else if (sort === 'price_desc') {
+      sortedProducts = productsWithPricing.sort((a, b) => b._sortPrice - a._sortPrice);
+    }
+
+    // Aplicar paginação após ordenação
+    const paginatedProducts = sortedProducts.slice(skip, skip + limitNum);
+
+    // Remover campo auxiliar antes de retornar
+    const finalProducts = paginatedProducts.map(({ _sortPrice, ...product }) => product);
 
     const totalPages = Math.ceil(total / limitNum);
 
     return res.status(200).json({
-      products: productsWithPricing,
+      products: finalProducts,
       pagination: {
         page: pageNum,
         limit: limitNum,

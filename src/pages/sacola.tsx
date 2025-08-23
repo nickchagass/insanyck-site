@@ -45,7 +45,7 @@ export default function SacolaPage() {
       setApplied({ discountCents: res.discountCents, freeShip: false });
     } else {
       setApplied({ discountCents: 0, freeShip: false });
-      alert(t(res.message || "checkout:errors.couponInvalid"));
+      alert(t("checkout:errors.couponInvalid", res.message || "Cupom inválido"));
     }
   }
 
@@ -105,8 +105,8 @@ export default function SacolaPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="insanyck-reset-text">
                       <div className="text-white/90 font-medium truncate">{it.title}</div>
-                      {it.variant && (
-                        <div className="text-white/60 text-sm mt-0.5">{it.variant}</div>
+                      {it.options?.variant && (
+                        <div className="text-white/60 text-sm mt-0.5">{it.options.variant}</div>
                       )}
                     </div>
                     <button

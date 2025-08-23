@@ -29,6 +29,27 @@
     "fake": "Demo mode: payment is simulated."
   },
   "placeOrder": "Place order",
+  "processing": "Processing...",
+  "error": "Could not start payment.",
+  "success": {
+    "title": "Order Confirmed!",
+    "description": "Your order has been processed successfully",
+    "message": "Your order has been processed successfully.",
+    "sessionId": "Session ID:",
+    "emailSent": "You will soon receive an email with order details.",
+    "continueShopping": "Continue shopping",
+    "viewOrders": "My orders",
+    "support": "Questions? Contact us through"
+  },
+  "cancel": {
+    "title": "Checkout Cancelled",
+    "description": "The checkout process was cancelled",
+    "message": "Don't worry, no charge was made.",
+    "itemsSaved": "Your items remain saved in the cart.",
+    "backToBag": "Back to cart",
+    "continueShopping": "Continue shopping",
+    "needHelp": "Need help?"
+  },
   "coupon": {
     "applied10": "10% coupon applied",
     "freeShipping": "Free shipping applied"

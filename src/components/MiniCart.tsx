@@ -1,4 +1,4 @@
-// INSANYCK STEP 6/7 — Mini-Cart premium (acessível, i18n consistente)
+// INSANYCK STEP 6/7 + HOTFIX — Mini-Cart premium (acessível, i18n consistente, Portal, global)
 // src/components/MiniCart.tsx
 "use client";
 
@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { useCartStore, useCartHydrated } from "@/store/cart";
 import { formatPrice } from "@/lib/price";
+import Portal from "@/components/Portal";
 
 export default function MiniCart() {
   const isOpen = useCartStore((s) => s.isOpen);
@@ -60,34 +61,40 @@ export default function MiniCart() {
     return () => root.removeEventListener("keydown", onKeyDown as any);
   }, [isOpen]);
 
-  return (
-    <AnimatePresence>
-      {isOpen && hydrated && (
-        <>
-          {/* Overlay */}
-          <motion.div
-            key="overlay"
-            className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-[80]"
-            role="presentation"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => toggle(false)}
-          />
+  // Não renderizar até hidratado (evita mismatch SSR)
+  if (!hydrated) {
+    return null;
+  }
 
-          {/* Drawer */}
-          <motion.div
-            key="panel"
-            ref={refPanel}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="minicart-title"
-            className="fixed top-0 right-0 h-full w-[380px] max-w-[calc(100vw-48px)] bg-[#0f0f10]/85 border-l border-white/12 shadow-2xl backdrop-blur-md z-[90] text-white"
-            initial={{ x: 420 }}
-            animate={{ x: 0 }}
-            exit={{ x: 420 }}
-            transition={{ type: "tween", duration: 0.25 }}
-          >
+  return (
+    <Portal>
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Overlay */}
+            <motion.div
+              key="overlay"
+              className="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-50"
+              role="presentation"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => toggle(false)}
+            />
+
+            {/* Drawer */}
+            <motion.div
+              key="panel"
+              ref={refPanel}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="minicart-title"
+              className="fixed top-0 right-0 h-full w-[380px] max-w-[calc(100vw-48px)] bg-[#0f0f10]/85 border-l border-white/12 shadow-2xl backdrop-blur-md z-50 text-white"
+              initial={{ x: 420 }}
+              animate={{ x: 0 }}
+              exit={{ x: 420 }}
+              transition={{ type: "tween", duration: 0.25 }}
+            >
             {/* Cabeçalho + halo sutil */}
             <div className="relative">
               <div
@@ -137,8 +144,8 @@ export default function MiniCart() {
                     />
                     <div className="flex-1 min-w-0">
                       <div className="text-white/90 font-medium truncate">{it.title}</div>
-                      {it.variant ? (
-                        <div className="text-white/50 text-xs mt-0.5">{it.variant}</div>
+                      {it.options?.variant ? (
+                        <div className="text-white/50 text-xs mt-0.5">{it.options.variant}</div>
                       ) : null}
                       <div className="text-white/70 text-sm mt-1">
                         {formatPrice(it.priceCents, locale as any)}
@@ -198,9 +205,10 @@ export default function MiniCart() {
                 </Link>
               </div>
             </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </Portal>
   );
 }

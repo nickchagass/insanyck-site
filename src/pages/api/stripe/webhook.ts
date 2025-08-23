@@ -1,9 +1,8 @@
-// INSANYCK STEP 10 — Webhook Stripe com gestão de estoque
-// INSANYCK STEP 8 + decrementar inventory por variantId
-// Webhook unificado usando versão do .env
+// INSANYCK STEP 11 — Webhook Stripe with Type-Safe Env
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/lib/prisma";
-import { stripe } from "@/lib/stripeServer";
+import { stripe } from "@/lib/stripe";
+import { env, isServerEnvReady } from "@/lib/env.server";
 
 export const config = { api: { bodyParser: false } };
 
@@ -17,6 +16,12 @@ function readBuffer(readable: any) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // INSANYCK STEP 11 — Runtime guards for environment
+  if (!isServerEnvReady()) {
+    console.error('[INSANYCK][Webhook] Server environment not ready');
+    return res.status(500).json({ error: "Server configuration error" });
+  }
+
   if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
 
   const sig = req.headers["stripe-signature"];
@@ -25,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const buf = await readBuffer(req);
   let event;
   try {
-    event = stripe.webhooks.constructEvent(buf, sig.toString(), process.env.STRIPE_WEBHOOK_SECRET!);
+    event = stripe.webhooks.constructEvent(buf, sig.toString(), env.STRIPE_WEBHOOK_SECRET);
   } catch (err: any) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
@@ -121,6 +126,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       return res.status(200).json({ ok: true, orderId: order.id });
     }
+    
+    // ETAPA 11C — Tratar payment_intent.payment_failed
+    if (event.type === "payment_intent.payment_failed") {
+      const paymentIntent = event.data.object as any;
+      console.warn(`Payment failed for intent: ${paymentIntent.id}`, {
+        amount: paymentIntent.amount,
+        currency: paymentIntent.currency,
+        lastPaymentError: paymentIntent.last_payment_error,
+      });
+      return res.status(200).json({ ok: true, logged: "payment_failed" });
+    }
+    
     return res.status(200).json({ received: true });
   } catch (err: any) {
     // eslint-disable-next-line no-console
