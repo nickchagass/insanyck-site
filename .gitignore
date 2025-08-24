@@ -44,3 +44,6 @@ next-env.d.ts
 
 # Evitar travar 'git add .' no Windows
 nul
+
+# Evitar travar 'git add .' no Windows
+nul
