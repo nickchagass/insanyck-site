@@ -1,13 +1,14 @@
-// INSANYCK — NextAuth (JWT) + PrismaAdapter
+// INSANYCK STEP 11 — NextAuth (JWT) + PrismaAdapter with Type-Safe Env
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
+import { env } from "@/lib/env.server";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/conta/login",
     error: "/conta/login",

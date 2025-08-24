@@ -1,10 +1,9 @@
-// INSANYCK STEP 5 + HOTFIX
-// src/components/ProductGrid.tsx
+// INSANYCK STEP 11 — ProductGrid with Real Prisma Types
 import ProductCard from "@/components/ProductCard";
 import Skeleton from "@/components/Skeleton";
-import { Product } from "@/data/products.mock";
+import { ProductCardData } from "@/types/product";
 
-type Props = { items?: Product[]; className?: string; showSkeleton?: boolean; skeletonCount?: number };
+type Props = { items?: ProductCardData[]; className?: string; showSkeleton?: boolean; skeletonCount?: number };
 
 export default function ProductGrid({ items = [], className, showSkeleton = false, skeletonCount = 8 }: Props) {
   const list = Array.isArray(items) ? items : [];

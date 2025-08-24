@@ -1,9 +1,19 @@
-// INSANYCK — Stripe Checkout (Session) usando versão do .env
+// INSANYCK STEP 11 — Stripe Checkout (Session) with Type-Safe Env
 import type { NextApiRequest, NextApiResponse } from "next";
 import type Stripe from "stripe";
-import { stripe } from "@/lib/stripeServer";
+import { stripe } from "@/lib/stripe";
+import { env, isServerEnvReady } from "@/lib/env.server";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // INSANYCK STEP 11 — Runtime guards for environment
+  if (!isServerEnvReady()) {
+    console.error('[INSANYCK][Stripe Checkout] Server environment not ready');
+    return res.status(500).json({ 
+      error: "Service temporarily unavailable",
+      code: "ENV_NOT_READY" 
+    });
+  }
+
   if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
   try {
     const { items, shippingCents = 0, locale = "pt", email } = req.body || {};

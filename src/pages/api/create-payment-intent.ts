@@ -1,13 +1,18 @@
-// pages/api/create-payment-intent.ts
+// INSANYCK STEP 11 — Payment Intent with Type-Safe Env
 import type { NextApiRequest, NextApiResponse } from 'next';
-import Stripe from 'stripe';
-
-// ✅ Stripe client com versão fixada
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2024-04-10',
-});
+import { stripe } from '@/lib/stripe';
+import { env, isServerEnvReady } from '@/lib/env.server';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // INSANYCK STEP 11 — Runtime guards for environment
+  if (!isServerEnvReady()) {
+    console.error('[INSANYCK][PaymentIntent] Server environment not ready');
+    return res.status(500).json({ 
+      error: "Serviço temporariamente indisponível",
+      code: "ENV_NOT_READY" 
+    });
+  }
+
   // ✅ Segurança: só permite POST
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);

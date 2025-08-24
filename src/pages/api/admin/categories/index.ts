@@ -107,7 +107,7 @@ async function createCategory(req: NextApiRequest, res: NextApiResponse, session
     return res.status(201).json({ category });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Validation error', details: error.errors });
+      return res.status(400).json({ error: 'Validation error', details: error.issues });
     }
     console.error('Error creating category:', error);
     return res.status(500).json({ error: 'Internal server error' });

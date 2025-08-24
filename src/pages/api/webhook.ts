@@ -1,14 +1,22 @@
+// INSANYCK STEP 11 — Webhook with Type-Safe Env and Runtime Guards
 import { buffer } from "micro";
 import type { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
+import { stripe } from "@/lib/stripe";
+import { env, isServerEnvReady } from "@/lib/env.server";
 
 export const config = { api: { bodyParser: false } };
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-07-30.basil",
-});
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // INSANYCK STEP 11 — Runtime guards for environment
+  if (!isServerEnvReady()) {
+    console.error('[INSANYCK][Webhook] Server environment not ready');
+    return res.status(500).json({ 
+      error: "Service temporarily unavailable",
+      code: "ENV_NOT_READY" 
+    });
+  }
+
   if (req.method !== "POST") return res.status(405).end();
 
   const sig = req.headers["stripe-signature"] as string;
@@ -16,8 +24,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   let event;
   try {
-    event = stripe.webhooks.constructEvent(buf, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+    event = stripe.webhooks.constructEvent(buf, sig, env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
+    console.error('[INSANYCK][Webhook] Signature verification failed:', err);
     return res.status(400).send(`Webhook Error: ${(err as Error).message}`);
   }
 

@@ -123,7 +123,7 @@ async function createVariant(req: NextApiRequest, res: NextApiResponse, session:
     return res.status(201).json({ variant: fullVariant });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Validation error', details: error.errors });
+      return res.status(400).json({ error: 'Validation error', details: error.issues });
     }
     console.error('Error creating variant:', error);
     return res.status(500).json({ error: 'Internal server error' });

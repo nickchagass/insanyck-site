@@ -1,10 +1,10 @@
-// INSANYCK STEP 5 + STEP 6 + STEP 7.1 PATCH
+// INSANYCK STEP 11 — ProductCard with Real Prisma Types
 "use client";
 
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Product } from "@/data/products.mock";
+import { ProductCardData } from "@/types/product";
 import { useTranslation } from "next-i18next";
 
 // INSANYCK STEP 6 — botão de carrinho
@@ -13,7 +13,7 @@ import AddToCartButton from "@/components/AddToCartButton";
 // INSANYCK STEP 8 — botão de favoritos
 import WishlistButton from "@/components/WishlistButton"; // INSANYCK STEP 8
 
-type Props = { product: Product };
+type Props = { product: ProductCardData };
 
 export default function ProductCard({ product }: Props) {
   const { t } = useTranslation(["plp", "cart"]);
@@ -23,7 +23,7 @@ export default function ProductCard({ product }: Props) {
     product.images?.front ||
     "/products/placeholder/front.webp";
 
-  // INSANYCK STEP 8 — converte preço para centavos (aceita string "R$ 199,90" ou number)
+  // INSANYCK STEP 11 — converte preço para centavos (aceita string "R$ 199,90" ou number)
   const priceCents =
     typeof product.price === "number"
       ? Math.round(product.price * 100)
@@ -35,7 +35,7 @@ export default function ProductCard({ product }: Props) {
               .replace(",", ".")         // vírgula -> ponto decimal
           );
           return Number.isFinite(val) ? Math.round(val * 100) : 0;
-        })(); // INSANYCK STEP 8
+        })();
 
   return (
     <motion.article

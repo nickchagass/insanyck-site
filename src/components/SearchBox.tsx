@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { track } from "@/lib/analytics";
-import { ProductCard } from "@/lib/catalog";
+import { ProductCardData } from "@/types/product";
 
 type Suggestion = {
   slug: string;

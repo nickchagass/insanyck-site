@@ -94,7 +94,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error("Checkout error:", error);
     res.status(500).json({ 
       error: "Erro interno do servidor",
-      detail: process.env.NODE_ENV === "development" ? error : undefined
+      detail: env.NODE_ENV === "development" ? error : undefined
     });
   }
 }
