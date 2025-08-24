@@ -1,15 +1,20 @@
-// INSANYCK STEP 10 — Sitemap dinâmico com produtos do DB
-// src/pages/api/sitemap.xml.ts
+// INSANYCK STEP 11 — Sitemap with Type-Safe Env and Prisma
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { env, isServerEnvReady } from '@/lib/env.server';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (!isServerEnvReady()) {
+    console.error('[INSANYCK][Sitemap] Server environment not ready');
+    return res.status(500).json({ error: 'Service unavailable' });
+  }
+
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const baseUrl = process.env.NEXTAUTH_URL || 'https://insanyck.com';
+    const baseUrl = env.NEXT_PUBLIC_URL;
 
     // Páginas estáticas
     const staticPages = [

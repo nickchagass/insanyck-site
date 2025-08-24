@@ -3,6 +3,8 @@
 ## 📋 Pre-Deploy Checklist
 
 ### Environment Variables
+**⚠️ CRITICAL: Never commit `.env.local` to version control! Contains real secrets.**
+
 Ensure all required variables are set in your deployment platform:
 
 ```bash
@@ -12,11 +14,13 @@ NEXTAUTH_URL="https://yourdomain.com"
 NEXTAUTH_SECRET="your-32-char-secret" # Generate: openssl rand -base64 32
 NEXT_PUBLIC_URL="https://yourdomain.com"
 
-# Stripe Integration (REQUIRED for Etapa 11)
-STRIPE_PUBLISHABLE_KEY="pk_live_..." # Production keys
-STRIPE_SECRET_KEY="sk_live_..."      # Keep secure!
-STRIPE_WEBHOOK_SECRET="whsec_..."    # From webhook config
-STRIPE_API_VERSION="2025-07-30.basil"
+# Stripe Integration (REQUIRED for Block 1)
+# Client-side key (public, used in browser)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_live_..." # Client access
+# Server-side keys (private, never expose)
+STRIPE_SECRET_KEY="sk_live_..."                   # Server-only
+STRIPE_WEBHOOK_SECRET="whsec_..."                 # Server-only  
+STRIPE_API_VERSION="2025-07-30.basil"            # Pinned version
 
 # Optional
 NODE_ENV="production"
@@ -40,9 +44,13 @@ npm i -g vercel
 vercel
 
 # Set environment variables via dashboard or CLI:
-vercel env add STRIPE_SECRET_KEY
 vercel env add DATABASE_URL
-# ... (add all required vars)
+vercel env add NEXTAUTH_SECRET
+vercel env add STRIPE_SECRET_KEY
+vercel env add NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+vercel env add STRIPE_WEBHOOK_SECRET
+vercel env add STRIPE_API_VERSION
+# ... (add all other vars)
 
 # Redeploy with env vars
 vercel --prod

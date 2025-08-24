@@ -1,154 +1,129 @@
-// INSANYCK STEP 11 — Catalog Utils with DB via Prisma
+// INSANYCK STEP 11 — Catalog Utils with Real Prisma Integration
 import { prisma } from "@/lib/prisma";
+import { ProductCardData, productToCardData } from "@/types/product";
+import { env } from "@/lib/env.server";
 
 // Fallback mock data for graceful degradation during development
-const mockProducts = [
+const mockProducts: ProductCardData[] = [
   {
     id: "1",
     slug: "produto-exemplo",
     title: "Produto Exemplo",
-    variants: [{ priceCents: 9900 }],
-    images: [{ url: "/products/placeholder/front.webp" }],
-    status: "active",
-  },
-];
-
-// Product shape matching existing mock structure for 1:1 compatibility
-export interface ProductCard {
-  id: string;
-  slug: string;
-  title: string;
-  price: string; // Formatted price string
-  status?: "new" | "soldout";
-  images?: {
-    front?: string;
-    back?: string;
-    detail?: string;
-  };
-  thumbs?: {
-    front?: string;
-    back?: string;
-    detail?: string;
-  };
-}
-
-// Helper to format price from cents to BRL string
-function formatPrice(cents: number): string {
-  return (cents / 100).toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-  });
-}
-
-// Helper to map DB product to ProductCard format (maintaining 1:1 visual compatibility)
-function mapProductToCard(product: any): ProductCard {
-  // Get minimum variant price for display (flexible schema access)
-  const variants = product.variants || [];
-  const minPriceCents = variants.length > 0 
-    ? Math.min(...variants.map((v: any) => v.priceCents || v.price || 9900))
-    : 9900; // Default fallback
-
-  // Extract first image or use placeholder (flexible schema access)
-  const images = product.images || [];
-  const frontImage = images[0]?.url || images[0]?.src;
-  const backImage = images[1]?.url || images[1]?.src;
-
-  return {
-    id: product.id,
-    slug: product.slug,
-    title: product.title,
-    price: formatPrice(minPriceCents),
-    status: product.status === 'soldout' ? 'soldout' : undefined,
+    price: "R$ 99,00",
     images: {
-      front: frontImage,
-      back: backImage,
+      front: "/products/placeholder/front.webp"
     },
     thumbs: {
-      front: frontImage,
-      back: backImage,
+      front: "/products/placeholder/front.webp"
     },
-  };
-}
+  },
+];
 
 /**
  * Get featured products for home page carousels
  */
-export async function getFeaturedProducts(limit = 8): Promise<ProductCard[]> {
+export async function getFeaturedProducts(limit = 8): Promise<ProductCardData[]> {
   try {
     const products = await prisma.product.findMany({
+      where: { status: 'active' },
       take: limit,
       include: {
         images: true,
-        variants: true,
+        variants: {
+          include: {
+            price: true,
+            inventory: true,
+          }
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
 
-    return products.map(mapProductToCard);
+    return products.map(productToCardData);
   } catch (error) {
     console.error('[INSANYCK][Catalog] Error fetching featured products:', error);
     // Graceful fallback with mock data during development
-    return mockProducts.slice(0, limit).map(mapProductToCard);
+    if (env.NODE_ENV === 'development') {
+      console.log('[INSANYCK][Catalog] Using fallback mock data');
+    }
+    return mockProducts.slice(0, limit);
   }
 }
 
 /**
  * Get new arrivals for home page
  */
-export async function getNewArrivals(limit = 6): Promise<ProductCard[]> {
+export async function getNewArrivals(limit = 6): Promise<ProductCardData[]> {
   try {
     const products = await prisma.product.findMany({
+      where: { status: 'active' },
       take: limit,
       include: {
         images: true,
-        variants: true,
+        variants: {
+          include: {
+            price: true,
+            inventory: true,
+          }
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
 
-    return products.map(mapProductToCard);
+    return products.map(productToCardData);
   } catch (error) {
     console.error('[INSANYCK][Catalog] Error fetching new arrivals:', error);
-    return mockProducts.slice(0, limit).map(mapProductToCard);
+    if (env.NODE_ENV === 'development') {
+      console.log('[INSANYCK][Catalog] Using fallback mock data');
+    }
+    return mockProducts.slice(0, limit);
   }
 }
 
 /**
  * Get category highlights
  */
-export async function getCategoryHighlights(categorySlug: string, limit = 4): Promise<ProductCard[]> {
+export async function getCategoryHighlights(categorySlug: string, limit = 4): Promise<ProductCardData[]> {
   try {
     const products = await prisma.product.findMany({
+      where: {
+        status: 'active',
+        category: { is: { slug: categorySlug } }
+      },
       take: limit,
       include: {
         images: true,
-        variants: true,
+        variants: {
+          include: {
+            price: true,
+            inventory: true,
+          }
+        },
         category: true,
       },
       orderBy: { createdAt: 'desc' },
     });
 
-    // Client-side filter by category (temporary until schema is clarified)
-    const filtered = products.filter(p => 
-      (p.category as any)?.slug === categorySlug
-    );
-
-    return filtered.map(mapProductToCard);
+    return products.map(productToCardData);
   } catch (error) {
     console.error('[INSANYCK][Catalog] Error fetching category highlights:', error);
-    return mockProducts.slice(0, limit).map(mapProductToCard);
+    if (env.NODE_ENV === 'development') {
+      console.log('[INSANYCK][Catalog] Using fallback mock data');
+    }
+    return mockProducts.slice(0, limit);
   }
 }
 
 /**
  * Search products by query string
  */
-export async function searchProducts(query: string, limit = 20): Promise<ProductCard[]> {
+export async function searchProducts(query: string, limit = 20): Promise<ProductCardData[]> {
   if (!query.trim()) return [];
 
   try {
     const products = await prisma.product.findMany({
       where: {
+        status: 'active',
         OR: [
           { title: { contains: query, mode: 'insensitive' } },
           { description: { contains: query, mode: 'insensitive' } },
@@ -157,17 +132,106 @@ export async function searchProducts(query: string, limit = 20): Promise<Product
       take: limit,
       include: {
         images: true,
-        variants: true,
+        variants: {
+          include: {
+            price: true,
+            inventory: true,
+          }
+        },
         category: true,
       },
       orderBy: { title: 'asc' },
     });
 
-    return products.map(mapProductToCard);
+    return products.map(productToCardData);
   } catch (error) {
     console.error('[INSANYCK][Catalog] Error searching products:', error);
+    if (env.NODE_ENV === 'development') {
+      console.log('[INSANYCK][Catalog] Using fallback mock data for search');
+    }
     return mockProducts.filter(p => 
       p.title.toLowerCase().includes(query.toLowerCase())
-    ).map(mapProductToCard);
+    );
+  }
+}
+
+/**
+ * Get all products for PLP with filtering/sorting
+ */
+export async function getAllProducts(options: {
+  categorySlug?: string;
+  sortBy?: 'newest' | 'oldest' | 'price_asc' | 'price_desc' | 'title';
+  limit?: number;
+  offset?: number;
+} = {}): Promise<ProductCardData[]> {
+  const { categorySlug, sortBy = 'newest', limit = 20, offset = 0 } = options;
+
+  try {
+    // Build where clause
+    const where: any = { status: 'active' };
+    if (categorySlug) {
+      where.category = { is: { slug: categorySlug } };
+    }
+
+    // Build orderBy clause
+    let orderBy: any;
+    switch (sortBy) {
+      case 'oldest':
+        orderBy = { createdAt: 'asc' };
+        break;
+      case 'title':
+        orderBy = { title: 'asc' };
+        break;
+      case 'price_asc':
+      case 'price_desc':
+        // For price sorting, we'll sort after fetching based on variant pricing
+        orderBy = { createdAt: 'desc' };
+        break;
+      default:
+        orderBy = { createdAt: 'desc' };
+    }
+
+    const products = await prisma.product.findMany({
+      where,
+      take: limit,
+      skip: offset,
+      include: {
+        images: true,
+        variants: {
+          include: {
+            price: true,
+            inventory: true,
+          }
+        },
+        category: true,
+      },
+      orderBy,
+    });
+
+    // INSANYCK STEP 11 — Robust price sorting with minCents (no string parsing)
+    const getMinCents = (prod: any) => {
+      const vals = (prod.variants ?? [])
+        .map((v: any) => v?.price?.cents ?? 0)
+        .filter((n: number) => Number.isFinite(n) && n > 0);
+      return vals.length ? Math.min(...vals) : 0;
+    };
+
+    if (sortBy === 'price_asc' || sortBy === 'price_desc') {
+      products.sort((a: any, b: any) => {
+        const A = getMinCents(a);
+        const B = getMinCents(b);
+        return sortBy === 'price_asc' ? A - B : B - A;
+      });
+    }
+
+    // Map depois da ordenação
+    const result = products.map(productToCardData);
+    return result;
+  } catch (error) {
+    console.error('[INSANYCK][Catalog] Error fetching all products:', error);
+    if (env.NODE_ENV === 'development') {
+      console.log('[INSANYCK][Catalog] Using fallback mock data');
+    }
+    return mockProducts.slice(offset, offset + limit);
   }
 }

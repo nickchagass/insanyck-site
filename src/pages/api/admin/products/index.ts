@@ -133,7 +133,7 @@ async function createProduct(req: NextApiRequest, res: NextApiResponse, session:
     return res.status(201).json({ product });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: 'Validation error', details: error.errors });
+      return res.status(400).json({ error: 'Validation error', details: error.issues });
     }
     console.error('Error creating product:', error);
     return res.status(500).json({ error: 'Internal server error' });

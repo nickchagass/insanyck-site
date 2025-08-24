@@ -1,18 +1,21 @@
+// INSANYCK STEP 11 — Collection Page with Real Prisma Integration  
 import useSWR from "swr";
-import { ProductCard3D } from "../src/components/ProductCard3D";
+import ProductCard from "@/components/ProductCard";
+import ProductGrid from "@/components/ProductGrid";
+import { ProductCardData } from "@/types/product";
+
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 export default function ColecaoPage() {
   const { data: produtos, error } = useSWR("/api/products", fetcher);
 
-  if (error) return <div>Falha ao carregar produtos</div>;
-  if (!produtos) return <div>Carregando...</div>;
+  if (error) return <div className="p-8 text-white">Falha ao carregar produtos</div>;
+  if (!produtos) return <div className="p-8 text-white">Carregando...</div>;
 
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 p-8">
-      {produtos.map((p: any) => (
-        <ProductCard key={p.id} product={p} />
-      ))}
+    <section className="p-8">
+      <h1 className="text-3xl font-bold text-white mb-8">Coleção</h1>
+      <ProductGrid items={produtos as ProductCardData[]} />
     </section>
   );
 }

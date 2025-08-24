@@ -69,7 +69,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse, session: any) 
     if (error instanceof z.ZodError) {
       return res.status(400).json({ 
         error: 'Dados inválidos', 
-        details: error.errors 
+        details: error.issues 
       });
     }
 

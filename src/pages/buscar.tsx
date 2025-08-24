@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import ProductGrid from "@/components/ProductGrid";
-import { ProductCard } from "@/lib/catalog";
+import { ProductCardData } from "@/types/product";
 
 export default function BuscarPage() {
   const { t } = useTranslation(["search", "ui"]);
@@ -14,7 +14,7 @@ export default function BuscarPage() {
   const q = typeof router.query.q === "string" ? router.query.q.trim() : "";
 
   const [hydrated, setHydrated] = useState(false);
-  const [results, setResults] = useState<ProductCard[]>([]);
+  const [results, setResults] = useState<ProductCardData[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => setHydrated(true), []);
