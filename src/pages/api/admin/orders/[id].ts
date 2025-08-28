@@ -28,7 +28,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse, session: any) 
               id: true,
               name: true,
               email: true,
-              phone: true,
+              // phone: true,
             }
           }
         }

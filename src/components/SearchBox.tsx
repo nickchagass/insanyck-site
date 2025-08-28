@@ -49,7 +49,7 @@ export default function SearchBox() {
         if (!response.ok) throw new Error('Search failed');
         
         const data = await response.json();
-        const mapped: Suggestion[] = (data.results || []).map((p: ProductCard) => ({
+        const mapped: Suggestion[] = (data.results || []).map((p: any) => ({
           slug: p.slug,
           title: p.title,
           price: p.price,

@@ -156,7 +156,8 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   product,
   onClose,
 }) => {
-  const { t } = useTranslation();
+  const ns = ["common", "pdp", "product"] as const;
+  const { t } = useTranslation(ns) as any;
   const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
   const [mode, setMode] = useState<"3d" | "ar" | "try-on">("3d");
   const [bodyMeasurements, setBodyMeasurements] = useState<BodyMeasurements | null>(null);
@@ -283,7 +284,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               gl={{ preserveDrawingBuffer: true }}
               style={{ background: "transparent" }}
             >
-              <XR>
+              <XR store={null as any}>
                 <Suspense fallback={<Html center>{t("carregando")}</Html>}>
                   <ambientLight intensity={0.89} />
                   <spotLight position={[12, 16, 18]} angle={0.17} penumbra={1} />

@@ -73,9 +73,9 @@ export const metaTags = (config: MetaTagsConfig) => {
   // Add hreflang alternates
   if (!noIndex) {
     link.push(
-      { rel: 'alternate', href: fullCanonical, hrefLang: 'pt-BR' },
-      { rel: 'alternate', href: fullCanonical.replace('/pt/', '/en/'), hrefLang: 'en' },
-      { rel: 'alternate', href: fullCanonical, hrefLang: 'x-default' }
+      { rel: 'alternate', href: fullCanonical, hrefLang: 'pt-BR' } as any,
+      { rel: 'alternate', href: fullCanonical.replace('/pt/', '/en/'), hrefLang: 'en' } as any,
+      { rel: 'alternate', href: fullCanonical, hrefLang: 'x-default' } as any
     );
   }
 

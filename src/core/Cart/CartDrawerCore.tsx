@@ -52,7 +52,7 @@ export function CartDrawerCore({ open, onClose }: Props) {
     async (id: string, cor: string, tamanho: string, quantidade: number) => {
       if (quantidade < 1) return;
       try {
-        await update(id, cor, tamanho, quantidade);
+        await update(id, cor, tamanho, { quantidade });
       } catch (e: any) {
         toast.error(e.message || "Erro ao atualizar quantidade.");
       }

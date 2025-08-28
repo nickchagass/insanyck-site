@@ -1,7 +1,7 @@
 // src/store/useCart.ts
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { set, get, del } from "idb-keyval";
+import { set as idbSet, get as idbGet, del as idbDel } from "idb-keyval";
 
 // -- Cart Item Tipo
 export type CartItem = {
@@ -20,6 +20,7 @@ type CartStore = {
   items: CartItem[];
   version: number;
   currency: "BRL" | "USD" | "EUR";
+  isLoading: boolean;
   add: (item: CartItem) => void;
   remove: (id: string, cor: string, tamanho: string) => void;
   update: (id: string, cor: string, tamanho: string, data: Partial<CartItem>) => void;
@@ -27,6 +28,7 @@ type CartStore = {
   sync: (userId?: string) => Promise<void>;
   restore: (userId?: string) => Promise<void>;
   setCurrency: (currency: "BRL" | "USD" | "EUR") => void;
+  checkout: () => Promise<void>;
 };
 
 const CART_VERSION = 2;
@@ -38,7 +40,7 @@ function cartKey(item: Pick<CartItem, "id" | "cor" | "tamanho">) {
 
 // Função para persistir após qualquer alteração
 async function autoSync(items: CartItem[], userId?: string) {
-  await set(`cart-${userId || "anon"}-v${CART_VERSION}`, items);
+  await idbSet(`cart-${userId || "anon"}-v${CART_VERSION}`, items);
 }
 
 export const useCart = create<CartStore>()(
@@ -47,6 +49,7 @@ export const useCart = create<CartStore>()(
       items: [],
       version: CART_VERSION,
       currency: "BRL",
+      isLoading: false,
 
       add: (item) => set((state) => {
         // Atualiza item se já existir, soma quantidade
@@ -90,24 +93,34 @@ export const useCart = create<CartStore>()(
       setCurrency: (currency) => set({ currency }),
 
       sync: async (userId) => {
-        await set(`cart-${userId || "anon"}-v${CART_VERSION}`, get().items);
+        await idbSet(`cart-${userId || "anon"}-v${CART_VERSION}`, get().items);
       },
 
       restore: async (userId) => {
-        const saved = await get<CartItem[]>(`cart-${userId || "anon"}-v${CART_VERSION}`);
+        const saved = await idbGet<CartItem[]>(`cart-${userId || "anon"}-v${CART_VERSION}`);
         if (saved) set({ items: saved });
+      },
+
+      checkout: async () => {
+        set({ isLoading: true });
+        try {
+          // Checkout implementation placeholder
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        } finally {
+          set({ isLoading: false });
+        }
       },
     }),
     {
       name: "insanyck-cart-v2",
-      getStorage: () => ({
-        getItem: async (name) => {
-          try { return (await get(name)) || null; }
+      storage: {
+        getItem: async (name: string) => {
+          try { return (await idbGet(name)) || null; }
           catch { return null; }
         },
-        setItem: async (name, value) => { await set(name, value); },
-        removeItem: async (name) => { await del(name); }
-      })
+        setItem: async (name: string, value: any) => { await idbSet(name, value); },
+        removeItem: async (name: string) => { await idbDel(name); }
+      }
     }
   )
 );

@@ -74,3 +74,4 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default connectToDatabase;
+export { connectToDatabase };

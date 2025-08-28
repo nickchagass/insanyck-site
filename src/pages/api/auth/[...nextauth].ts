@@ -56,7 +56,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === "HEAD") return res.status(200).end();
     const options = await createAuthOptions();
     // NextAuth aceita (req, res, options) no Pages Router
-    // @ts-expect-error – assinatura aceita em runtime
+    // @ts-ignore – assinatura aceita em runtime
     return NextAuth(req, res, options);
   } catch (e: any) {
     return res.status(503).json({ error: "Auth unavailable", detail: e?.message });

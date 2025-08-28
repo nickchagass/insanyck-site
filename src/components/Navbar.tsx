@@ -179,12 +179,12 @@ function UserMenu() {
 
   if (status !== "authenticated") {
     return (
-      <a
+      <Link
         href="/conta/login"
         className="text-white/80 hover:text-white transition-colors px-2 py-1 rounded-lg border border-white/10 hover:border-white/20"
       >
         Entrar
-      </a>
+      </Link>
     );
   }
 
@@ -196,15 +196,15 @@ function UserMenu() {
         {String(name).split(" ")[0]}
       </button>
       <div className="absolute right-0 mt-2 hidden group-hover:block rounded-2xl border border-white/10 bg-black/70 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] p-2 w-[220px] z-[60]">
-        <a className="block px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg" href="/conta">
+        <Link className="block px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg" href="/conta">
           Minha conta
-        </a>
-        <a className="block px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg" href="/conta/pedidos">
+        </Link>
+        <Link className="block px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg" href="/conta/pedidos">
           Pedidos
-        </a>
-        <a className="block px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg" href="/favoritos">
+        </Link>
+        <Link className="block px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg" href="/favoritos">
           Favoritos
-        </a>
+        </Link>
         <form method="post" action="/api/auth/signout" className="mt-1">
           <button className="w-full text-left px-3 py-2 text-white/70 hover:text-white hover:bg-white/5 rounded-lg">
             Sair

@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import { getFingerprint, analyzeBehavior } from "@/lib/fraud";
 // import Product3DView from "@/components/Product3DView";
 import { Loader } from "@/components/Loader";
-import { validateEmail } from "@/lib/validate";
+// import { validateEmail } from "@/lib/validate";
 import { useRouter } from "next/router";
 
 
@@ -30,12 +30,13 @@ interface CheckoutSPAProps {
 }
 
 export default function CheckoutSPA({ cart, total, customerEmail, onComplete }: CheckoutSPAProps) {
-  const { t } = useTranslation();
+  const ns = ["checkout", "common"] as const;
+  const { t } = useTranslation(ns) as any;
   const [step, setStep] = useState<Step>("review");
   const [loading, setLoading] = useState(false);
   const [paymentIntent, setPaymentIntent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [confirmed, setConfirmed] = useState(false);
+  const [_confirmed, setConfirmed] = useState(false);
   const [fraudScore, setFraudScore] = useState<number>(0);
 
   const router = useRouter();
@@ -43,7 +44,7 @@ export default function CheckoutSPA({ cart, total, customerEmail, onComplete }: 
   // Fraud detection: device fingerprinting + behavioral analysis
   useEffect(() => {
     async function detectFraud() {
-      const device = await getFingerprint();
+      const _device = await getFingerprint();
       const behavior = await analyzeBehavior();
       setFraudScore(behavior.risk); // Agora só o risk (ou some como quiser!)
     }
@@ -181,7 +182,8 @@ export default function CheckoutSPA({ cart, total, customerEmail, onComplete }: 
 function PaymentForm({ email, setConfirmed, setError, setStep }: any) {
   const stripe = useStripe();
   const elements = useElements();
-  const { t } = useTranslation();
+  const ns = ["checkout", "common"] as const;
+  const { t } = useTranslation(ns) as any;
   const [processing, setProcessing] = useState(false);
 
   const handleSubmit = async (e: any) => {
