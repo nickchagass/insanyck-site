@@ -71,6 +71,10 @@ const StatusBadge = ({ status }: { status: Order['status'] }) => {
   );
 };
 
+AdminOrdersPage.getInitialProps = async () => {
+  return {};
+};
+
 export default function AdminOrdersPage() {
   const { data: session, status } = useSession();
   const router = useRouter();

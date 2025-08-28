@@ -2,7 +2,7 @@
 // src/lib/adminAuth.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
+import { createAuthOptions } from '@/pages/api/auth/[...nextauth]';
 
 export class UnauthorizedError extends Error {
   constructor(message = 'Unauthorized') {
@@ -12,6 +12,7 @@ export class UnauthorizedError extends Error {
 }
 
 export async function requireAdmin(req: NextApiRequest, res: NextApiResponse) {
+  const authOptions = await createAuthOptions();
   const session = await getServerSession(req, res, authOptions);
   
   if (!session?.user) {

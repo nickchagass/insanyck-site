@@ -2,15 +2,23 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import Head from "next/head";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import OrderSummary from "@/components/OrderSummary";
+import dynamic from "next/dynamic";
 import { useCartStore, useCartHydrated, useCartSubtotal } from "@/store/cart";
+
+const OrderSummary = dynamic(() => import("@/components/OrderSummary"), {
+  ssr: false,
+  loading: () => <div className="h-[200px] w-full animate-pulse bg-white/5 rounded-xl" />,
+});
 import { formatPrice } from "@/lib/price";
 import { applyCoupon } from "@/lib/coupon";
 import { simulate } from "@/lib/shipping";
+import { seoCart } from "@/lib/seo";
 
 export default function SacolaPage() {
   const { t, i18n } = useTranslation(["bag", "checkout", "cart"]);
@@ -51,8 +59,16 @@ export default function SacolaPage() {
 
   if (!hydrated) return null; // evita hydration mismatch
 
+  const seo = seoCart(locale);
+
   return (
-    <main className="relative pt-[120px] pb-20 px-6 mx-auto max-w-[1200px] section-halo">
+    <>
+      <Head>
+        <title>{seo.title}</title>
+        {seo.meta.map((tag, i) => <meta key={i} {...tag} />)}
+        {seo.link.map((l, i) => <link key={i} {...l} />)}
+      </Head>
+      <main className="relative pt-[120px] pb-20 px-6 mx-auto max-w-[1200px] section-halo">
       {/* Vinheta/Halo cinematográfico discreto */}
       <div
         aria-hidden
@@ -91,13 +107,14 @@ export default function SacolaPage() {
                 className="rounded-2xl border border-white/10 bg-black/40 p-4 flex gap-4 items-center shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
               >
                 <div className="relative w-[92px] h-[92px] overflow-hidden rounded-xl bg-black/60">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={it.image || "/products/placeholder/front.webp"}
                     alt={it.title}
-                    className="w-full h-full object-cover"
+                    width={92}
+                    height={92}
+                    sizes="92px"
+                    className="object-cover"
                     loading="lazy"
-                    decoding="async"
                   />
                 </div>
 
@@ -165,7 +182,7 @@ export default function SacolaPage() {
                 />
                 <button
                   onClick={onApplyCoupon}
-                  className="rounded-xl px-4 py-2 border border-white/15 text-white hover:bg-white/5 transition"
+                  className="rounded-xl px-4 py-2 border border-white/15 text-white hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 transition"
                 >
                   {t("bag:coupon.apply", "Aplicar")}
                 </button>
@@ -230,6 +247,7 @@ export default function SacolaPage() {
         </div>
       )}
     </main>
+    </>
   );
 }
 

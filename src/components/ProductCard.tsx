@@ -55,7 +55,7 @@ export default function ProductCard({ product }: Props) {
             src={img}
             alt={product.title}
             fill
-            sizes="(min-width:1024px) 25vw, (min-width:768px) 33vw, 50vw"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             loading="lazy"
           />
@@ -87,7 +87,7 @@ export default function ProductCard({ product }: Props) {
           <Link
             href={`/produto/${product.slug}`}
             prefetch
-            className="rounded-xl px-4 py-2 text-sm font-semibold border border-white/15 text-white hover:bg-white/5 transition"
+            className="rounded-xl px-4 py-2 text-sm font-semibold border border-white/15 text-white hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 transition"
           >
             {t("plp:viewDetails", "Ver detalhes")}
           </Link>
@@ -100,7 +100,7 @@ export default function ProductCard({ product }: Props) {
               image: img,
               price: product.price, // componente converte se for string
             }}
-            className="rounded-xl px-4 py-2 text-sm font-semibold border border-white/15 text-white hover:bg-white/5 transition"
+            className="rounded-xl px-4 py-2 text-sm font-semibold border border-white/15 text-white hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 transition"
           >
             {t("cart:addToCart", "Adicionar ao carrinho")}
           </AddToCartButton>

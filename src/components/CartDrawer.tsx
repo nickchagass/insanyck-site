@@ -7,7 +7,7 @@ import { FixedSizeList as List } from "react-window";
 import { X } from "lucide-react";
 
 const spring = {
-  type: "spring",
+  type: "spring" as const,
   stiffness: 360,
   damping: 35
 };
@@ -40,7 +40,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
         <button
           className="text-red-500 text-lg px-2 hover:scale-110"
           aria-label="Remover do carrinho"
-          onClick={() => remove(item.id)}
+          onClick={() => remove(item.id, item.cor, item.tamanho)}
         >
           <X />
         </button>

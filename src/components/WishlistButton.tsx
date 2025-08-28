@@ -64,7 +64,7 @@ export default function WishlistButton({ slug, title, priceCents, image, classNa
       onClick={onToggle}
       aria-pressed={active}
       title={active ? t("wishlist:remove", "Remover dos favoritos") : t("wishlist:add", "Adicionar aos favoritos")}
-      className={`inline-flex items-center justify-center rounded-xl border border-white/15 text-white/80 hover:text-white hover:bg-white/5 transition px-3 py-2 ${className ?? ""}`}
+      className={`inline-flex items-center justify-center rounded-xl border border-white/15 text-white/80 hover:text-white hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 transition px-3 py-2 ${className ?? ""}`}
       disabled={busy}
     >
       <span className="sr-only">{t("wishlist:toggle", "Favoritar")}</span>

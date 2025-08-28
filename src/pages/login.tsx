@@ -3,6 +3,10 @@ import { useState } from "react";
 import { signIn, getCsrfToken } from "next-auth/react";
 import { useRouter } from "next/router";
 
+Login.getInitialProps = async () => {
+  return {};
+};
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

@@ -20,6 +20,15 @@ class MyDocument extends Document {
     return (
       <Html lang={currentLocale}>
         <Head>
+          {/* DNS prefetch control */}
+          <meta httpEquiv="x-dns-prefetch-control" content="on" />
+          
+          {/* Resource hints for Google Fonts */}
+          <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+          <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+          <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+
           {/* OG locale por idioma */}
           <meta property="og:locale" content={ogLocale} />
 

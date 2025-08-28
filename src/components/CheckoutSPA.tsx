@@ -10,7 +10,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { getFingerprint, analyzeBehavior } from "@/lib/fraud";
-import { Product3DView } from "@/components/Product3DView";
+// import Product3DView from "@/components/Product3DView";
 import { Loader } from "@/components/Loader";
 import { validateEmail } from "@/lib/validate";
 import { useRouter } from "next/router";
@@ -109,22 +109,22 @@ export default function CheckoutSPA({ cart, total, customerEmail, onComplete }: 
           {step === "review" && (
             <>
               <h2 className="text-2xl font-extrabold mb-4 text-yellow-400" id="checkout-heading">
-                {t("checkout.review")}
+                {t("checkout.review" as any)}
               </h2>
               <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {cart.map((item, i) => (
                   <div key={i} className="bg-black/40 p-4 rounded-xl flex gap-3">
-                    <div className="w-24 h-24"><Product3DView product={item} /></div>
+                    <div className="w-24 h-24 bg-white/10 rounded-lg flex items-center justify-center text-white/60 text-xs">3D</div>
                     <div>
                       <div className="font-bold text-lg text-yellow-300">{item.nome}</div>
-                      <div className="text-neutral-400">{t("cor")}: {item.cor} &nbsp;|&nbsp; {t("tamanho")}: {item.tamanho}</div>
+                      <div className="text-neutral-400">{t("cor" as any)}: {item.cor} &nbsp;|&nbsp; {t("tamanho" as any)}: {item.tamanho}</div>
                       <div className="text-white mt-2 font-bold">R$ {item.preco.toFixed(2)}</div>
                     </div>
                   </div>
                 ))}
               </div>
               <div className="flex justify-between mb-4">
-                <span className="font-bold text-white">{t("total")}</span>
+                <span className="font-bold text-white">{t("total" as any)}</span>
                 <span className="font-bold text-2xl text-yellow-400">R$ {total.toFixed(2)}</span>
               </div>
               <motion.button

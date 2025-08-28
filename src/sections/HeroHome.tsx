@@ -2,6 +2,7 @@
 
 import { CTA } from "@/components/CTA";
 import Link from "next/link";
+import Image from "next/image";
 import { useRef } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next"; // INSANYCK STEP 4
@@ -99,18 +100,22 @@ export default function HeroHome() {
               /* esconder scrollbar; mantém acessibilidade por teclado */
               .snap-x::-webkit-scrollbar { display: none; }
             `}</style>
-            {ITEMS.map((it) => (
+            {ITEMS.map((it, index) => (
               <motion.article
                 key={it.titleKey}
                 whileHover={{ y: -2 }}
                 className="snap-start shrink-0 w-[220px] h-[140px] rounded-2xl bg-[#0f0f10] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] relative overflow-hidden"
               >
               {/* INSANYCK STEP 4 — alt usa a chave tipada do carrossel */}
-<img
-  src={it.img}
-  alt={t(it.titleKey)}
-  className="absolute inset-0 w-full h-full object-cover opacity-[0.92]"
-/>
+              <Image
+                src={it.img}
+                alt={t(it.titleKey)}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1200px"
+                className="object-cover opacity-[0.92]"
+                priority={index === 0}
+                loading={index === 0 ? "eager" : "lazy"}
+              />
 
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.5)_100%)]" />
                 <div className="absolute bottom-3 left-4 text-white/90 text-sm font-medium">

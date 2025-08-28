@@ -1,12 +1,22 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { connectToDatabase } from "@/lib/mongo";
-import Cart from "@/lib/models/Cart";
-
-// Para autenticação NextAuth (opcional, só use se quiser autenticação JWT)
-import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]"; // Ajuste o caminho se necessário
+import { backendDisabled, missingEnv } from "@/lib/backendGuard";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (backendDisabled) {
+    return res.status(503).json({ error: "Backend disabled for preview/dev" });
+  }
+
+  const need = missingEnv("MONGODB_URI");
+  if (!need.ok) {
+    return res.status(503).json({ error: "Missing env", missing: need.absent });
+  }
+
+  // Lazy imports
+  const { connectToDatabase } = await import("@/lib/mongo");
+  const { default: Cart } = await import("@/lib/models/Cart");
+  const { getServerSession } = await import("next-auth");
+  const { createAuthOptions } = await import("./auth/[...nextauth]");
+
   // 1. Conexão universal
   await connectToDatabase();
 
@@ -15,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let sessionId: string | undefined = undefined;
 
   // Exemplo para NextAuth (usuário logado)
+  const authOptions = await createAuthOptions();
   const session = await getServerSession(req, res, authOptions).catch(() => null);
   if (session?.user?.id) {
     userId = session.user.id;

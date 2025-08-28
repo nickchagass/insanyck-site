@@ -5,19 +5,33 @@
 import React, { useMemo, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
+import Image from "next/image";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { useRouter } from "next/router";
 
-import AddressForm, { AddressFields } from "@/components/AddressForm";
-import ShippingSelector from "@/components/ShippingSelector";
-import OrderSummary from "@/components/OrderSummary";
+import dynamic from "next/dynamic";
+import { AddressFields } from "@/components/AddressForm";
 import { useCartStore, useCartSubtotal } from "@/store/cart";
+
+const AddressForm = dynamic(() => import("@/components/AddressForm"), {
+  ssr: false,
+  loading: () => <div className="h-[300px] w-full animate-pulse bg-white/5 rounded-xl" />,
+});
+
+const ShippingSelector = dynamic(() => import("@/components/ShippingSelector"), {
+  ssr: false,
+  loading: () => <div className="h-[100px] w-full animate-pulse bg-white/5 rounded-xl" />,
+});
+
+const OrderSummary = dynamic(() => import("@/components/OrderSummary"), {
+  ssr: false,
+  loading: () => <div className="h-[200px] w-full animate-pulse bg-white/5 rounded-xl" />,
+});
+import { seoCheckout } from "@/lib/seo";
 
 export default function CheckoutPage() {
   const { t, i18n } = useTranslation(["checkout", "bag"]);
   const locale = i18n.language?.startsWith("en") ? "en" : "pt";
-  const router = useRouter();
 
   const items = useCartStore((s) => s.items);
   const clear = useCartStore((s) => s.clear);
@@ -66,11 +80,14 @@ export default function CheckoutPage() {
     }
   }
 
+  const seo = seoCheckout(locale);
+
   return (
     <>
       <Head>
-        <title>{t("checkout:title", "Checkout")} — INSANYCK</title>
-        <meta name="description" content={t("checkout:subtitle", "Finalize sua compra com segurança.") as string} />
+        <title>{seo.title}</title>
+        {seo.meta.map((tag, i) => <meta key={i} {...tag} />)}
+        {seo.link.map((l, i) => <link key={i} {...l} />)}
       </Head>
 
       <main className="mx-auto max-w-[1200px] px-6 pt-[120px] pb-20">
@@ -111,7 +128,7 @@ export default function CheckoutPage() {
                 <button
                   onClick={handlePay}
                   disabled={loading || !canPay}
-                  className="mt-4 rounded-xl px-4 py-3 font-semibold bg-white text-black hover:brightness-95 transition disabled:opacity-60"
+                  className="mt-4 rounded-xl px-4 py-3 font-semibold bg-white text-black hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 transition disabled:opacity-60"
                 >
                   {loading ? t("checkout:processing", "Processando...") : t("checkout:placeOrder", "Finalizar pedido")}
                 </button>
@@ -125,15 +142,14 @@ export default function CheckoutPage() {
                 <ul className="space-y-3">
                   {items.map((it) => (
                     <li key={it.id} className="flex items-center gap-3">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
                         src={it.image || "/products/placeholder/front.webp"}
                         alt={it.title}
-                        className="w-14 h-14 rounded-lg object-cover border border-white/10"
-                        loading="lazy"
-                        decoding="async"
                         width={56}
                         height={56}
+                        sizes="56px"
+                        className="rounded-lg object-cover border border-white/10"
+                        loading="lazy"
                       />
                       <div className="flex-1">
                         <div className="text-white/80 text-sm">{it.title}</div>

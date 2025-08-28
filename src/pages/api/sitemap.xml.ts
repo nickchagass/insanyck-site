@@ -4,82 +4,81 @@ import { prisma } from '@/lib/prisma';
 import { env, isServerEnvReady } from '@/lib/env.server';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!isServerEnvReady()) {
-    console.error('[INSANYCK][Sitemap] Server environment not ready');
-    return res.status(500).json({ error: 'Service unavailable' });
-  }
-
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
   try {
-    const baseUrl = env.NEXT_PUBLIC_URL;
+    // 1) Base URL: usa env se existir; senão, deriva do request (robusto para qualquer porta/preview)
+    const rawBase = (() => {
+      try {
+        return isServerEnvReady() ? (env.NEXT_PUBLIC_URL || "").trim().replace(/\/$/, "") : "";
+      } catch {
+        return "";
+      }
+    })();
+    const derivedBase = (() => {
+      const host = req.headers.host || "localhost:3000";
+      const proto = (req.headers["x-forwarded-proto"] as string) || (host.includes("localhost") ? "http" : "https");
+      return `${proto}://${host}`;
+    })();
+    const baseUrl = rawBase || derivedBase;
+    if (!rawBase && process.env.NODE_ENV !== "production") {
+      console.warn("[INSANYCK][Sitemap] NEXT_PUBLIC_URL ausente; usando base derivada:", baseUrl);
+    }
 
-    // Páginas estáticas
-    const staticPages = [
-      '',
-      '/loja',
-      '/conta',
-      '/favoritos',
-      '/login',
+    // 2) Permitir GET e HEAD
+    if (req.method !== "GET" && req.method !== "HEAD") {
+      return res.status(405).json({ error: "Method not allowed" });
+    }
+
+    const [products, categories] = await Promise.all([
+      prisma.product.findMany({ select: { slug: true, updatedAt: true }, where: { status: "active" } }),
+      prisma.category.findMany({ select: { slug: true, updatedAt: true } }),
+    ]);
+
+    const now = new Date();
+    const staticUrls = [
+      { loc: "/", lastmod: now, priority: "1.0" },
+      { loc: "/loja", lastmod: now, priority: "0.8" }
     ];
 
-    // Buscar produtos ativos
-    const products = await prisma.product.findMany({
-      where: { status: 'active' },
-      select: { slug: true, updatedAt: true },
-      orderBy: { updatedAt: 'desc' },
-    });
+    const categoryUrls = (categories ?? []).map(c => ({
+      loc: `/loja?category=${encodeURIComponent(c.slug)}`,
+      lastmod: c.updatedAt ?? now,
+      priority: "0.7"
+    }));
 
-    // Buscar categorias
-    const categories = await prisma.category.findMany({
-      select: { slug: true, updatedAt: true },
-      orderBy: { updatedAt: 'desc' },
-    });
+    const productUrls = (products ?? []).map(p => ({
+      loc: `/produto/${encodeURIComponent(p.slug)}`,
+      lastmod: p.updatedAt ?? now,
+      priority: "0.6"
+    }));
 
+    const allUrls = [...staticUrls, ...categoryUrls, ...productUrls];
+    
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${staticPages
-    .map((page) => {
-      return `
-  <url>
-    <loc>${baseUrl}${page}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
+${allUrls.map(url => `  <url>
+    <loc>${baseUrl}${url.loc.startsWith("/") ? url.loc : "/" + url.loc}</loc>
+    <lastmod>${url.lastmod.toISOString()}</lastmod>
     <changefreq>daily</changefreq>
-    <priority>${page === '' ? '1.0' : '0.8'}</priority>
-  </url>`;
-    })
-    .join('')}
-  ${products
-    .map((product) => {
-      return `
-  <url>
-    <loc>${baseUrl}/produto/${product.slug}</loc>
-    <lastmod>${product.updatedAt.toISOString()}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>`;
-    })
-    .join('')}
-  ${categories
-    .map((category) => {
-      return `
-  <url>
-    <loc>${baseUrl}/loja?categoria=${category.slug}</loc>
-    <lastmod>${category.updatedAt.toISOString()}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>`;
-    })
-    .join('')}
+    <priority>${url.priority}</priority>
+  </url>`).join("\n")}
 </urlset>`;
 
-    res.setHeader('Content-Type', 'application/xml');
-    res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=43200');
+    res.setHeader("Content-Type", "application/xml; charset=utf-8");
+    res.setHeader("Cache-Control", "public, s-maxage=86400, stale-while-revalidate=604800");
     res.status(200).send(sitemap);
-  } catch (error) {
-    console.error('Error generating sitemap:', error);
-    res.status(500).json({ error: 'Failed to generate sitemap' });
+  } catch (e) {
+    console.error("[INSANYCK][Sitemap] Fallback mode:", e);
+    const host = req.headers.host || "localhost:3000";
+    const proto = (req.headers["x-forwarded-proto"] as string) || (host.includes("localhost") ? "http" : "https");
+    const fallbackBase = `${proto}://${host}`;
+    const now = new Date().toISOString();
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>${fallbackBase}/</loc><lastmod>${now}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>${fallbackBase}/loja</loc><lastmod>${now}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
+</urlset>`;
+    res.setHeader("Content-Type", "application/xml; charset=utf-8");
+    res.setHeader("Cache-Control", "public, s-maxage=86400, stale-while-revalidate=604800");
+    res.status(200).send(xml);
   }
 }

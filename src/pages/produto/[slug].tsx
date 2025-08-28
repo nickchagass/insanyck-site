@@ -1,12 +1,20 @@
 // INSANYCK STEP 10 — PDP robusto (SSR seguro + mapeamento compatível)
 import Head from 'next/head';
 import Link from 'next/link';
+import Image from 'next/image';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
-import VariantSelector from '@/components/VariantSelector';
+import { useRouter } from 'next/router';
+import dynamic from 'next/dynamic';
 import AddToCartButton from '@/components/AddToCartButton';
+
+const VariantSelector = dynamic(() => import('@/components/VariantSelector'), {
+  ssr: true,
+  loading: () => <div className="h-[120px] w-full animate-pulse bg-white/5 rounded-xl" />,
+});
+import { seoPDP } from '@/lib/seo';
 
 type OptionValue = { slug: string; name: string; value: string };
 type Option = { slug: string; name: string; type?: 'color'|'size'|'select'; values: OptionValue[] };
@@ -33,6 +41,7 @@ export default function ProdutoPage({
   variants,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { t } = useTranslation(['pdp', 'common', 'cart']);
+  const router = useRouter();
   const [selectedVariant, setSelectedVariant] = useState<PDPVariant | null>(null);
 
   const handleVariantChange = (variant: PDPVariant | null) => {
@@ -45,14 +54,27 @@ export default function ProdutoPage({
     ? (variants[0].priceCents / 100).toLocaleString('pt-BR', { style: 'currency', currency: variants[0].currency })
     : '';
 
+  const seo = seoPDP({
+    title: product.title,
+    description: product.description || undefined,
+    images: product.image ? [product.image] : [],
+    slug: product.slug,
+    price: selectedVariant?.priceCents ? selectedVariant.priceCents / 100 : (variants[0]?.priceCents || 0) / 100,
+    currency: selectedVariant?.currency || variants[0]?.currency || 'BRL',
+    inStock: (selectedVariant?.inventory?.available || 0) > 0 || variants.some(v => (v.inventory?.available || 0) > 0),
+    sku: selectedVariant?.sku || variants[0]?.sku,
+  }, router.locale);
+
   return (
     <>
       <Head>
-        <title>{product.title} • INSANYCK</title>
-        <meta name="description" content={product.description ?? product.title} />
-        <meta property="og:title" content={`${product.title} • INSANYCK`} />
-        <meta property="og:description" content={product.description ?? product.title} />
-        <meta property="og:image" content={product.image || ''} />
+        <title>{seo.title}</title>
+        {seo.meta.map((tag, i) => <meta key={i} {...tag} />)}
+        {seo.link.map((l, i) => <link key={i} {...l} />)}
+        {seo.jsonLd.map((schema, i) => (
+          <script key={i} type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+        ))}
       </Head>
 
       <main className="mx-auto max-w-[1200px] px-6 pt-24 pb-16 insanyck-bloom insanyck-bloom--soft">
@@ -68,19 +90,16 @@ export default function ProdutoPage({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Imagem */}
-          <div className="aspect-square bg-white/5 rounded-xl border border-white/10 overflow-hidden">
-            {product.image ? (
-              <img 
-                src={product.image} 
-                alt={product.title} 
-                className="w-full h-full object-cover" 
-                loading="eager"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-white/40">
-                {t('pdp:noImage', 'Sem imagem')}
-              </div>
-            )}
+          <div className="relative aspect-square md:aspect-[4/5] overflow-hidden rounded-2xl bg-white/5">
+            <Image
+              src={product.image || '/products/oversized-classic/front.webp'}
+              alt={product.title}
+              fill
+              priority
+              fetchPriority="high"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+              className="object-cover"
+            />
           </div>
 
           {/* Detalhes */}
@@ -122,7 +141,7 @@ export default function ProdutoPage({
                     priceCents: selectedVariant.priceCents,
                     currency: selectedVariant.currency,
                   }}
-                  className="bg-white text-black rounded-xl px-8 py-3 font-semibold hover:brightness-95 transition flex-1"
+                  className="bg-white text-black rounded-xl px-8 py-3 font-semibold hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 transition flex-1"
                 >
                   {t('cart:addToCart', 'Adicionar ao carrinho')}
                 </AddToCartButton>
@@ -158,7 +177,10 @@ export default function ProdutoPage({
 }
 
 export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params, locale, res }) => {
-  res.setHeader('Cache-Control','public, s-maxage=3600, stale-while-revalidate=86400');
+  res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=600, stale-while-revalidate=86400'
+  );
   
   try {
     const slugParam = params?.slug;

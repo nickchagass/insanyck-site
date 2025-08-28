@@ -2,6 +2,7 @@
 // INSANYCK STEP 5 + STEP 9 (bloom sutil) + DB integration
 
 import Head from "next/head";
+import { seoPLP } from "@/lib/seo";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
@@ -51,6 +52,9 @@ export default function Loja({
   const [loading, setLoading] = useState(false);
 
   const { category, size, color, inStock, sort = "newest" } = router.query;
+  // Normalize category param for SEO
+  const categorySlug = Array.isArray(category) ? category[0] : category;
+  const categoryName = categories.find(c => c.slug === (categorySlug ?? ""))?.name;
 
   useEffect(() => {
     fetchProducts();
@@ -118,11 +122,25 @@ export default function Loja({
   return (
     <>
       <Head>
-        <title>{t("plp:title", "Loja INSANYCK")}</title>
-        <meta
-          name="description"
-          content={t("plp:subtitle", "Vidro leve • borda hairline")}
-        />
+        {(() => {
+          const seo = seoPLP({
+            locale: router.locale ?? "pt",
+            categorySlug: categorySlug ?? undefined,
+            categoryName,
+            productCount: totalProducts,
+          });
+          return (
+            <>
+              <title>{seo.title}</title>
+              {seo.meta.map((tag, i) => <meta key={i} {...tag} />)}
+              {seo.link.map((l, i) => <link key={i} {...l} />)}
+              {seo.jsonLd.map((schema, i) => (
+                <script key={i} type="application/ld+json"
+                  dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
+              ))}
+            </>
+          );
+        })()}
       </Head>
 
       {/* INSANYCK STEP 9 — bloom sutil; não altera layout/tipografia */}
@@ -212,7 +230,7 @@ export const getServerSideProps: GetServerSideProps<LojaProps> = async ({
   // INSANYCK STEP 10 — ISR usando res.revalidate (Pages Router)
   res.setHeader(
     'Cache-Control',
-    'public, s-maxage=3600, stale-while-revalidate=86400'
+    'public, s-maxage=600, stale-while-revalidate=86400'
   );
 
   try {

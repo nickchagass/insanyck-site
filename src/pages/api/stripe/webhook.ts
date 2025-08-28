@@ -1,5 +1,6 @@
 // INSANYCK STEP 11 — Webhook Stripe with Type-Safe Env
 import type { NextApiRequest, NextApiResponse } from "next";
+import { backendDisabled, missingEnv } from "@/lib/backendGuard";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { env, isServerEnvReady } from "@/lib/env.server";
@@ -16,12 +17,21 @@ function readBuffer(readable: any) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // INSANYCK STEP 11 — Runtime guards for environment
+  // Guards de runtime (não derrubam preview/dev)
+  if (backendDisabled) {
+    return res.status(503).json({ error: "Backend disabled for preview/dev" });
+  }
   if (!isServerEnvReady()) {
-    console.error('[INSANYCK][Webhook] Server environment not ready');
+    console.error("[INSANYCK][Webhook] Server environment not ready");
     return res.status(500).json({ error: "Server configuration error" });
   }
+  const need = missingEnv("STRIPE_WEBHOOK_SECRET");
+  if (!need.ok) {
+    return res.status(503).json({ error: "Missing env", missing: need.absent });
+  }
 
+  // Permitir HEAD para health checks
+  if (req.method === "HEAD") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
 
   const sig = req.headers["stripe-signature"];
@@ -30,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const buf = await readBuffer(req);
   let event;
   try {
-    event = stripe.webhooks.constructEvent(buf, sig.toString(), env.STRIPE_WEBHOOK_SECRET);
+    event = stripe.webhooks.constructEvent(buf, String(sig), env.STRIPE_WEBHOOK_SECRET);
   } catch (err: any) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
@@ -52,9 +62,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const amountTotal = session.amount_total ?? 0;
       const user = email ? await prisma.user.findFirst({ where: { email } }) : null;
 
-      // INSANYCK STEP 10 — Criar pedido e decrementar estoque em transação
+      // Criar pedido e decrementar estoque em transação
       const order = await prisma.$transaction(async (tx) => {
-        // Criar o pedido
         const newOrder = await tx.order.create({
           data: {
             userId: user?.id ?? null,
@@ -73,28 +82,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   product?.metadata?.slug ||
                   title.toLowerCase().replace(/[^\w]+/g, "-").replace(/(^-|-$)/g, "");
                 const image = Array.isArray(product?.images) ? product.images[0] : undefined;
-                
-                // INSANYCK STEP 10 — Capturar variantId e sku do metadata
+
                 const variantId = product?.metadata?.variantId;
                 const sku = product?.metadata?.sku;
-                
-                return { 
-                  slug, 
-                  title, 
-                  priceCents: unit, 
-                  qty, 
-                  image, 
+
+                return {
+                  slug,
+                  title,
+                  priceCents: unit,
+                  qty,
+                  image,
                   variant: product?.metadata?.variant || undefined,
-                  // Novos campos
                   variantId,
-                  sku
+                  sku,
                 };
               }),
             },
           },
         });
 
-        // Decrementar estoque para cada item com variantId
+        // Decrementar estoque por variantId (quando houver)
         for (const li of lineItems.data || []) {
           const product = (li.price?.product as any) || {};
           const variantId = product?.metadata?.variantId;
@@ -102,21 +109,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
           if (variantId) {
             try {
-              // Decrementar estoque da variante
               await tx.inventory.updateMany({
-                where: { 
-                  variantId: variantId,
-                  quantity: { gte: qty } // Só decrementa se há estoque suficiente
-                },
-                data: {
-                  quantity: { decrement: qty }
-                }
+                where: { variantId, quantity: { gte: qty } },
+                data: { quantity: { decrement: qty } },
               });
-
               console.log(`Estoque decrementado: variantId=${variantId}, qty=${qty}`);
             } catch (error) {
               console.warn(`Erro ao decrementar estoque para variantId ${variantId}:`, error);
-              // Não falha a transação, apenas loga o erro
+              // Não falha a transação
             }
           }
         }
@@ -126,8 +126,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       return res.status(200).json({ ok: true, orderId: order.id });
     }
-    
-    // ETAPA 11C — Tratar payment_intent.payment_failed
     if (event.type === "payment_intent.payment_failed") {
       const paymentIntent = event.data.object as any;
       console.warn(`Payment failed for intent: ${paymentIntent.id}`, {

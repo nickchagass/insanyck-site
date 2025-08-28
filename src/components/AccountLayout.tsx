@@ -24,7 +24,7 @@ export default function AccountLayout({ titleKey, children }: Props) {
   return (
     <section className="pt-[100px] pb-16">
       <div className="mx-auto max-w-[1200px] px-6">
-        <h1 className="text-3xl font-semibold tracking-wide text-white/90">{t(titleKey)}</h1>
+        <h1 className="text-3xl font-semibold tracking-wide text-white/90">{t(titleKey as any)}</h1>
 
         <div className="mt-8 grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-6">
           {/* Nav lateral */}
@@ -40,7 +40,7 @@ export default function AccountLayout({ titleKey, children }: Props) {
                       active ? "bg-white/10 text-white" : "text-white/80 hover:text-white hover:bg-white/5"
                     }`}
                   >
-                    {t(item.key)}
+                    {t(item.key as any)}
                   </Link>
                 );
               })}
@@ -48,7 +48,7 @@ export default function AccountLayout({ titleKey, children }: Props) {
                 <button
                   className="w-full text-left px-3 py-2 rounded-lg text-white/70 hover:text-white hover:bg-white/5 transition"
                 >
-                  {t("account:nav.signout", "Sair")}
+                  {t("account:nav.signout" as any, "Sair")}
                 </button>
               </form>
             </nav>

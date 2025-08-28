@@ -1,13 +1,14 @@
 // INSANYCK STEP 8
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
+import { createAuthOptions } from "../auth/[...nextauth]";
 
 type MeResponse =
   | { user: { id: string; name: string | null; email: string | null; image?: string | null } }
   | { error: string };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<MeResponse>) {
+  const authOptions = await createAuthOptions();
   const session = await getServerSession(req, res, authOptions);
   if (!session?.user?.id) {
     return res.status(401).json({ error: "Unauthorized" });

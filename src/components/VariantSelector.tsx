@@ -95,7 +95,7 @@ export default function VariantSelector({
     const isSelected = selectedOptions[optionSlug] === valueSlug;
     const isAvailable = isOptionValueAvailable(optionSlug, valueSlug);
     
-    let baseClass = "border border-white/20 transition-all duration-200 ";
+    let baseClass = "border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ";
 
     // INSANYCK STEP 10 — Detectar cor por type ou slug (retrocompatíbvel)
     const isColorFilter = option.type === 'color' || option.slug === 'color';
@@ -105,7 +105,9 @@ export default function VariantSelector({
       baseClass += "w-8 h-8 rounded-full cursor-pointer ";
       
       if (isSelected) {
-        baseClass += "ring-2 ring-white ring-offset-2 ring-offset-black ";
+        baseClass += "ring-2 ring-white ring-offset-2 ring-offset-black border-white/40 ";
+      } else {
+        baseClass += "border-white/20 hover:border-white/30 ";
       }
       
       if (!isAvailable) {
@@ -118,7 +120,7 @@ export default function VariantSelector({
       if (isSelected) {
         baseClass += "bg-white text-black border-white ";
       } else {
-        baseClass += "bg-transparent text-white hover:bg-white/10 ";
+        baseClass += "bg-transparent text-white border-white/20 hover:bg-white/10 hover:border-white/40 ";
       }
       
       if (!isAvailable) {

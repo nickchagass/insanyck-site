@@ -6,6 +6,10 @@ import { ProductCardData } from "@/types/product";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
+ColecaoPage.getInitialProps = async () => {
+  return {};
+};
+
 export default function ColecaoPage() {
   const { data: produtos, error } = useSWR("/api/products", fetcher);
 

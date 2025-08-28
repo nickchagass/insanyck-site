@@ -2,7 +2,7 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../api/auth/[...nextauth]";
+import { createAuthOptions } from "../api/auth/[...nextauth]";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import AccountLayout from "@/components/AccountLayout";
 import { useTranslation } from "next-i18next";
@@ -139,6 +139,7 @@ export default function AddressesPage() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const authOptions = await createAuthOptions();
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   if (!session?.user?.id) {
     return { redirect: { destination: "/conta/login", permanent: false }, props: {} as any };

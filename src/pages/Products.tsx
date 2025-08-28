@@ -20,6 +20,10 @@ const produtos3D = [
   },
 ];
 
+Products.getInitialProps = async () => {
+  return {};
+};
+
 export default function Products() {
   return (
     <section className="bg-black min-h-screen py-8">
