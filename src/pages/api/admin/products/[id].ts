@@ -136,7 +136,8 @@ async function deleteProduct(req: NextApiRequest, res: NextApiResponse, id: stri
 
     console.log(`Admin ${session.user?.email} deleted product: ${product.slug}`);
 
-    return res.status(204).end();
+    res.status(204).end();
+    return;
   } catch (error) {
     console.error('Error deleting product:', error);
     return res.status(500).json({ error: 'Internal server error' });

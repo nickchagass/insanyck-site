@@ -7,17 +7,21 @@ import { env, isServerEnvReady } from "@/lib/env.server";
 
 export const config = { api: { bodyParser: false } };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   // INSANYCK STEP 11 — Runtime guards for environment
   if (!isServerEnvReady()) {
     console.error('[INSANYCK][Webhook] Server environment not ready');
-    return res.status(500).json({ 
+    res.status(500).json({ 
       error: "Service temporarily unavailable",
       code: "ENV_NOT_READY" 
     });
+    return;
   }
 
-  if (req.method !== "POST") return res.status(405).end();
+  if (req.method !== "POST") {
+    res.status(405).end();
+    return;
+  }
 
   const sig = req.headers["stripe-signature"] as string;
   const buf = await buffer(req);
@@ -27,7 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     event = stripe.webhooks.constructEvent(buf, sig, env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
     console.error('[INSANYCK][Webhook] Signature verification failed:', err);
-    return res.status(400).send(`Webhook Error: ${(err as Error).message}`);
+    res.status(400).send(`Webhook Error: ${(err as Error).message}`);
+    return;
   }
 
   // Exemplo: ação quando pagamento é completado

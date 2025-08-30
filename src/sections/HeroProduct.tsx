@@ -1,11 +1,19 @@
 // INSANYCK STEP 3 — Produto (switch entre estático e 3D)
-"use client";
 
 import { CTA } from "@/components/CTA";
-import Product3DView from "@/components/Product3DView";
 import ProductImageView from "@/components/ProductImageView";
 import { useState } from "react";
 import { useTranslation } from "next-i18next"; // INSANYCK STEP 4
+import dynamic from "next/dynamic";
+
+const Product3DView = dynamic(() => import("@/components/Product3DView"), {
+  ssr: false,
+  loading: () => (
+    <div className="aspect-square bg-gray-900 rounded-xl flex items-center justify-center">
+      <div className="text-yellow-400 font-bold animate-pulse">Carregando modelo 3D...</div>
+    </div>
+  )
+});
 
 type Variant = "front" | "back" | "detail";
 

@@ -1,6 +1,5 @@
 // INSANYCK STEP 7 — Checkout SPA (Checkout Sessions)
 // src/pages/checkout.tsx
-"use client";
 
 import React, { useMemo, useState } from "react";
 import Head from "next/head";
@@ -180,7 +179,7 @@ export default function CheckoutPage() {
   );
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
+export async function getServerSideProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale ?? "pt", ["common", "nav", "bag", "checkout"])),

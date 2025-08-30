@@ -4,6 +4,31 @@
     "no-console": ["warn", { "allow": ["warn", "error"] }],
     "@next/next/no-img-element": "off",
     "prefer-const": "warn",
-    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }]
-  }
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "next/document",
+            "message": "Import Html from next/document is only allowed in pages/_document.tsx. Use Html as DreiHtml from @react-three/drei for 3D components."
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["**/next/document"],
+            "message": "Import Html from next/document is only allowed in pages/_document.tsx. Use Html as DreiHtml from @react-three/drei for 3D components."
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/pages/_document.tsx"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ]
 }

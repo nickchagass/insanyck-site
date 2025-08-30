@@ -2,7 +2,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
-import { ProductCard3D } from "@/components/ProductCard3D";
 
 // Traduções organizadas por namespace (permite crescer para outros módulos)
 const resources = {

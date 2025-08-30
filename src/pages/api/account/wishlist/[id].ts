@@ -4,11 +4,14 @@ import { getServerSession } from "next-auth/next";
 import { createAuthOptions } from "../../auth/[...nextauth]";
 import { prisma } from "@/lib/prisma";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   // PWA/Workbox: NetworkOnly
   const authOptions = await createAuthOptions();
   const session = await getServerSession(req, res, authOptions);
-  if (!session?.user?.id) return res.status(401).json({ error: "Unauthorized" });
+  if (!session?.user?.id) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
 
   const userId = (session.user as any).id as string;
   const id = req.query.id as string;
@@ -16,12 +19,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     if (req.method === "DELETE") {
       const found = await prisma.wishlistItem.findUnique({ where: { id } });
-      if (!found || found.userId !== userId) return res.status(404).json({ error: "Not Found" });
+      if (!found || found.userId !== userId) {
+        res.status(404).json({ error: "Not Found" });
+        return;
+      }
       await prisma.wishlistItem.delete({ where: { id } });
-      return res.status(204).end();
+      res.status(204).end();
+      return;
     }
-    return res.status(405).json({ error: "Method Not Allowed" });
+    res.status(405).json({ error: "Method Not Allowed" });
+    return;
   } catch (err: any) {
-    return res.status(500).json({ error: err?.message ?? "Server error" });
+    res.status(500).json({ error: err?.message ?? "Server error" });
+    return;
   }
 }

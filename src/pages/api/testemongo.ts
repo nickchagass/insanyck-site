@@ -24,7 +24,7 @@ function sanitize(str: string) {
 }
 
 // Handler principal
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   const startedAt = Date.now();
 
   // CORS: só libera tudo no dev, e domínio seguro em prod
@@ -37,7 +37,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    res.status(200).end();
+    return;
   }
 
   try {
@@ -51,13 +52,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     switch (req.method) {
       case "GET":
         await handleGetRequest(db, req, res, startedAt);
-        break;
+        return;
       case "POST":
         await handlePostRequest(db, req, res, startedAt);
-        break;
+        return;
       default:
         res.setHeader('Allow', ['GET', 'POST']);
         res.status(405).json({ error: `Método ${req.method} não permitido` });
+        return;
     }
   } catch (error) {
     handleServerError(error, res);
@@ -112,10 +114,11 @@ async function handlePostRequest(
     const validation = UserSchema.safeParse(req.body);
     if (!validation.success) {
       logger.warn({ endpoint: "POST /api/testemongo", error: validation.error});
-      return res.status(400).json({
+      res.status(400).json({
         error: "Dados inválidos",
         details: validation.error.issues,
       });
+      return;
     }
 
     const userData: UserData = validation.data;
@@ -147,10 +150,11 @@ async function handlePostRequest(
 function handleDatabaseError(error: any, res: NextApiResponse) {
   logger.error({ msg: "Database error", error });
   if (error.code === 11000) {
-    return res.status(409).json({
+    res.status(409).json({
       error: "Conflito de dados",
       message: "Registro duplicado detectado"
     });
+    return;
   }
   res.status(500).json({
     error: "Erro no banco de dados",

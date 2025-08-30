@@ -3,7 +3,7 @@
 
 import * as THREE from "three";
 import { Canvas } from "@react-three/fiber";
-import { Environment, ContactShadows, OrbitControls, useGLTF } from "@react-three/drei";
+import { ContactShadows, OrbitControls, useGLTF } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useRef } from "react";
 
 type Variant = "front" | "back" | "detail";
@@ -14,15 +14,6 @@ function ShirtModel({ url }: { url: string }) {
   return <primitive object={scene} />;
 }
 
-function Placeholder() {
-  // caso o GLB ainda não esteja disponível
-  return (
-    <mesh castShadow receiveShadow>
-      <torusKnotGeometry args={[0.7, 0.22, 200, 32]} />
-      <meshStandardMaterial color="#1a1a1a" roughness={0.35} metalness={0.1} />
-    </mesh>
-  );
-}
 
 export default function Product3DView({
   modelUrl = "/models/shirt.glb",
@@ -88,7 +79,6 @@ export default function Product3DView({
         <Suspense fallback={null}>
           <group ref={group} position={[0, 0.2, 0]} scale={1.25} castShadow>
             {/* tenta carregar o GLB; se falhar, renderiza placeholder */}
-            {/* @ts-expect-error hydrating */}
             <ShirtModel url={modelUrl} />
           </group>
         </Suspense>

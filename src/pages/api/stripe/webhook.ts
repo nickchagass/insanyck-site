@@ -16,33 +16,46 @@ function readBuffer(readable: any) {
   });
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   // Guards de runtime (não derrubam preview/dev)
   if (backendDisabled) {
-    return res.status(503).json({ error: "Backend disabled for preview/dev" });
+    res.status(503).json({ error: "Backend disabled for preview/dev" });
+    return;
   }
   if (!isServerEnvReady()) {
     console.error("[INSANYCK][Webhook] Server environment not ready");
-    return res.status(500).json({ error: "Server configuration error" });
+    res.status(500).json({ error: "Server configuration error" });
+    return;
   }
   const need = missingEnv("STRIPE_WEBHOOK_SECRET");
   if (!need.ok) {
-    return res.status(503).json({ error: "Missing env", missing: need.absent });
+    res.status(503).json({ error: "Missing env", missing: need.absent });
+    return;
   }
 
   // Permitir HEAD para health checks
-  if (req.method === "HEAD") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
+  if (req.method === "HEAD") {
+    res.status(200).end();
+    return;
+  }
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method Not Allowed" });
+    return;
+  }
 
   const sig = req.headers["stripe-signature"];
-  if (!sig) return res.status(400).json({ error: "Missing stripe-signature" });
+  if (!sig) {
+    res.status(400).json({ error: "Missing stripe-signature" });
+    return;
+  }
 
   const buf = await readBuffer(req);
   let event;
   try {
     event = stripe.webhooks.constructEvent(buf, String(sig), env.STRIPE_WEBHOOK_SECRET);
   } catch (err: any) {
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    res.status(400).send(`Webhook Error: ${err.message}`);
+    return;
   }
 
   try {
@@ -51,7 +64,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Idempotência
       const exists = await prisma.order.findFirst({ where: { stripeSessionId: session.id } });
-      if (exists) return res.status(200).json({ ok: true, skipped: "duplicate" });
+      if (exists) {
+        res.status(200).json({ ok: true, skipped: "duplicate" });
+        return;
+      }
 
       const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
         expand: ["data.price.product"],
@@ -124,7 +140,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return newOrder;
       });
 
-      return res.status(200).json({ ok: true, orderId: order.id });
+      res.status(200).json({ ok: true, orderId: order.id });
+      return;
     }
     if (event.type === "payment_intent.payment_failed") {
       const paymentIntent = event.data.object as any;
@@ -133,13 +150,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         currency: paymentIntent.currency,
         lastPaymentError: paymentIntent.last_payment_error,
       });
-      return res.status(200).json({ ok: true, logged: "payment_failed" });
+      res.status(200).json({ ok: true, logged: "payment_failed" });
+      return;
     }
     
-    return res.status(200).json({ received: true });
+    res.status(200).json({ received: true });
+    return;
   } catch (err: any) {
     // eslint-disable-next-line no-console
     console.error("[stripe/webhook]", err);
-    return res.status(500).json({ error: err?.message || "Webhook handler error" });
+    res.status(500).json({ error: err?.message || "Webhook handler error" });
+    return;
   }
 }

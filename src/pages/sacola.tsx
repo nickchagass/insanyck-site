@@ -1,5 +1,4 @@
 // INSANYCK STEP 7 + 7.1 — Sacola cinematográfica (halo), SSR-safe, cupom+frete
-"use client";
 
 import React, { useMemo, useState } from "react";
 import Head from "next/head";
@@ -237,7 +236,11 @@ export default function SacolaPage() {
                 {t("bag:checkoutCta", "Ir para checkout")}
               </Link>
               <button
-                onClick={() => router.push("/loja")}
+                onClick={() => {
+                  if (typeof window !== "undefined" && router.isReady) {
+                    router.push("/loja");
+                  }
+                }}
                 className="block w-full text-center mt-2 text-white/70 hover:text-white underline underline-offset-4"
               >
                 {t("bag:continue", "Continuar comprando")}
@@ -252,7 +255,7 @@ export default function SacolaPage() {
 }
 
 // SSR/i18n
-export async function getStaticProps({ locale }: { locale: string }) {
+export async function getServerSideProps({ locale }: { locale: string }) {
   return {
     props: {
       ...(await serverSideTranslations(locale ?? "pt", ["bag", "checkout", "cart", "nav", "common"])),

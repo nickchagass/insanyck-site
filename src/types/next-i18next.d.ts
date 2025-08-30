@@ -1,14 +1,12 @@
-// INSANYCK — i18next lenient typing for CI stabilization
+// i18n Custom Types (lenient but typed)
 import "i18next";
 
 declare module "i18next" {
   interface CustomTypeOptions {
+    resources: Record<string, Record<string, string>>;
     defaultNS: "common";
     returnNull: false;
-    resources: {
-      [key: string]: {
-        [key: string]: any;
-      };
-    };
+    nsSeparator: ":";     // usamos "namespace:key"
+    keySeparator: ".";    // "path.to.key"
   }
 }

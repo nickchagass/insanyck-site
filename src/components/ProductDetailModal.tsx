@@ -1,9 +1,9 @@
 // src/components/ProductDetailModal/ProductDetailModal.tsx
 import React, { useRef, useState, useEffect, Suspense, useCallback } from "react";
 import { Canvas } from "@react-three/fiber";
-import { XR, ARButton, Controllers, useHitTest } from "@react-three/xr";
-import { OrbitControls, Environment, Html, useTexture, useGLTF } from "@react-three/drei";
-import { AnimatePresence, motion } from "@framer-motion";
+import { XR } from "@react-three/xr";
+import { OrbitControls, Environment, useTexture, useGLTF } from "@react-three/drei";
+import { AnimatePresence, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import * as tf from "@tensorflow/tfjs";
 
@@ -60,25 +60,8 @@ interface ProductDetailModalProps {
 }
 
 // --- Loader & Error UI
-function Loader3D() {
-  return (
-    <Html center>
-      <div className="text-yellow-400 font-bold text-lg animate-pulse">
-        Carregando modelo 3D...
-      </div>
-    </Html>
-  );
-}
-
-function ErrorFallback({ message }: { message: string }) {
-  return (
-    <Html center>
-      <div className="text-red-500 bg-black/70 p-4 rounded-xl font-bold">
-        Erro ao carregar modelo: {message}
-      </div>
-    </Html>
-  );
-}
+function Loader3D() { return null; }
+function ErrorFallback({ message }: { message: string }) { return null; }
 
 // --- Componente 3D + texturização
 function ProductModel({
@@ -111,21 +94,13 @@ function ProductModel({
 
 // --- ARView
 function ARView({ product }: { product: Product }) {
-  const arGroup = useRef<any>();
-  useHitTest((hitMatrix) => {
-    if (!arGroup.current) return;
-    arGroup.current.matrix.fromArray(hitMatrix);
-  });
-
   return (
-    <group ref={arGroup}>
+    <group>
       <ProductModel
         modelUrl={product.model3D.glb}
         textureVariant={product.model3D.textures.variants[0]}
       />
-      <Html position={[0, 0.5, 0]} className="ar-hint">
-        {product.arConfig.placementHint}
-      </Html>
+      {/* AR hint removed temporarily */}
     </group>
   );
 }
@@ -133,7 +108,7 @@ function ARView({ product }: { product: Product }) {
 // --- TryOnView (IA)
 function TryOnView({ measurements }: { measurements: BodyMeasurements }) {
   return (
-    <Html center className="bg-black/70 p-8 rounded-2xl text-yellow-400 text-lg font-bold">
+    <div className="bg-black/70 p-8 rounded-2xl text-yellow-400 text-lg font-bold">
       <div>
         👕 Seu tamanho estimado:{" "}
         <span className="text-white">{measurements.size}</span>
@@ -147,7 +122,7 @@ function TryOnView({ measurements }: { measurements: BodyMeasurements }) {
       <div className="mt-4">
         <em>* Recomendação automática gerada por IA</em>
       </div>
-    </Html>
+    </div>
   );
 }
 
@@ -157,7 +132,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   onClose,
 }) => {
   const ns = ["common", "pdp", "product"] as const;
-  const { t } = useTranslation(ns) as any;
+  const { t } = useTranslation(ns);
   const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
   const [mode, setMode] = useState<"3d" | "ar" | "try-on">("3d");
   const [bodyMeasurements, setBodyMeasurements] = useState<BodyMeasurements | null>(null);
@@ -196,7 +171,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     visible: {
       opacity: 1,
       scale: 1,
-      transition: { duration: 0.5, ease: "easeOut", staggerChildren: 0.08 },
+      transition: { duration: 0.5, ease: [0.4, 0, 0.2, 1] as any, staggerChildren: 0.08 },
     },
     exit: { opacity: 0, scale: 0.8, transition: { duration: 0.3 } },
   };
@@ -229,7 +204,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             className="absolute top-6 right-6 z-50 text-yellow-400 text-2xl bg-black/60 rounded-full w-12 h-12 flex items-center justify-center hover:bg-yellow-400 hover:text-black transition-all"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.92 }}
-            aria-label={t("fechar")}
+            aria-label={t("common:close")}
           >
             ✕
           </motion.button>
@@ -246,21 +221,16 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               whileHover={{ scale: 1.06 }}
               whileTap={{ scale: 0.96 }}
             >
-              {t("modo3D")}
+              {t("pdp:modo3D")}
             </motion.button>
             {xrSupported && (
-              <ARButton
+              <button
                 aria-label="Visualizar produto em realidade aumentada"
-                sessionInit={{
-                  requiredFeatures: ["hit-test"],
-                  optionalFeatures: ["dom-overlay"],
-                  domOverlay: { root: canvasRef.current },
-                }}
                 className="bg-purple-500 text-white px-4 py-2 rounded-full font-bold"
                 onClick={() => setMode("ar")}
               >
-                {t("verEmAR")}
-              </ARButton>
+                {t("pdp:verEmAR")}
+              </button>
             )}
             {product.tryOnData && (
               <motion.button
@@ -270,13 +240,13 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                 whileTap={{ scale: 0.96 }}
                 disabled={isLoadingAI}
               >
-                {isLoadingAI ? t("carregando") : t("experimentar")}
+                {isLoadingAI ? t("common:loading") : t("pdp:experimentar")}
               </motion.button>
             )}
           </div>
 
           {/* CANVAS 3D PRINCIPAL */}
-          <div className="w-full h-full">
+          <div className="relative w-full h-full">
             <Canvas
               ref={canvasRef}
               shadows
@@ -285,7 +255,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               style={{ background: "transparent" }}
             >
               <XR store={null as any}>
-                <Suspense fallback={<Html center>{t("carregando")}</Html>}>
+                <Suspense fallback={null}>
                   <ambientLight intensity={0.89} />
                   <spotLight position={[12, 16, 18]} angle={0.17} penumbra={1} />
                   {mode === "3d" && currentTextureVariant && (
@@ -308,9 +278,15 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                     <TryOnView measurements={bodyMeasurements} />
                   )}
                 </Suspense>
-                <Controllers />
               </XR>
             </Canvas>
+            
+            {/* Overlays DOM fora do Canvas */}
+            {mode === "ar" && xrSupported && (
+              <div className="pointer-events-none absolute left-1/2 bottom-24 -translate-x-1/2 text-yellow-400 font-bold">
+                {product.arConfig?.placementHint || "Posicione o produto no ambiente"}
+              </div>
+            )}
           </div>
 
           {/* RODAPÉ/INFOS */}

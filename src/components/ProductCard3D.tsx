@@ -1,7 +1,7 @@
 // src/components/ProductCard3D.tsx
 import React, { Suspense, useRef, useState, useCallback } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Environment, Html, useGLTF } from "@react-three/drei";
+import { OrbitControls, Environment, useGLTF } from "@react-three/drei";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -61,7 +61,7 @@ export const ProductCard3D: React.FC<ProductCard3DProps> = ({
             className="bg-gradient-to-r from-yellow-400 to-orange-400 text-black px-4 py-1 rounded-full text-xs font-extrabold animate-pulse shadow-md"
             style={{ letterSpacing: 1, boxShadow: "0 2px 10px #ffd70055" }}
           >
-            {t("destaque")}
+            {t("common:featured")}
           </motion.span>
         )}
         {isNew && (
@@ -70,7 +70,7 @@ export const ProductCard3D: React.FC<ProductCard3DProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             className="bg-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold animate-pulse"
           >
-            {t("novidade")}
+            {t("common:new")}
           </motion.span>
         )}
       </div>
@@ -78,15 +78,13 @@ export const ProductCard3D: React.FC<ProductCard3DProps> = ({
       {/* VISUALIZAÇÃO 3D */}
       <div
         className="w-full h-64 rounded-xl mb-5 bg-gradient-to-br from-neutral-900 to-black flex items-center justify-center overflow-hidden relative"
-        aria-label={t("visualizacao3d")}
+        aria-label={t("common:view3D")}
       >
         <Suspense
           fallback={
-            <Html center>
-              <div className="animate-pulse text-yellow-400 text-lg font-bold">
-                {t("carregando")}
-              </div>
-            </Html>
+            <div className="animate-pulse text-yellow-400 text-lg font-bold">
+              {t("common:loading")}
+            </div>
           }
         >
           {is3d ? (
@@ -129,9 +127,9 @@ export const ProductCard3D: React.FC<ProductCard3DProps> = ({
         onClick={onDetails}
         whileHover={{ scale: 1.03 }}
         whileTap={{ scale: 0.97 }}
-        aria-label={t("verDetalhes")}
+        aria-label={t("common:viewDetails")}
       >
-        {t("verDetalhes")}
+        {t("common:viewDetails")}
       </motion.button>
     </motion.div>
   );

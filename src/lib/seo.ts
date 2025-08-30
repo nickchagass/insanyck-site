@@ -1,6 +1,11 @@
 // INSANYCK SEO Core Library
 // Handles meta tags, Open Graph, Twitter Cards, hreflang, and JSON-LD
+import React from 'react';
 import { PUBLIC_URL, getPublicBaseUrl } from './env.public';
+
+type LinkTag = React.DetailedHTMLProps<
+  React.LinkHTMLAttributes<HTMLLinkElement>, HTMLLinkElement
+>;
 
 // Base configuration
 export const baseTitle = 'INSANYCK';
@@ -66,16 +71,16 @@ export const metaTags = (config: MetaTagsConfig) => {
     meta.push({ name: 'robots', content: 'noindex, nofollow' });
   }
 
-  const link = [
+  const link: LinkTag[] = [
     { rel: 'canonical', href: fullCanonical },
   ];
 
   // Add hreflang alternates
   if (!noIndex) {
     link.push(
-      { rel: 'alternate', href: fullCanonical, hrefLang: 'pt-BR' } as any,
-      { rel: 'alternate', href: fullCanonical.replace('/pt/', '/en/'), hrefLang: 'en' } as any,
-      { rel: 'alternate', href: fullCanonical, hrefLang: 'x-default' } as any
+      { rel: 'alternate', href: fullCanonical, hrefLang: 'pt-BR' },
+      { rel: 'alternate', href: fullCanonical.replace('/pt/', '/en/'), hrefLang: 'en' },
+      { rel: 'alternate', href: fullCanonical, hrefLang: 'x-default' }
     );
   }
 

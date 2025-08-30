@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth';
 import { createAuthOptions } from '@/pages/api/auth/[...nextauth]';
 import AdminLayout from '@/components/AdminLayout';
 import { prisma } from '@/lib/prisma';
+import Link from 'next/link';
 import { Package, Users, ShoppingCart, TrendingUp } from 'lucide-react';
 
 interface DashboardStats {
@@ -95,13 +96,13 @@ export default function AdminDashboard({ stats }: AdminDashboardProps) {
               <Users className="h-5 w-5 mr-2" />
               Gerenciar Categorias
             </a>
-            <a
+            <Link
               href="/admin/orders"
               className="flex items-center justify-center px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 transition-colors"
             >
               <ShoppingCart className="h-5 w-5 mr-2" />
               Ver Pedidos
-            </a>
+            </Link>
           </div>
         </div>
       </div>
