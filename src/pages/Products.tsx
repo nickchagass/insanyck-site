@@ -1,14 +1,17 @@
 import React from "react";
 import dynamic from "next/dynamic";
 
-const ProductCard3D = dynamic(() => import("@/components/ProductCard3D").then(mod => ({ default: mod.ProductCard3D })), {
-  ssr: false,
-  loading: () => (
-    <div className="bg-gray-900 rounded-xl p-6 h-96 flex items-center justify-center">
-      <div className="text-yellow-400 font-bold animate-pulse">Carregando...</div>
-    </div>
-  )
-});
+const ProductCard3D = dynamic(
+  () => import("@/components/three/ProductCard3D").then((mod) => ({ default: mod.ProductCard3D })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="bg-gray-900 rounded-xl p-6 h-96 flex items-center justify-center">
+        <div className="text-yellow-400 font-bold animate-pulse">Carregando...</div>
+      </div>
+    ),
+  }
+);
 
 const produtos3D = [
   {

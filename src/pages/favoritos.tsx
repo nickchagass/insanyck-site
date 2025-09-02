@@ -54,7 +54,8 @@ export default function FavoritosPage() {
       <main className="pt-[120px] insanyck-bloom insanyck-bloom--soft">
         <div className="mx-auto max-w-[1280px] px-6">
           <h1 className="text-white/90 text-2xl font-semibold">
-            {t("wishlist:title", "Favoritos")} {hydrated ? <span className="text-white/50">({items.length})</span> : null}
+            {t("wishlist:title", "Favoritos")}{" "}
+            {hydrated ? <span className="text-white/50">({items.length})</span> : null}
           </h1>
 
           {!hydrated ? (
@@ -85,13 +86,7 @@ export default function FavoritosPage() {
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
   return {
     props: {
-      ...(await serverSideTranslations(locale ?? "pt", [
-        "common",
-        "nav",
-        "plp",
-        "wishlist",
-        "ui"
-      ])),
+      ...(await serverSideTranslations(locale ?? "pt", ["common", "nav", "plp", "wishlist", "ui"])),
       revalidate: 60,
     },
   };

@@ -1,0 +1,12 @@
+.next
+.turbo
+dist
+coverage
+node_modules
+public/**/*.glb
+public/**/*.hdr
+public/**/*.bin
+public/sw.js
+package-lock.json
+pnpm-lock.yaml
+yarn.lock

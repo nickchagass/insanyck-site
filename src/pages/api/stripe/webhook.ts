@@ -96,7 +96,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const product = (li.price?.product as any) || {};
                 const slug =
                   product?.metadata?.slug ||
-                  title.toLowerCase().replace(/[^\w]+/g, "-").replace(/(^-|-$)/g, "");
+                  title
+                    .toLowerCase()
+                    .replace(/[^\w]+/g, "-")
+                    .replace(/(^-|-$)/g, "");
                 const image = Array.isArray(product?.images) ? product.images[0] : undefined;
 
                 const variantId = product?.metadata?.variantId;
@@ -153,7 +156,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(200).json({ ok: true, logged: "payment_failed" });
       return;
     }
-    
+
     res.status(200).json({ received: true });
     return;
   } catch (err: any) {

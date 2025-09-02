@@ -52,10 +52,10 @@ export default function CheckoutPage() {
     setLoading(true);
     try {
       // ETAPA 11D — Adaptar para nova API /api/checkout com variantId/sku/qty do cart v2
-      const checkoutItems = items.map(item => ({
+      const checkoutItems = items.map((item) => ({
         variantId: item.variantId,
         sku: item.sku,
-        qty: item.qty
+        qty: item.qty,
       }));
 
       const res = await fetch("/api/checkout", {
@@ -63,7 +63,7 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: checkoutItems,
-          currency: "BRL"
+          currency: "BRL",
         }),
       });
       if (!res.ok) throw new Error("Checkout API error");
@@ -85,8 +85,12 @@ export default function CheckoutPage() {
     <>
       <Head>
         <title>{seo.title}</title>
-        {seo.meta.map((tag, i) => <meta key={i} {...tag} />)}
-        {seo.link.map((l, i) => <link key={i} {...l} />)}
+        {seo.meta.map((tag, i) => (
+          <meta key={i} {...tag} />
+        ))}
+        {seo.link.map((l, i) => (
+          <link key={i} {...l} />
+        ))}
       </Head>
 
       <main className="mx-auto max-w-[1200px] px-6 pt-[120px] pb-20">
@@ -95,7 +99,10 @@ export default function CheckoutPage() {
         {items.length === 0 ? (
           <div className="mt-10 rounded-2xl border border-white/10 bg-black/40 p-8 text-white/70">
             <p>{t("bag:empty", "Sua sacola está vazia.")}</p>
-            <Link href="/loja" className="mt-4 inline-block underline underline-offset-4 hover:text-white">
+            <Link
+              href="/loja"
+              className="mt-4 inline-block underline underline-offset-4 hover:text-white"
+            >
               {t("bag:goShop", "Ir para a loja")}
             </Link>
           </div>
@@ -108,7 +115,7 @@ export default function CheckoutPage() {
                   {t("checkout:sections.customer", "Seus dados")}
                 </h2>
                 <AddressForm
-                  register={(/* compat mock */) => ({ name: "", onChange: () => {} } as any)}
+                  register={(/* compat mock */) => ({ name: "", onChange: () => {} }) as any}
                   errors={{} as any}
                 />
                 <h2 className="text-white/90 font-medium mt-6 mb-3">
@@ -129,7 +136,9 @@ export default function CheckoutPage() {
                   disabled={loading || !canPay}
                   className="mt-4 rounded-xl px-4 py-3 font-semibold bg-white text-black hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 transition disabled:opacity-60"
                 >
-                  {loading ? t("checkout:processing", "Processando...") : t("checkout:placeOrder", "Finalizar pedido")}
+                  {loading
+                    ? t("checkout:processing", "Processando...")
+                    : t("checkout:placeOrder", "Finalizar pedido")}
                 </button>
               </div>
             </section>
@@ -152,7 +161,9 @@ export default function CheckoutPage() {
                       />
                       <div className="flex-1">
                         <div className="text-white/80 text-sm">{it.title}</div>
-                        {it.options?.variant ? <div className="text-white/50 text-xs">{it.options.variant}</div> : null}
+                        {it.options?.variant ? (
+                          <div className="text-white/50 text-xs">{it.options.variant}</div>
+                        ) : null}
                       </div>
                       <div className="text-white/70 text-sm">
                         {new Intl.NumberFormat(locale === "en" ? "en-US" : "pt-BR", {

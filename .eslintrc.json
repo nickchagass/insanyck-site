@@ -29,6 +29,36 @@
       "rules": {
         "no-restricted-imports": "off"
       }
+    },
+    {
+      "files": ["src/pages/_document.tsx", "src/pages/**/api/*.ts", "src/pages/404.tsx", "src/pages/_error.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "@react-three/fiber",
+                "message": "3D imports are not allowed in error pages, API routes, or _document to prevent bundle bloat and SSR conflicts."
+              },
+              {
+                "name": "@react-three/drei",
+                "message": "3D imports are not allowed in error pages, API routes, or _document to prevent bundle bloat and SSR conflicts."
+              },
+              {
+                "name": "three",
+                "message": "3D imports are not allowed in error pages, API routes, or _document to prevent bundle bloat and SSR conflicts."
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["**/three/**"],
+                "message": "3D component imports are not allowed in error pages, API routes, or _document to prevent bundle bloat and SSR conflicts."
+              }
+            ]
+          }
+        ]
+      }
     }
   ]
 }

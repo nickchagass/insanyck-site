@@ -1,25 +1,25 @@
 // INSANYCK STEP 10 — Public Products API
 // src/pages/api/products/index.ts
-import { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from '@/lib/prisma';
+import { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "@/lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', ['GET']);
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (req.method !== "GET") {
+    res.setHeader("Allow", ["GET"]);
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   const {
-    page = '1',
-    limit = '12',
+    page = "1",
+    limit = "12",
     category,
     search,
     minPrice,
     maxPrice,
     size,
     color,
-    inStock = 'false',
-    sort = 'newest',
+    inStock = "false",
+    sort = "newest",
   } = req.query;
 
   const pageNum = parseInt(page as string);
@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const where: any = {
-      status: 'active',
+      status: "active",
     };
 
     // Filtro por categoria
@@ -41,14 +41,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Filtro por busca
     if (search) {
       where.OR = [
-        { title: { contains: search as string, mode: 'insensitive' } },
-        { description: { contains: search as string, mode: 'insensitive' } },
+        { title: { contains: search as string, mode: "insensitive" } },
+        { description: { contains: search as string, mode: "insensitive" } },
       ];
     }
 
     // INSANYCK STEP 10 — Filtros por variantes com lógica AND correta
-    if (minPrice || maxPrice || size || color || inStock === 'true') {
-      const andConditions: any[] = [{ status: 'active' }];
+    if (minPrice || maxPrice || size || color || inStock === "true") {
+      const andConditions: any[] = [{ status: "active" }];
 
       if (minPrice || maxPrice) {
         andConditions.push({
@@ -66,7 +66,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           options: {
             some: {
               optionValue: {
-                option: { slug: 'size' },
+                option: { slug: "size" },
                 value: String(size),
               },
             },
@@ -79,7 +79,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           options: {
             some: {
               optionValue: {
-                option: { slug: 'color' },
+                option: { slug: "color" },
                 slug: String(color),
               },
             },
@@ -87,7 +87,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
       }
 
-      if (inStock === 'true') {
+      if (inStock === "true") {
         andConditions.push({
           inventory: {
             quantity: { gt: 0 },
@@ -99,9 +99,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // INSANYCK STEP 10 — Ordenação (price em memória, outros diretos)
-    let orderBy: any = { updatedAt: 'desc' }; // newest
-    if (sort === 'name') {
-      orderBy = { title: 'asc' };
+    let orderBy: any = { updatedAt: "desc" }; // newest
+    if (sort === "name") {
+      orderBy = { title: "asc" };
     }
     // price_asc/price_desc será feito em memória após buscar os dados
 
@@ -116,7 +116,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             take: 1,
           },
           variants: {
-            where: { status: 'active' },
+            where: { status: "active" },
             include: {
               price: true,
               inventory: true,
@@ -139,12 +139,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // INSANYCK STEP 10 — Transformar dados para frontend com cálculo de preços
     const productsWithPricing = allProducts.map((product) => {
-      const activeVariants = product.variants.filter(v => v.status === 'active');
-      const prices = activeVariants.map(v => v.price?.cents || 0).filter(p => p > 0);
-      
+      const activeVariants = product.variants.filter((v) => v.status === "active");
+      const prices = activeVariants.map((v) => v.price?.cents || 0).filter((p) => p > 0);
+
       const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
       const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
-      
+
       const totalStock = activeVariants.reduce((sum, v) => {
         const available = (v.inventory?.quantity || 0) - (v.inventory?.reserved || 0);
         return sum + Math.max(0, available);
@@ -160,7 +160,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         pricing: {
           minCents: minPrice,
           maxCents: maxPrice,
-          currency: 'BRL',
+          currency: "BRL",
         },
         availability: {
           inStock: totalStock > 0,
@@ -174,9 +174,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // INSANYCK STEP 10 — Ordenação por preço em memória
     let sortedProducts = productsWithPricing;
-    if (sort === 'price_asc') {
+    if (sort === "price_asc") {
       sortedProducts = productsWithPricing.sort((a, b) => a._sortPrice - b._sortPrice);
-    } else if (sort === 'price_desc') {
+    } else if (sort === "price_desc") {
       sortedProducts = productsWithPricing.sort((a, b) => b._sortPrice - a._sortPrice);
     }
 
@@ -200,7 +200,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
   } catch (error) {
-    console.error('Error fetching products:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error("Error fetching products:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 }

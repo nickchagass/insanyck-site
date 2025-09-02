@@ -6,13 +6,13 @@ import { useState } from "react";
 import { useTranslation } from "next-i18next"; // INSANYCK STEP 4
 import dynamic from "next/dynamic";
 
-const Product3DView = dynamic(() => import("@/components/Product3DView"), {
+const Product3DView = dynamic(() => import("@/components/three/Product3DView"), {
   ssr: false,
   loading: () => (
     <div className="aspect-square bg-gray-900 rounded-xl flex items-center justify-center">
       <div className="text-yellow-400 font-bold animate-pulse">Carregando modelo 3D...</div>
     </div>
-  )
+  ),
 });
 
 type Variant = "front" | "back" | "detail";
@@ -47,14 +47,18 @@ export default function HeroProduct() {
 
           <div className="mt-8 flex flex-wrap gap-4 justify-center lg:justify-start">
             <CTA>{t("product:cta.buyNow", "Comprar agora") /* INSANYCK STEP 4 */}</CTA>
-            <CTA variant="ghost">{t("product:cta.viewDetails", "Ver detalhes") /* INSANYCK STEP 4 */}</CTA>
+            <CTA variant="ghost">
+              {t("product:cta.viewDetails", "Ver detalhes") /* INSANYCK STEP 4 */}
+            </CTA>
           </div>
 
           <div className="mt-6 text-white/75">
             {/* instrução muda conforme viewer */}
-            {USE_STATIC_VIEW
-              ? t("product:hint.thumbs", "Use as miniaturas para ver frente/verso/detalhes")
-              : t("product:hint.drag", "Arraste para girar — passe o mouse") /* INSANYCK STEP 4 */}
+            {
+              USE_STATIC_VIEW
+                ? t("product:hint.thumbs", "Use as miniaturas para ver frente/verso/detalhes")
+                : t("product:hint.drag", "Arraste para girar — passe o mouse") /* INSANYCK STEP 4 */
+            }
           </div>
 
           {/* botões de texto (Frente/Verso) como na ref */}
@@ -66,7 +70,9 @@ export default function HeroProduct() {
               <button
                 key={o.k}
                 onClick={() => setVariant(o.k as Variant)}
-                className={o.k === variant ? "underline underline-offset-4" : "opacity-80 hover:opacity-100"}
+                className={
+                  o.k === variant ? "underline underline-offset-4" : "opacity-80 hover:opacity-100"
+                }
                 aria-pressed={o.k === variant}
               >
                 {o.label}

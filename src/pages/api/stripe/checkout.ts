@@ -7,10 +7,10 @@ import { env, isServerEnvReady } from "@/lib/env.server";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // INSANYCK STEP 11 — Runtime guards for environment
   if (!isServerEnvReady()) {
-    console.error('[INSANYCK][Stripe Checkout] Server environment not ready');
-    return res.status(500).json({ 
+    console.error("[INSANYCK][Stripe Checkout] Server environment not ready");
+    return res.status(500).json({
       error: "Service temporarily unavailable",
-      code: "ENV_NOT_READY" 
+      code: "ENV_NOT_READY",
     });
   }
 
@@ -33,27 +33,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               product_data: {
                 name: it.title || "Produto",
                 images: it.image ? [it.image] : undefined,
-                metadata: { 
-                  slug: it.slug || "", 
+                metadata: {
+                  slug: it.slug || "",
                   variant: it.variant || "",
                   // INSANYCK STEP 10 — Metadados para o webhook decrementar estoque
                   variantId: it.variantId || "",
                   sku: it.sku || "",
-                  title: it.title || ""
+                  title: it.title || "",
                 },
               },
             },
           }))
         : []),
       ...(shippingCents > 0
-        ? [{
-            quantity: 1,
-            price_data: {
-              currency,
-              unit_amount: Number(shippingCents) || 0,
-              product_data: { name: "Frete" },
+        ? [
+            {
+              quantity: 1,
+              price_data: {
+                currency,
+                unit_amount: Number(shippingCents) || 0,
+                product_data: { name: "Frete" },
+              },
             },
-          }]
+          ]
         : []),
     ];
 
