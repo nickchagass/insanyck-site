@@ -1,0 +1,43 @@
+{
+  "ci": {
+    "collect": {
+      "startServerCommand": "npm run start",
+      "url": [
+        "http://localhost:3000/pt",
+        "http://localhost:3000/pt/sacola",
+        "http://localhost:3000/pt/checkout",
+        "http://localhost:3000/pt/favoritos",
+        "http://localhost:3000/pt/produto/slug-exemplo"
+      ],
+      "numberOfRuns": 2,
+      "settings": {
+        "preset": "desktop",
+        "throttlingMethod": "devtools",
+        "formFactor": "desktop"
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": [
+          ">=",
+          0.8
+        ],
+        "categories:accessibility": [
+          ">=",
+          0.9
+        ],
+        "categories:best-practices": [
+          ">=",
+          0.9
+        ],
+        "categories:seo": [
+          ">=",
+          0.9
+        ]
+      }
+    }
+  }
+}
