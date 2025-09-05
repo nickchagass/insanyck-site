@@ -4,7 +4,6 @@
 
 import { ButtonHTMLAttributes, forwardRef, ReactNode } from "react";
 import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "ghost" | "link";
@@ -63,6 +62,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   }, ref) => {
     const isDisabled = disabled || loading;
 
+    // INSANYCK STEP 4 · Lote 3 — Extract motion-specific props to avoid conflicts
+    const { onDrag, onDragStart, onDragEnd, ...buttonProps } = props as any;
+
     return (
       <motion.button
         ref={ref}
@@ -85,7 +87,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={isDisabled}
         aria-busy={loading}
         data-state={loading ? "loading" : "idle"}
-        {...props}
+        {...buttonProps}
       >
         {loading && <LoadingSpinner />}
         {children}
@@ -97,6 +99,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 // INSANYCK STEP 4 · Lote 3 — Utility function for className merging
-function cn(...classes: (string | undefined)[]): string {
+function cn(...classes: (string | undefined | false)[]): string {
   return classes.filter(Boolean).join(' ');
 }

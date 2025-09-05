@@ -67,7 +67,7 @@ export default function SearchEmpty({ query, onClearFilters, onNewSearch }: Sear
           {query ? (
             <>
               {t("search:empty.withQuery.description", "Não encontramos nada para")}{" "}
-              <span className="text-white/80 font-medium">"{query}"</span>
+              <span className="text-white/80 font-medium">&ldquo;{query}&rdquo;</span>
               <br />
               {t("search:empty.withQuery.suggestion", "Tente termos mais gerais ou explore nossa coleção")}
             </>

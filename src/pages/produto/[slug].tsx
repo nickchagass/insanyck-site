@@ -1,7 +1,6 @@
 // INSANYCK STEP 10 — PDP robusto (SSR seguro + mapeamento compatível)
 import Head from "next/head";
 import Link from "next/link";
-import Image from "next/image";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
@@ -9,6 +8,8 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import AddToCartButton from "@/components/AddToCartButton";
+// INSANYCK STEP 4 · Lote 3 — OptimizedImage para zero CLS
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 const VariantSelector = dynamic(() => import("@/components/VariantSelector"), {
   ssr: true,
@@ -120,16 +121,17 @@ export default function ProdutoPage({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {/* Imagem */}
-          <div className="relative aspect-square md:aspect-[4/5] overflow-hidden rounded-2xl bg-white/5">
-            <Image
+          {/* INSANYCK STEP 4 · Lote 3 — OptimizedImage para zero CLS */}
+          <div className="overflow-hidden rounded-2xl bg-white/5">
+            <OptimizedImage
               src={product.image || "/products/oversized-classic/front.webp"}
-              alt={product.title}
-              fill
-              priority
-              fetchPriority="high"
+              alt={`${product.title} — ${t('common:aria.productImage', 'Imagem do produto')}`}
+              aspectRatio="1/1"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
-              className="object-cover"
+              className="object-cover md:aspect-[4/5]"
+              priority={true}
+              loading="eager"
+              fallbackSrc="/products/placeholder/front.webp"
             />
           </div>
 

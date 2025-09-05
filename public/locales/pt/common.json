@@ -33,6 +33,13 @@
   "previous": "Anterior",
   "save": "Salvar",
   "cancel": "Cancelar",
-  "confirm": "Confirmar"
+  "confirm": "Confirmar",
+  "aria": {
+    "collection": "Coleção INSANYCK",
+    "productImage": "Imagem do produto",
+    "logo": "Logo INSANYCK",
+    "menu": "Menu principal",
+    "cart": "Carrinho de compras"
+  }
 }
   

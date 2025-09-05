@@ -20,10 +20,10 @@
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release-notes": "changeset status --verbose",
-    "test:e2e": "playwright test",
-    "test:e2e:ci": "playwright test --reporter=list,html",
-    "test:e2e:update": "playwright test --update-snapshots",
-    "test:a11y": "playwright test tests/a11y --reporter=list,html"
+    "test:e2e": "playwright test -c playwright.config.ts",
+    "test:e2e:update": "playwright test -c playwright.config.ts --update-snapshots",
+    "test:a11y": "playwright test -c playwright.a11y.config.ts",
+    "test:all": "npm run test:e2e && npm run test:a11y"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",

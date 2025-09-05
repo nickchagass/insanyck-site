@@ -1,25 +1,19 @@
-// INSANYCK STEP 4 · Lote 3 — Playwright E2E/Visual config final
+// INSANYCK STEP 4 · Lote 3 — Playwright A11y config
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: './tests/a11y',
   timeout: 30 * 1000,
 
-  expect: {
-    timeout: 5000,
-    toHaveScreenshot: {
-      // 0,3% de tolerância visual
-      threshold: 0.003,
-      maxDiffPixels: 1000,
-    },
-  },
+  // INSANYCK STEP 4 · Lote 3 — A11y com DOM estável (timeout estendido)
+  expect: { timeout: 10000 },
 
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI
-    ? [['list'], ['html', { outputFolder: 'playwright-report' }]]
+    ? [['list'], ['html', { outputFolder: 'playwright-report-a11y' }]]
     : 'list',
 
   use: {
@@ -27,7 +21,7 @@ export default defineConfig({
     locale: 'pt-BR',
     viewport: { width: 1366, height: 900 },
     trace: 'retain-on-failure',
-    video: 'retain-on-failure',
+    video: 'off',
     screenshot: 'only-on-failure',
     actionTimeout: 15 * 1000,
   },
@@ -36,11 +30,11 @@ export default defineConfig({
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   ],
 
-  webServer: process.env.CI ? undefined : {
-    command: 'npm run dev',
+  webServer: {
+    command: 'npm run build && npm start',
     port: 3000,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
   },
 
-  outputDir: 'test-results/',
+  outputDir: 'test-results-a11y/',
 });

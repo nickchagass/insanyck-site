@@ -32,13 +32,16 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
   // INSANYCK STEP 4 · Lote 3 — Focus trap and initial focus
   useEffect(() => {
     if (open) {
-      // Focus the heading when drawer opens
-      titleRef.current?.focus();
-      
       // Store previously focused element to restore later
       const previouslyFocused = document.activeElement as HTMLElement;
       
+      // Focus the heading when drawer opens (small delay for animation)
+      const focusTimer = setTimeout(() => {
+        titleRef.current?.focus();
+      }, 150);
+      
       return () => {
+        clearTimeout(focusTimer);
         // Restore focus when drawer closes
         previouslyFocused?.focus?.();
       };

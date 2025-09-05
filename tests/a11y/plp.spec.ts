@@ -5,7 +5,9 @@ import AxeBuilder from '@axe-core/playwright';
 test.describe('Product Listing A11y', () => {
   test('should not have any automatically detectable accessibility issues', async ({ page }) => {
     await page.goto('/pt/loja');
+    await page.waitForSelector('main', { state: 'visible' });
     await page.waitForLoadState('networkidle');
+    await page.waitForSelector('h1', { timeout: 5000 }).catch(()=>{});
 
     // INSANYCK STEP 4 · Lote 3 — Run axe scan focusing on product grid
     const accessibilityScanResults = await new AxeBuilder({ page })
@@ -38,6 +40,7 @@ test.describe('Product Listing A11y', () => {
 
   test('should have accessible product cards', async ({ page }) => {
     await page.goto('/pt/loja');
+    await page.waitForSelector('main', { state: 'visible' });
     await page.waitForLoadState('networkidle');
 
     // INSANYCK STEP 4 · Lote 3 — Check product cards accessibility
@@ -68,6 +71,7 @@ test.describe('Product Listing A11y', () => {
 
   test('should have keyboard navigable filters', async ({ page }) => {
     await page.goto('/pt/loja');
+    await page.waitForSelector('main', { state: 'visible' });
     await page.waitForLoadState('networkidle');
 
     // INSANYCK STEP 4 · Lote 3 — Check for filter controls
@@ -94,6 +98,7 @@ test.describe('Product Listing A11y', () => {
 
   test('should have proper list structure for products', async ({ page }) => {
     await page.goto('/pt/loja');
+    await page.waitForSelector('main', { state: 'visible' });
     await page.waitForLoadState('networkidle');
 
     // INSANYCK STEP 4 · Lote 3 — Check if products are in a list structure

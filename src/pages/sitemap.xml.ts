@@ -95,10 +95,9 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     try {
       const products = await prisma.product.findMany({
         where: { 
-          published: true,
           // Only include products with valid slugs
           slug: {
-            not: null
+            not: null as any
           }
         },
         select: {

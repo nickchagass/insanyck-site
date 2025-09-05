@@ -2,10 +2,11 @@
 
 import { CTA } from "@/components/CTA";
 import Link from "next/link";
-import Image from "next/image";
 import { useRef } from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "next-i18next"; // INSANYCK STEP 4
+// INSANYCK STEP 4 · Lote 3 — OptimizedImage para zero CLS
+import OptimizedImage from "@/components/ui/OptimizedImage";
 
 // INSANYCK STEP 4 — tipagem das chaves usadas neste componente
 type HomeKey =
@@ -106,15 +107,16 @@ export default function HeroHome() {
                 whileHover={{ y: -2 }}
                 className="snap-start shrink-0 w-[220px] h-[140px] rounded-2xl bg-[#0f0f10] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] relative overflow-hidden"
               >
-              {/* INSANYCK STEP 4 — alt usa a chave tipada do carrossel */}
-              <Image
+              {/* INSANYCK STEP 4 · Lote 3 — OptimizedImage para zero CLS */}
+              <OptimizedImage
                 src={it.img}
-                alt={t(it.titleKey)}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1200px"
+                alt={`${t(it.titleKey)} — ${t("aria.collection", "Coleção INSANYCK")}`}
+                aspectRatio="22/14"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 220px"
                 className="object-cover opacity-[0.92]"
                 priority={index === 0}
                 loading={index === 0 ? "eager" : "lazy"}
+                fallbackSrc="/thumbs/placeholder.webp"
               />
 
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.5)_100%)]" />

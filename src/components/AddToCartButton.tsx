@@ -53,6 +53,7 @@ export default function AddToCartButton({
     
     setIsAdding(true);
     
+    try {
       const priceCents =
         typeof product.priceCents === "number"
           ? product.priceCents

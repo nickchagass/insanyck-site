@@ -3,12 +3,14 @@ import Head from "next/head";
 import type { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 import Navbar from "../components/Navbar";
 import HeroHome from "../sections/HeroHome";
 import { seoHome } from "../lib/seo";
 
 export default function HomePage() {
   const { locale } = useRouter();
+  const { t } = useTranslation('home');
   const seo = seoHome(locale);
 
   return (
@@ -31,6 +33,8 @@ export default function HomePage() {
       </Head>
       <Navbar />
       <main className="pt-24">
+        {/* INSANYCK STEP 4 · Lote 3 — H1 sr-only para hierarquia A11y */}
+        <h1 className="sr-only">{t('hero.title', 'INSANYCK — Essential luxury in motion')}</h1>
         <HeroHome />
       </main>
     </>

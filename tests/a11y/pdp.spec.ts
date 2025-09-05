@@ -5,7 +5,9 @@ import AxeBuilder from '@axe-core/playwright';
 test.describe('Product Detail A11y', () => {
   test('should not have any automatically detectable accessibility issues', async ({ page }) => {
     await page.goto('/pt/produto/oversized-classic');
+    await page.waitForSelector('main', { state: 'visible' });
     await page.waitForLoadState('networkidle');
+    await page.waitForSelector('h1', { timeout: 5000 }).catch(()=>{});
 
     // INSANYCK STEP 4 · Lote 3 — Run axe scan on product page
     const accessibilityScanResults = await new AxeBuilder({ page })
@@ -38,6 +40,7 @@ test.describe('Product Detail A11y', () => {
 
   test('should have accessible product images', async ({ page }) => {
     await page.goto('/pt/produto/oversized-classic');
+    await page.waitForSelector('main', { state: 'visible' });
     await page.waitForLoadState('networkidle');
 
     // INSANYCK STEP 4 · Lote 3 — Check product images
@@ -63,6 +66,7 @@ test.describe('Product Detail A11y', () => {
 
   test('should have accessible add to cart button', async ({ page }) => {
     await page.goto('/pt/produto/oversized-classic');
+    await page.waitForSelector('main', { state: 'visible' });
     await page.waitForLoadState('networkidle');
 
     // INSANYCK STEP 4 · Lote 3 — Check add to cart button
@@ -94,6 +98,7 @@ test.describe('Product Detail A11y', () => {
 
   test('should have accessible variant selector', async ({ page }) => {
     await page.goto('/pt/produto/oversized-classic');
+    await page.waitForSelector('main', { state: 'visible' });
     await page.waitForLoadState('networkidle');
 
     // INSANYCK STEP 4 · Lote 3 — Check variant/size selectors
@@ -128,7 +133,9 @@ test.describe('Product Detail A11y', () => {
 
   test('should have proper heading structure for product info', async ({ page }) => {
     await page.goto('/pt/produto/oversized-classic');
+    await page.waitForSelector('main', { state: 'visible' });
     await page.waitForLoadState('networkidle');
+    await page.waitForSelector('h1', { timeout: 5000 }).catch(()=>{});
 
     // INSANYCK STEP 4 · Lote 3 — Check product page heading structure
     const productTitle = await page.locator('h1').count();
