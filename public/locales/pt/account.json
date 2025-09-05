@@ -25,7 +25,31 @@
     },
     "orders": {
       "title": "Pedidos",
-      "empty": "Você ainda não possui pedidos."
+      "empty": {
+        "title": "Sua jornada começa aqui",
+        "description": "Ainda não há pedidos em sua conta. Descubra peças que definem seu estilo único."
+      },
+      "benefits": {
+        "shipping": "Entrega expressa",
+        "quality": "Qualidade premium",
+        "service": "Suporte 24/7"
+      },
+      "status": {
+        "pending": "Pendente",
+        "processing": "Processando",
+        "shipped": "Enviado",
+        "delivered": "Entregue",
+        "cancelled": "Cancelado"
+      },
+      "details": {
+        "orderNumber": "Pedido #{{number}}",
+        "orderDate": "Pedido em",
+        "total": "Total",
+        "items": "{{count}} item",
+        "items_plural": "{{count}} itens",
+        "trackOrder": "Rastrear pedido",
+        "reorder": "Repetir pedido"
+      }
     },
     "login": {
       "title": "Entrar",

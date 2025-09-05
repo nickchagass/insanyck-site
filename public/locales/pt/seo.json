@@ -1,0 +1,44 @@
+{
+  "brand": "INSANYCK",
+  "home": {
+    "title": "INSANYCK — Luxo essencial em movimento",
+    "description": "Peças premium com design preciso e presença magnética. Descubra uma coleção que define o luxo contemporâneo."
+  },
+  "shop": {
+    "title": "Coleção INSANYCK — Peças Exclusivas",
+    "description": "Explore nossa coleção de luxo essencial. Peças únicas que capturam a essência do design contemporâneo."
+  },
+  "product": {
+    "titleSuffix": "— INSANYCK",
+    "defaultDescription": "Peça exclusiva da coleção INSANYCK. Design preciso, qualidade premium, presença magnética."
+  },
+  "wishlist": {
+    "title": "Seus Favoritos — INSANYCK",
+    "description": "Suas peças favoritas da coleção INSANYCK. Salve o que mais inspira seu estilo único."
+  },
+  "cart": {
+    "title": "Sua Sacola — INSANYCK",
+    "description": "Revise seus itens selecionados e finalize sua compra com segurança e praticidade."
+  },
+  "about": {
+    "title": "Sobre — INSANYCK",
+    "description": "Conheça a filosofia INSANYCK: luxo essencial, design preciso e presença magnética que define o contemporâneo."
+  },
+  "faq": {
+    "title": "Perguntas Frequentes — INSANYCK",
+    "description": "Encontre respostas sobre nossa coleção, processos de compra, entrega e cuidados com as peças INSANYCK."
+  },
+  "contact": {
+    "title": "Contato — INSANYCK",
+    "description": "Entre em contato conosco. Nossa equipe está pronta para auxiliar em sua jornada de estilo INSANYCK."
+  },
+  "search": {
+    "title": "Busca — INSANYCK",
+    "titleWithQuery": "Busca por '{{query}}' — INSANYCK",
+    "description": "Encontre as peças INSANYCK que definem seu estilo. Busque por categoria, cor, tamanho ou estilo."
+  },
+  "account": {
+    "title": "Minha Conta — INSANYCK",
+    "description": "Gerencie seus pedidos, favoritos e informações pessoais em sua conta INSANYCK."
+  }
+}

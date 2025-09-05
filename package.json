@@ -19,7 +19,11 @@
     "db:seed": "tsx prisma/seed.ts",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release-notes": "changeset status --verbose"
+    "release-notes": "changeset status --verbose",
+    "test:e2e": "playwright test",
+    "test:e2e:ci": "playwright test --reporter=list,html",
+    "test:e2e:update": "playwright test --update-snapshots",
+    "test:a11y": "playwright test tests/a11y --reporter=list,html"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
@@ -63,8 +67,10 @@
     "zustand": "^5.0.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
     "@lhci/cli": "^0.14.0",
     "@next/bundle-analyzer": "^15.4.6",
+    "@playwright/test": "^1.55.0",
     "@tailwindcss/postcss": "^4",
     "@types/micro": "^7.3.7",
     "@types/node": "^20",

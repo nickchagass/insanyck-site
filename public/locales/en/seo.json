@@ -1,0 +1,44 @@
+{
+  "brand": "INSANYCK",
+  "home": {
+    "title": "INSANYCK — Essential luxury in motion",
+    "description": "Premium pieces with precise design and magnetic presence. Discover a collection that defines contemporary luxury."
+  },
+  "shop": {
+    "title": "INSANYCK Collection — Exclusive Pieces",
+    "description": "Explore our essential luxury collection. Unique pieces that capture the essence of contemporary design."
+  },
+  "product": {
+    "titleSuffix": "— INSANYCK",
+    "defaultDescription": "Exclusive piece from the INSANYCK collection. Precise design, premium quality, magnetic presence."
+  },
+  "wishlist": {
+    "title": "Your Wishlist — INSANYCK",
+    "description": "Your favorite pieces from the INSANYCK collection. Save what inspires your unique style."
+  },
+  "cart": {
+    "title": "Your Bag — INSANYCK",
+    "description": "Review your selected items and complete your purchase safely and conveniently."
+  },
+  "about": {
+    "title": "About — INSANYCK",
+    "description": "Learn about the INSANYCK philosophy: essential luxury, precise design and magnetic presence that defines contemporary."
+  },
+  "faq": {
+    "title": "FAQ — INSANYCK",
+    "description": "Find answers about our collection, purchasing process, delivery and care for INSANYCK pieces."
+  },
+  "contact": {
+    "title": "Contact — INSANYCK",
+    "description": "Get in touch with us. Our team is ready to assist you on your INSANYCK style journey."
+  },
+  "search": {
+    "title": "Search — INSANYCK",
+    "titleWithQuery": "Search for '{{query}}' — INSANYCK",
+    "description": "Find the INSANYCK pieces that define your style. Search by category, color, size or style."
+  },
+  "account": {
+    "title": "My Account — INSANYCK",
+    "description": "Manage your orders, favorites and personal information in your INSANYCK account."
+  }
+}
