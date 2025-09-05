@@ -17,7 +17,7 @@ export default defineConfig({
     : 'list',
 
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3001',
+    baseURL: process.env.BASE_URL || 'http://localhost:3000',
     locale: 'pt-BR',
     viewport: { width: 1366, height: 900 },
     trace: 'retain-on-failure',

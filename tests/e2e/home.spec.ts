@@ -7,15 +7,19 @@ test.describe('Home Page', () => {
     // Check page loads successfully
     expect(page.url()).toContain('/pt');
     
+    // INSANYCK STEP 4 · Lote 3 — reduced motion and wait
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.waitForTimeout(100);
+
     // Check essential elements are present
-    await expect(page.locator('header')).toBeVisible();
-    await expect(page.locator('[data-testid="logo"], img[alt*="INSANYCK"], img[alt*="logo"]')).toBeVisible();
+    await expect(page.locator('header').first()).toBeVisible();
+    await expect(page.locator('[data-testid="logo"], img[alt*="INSANYCK"], img[alt*="logo"]').first()).toBeVisible();
     
     // Check hero section is present
     await expect(page.locator('main')).toBeVisible();
     
     // Take visual snapshot of hero area
-    await expect(page.locator('header')).toHaveScreenshot('header-home.png');
+    await expect(page.locator('header').first()).toHaveScreenshot('header-home.png');
     
     // Check navigation is present
     await expect(page.locator('nav, [role="navigation"]')).toBeVisible();

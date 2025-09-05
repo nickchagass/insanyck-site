@@ -48,7 +48,7 @@ test.describe('Sacola (Cart) Page', () => {
     // If cart is empty, should have continue shopping link
     if (hasEmptyState) {
       const continueShoppingLink = page.locator(
-        'a[href*="loja"], a[href*="produto"], [data-testid="continue-shopping"], text="continuar comprando"'
+        'a[href*="loja"], a[href*="produto"], [data-testid="continue-shopping"]'
       );
       
       if (await continueShoppingLink.count() > 0) {
@@ -57,6 +57,9 @@ test.describe('Sacola (Cart) Page', () => {
     }
     
     // Take visual snapshot of cart page
+    // INSANYCK STEP 4 · Lote 3 — reduced motion and wait
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.waitForTimeout(100);
     await expect(page.locator('main')).toHaveScreenshot('cart-main.png');
   });
 });

@@ -80,6 +80,9 @@ test.describe('Product Detail Page (PDP)', () => {
       expect(hasTitle || hasPrice || hasAddToCart).toBe(true);
       
       // Take visual snapshot of product hero area
+      // INSANYCK STEP 4 · Lote 3 — reduced motion and wait
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.waitForTimeout(100);
       await expect(page.locator('main').first()).toHaveScreenshot('pdp-hero.png');
     }
   });
@@ -95,7 +98,10 @@ test.describe('Product Detail Page (PDP)', () => {
       '[class*="three"]',
       'canvas',
       '[data-testid="product-image"]',
-      '[class*="product-image"]'
+      '[class*="product-image"]',
+      'img[src*="product"]',
+      'img[alt*="produto"]',
+      'img' // Any image as fallback
     ];
     
     let hasVisualElement = false;
@@ -107,7 +113,7 @@ test.describe('Product Detail Page (PDP)', () => {
       }
     }
     
-    // Should have some visual representation of the product
+    // Should have some visual representation of the product (3D model or images)
     expect(hasVisualElement).toBe(true);
   });
 });

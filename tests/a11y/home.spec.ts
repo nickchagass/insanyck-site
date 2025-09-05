@@ -1,48 +1,26 @@
 // INSANYCK STEP 4 · Lote 3 — A11y testing for home page
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { blockThirdParties } from './_utils/network';
 
 test.describe('Home Page A11y', () => {
   test('should not have any automatically detectable accessibility issues', async ({ page }) => {
     await page.goto('/pt');
+    await blockThirdParties(page);
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
-    await page.waitForLoadState('networkidle');
     await page.waitForSelector('h1', { timeout: 5000 }).catch(()=>{});
 
     // INSANYCK STEP 4 · Lote 3 — Run axe scan with serious/critical violations only
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
-      .include('main')
-      .analyze();
-
-    // INSANYCK STEP 4 · Lote 3 — Filter for serious and critical violations
-    const violations = accessibilityScanResults.violations.filter(
-      violation => violation.impact === 'serious' || violation.impact === 'critical'
-    );
-
-    // INSANYCK STEP 4 · Lote 3 — Attach detailed report for CI artifacts
-    await test.info().attach('accessibility-scan-results.json', {
-      body: JSON.stringify({
-        url: page.url(),
-        timestamp: new Date().toISOString(),
-        violations: violations,
-        summary: {
-          total: violations.length,
-          critical: violations.filter(v => v.impact === 'critical').length,
-          serious: violations.filter(v => v.impact === 'serious').length,
-        }
-      }, null, 2),
-      contentType: 'application/json',
-    });
-
-    // INSANYCK STEP 4 · Lote 3 — Fail if serious or critical violations found
-    expect(violations).toEqual([]);
+    const results = await new AxeBuilder({ page }).include('main').analyze();
+    expect(results.violations).toEqual([]);
   });
 
   test('should have proper focus management', async ({ page }) => {
     await page.goto('/pt');
+    await blockThirdParties(page);
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
-    await page.waitForLoadState('networkidle');
 
     // INSANYCK STEP 4 · Lote 3 — Test keyboard navigation
     await page.keyboard.press('Tab');
@@ -73,8 +51,9 @@ test.describe('Home Page A11y', () => {
 
   test('should have proper heading hierarchy', async ({ page }) => {
     await page.goto('/pt');
+    await blockThirdParties(page);
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
-    await page.waitForLoadState('networkidle');
     await page.waitForSelector('h1', { timeout: 5000 }).catch(()=>{});
 
     // INSANYCK STEP 4 · Lote 3 — Check heading hierarchy
@@ -99,8 +78,9 @@ test.describe('Home Page A11y', () => {
 
   test('should have accessible images', async ({ page }) => {
     await page.goto('/pt');
+    await blockThirdParties(page);
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
-    await page.waitForLoadState('networkidle');
 
     // INSANYCK STEP 4 · Lote 3 — Check that critical images have alt text
     const images = await page.locator('img[src*="logo"], img[src*="hero"], img[src*="product"]').all();

@@ -1,47 +1,26 @@
 // INSANYCK STEP 4 · Lote 3 — A11y testing for product detail page
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { blockThirdParties } from './_utils/network';
 
 test.describe('Product Detail A11y', () => {
   test('should not have any automatically detectable accessibility issues', async ({ page }) => {
     await page.goto('/pt/produto/oversized-classic');
+    await blockThirdParties(page);
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
-    await page.waitForLoadState('networkidle');
     await page.waitForSelector('h1', { timeout: 5000 }).catch(()=>{});
 
     // INSANYCK STEP 4 · Lote 3 — Run axe scan on product page
-    const accessibilityScanResults = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
-      .include('main')
-      .analyze();
-
-    // Filter for serious and critical violations
-    const violations = accessibilityScanResults.violations.filter(
-      violation => violation.impact === 'serious' || violation.impact === 'critical'
-    );
-
-    // Attach detailed report
-    await test.info().attach('pdp-accessibility-scan-results.json', {
-      body: JSON.stringify({
-        url: page.url(),
-        timestamp: new Date().toISOString(),
-        violations: violations,
-        summary: {
-          total: violations.length,
-          critical: violations.filter(v => v.impact === 'critical').length,
-          serious: violations.filter(v => v.impact === 'serious').length,
-        }
-      }, null, 2),
-      contentType: 'application/json',
-    });
-
-    expect(violations).toEqual([]);
+    const results = await new AxeBuilder({ page }).include('main').analyze();
+    expect(results.violations).toEqual([]);
   });
 
   test('should have accessible product images', async ({ page }) => {
     await page.goto('/pt/produto/oversized-classic');
+    await blockThirdParties(page);
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
-    await page.waitForLoadState('networkidle');
 
     // INSANYCK STEP 4 · Lote 3 — Check product images
     const productImages = await page.locator('img[src*="product"], img[alt*="produto"], [data-testid="product-image"]').all();
@@ -66,8 +45,9 @@ test.describe('Product Detail A11y', () => {
 
   test('should have accessible add to cart button', async ({ page }) => {
     await page.goto('/pt/produto/oversized-classic');
+    await blockThirdParties(page);
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
-    await page.waitForLoadState('networkidle');
 
     // INSANYCK STEP 4 · Lote 3 — Check add to cart button
     const addToCartButtons = await page.locator('button:has-text("Adicionar"), button:has-text("Carrinho"), [data-testid="add-to-cart"]').all();
@@ -98,8 +78,9 @@ test.describe('Product Detail A11y', () => {
 
   test('should have accessible variant selector', async ({ page }) => {
     await page.goto('/pt/produto/oversized-classic');
+    await blockThirdParties(page);
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
-    await page.waitForLoadState('networkidle');
 
     // INSANYCK STEP 4 · Lote 3 — Check variant/size selectors
     const variantSelectors = await page.locator('select, [role="listbox"], [role="radiogroup"], fieldset').all();
@@ -133,8 +114,9 @@ test.describe('Product Detail A11y', () => {
 
   test('should have proper heading structure for product info', async ({ page }) => {
     await page.goto('/pt/produto/oversized-classic');
+    await blockThirdParties(page);
+    await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
-    await page.waitForLoadState('networkidle');
     await page.waitForSelector('h1', { timeout: 5000 }).catch(()=>{});
 
     // INSANYCK STEP 4 · Lote 3 — Check product page heading structure

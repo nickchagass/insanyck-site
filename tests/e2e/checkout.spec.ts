@@ -78,6 +78,9 @@ test.describe('Checkout Page', () => {
     expect(hasForm || hasEmptyCartMessage).toBe(true);
     
     // Take visual snapshot
+    // INSANYCK STEP 4 · Lote 3 — reduced motion and wait
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.waitForTimeout(100);
     await expect(page.locator('main')).toHaveScreenshot('checkout-main.png');
   });
 
