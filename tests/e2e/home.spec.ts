@@ -22,7 +22,7 @@ test.describe('Home Page', () => {
     await expect(page.locator('header').first()).toHaveScreenshot('header-home.png');
     
     // Check navigation is present
-    await expect(page.locator('nav, [role="navigation"]')).toBeVisible();
+    await expect(page.locator('nav, [role="navigation"]').first()).toBeVisible();
   });
 
   test('should have working navigation links', async ({ page }) => {
