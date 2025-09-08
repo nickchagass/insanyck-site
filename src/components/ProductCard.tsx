@@ -48,7 +48,7 @@ export default function ProductCard({ product }: Props) {
         href={`/produto/${product.slug}`}
         prefetch
         className="block group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/30 rounded-2xl"
-        aria-label={`${t("plp:viewDetails", "Ver detalhes")} — ${product.title}`}
+        aria-label={`Ver detalhes de ${product.title}`}
       >
         {/* INSANYCK STEP 4 · Lote 3 — OptimizedImage para zero CLS */}
         <OptimizedImage

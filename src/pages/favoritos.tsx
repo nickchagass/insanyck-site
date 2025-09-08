@@ -7,6 +7,8 @@ import { useTranslation } from "next-i18next";
 import ProductGrid from "@/components/ProductGrid";
 import Skeleton from "@/components/Skeleton";
 import { useWishlist } from "@/store/wishlist";
+// INSANYCK STEP 4 · Lote 3 — Import WishlistEmpty para teste estável
+import WishlistEmpty from "@/components/EmptyStates/WishlistEmpty";
 
 export default function FavoritosPage() {
   const { t } = useTranslation(["wishlist", "plp"]);
@@ -71,9 +73,11 @@ export default function FavoritosPage() {
               ))}
             </div>
           ) : products.length === 0 ? (
-            <p className="mt-8 text-white/70">{t("wishlist:empty", "Nenhum favorito ainda.")}</p>
+            <div data-testid="empty-wishlist" className="mt-8">
+              <WishlistEmpty />
+            </div>
           ) : (
-            <div className="mt-8">
+            <div data-testid="wishlist-items" className="mt-8">
               <ProductGrid items={products as any} />
             </div>
           )}

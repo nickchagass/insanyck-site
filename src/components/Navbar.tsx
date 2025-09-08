@@ -129,7 +129,9 @@ export default function Navbar() {
             aria-label={t("nav:aria.search", "Pesquisar")}
             className="text-white/80 hover:text-white transition-colors"
           >
-            <Search size={22} strokeWidth={1.5} />
+            {/* INSANYCK STEP 4 · Lote 3 — Sr-only text para ícone */}
+            <span className="sr-only">{t("nav:aria.search", "Pesquisar")}</span>
+            <Search size={22} strokeWidth={1.5} aria-hidden="true" focusable="false" />
           </Link>
 
           {/* Favoritos (com contador) — oculta em checkout/pagamento */}
@@ -139,7 +141,9 @@ export default function Navbar() {
               aria-label="Favoritos"
               className="relative text-white/80 hover:text-white transition-colors"
             >
-              <Heart size={22} strokeWidth={1.5} />
+              {/* INSANYCK STEP 4 · Lote 3 — Sr-only text para ícone */}
+              <span className="sr-only">Favoritos</span>
+              <Heart size={22} strokeWidth={1.5} aria-hidden="true" focusable="false" />
               {wishlistCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-white text-black text-[10px] leading-4 font-semibold ring-1 ring-black/10 text-center">
                   {wishlistCount}
@@ -156,7 +160,9 @@ export default function Navbar() {
               aria-label={t("nav:aria.cart", "Carrinho")}
               className="relative text-white/80 hover:text-white transition-colors"
             >
-              <ShoppingBag size={22} strokeWidth={1.5} />
+              {/* INSANYCK STEP 4 · Lote 3 — Sr-only text para ícone */}
+              <span className="sr-only">{t("nav:aria.cart", "Carrinho")}</span>
+              <ShoppingBag size={22} strokeWidth={1.5} aria-hidden="true" focusable="false" />
               {count > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-white text-black text-[10px] leading-4 font-semibold ring-1 ring-black/10 text-center">
                   {count}

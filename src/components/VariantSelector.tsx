@@ -134,12 +134,14 @@ export default function VariantSelector({
   return (
     <div className="space-y-6">
       {options.map((option) => (
-        <div key={option.slug}>
-          <h3 className="text-white font-medium mb-3">{option.name}</h3>
+        // INSANYCK STEP 4 · Lote 3 — Fieldset/legend para seleção de variantes
+        <fieldset key={option.slug} className="border-none p-0 m-0" data-testid={`variant-${option.slug}`}>
+          <legend id={`legend-${option.slug}`} className="text-white font-medium mb-3">{`Selecione ${option.name.toLowerCase()}`}</legend>
           
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3" role="group" aria-labelledby={`legend-${option.slug}`}>
             {option.values.map((value) => {
               const isAvailable = isOptionValueAvailable(option.slug, value.slug);
+              const isSelected = selectedOptions[option.slug] === value.slug;
               
               // INSANYCK STEP 10 — Detectar cor por type ou slug (retrocompatíbvel)
               const isColorOption = option.type === 'color' || option.slug === 'color';
@@ -149,6 +151,7 @@ export default function VariantSelector({
                 return (
                   <button
                     key={value.slug}
+                    type="button"
                     onClick={() => {
                       if (isAvailable) {
                         handleOptionChange(option.slug, value.slug);
@@ -156,7 +159,8 @@ export default function VariantSelector({
                     }}
                     className={getOptionValueClass(option.slug, value.slug, option)}
                     style={{ backgroundColor: value.value }}
-                    title={`${value.name}${!isAvailable ? ' - Indisponível' : ''}`}
+                    aria-label={`${value.name}${!isAvailable ? ' - Indisponível' : ''}${isSelected ? ' - Selecionado' : ''}`}
+                    aria-pressed={isSelected}
                     disabled={!isAvailable}
                   />
                 );
@@ -165,12 +169,14 @@ export default function VariantSelector({
                 return (
                   <button
                     key={value.slug}
+                    type="button"
                     onClick={() => {
                       if (isAvailable) {
                         handleOptionChange(option.slug, value.slug);
                       }
                     }}
                     className={getOptionValueClass(option.slug, value.slug, option)}
+                    aria-pressed={isSelected}
                     disabled={!isAvailable}
                   >
                     {value.name}
@@ -179,12 +185,12 @@ export default function VariantSelector({
               }
             })}
           </div>
-        </div>
+        </fieldset>
       ))}
 
       {/* Informações da variante selecionada */}
       {selectedVariant && (
-        <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10">
+        <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10" aria-live="polite">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-white/80 text-sm">SKU: {selectedVariant.sku}</p>
