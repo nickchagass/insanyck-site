@@ -134,9 +134,10 @@ export default function VariantSelector({
   return (
     <div className="space-y-6">
       {options.map((option) => (
-        // INSANYCK STEP 4 · Lote 3 — Fieldset/legend para seleção de variantes
-        <fieldset key={option.slug} className="border-none p-0 m-0" data-testid={`variant-${option.slug}`}>
-          <legend id={`legend-${option.slug}`} className="text-white font-medium mb-3">{`Selecione ${option.name.toLowerCase()}`}</legend>
+        // INSANYCK STEP 4 · Lote 3 — Fieldset/legend para seleção de variantes + neutralização de defaults
+        <fieldset key={option.slug} className="m-0 p-0 border-0" data-testid={`variant-${option.slug}`}>
+          <legend className="sr-only">{`Selecione ${option.name.toLowerCase()}`}</legend>
+          <h2 className="text-white font-medium mb-3">{option.name}</h2>
           
           <div className="flex flex-wrap gap-3" role="group" aria-labelledby={`legend-${option.slug}`}>
             {option.values.map((value) => {

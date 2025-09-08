@@ -9,6 +9,9 @@ test.describe('Product Listing A11y', () => {
     await blockThirdParties(page);
     await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
+    // INSANYCK STEP 4 · Lote 3 — Ignorar skip link no foco inicial
+    const active = await page.evaluate(() => (document.activeElement as HTMLElement)?.getAttribute?.('href'));
+    if (active === '#conteudo') { await page.keyboard.press('Tab'); }
     await page.waitForSelector('h1', { timeout: 5000 }).catch(()=>{});
 
     // INSANYCK STEP 4 · Lote 3 — Run axe scan focusing on product grid

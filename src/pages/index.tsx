@@ -31,10 +31,10 @@ export default function HomePage() {
           />
         ))}
       </Head>
-      {/* INSANYCK STEP 4 · Lote 3 — Skip link para navegação A11y */}
+      {/* INSANYCK STEP 4 · Lote 3 — Skip link para navegação A11y + neutralização de layout */}
       <a 
         href="#conteudo" 
-        className="sr-only focus:not-sr-only focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white fixed top-4 left-4 bg-black text-white px-4 py-2 rounded-lg z-[200]"
+        className="sr-only focus:not-sr-only focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 absolute left-2 top-2 z-50 px-3 py-2 rounded-2xl bg-black/60 backdrop-blur text-white"
       >
         Pular para conteúdo
       </a>

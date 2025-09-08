@@ -10,10 +10,10 @@ export default function ProductGrid({ items = [], className, showSkeleton = fals
   
   if (showSkeleton && !list.length) {
     return (
-      // INSANYCK STEP 4 · Lote 3 — Lista semântica para produtos
-      <ul role="list" className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ${className || ''}`} aria-live="polite">
+      // INSANYCK STEP 4 · Lote 3 — Lista semântica para produtos + neutralização de defaults
+      <ul role="list" className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 list-none p-0 m-0 ${className || ''}`} aria-live="polite">
         {Array.from({ length: skeletonCount }).map((_, i) => (
-          <li key={i} role="listitem">
+          <li key={i} role="listitem" className="contents">
             <article className="rounded-2xl border border-white/10 bg-black/30 p-3">
               <Skeleton.Thumb />
               <div className="mt-3 space-y-2">
@@ -32,10 +32,10 @@ export default function ProductGrid({ items = [], className, showSkeleton = fals
   }
   
   return (
-    // INSANYCK STEP 4 · Lote 3 — Lista semântica para produtos
-    <ul role="list" className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 ${className || ''}`}>
+    // INSANYCK STEP 4 · Lote 3 — Lista semântica para produtos + neutralização de defaults
+    <ul role="list" className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 list-none p-0 m-0 ${className || ''}`}>
       {list.map((p) => (
-        <li key={p.id ?? p.slug} role="listitem">
+        <li key={p.id ?? p.slug} role="listitem" className="contents">
           <ProductCard product={p} />
         </li>
       ))}

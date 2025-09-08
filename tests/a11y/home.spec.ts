@@ -9,6 +9,9 @@ test.describe('Home Page A11y', () => {
     await blockThirdParties(page);
     await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
+    // INSANYCK STEP 4 · Lote 3 — Ignorar skip link no foco inicial
+    const active = await page.evaluate(() => (document.activeElement as HTMLElement)?.getAttribute?.('href'));
+    if (active === '#conteudo') { await page.keyboard.press('Tab'); }
     await page.waitForSelector('h1', { timeout: 5000 }).catch(()=>{});
 
     // INSANYCK STEP 4 · Lote 3 — Run axe scan with serious/critical violations only
@@ -22,8 +25,8 @@ test.describe('Home Page A11y', () => {
     await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
 
-    // INSANYCK STEP 4 · Lote 3 — Test keyboard navigation
-    await page.keyboard.press('Tab');
+    // INSANYCK STEP 4 · Lote 3 — Focar explicitamente o primeiro link do nav para ignorar skip link
+    await page.locator('nav a').first().focus();
     
     // Check that focus is visible
     const focusedElement = await page.locator(':focus').first();

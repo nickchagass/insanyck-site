@@ -9,6 +9,9 @@ test.describe('Product Detail A11y', () => {
     await blockThirdParties(page);
     await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
+    // INSANYCK STEP 4 · Lote 3 — Ignorar skip link no foco inicial
+    const active = await page.evaluate(() => (document.activeElement as HTMLElement)?.getAttribute?.('href'));
+    if (active === '#conteudo') { await page.keyboard.press('Tab'); }
     await page.waitForSelector('h1', { timeout: 5000 }).catch(()=>{});
 
     // INSANYCK STEP 4 · Lote 3 — Run axe scan on product page
@@ -82,7 +85,7 @@ test.describe('Product Detail A11y', () => {
     await page.waitForLoadState('domcontentloaded');
     await page.waitForSelector('main', { state: 'visible' });
 
-    // INSANYCK STEP 4 · Lote 3 — Check variant/size selectors
+    // INSANYCK STEP 4 · Lote 3 — Check variant selector buttons and fieldsets
     const variantSelectors = await page.locator('select, [role="listbox"], [role="radiogroup"], fieldset').all();
     
     if (variantSelectors.length > 0) {
@@ -103,11 +106,18 @@ test.describe('Product Detail A11y', () => {
         } else if (tagName === 'fieldset') {
           const legend = await selector.locator('legend').count();
           expect(legend).toBeGreaterThan(0);
+          
+          // INSANYCK STEP 4 · Lote 3 — Test that variant buttons within fieldset are focusable
+          const buttons = await selector.locator('button').all();
+          if (buttons.length > 0) {
+            await buttons[0].focus();
+            await expect(buttons[0]).toBeFocused();
+          }
+        } else {
+          // Should be keyboard navigable (for non-fieldset elements)
+          await selector.focus();
+          await expect(selector).toBeFocused();
         }
-        
-        // Should be keyboard navigable
-        await selector.focus();
-        await expect(selector).toBeFocused();
       }
     }
   });
