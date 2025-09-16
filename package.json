@@ -21,6 +21,7 @@
     "version-packages": "changeset version",
     "release-notes": "changeset status --verbose",
     "test:e2e": "playwright test -c playwright.config.ts",
+    "test:e2e:ci": "playwright test -c playwright.config.ts --reporter=list,html",
     "test:e2e:update": "playwright test -c playwright.config.ts --update-snapshots",
     "test:a11y": "playwright test -c playwright.a11y.config.ts",
     "test:all": "npm run test:e2e && npm run test:a11y"
@@ -63,6 +64,7 @@
     "stripe": "^18.4.0",
     "swr": "^2.3.4",
     "three": "^0.179.1",
+    "workbox-window": "^7.3.0",
     "zod": "^4.0.17",
     "zustand": "^5.0.7"
   },
@@ -71,6 +73,7 @@
     "@lhci/cli": "^0.14.0",
     "@next/bundle-analyzer": "^15.4.6",
     "@playwright/test": "^1.55.0",
+    "@react-email/components": "^0.5.3",
     "@tailwindcss/postcss": "^4",
     "@types/micro": "^7.3.7",
     "@types/node": "^20",

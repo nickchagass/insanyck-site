@@ -1,25 +1,101 @@
-<!-- INSANYCK STEP 3 -->
+<!-- INSANYCK STEP 4 · Lote 4 — Enhanced offline page -->
 <!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Você está offline — INSANYCK</title>
+  <meta name="description" content="INSANYCK offline page" />
   <style>
-    html,body{height:100%;margin:0;background:#0a0a0a;color:#fff;font:16px/1.4 system-ui, Arial;}
-    .wrap{height:100%;display:grid;place-items:center;padding:24px;text-align:center}
-    .box{max-width:540px}
-    .btn{display:inline-block;margin-top:12px;padding:10px 16px;border-radius:12px;border:1px solid #fff3;color:#fff;text-decoration:none}
-    .btn:hover{background:#fff1;color:#fff}
+    html,body{height:100%;margin:0;background:#0a0a0a;color:#fff;font:16px/1.4 system-ui, -apple-system, Arial, sans-serif}
+    .wrap{height:100vh;display:grid;place-items:center;padding:24px;text-align:center}
+    .box{max-width:480px;padding:32px;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.1);border-radius:24px;backdrop-filter:blur(8px)}
+    h1{font-size:32px;font-weight:600;margin:0 0 16px 0;color:#fff}
+    p{margin:0 0 24px 0;color:rgba(255,255,255,0.8);line-height:1.6}
+    .actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 20px;border-radius:16px;border:1px solid rgba(255,255,255,0.2);color:#fff;text-decoration:none;font-weight:500;transition:all 0.15s ease;background:rgba(255,255,255,0.05)}
+    .btn:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.3);transform:translateY(-1px)}
+    .btn.primary{background:#fff;color:#000;border-color:rgba(255,255,255,0.2)}
+    .btn.primary:hover{background:rgba(255,255,255,0.9);box-shadow:0 4px 12px rgba(255,255,255,0.1)}
+    .lang-switch{position:absolute;top:20px;right:20px;font-size:14px}
+    .lang-switch button{background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);padding:6px 12px;border-radius:8px;cursor:pointer;transition:all 0.15s ease}
+    .lang-switch button:hover,.lang-switch button.active{color:#fff;border-color:rgba(255,255,255,0.3)}
+    .hidden{display:none}
+    @media (max-width: 480px) {
+      .box{margin:0 8px;padding:24px}
+      h1{font-size:24px}
+      .actions{flex-direction:column}
+    }
   </style>
 </head>
 <body>
+  <div class="lang-switch">
+    <button onclick="toggleLang('pt')" id="btn-pt" class="active">PT</button>
+    <button onclick="toggleLang('en')" id="btn-en">EN</button>
+  </div>
+  
   <div class="wrap">
     <div class="box">
-      <h1>Sem conexão</h1>
-      <p>Parece que você está offline. Algumas páginas podem não estar disponíveis.</p>
-      <a class="btn" href="/">Tentar novamente</a>
+      <!-- Portuguese Content -->
+      <div id="content-pt">
+        <h1>Você está offline</h1>
+        <p>Sem conexão com a internet. Algumas funcionalidades podem não estar disponíveis até que a conexão seja restaurada.</p>
+        <div class="actions">
+          <a class="btn primary" href="/" onclick="window.location.reload()">Voltar à Home</a>
+          <a class="btn" href="/favoritos">Ver Favoritos</a>
+          <a class="btn" href="/sacola">Ver Sacola</a>
+        </div>
+      </div>
+
+      <!-- English Content -->
+      <div id="content-en" class="hidden">
+        <h1>You're offline</h1>
+        <p>No internet connection. Some features may not be available until the connection is restored.</p>
+        <div class="actions">
+          <a class="btn primary" href="/" onclick="window.location.reload()">Back to Home</a>
+          <a class="btn" href="/wishlist">View Wishlist</a>
+          <a class="btn" href="/bag">View Bag</a>
+        </div>
+      </div>
     </div>
   </div>
+
+  <script>
+    function toggleLang(lang) {
+      // Toggle content visibility
+      document.getElementById('content-pt').classList.toggle('hidden', lang !== 'pt');
+      document.getElementById('content-en').classList.toggle('hidden', lang !== 'en');
+      
+      // Toggle button states
+      document.getElementById('btn-pt').classList.toggle('active', lang === 'pt');
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      
+      // Update page lang and title
+      document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+      document.title = lang === 'pt' ? 'Você está offline — INSANYCK' : 'You\'re offline — INSANYCK';
+      
+      // Store preference
+      try {
+        localStorage.setItem('insanyck-offline-lang', lang);
+      } catch(e) {}
+    }
+
+    // Load saved language preference
+    try {
+      const savedLang = localStorage.getItem('insanyck-offline-lang') || 
+                       (navigator.language.startsWith('pt') ? 'pt' : 'en');
+      if (savedLang === 'en') toggleLang('en');
+    } catch(e) {}
+
+    // Retry connection button
+    window.addEventListener('online', function() {
+      const retryBtn = document.querySelector('.btn.primary');
+      if (retryBtn) {
+        retryBtn.textContent = retryBtn.textContent.includes('Back') ? 'Back to Home' : 'Voltar à Home';
+        retryBtn.style.background = '#4ade80';
+        setTimeout(() => window.location.reload(), 1000);
+      }
+    });
+  </script>
 </body>
 </html>

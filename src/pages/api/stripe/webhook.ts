@@ -5,6 +5,24 @@ import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { env, isServerEnvReady } from "@/lib/env.server";
 
+// INSANYCK STEP 4 · Lote 4 — Idempotência em memória (com TTL)
+const __seenStripeEvents = new Map<string, number>();
+const __SEEN_TTL_MS = 24 * 60 * 60 * 1000; // 24h
+
+function __rememberStripe(id: string) {
+  const now = Date.now();
+  __seenStripeEvents.set(id, now);
+  if (__seenStripeEvents.size % 50 === 0) {
+    const cutoff = now - __SEEN_TTL_MS;
+    for (const [k, t] of __seenStripeEvents) if (t < cutoff) __seenStripeEvents.delete(k);
+  }
+}
+
+function __alreadyProcessedStripe(id: string) {
+  const t = __seenStripeEvents.get(id);
+  return !!t && Date.now() - t < __SEEN_TTL_MS;
+}
+
 export const config = { api: { bodyParser: false } };
 
 function readBuffer(readable: any) {
@@ -56,6 +74,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } catch (err: any) {
     res.status(400).send(`Webhook Error: ${err.message}`);
     return;
+  }
+
+  // INSANYCK STEP 4 · Lote 4 — Short-circuit se evento já processado
+  if (__alreadyProcessedStripe(event.id)) {
+    return res.status(200).json({ ok: true, skipped: "duplicate" });
   }
 
   try {
@@ -143,6 +166,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return newOrder;
       });
 
+      __rememberStripe(event.id);
       res.status(200).json({ ok: true, orderId: order.id });
       return;
     }
@@ -153,15 +177,41 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         currency: paymentIntent.currency,
         lastPaymentError: paymentIntent.last_payment_error,
       });
+      __rememberStripe(event.id);
       res.status(200).json({ ok: true, logged: "payment_failed" });
       return;
     }
 
+    // INSANYCK STEP 4 · Lote 4 — Eventos adicionais (logs leves)
+    if (event.type === "payment_intent.succeeded") {
+      const pi = event.data.object as any;
+      console.log("[StripeWebhook] payment_intent.succeeded", {
+        id: pi.id,
+        amount: pi.amount,
+        currency: pi.currency,
+      });
+      __rememberStripe(event.id);
+      return res.status(200).json({ ok: true, logged: "payment_intent.succeeded" });
+    }
+
+    if (event.type === "charge.refunded") {
+      const charge = event.data.object as any;
+      console.log("[StripeWebhook] charge.refunded", {
+        id: charge.id,
+        amount_refunded: charge.amount_refunded,
+        currency: charge.currency,
+      });
+      __rememberStripe(event.id);
+      return res.status(200).json({ ok: true, logged: "charge.refunded" });
+    }
+
+    __rememberStripe(event.id);
     res.status(200).json({ received: true });
     return;
   } catch (err: any) {
     // eslint-disable-next-line no-console
     console.error("[stripe/webhook]", err);
+    __rememberStripe(event.id);
     res.status(500).json({ error: err?.message || "Webhook handler error" });
     return;
   }
