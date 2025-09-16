@@ -22,9 +22,12 @@ const MiniCart = dynamic(() => import("@/components/MiniCart"), { ssr: false });
 function LayoutShell({ children }: { children: React.ReactNode }) {
   const { hasUpdate, updating, update } = useServiceWorkerUpdate();
 
+  // INSANYCK STEP 4 · Lote 4 — hide SW banner under test
+  const hideUpdateBanner = process.env.INSANYCK_TEST_HIDE_UPDATE_BANNER === '1';
+
   return (
     <>
-      {hasUpdate && <UpdateBanner onUpdate={update} updating={updating} />}
+      {hasUpdate && !hideUpdateBanner && <UpdateBanner onUpdate={update} updating={updating} />}
       <Navbar />
       {children}
       <MiniCart />

@@ -1,6 +1,15 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Checkout Page', () => {
+  // INSANYCK STEP 4 · Lote 4 — freeze time for visual snapshots
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => { 
+      const fixed = 1700000000000; 
+      Date.now = () => fixed as any; 
+    });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.waitForTimeout(120);
+  });
   test('should load checkout page successfully', async ({ page }) => {
     await page.goto('/pt/checkout');
     

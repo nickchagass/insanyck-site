@@ -1,6 +1,15 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Product Detail Page (PDP)', () => {
+  // INSANYCK STEP 4 · Lote 4 — freeze time for visual snapshots
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => { 
+      const fixed = 1700000000000; 
+      Date.now = () => fixed as any; 
+    });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.waitForTimeout(120);
+  });
   test('should load product page successfully', async ({ page }) => {
     // Try to navigate to a product page
     // First try the slug route structure
@@ -19,7 +28,7 @@ test.describe('Product Detail Page (PDP)', () => {
 
   test('should display product information when product exists', async ({ page }) => {
     await page.goto('/pt/produto/oversized-classic');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     
     const currentUrl = page.url();
     
@@ -89,7 +98,7 @@ test.describe('Product Detail Page (PDP)', () => {
 
   test('should handle 3D model gracefully', async ({ page }) => {
     await page.goto('/pt/produto/oversized-classic');
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     
     // Check if there's a 3D model container or fallback image
     const modelSelectors = [

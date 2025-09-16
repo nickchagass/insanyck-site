@@ -1,6 +1,16 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Home Page', () => {
+  // INSANYCK STEP 4 · Lote 4 — freeze time for visual snapshots
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => { 
+      const fixed = 1700000000000; 
+      Date.now = () => fixed as any; 
+    });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.waitForTimeout(120);
+  });
+
   test('should load home page successfully', async ({ page }) => {
     await page.goto('/pt');
     
@@ -29,7 +39,7 @@ test.describe('Home Page', () => {
     await page.goto('/pt');
     
     // Wait for page to be fully loaded
-    await page.waitForLoadState('networkidle');
+    await page.waitForLoadState('domcontentloaded');
     
     // Check if sacola/cart link exists and is clickable
     const cartLink = page.locator('a[href*="sacola"], [data-testid="cart-link"], [aria-label*="carrinho"], [aria-label*="sacola"]');
