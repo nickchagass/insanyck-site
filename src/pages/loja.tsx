@@ -155,10 +155,15 @@ export default function Loja({
         {/* INSANYCK STEP 10 — Filtros reais funcionais */}
         <div className="mt-8 flex flex-wrap items-center gap-3 text-white/75">
           {/* Categorias */}
+          <label htmlFor="category-filter" className="sr-only">
+            {t("catalog:filters.category_label", "Filtrar por categoria")}
+          </label>
           <select
+            id="category-filter"
             value={Array.isArray(category) ? category[0] : (category ?? "")}
             onChange={(e) => updateFilter("category", e.target.value || null)}
             className="rounded-full px-4 py-2 border border-white/15 bg-black/50 hover:bg-white/5 text-white"
+            aria-label={t("catalog:filters.category_label", "Filtrar por categoria")}
           >
             <option value="">{t("catalog:filters.all_categories", "Todas Categorias")}</option>
             {categories.map((cat) => (
@@ -196,10 +201,15 @@ export default function Loja({
           </button>
 
           {/* Ordenação */}
+          <label htmlFor="sort-filter" className="sr-only">
+            {t("catalog:sort.label", "Ordenar por")}
+          </label>
           <select
+            id="sort-filter"
             value={String(sort ?? 'newest')}
             onChange={(e) => updateFilter("sort", e.target.value)}
             className="rounded-full px-4 py-2 border border-white/15 bg-black/50 hover:bg-white/5 text-white"
+            aria-label={t("catalog:sort.label", "Ordenar por")}
           >
             <option value="newest">{t("catalog:sort.newest", "Mais Recentes")}</option>
             <option value="name">{t("catalog:sort.name", "Nome")}</option>

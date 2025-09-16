@@ -3,12 +3,14 @@ import Head from "next/head";
 import type { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
+import { useTranslation } from "next-i18next";
 import Navbar from "../components/Navbar";
 import HeroHome from "../sections/HeroHome";
 import { seoHome } from "../lib/seo";
 
 export default function HomePage() {
   const { locale } = useRouter();
+  const { t } = useTranslation('home');
   const seo = seoHome(locale);
 
   return (
@@ -29,8 +31,17 @@ export default function HomePage() {
           />
         ))}
       </Head>
+      {/* INSANYCK STEP 4 · Lote 3 — Skip link para navegação A11y + neutralização de layout */}
+      <a 
+        href="#conteudo" 
+        className="sr-only focus:not-sr-only focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 absolute left-2 top-2 z-50 px-3 py-2 rounded-2xl bg-black/60 backdrop-blur text-white"
+      >
+        Pular para conteúdo
+      </a>
       <Navbar />
-      <main className="pt-24">
+      <main id="conteudo" className="pt-24">
+        {/* INSANYCK STEP 4 · Lote 3 — H1 sr-only para hierarquia A11y */}
+        <h1 className="sr-only">{t('hero.title', 'INSANYCK — Essential luxury in motion')}</h1>
         <HeroHome />
       </main>
     </>

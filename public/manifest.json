@@ -1,18 +1,51 @@
 {
   "name": "INSANYCK",
   "short_name": "INSANYCK",
+  "description": "Luxury streetwear fashion - INSANYCK premium collection",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "theme_color": "#000000",
   "background_color": "#000000",
   "categories": ["shopping", "lifestyle", "business"],
+  "lang": "pt-BR",
   "icons": [
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
     { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable any" }
   ],
   "screenshots": [
-    { "src": "/thumbs/oversized-classic.png", "sizes": "1200x800", "type": "image/png", "form_factor": "wide" }
+    { "src": "/products/oversized-classic/front.webp", "sizes": "1200x800", "type": "image/webp", "form_factor": "wide" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Loja",
+      "short_name": "Loja",
+      "description": "Explorar coleção INSANYCK",
+      "url": "/catalog?source=pwa_shortcut",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Favoritos",
+      "short_name": "Favoritos",
+      "description": "Meus produtos favoritos",
+      "url": "/favoritos?source=pwa_shortcut",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Sacola",
+      "short_name": "Sacola",
+      "description": "Minha sacola de compras",
+      "url": "/sacola?source=pwa_shortcut",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Pedidos",
+      "short_name": "Pedidos",
+      "description": "Meus pedidos",
+      "url": "/account/orders?source=pwa_shortcut",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }

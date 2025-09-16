@@ -1,8 +1,44 @@
 {
-    "title": "Buscar",
-    "open": "Buscar",
-    "label": "Buscar produtos",
-    "placeholder": "Busque por produtos",
-    "empty": "Nenhum resultado"
+  "title": "Buscar",
+  "open": "Buscar",
+  "label": "Buscar produtos",
+  "placeholder": "Busque por produtos",
+  "empty": {
+    "noQuery": {
+      "title": "Comece sua busca",
+      "description": "Digite o que procura ou explore nossas categorias"
+    },
+    "withQuery": {
+      "title": "Nenhum resultado encontrado",
+      "description": "Não encontramos nada para",
+      "suggestion": "Tente termos mais gerais ou explore nossa coleção"
+    },
+    "suggestions": {
+      "title": "Termos populares:"
+    },
+    "actions": {
+      "clearFilters": "Limpar filtros",
+      "newSearch": "Nova busca"
+    }
+  },
+  "filters": {
+    "title": "Filtros",
+    "clear": "Limpar todos",
+    "apply": "Aplicar filtros",
+    "category": "Categoria",
+    "price": "Preço",
+    "color": "Cor",
+    "size": "Tamanho",
+    "availability": "Disponibilidade"
+  },
+  "results": {
+    "showing": "Mostrando {{count}} resultados",
+    "showingFor": "Mostrando {{count}} resultados para \"{{query}}\"",
+    "sortBy": "Ordenar por",
+    "relevance": "Relevância",
+    "priceAsc": "Menor preço",
+    "priceDesc": "Maior preço",
+    "newest": "Mais recentes"
   }
+}
   

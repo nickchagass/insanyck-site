@@ -1,4 +1,45 @@
 {
-    "brand": "INSANYCK"
+  "brand": "INSANYCK",
+  "cta": {
+    "shopNow": "Explorar coleção",
+    "discover": "Descobrir peças",
+    "exploreAll": "Explorar tudo",
+    "home": "Voltar ao início",
+    "wishlist": "Ver favoritos",
+    "viewWishlist": "Ver favoritos",
+    "startShopping": "Começar a explorar",
+    "continueShoppingCart": "Continuar comprando",
+    "newSearch": "Nova busca",
+    "clearFilters": "Limpar filtros"
+  },
+  "empty": {
+    "cart": {
+      "title": "Sua sacola está vazia",
+      "description": "Descubra peças exclusivas que definem seu estilo único",
+      "hint": "Frete grátis para todo Brasil"
+    },
+    "wishlist": {
+      "title": "Seus favoritos aguardam",
+      "description": "Salve as peças que capturam sua essência e volte quando estiver pronto para decidir",
+      "tip": "Toque no coração para salvar suas peças favoritas"
+    }
+  },
+  "loading": "Carregando...",
+  "error": "Algo deu errado",
+  "retry": "Tentar novamente",
+  "close": "Fechar",
+  "back": "Voltar",
+  "next": "Próximo",
+  "previous": "Anterior",
+  "save": "Salvar",
+  "cancel": "Cancelar",
+  "confirm": "Confirmar",
+  "aria": {
+    "collection": "Coleção INSANYCK",
+    "productImage": "Imagem do produto",
+    "logo": "Logo INSANYCK",
+    "menu": "Menu principal",
+    "cart": "Carrinho de compras"
   }
+}
   

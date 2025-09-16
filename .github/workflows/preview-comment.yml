@@ -1,0 +1,134 @@
+name: PR Preview Comment
+
+on:
+  deployment_status:
+    types: [success]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  comment-preview:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || (github.event_name == 'deployment_status' && github.event.deployment_status.state == 'success')
+    
+    steps:
+      - name: Check Vercel secrets
+        id: check-secrets
+        run: |
+          if [ -z "${{ secrets.VERCEL_TOKEN }}" ] || [ -z "${{ secrets.VERCEL_ORG_ID }}" ] || [ -z "${{ secrets.VERCEL_PROJECT_ID }}" ]; then
+            echo "missing=true" >> $GITHUB_OUTPUT
+            echo "::warning::Vercel secrets are missing. Skipping preview comment."
+          else
+            echo "missing=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get Vercel Preview URL
+        id: vercel-preview
+        if: steps.check-secrets.outputs.missing == 'false'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID } = process.env;
+            
+            try {
+              // Get deployments for this PR
+              const response = await fetch(
+                `https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&limit=10`,
+                {
+                  headers: {
+                    'Authorization': `Bearer ${VERCEL_TOKEN}`,
+                  }
+                }
+              );
+              
+              if (!response.ok) {
+                throw new Error(`Vercel API error: ${response.status}`);
+              }
+              
+              const data = await response.json();
+              const prNumber = context.payload.pull_request?.number;
+              
+              // Find deployment for this PR
+              const deployment = data.deployments.find(d => 
+                d.meta?.githubCommitRef === context.payload.pull_request?.head?.ref ||
+                d.meta?.githubCommitSha === context.payload.pull_request?.head?.sha
+              );
+              
+              if (deployment && deployment.url) {
+                const previewUrl = `https://${deployment.url}`;
+                core.setOutput('preview-url', previewUrl);
+                return previewUrl;
+              } else {
+                core.setOutput('preview-url', '');
+                console.log('No matching deployment found for this PR');
+                return '';
+              }
+            } catch (error) {
+              console.error('Error fetching Vercel deployment:', error);
+              core.setOutput('preview-url', '');
+              return '';
+            }
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Comment PR
+        if: steps.check-secrets.outputs.missing == 'false' && steps.vercel-preview.outputs.preview-url != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = '${{ steps.vercel-preview.outputs.preview-url }}';
+            
+            const comment = `## 🚀 Preview Deployment
+            
+            Your changes have been deployed to a preview environment:
+            
+            **🔗 Preview URL:** ${previewUrl}
+            
+            ### Quick Links:
+            - 🏠 [Home (PT)](${previewUrl}/pt)
+            - 🛍️ [Loja](${previewUrl}/pt/loja)
+            - 🛒 [Sacola](${previewUrl}/pt/sacola)
+            - ❤️ [Favoritos](${previewUrl}/pt/favoritos)
+            
+            *This preview will be updated automatically when you push new commits to this PR.*`;
+            
+            // Check if we already commented
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+            
+            const existingComment = comments.data.find(comment => 
+              comment.body.includes('🚀 Preview Deployment') && 
+              comment.user.type === 'Bot'
+            );
+            
+            if (existingComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: comment
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: comment
+              });
+            }
+
+      - name: Log missing secrets warning
+        if: steps.check-secrets.outputs.missing == 'true'
+        run: |
+          echo "⚠️ Preview comment skipped: Vercel secrets not configured"
+          echo "To enable PR preview comments, add these secrets to your repository:"
+          echo "- VERCEL_TOKEN"
+          echo "- VERCEL_ORG_ID" 
+          echo "- VERCEL_PROJECT_ID"

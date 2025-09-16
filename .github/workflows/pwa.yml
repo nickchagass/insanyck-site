@@ -1,0 +1,65 @@
+# INSANYCK STEP 4 · Lote 4 — PWA Testing Workflow
+name: PWA Tests
+
+on:
+  push:
+    branches: [main, develop, 'feature/*', 'chore/*']
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  pwa-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Build application
+        run: npm run build
+
+      - name: Start application
+        run: |
+          npm start &
+          npx wait-on http://localhost:3000 --timeout 60000
+
+      - name: Run PWA tests
+        run: npx playwright test tests/pwa -c playwright.config.ts
+        env:
+          BASE_URL: http://localhost:3000
+
+      - name: Run Email template tests (if token available)
+        run: npx playwright test tests/emails -c playwright.config.ts
+        env:
+          BASE_URL: http://localhost:3000
+          EMAIL_PREVIEW_TOKEN: ${{ secrets.EMAIL_PREVIEW_TOKEN }}
+        continue-on-error: true
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pwa-playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pwa-test-results
+          path: test-results/
+          retention-days: 30

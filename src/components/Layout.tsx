@@ -13,9 +13,16 @@ export default function Layout({ children }: PropsWithChildren) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-neutral-900 to-yellow-50 text-white">
+      {/* INSANYCK STEP 4 · Lote 3 — Skip link para navegação A11y + neutralização de layout */}
+      <a 
+        href="#conteudo" 
+        className="sr-only focus:not-sr-only focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 absolute left-2 top-2 z-50 px-3 py-2 rounded-2xl bg-black/60 backdrop-blur text-white"
+      >
+        Pular para conteúdo
+      </a>
       <Navbar />
       <main
-        id="main-content"
+        id="conteudo"
         role="main"
         tabIndex={-1} // Ajuda na acessibilidade, o usuário pode pular direto para o conteúdo
         className="pt-20 pb-10 max-w-7xl mx-auto px-4"

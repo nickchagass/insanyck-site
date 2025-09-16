@@ -33,12 +33,21 @@ jobs:
         env:
           NODE_ENV: production
           NEXT_PUBLIC_URL: http://localhost:3000
+          NEXT_TELEMETRY_DISABLED: "1"
           SENTRY_DSN: ""
           NEXT_PUBLIC_SENTRY_DSN: ""
           SENTRY_ENVIRONMENT: "ci"
           STRIPE_API_VERSION: "2025-07-30.basil"
           STRIPE_SECRET_KEY: "sk_test_dummy"
           NEXTAUTH_SECRET: "dummysecretforci"
+      
+      - name: Upload build artifacts on error
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-trace
+          path: .next/trace
+          if-no-files-found: ignore
       
       - name: Start server
         run: |
@@ -47,6 +56,7 @@ jobs:
         env:
           NODE_ENV: production
           NEXT_PUBLIC_URL: http://localhost:3000
+          NEXT_TELEMETRY_DISABLED: "1"
           SENTRY_DSN: ""
           NEXT_PUBLIC_SENTRY_DSN: ""
           SENTRY_ENVIRONMENT: "ci"
@@ -62,7 +72,7 @@ jobs:
           uploadArtifacts: true
           githubToken: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Upload artifacts
+      - name: Upload lighthouse artifacts
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -71,3 +81,14 @@ jobs:
             .lighthouseci
             lighthouse-ci-results.html
             lighthouse-ci-results.json
+          if-no-files-found: ignore
+      
+      - name: Upload lighthouse artifacts on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: lighthouse-failure-reports
+          path: |
+            .lighthouseci/**/*.html
+            .lighthouseci/**/*.json
+          if-no-files-found: ignore

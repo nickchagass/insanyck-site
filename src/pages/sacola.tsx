@@ -18,6 +18,8 @@ import { formatPrice } from "@/lib/price";
 import { applyCoupon } from "@/lib/coupon";
 import { simulate } from "@/lib/shipping";
 import { seoCart } from "@/lib/seo";
+// INSANYCK STEP 4 · Lote 3 — Import CartEmpty para teste estável
+import CartEmpty from "@/components/EmptyStates/CartEmpty";
 
 export default function SacolaPage() {
   const { t, i18n } = useTranslation(["bag", "checkout", "cart"]);
@@ -90,17 +92,11 @@ export default function SacolaPage() {
         </h1>
 
         {items.length === 0 ? (
-          <div className="mt-10 text-white/70">
-            <p>{t("bag:empty", "Sua sacola está vazia.")}</p>
-            <Link
-              href="/loja"
-              className="inline-block mt-4 underline underline-offset-4 text-white/90 hover:text-white"
-            >
-              {t("bag:goShop", "Ir para a loja")}
-            </Link>
+          <div data-testid="empty-cart" className="mt-10">
+            <CartEmpty />
           </div>
         ) : (
-          <div className="mt-8 grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
+          <div data-testid="cart-items" className="mt-8 grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
             {/* Lista de itens */}
             <section aria-label={t("bag:items", "Itens")} className="space-y-4">
               {items.map((it) => (

@@ -8,6 +8,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,6 +34,7 @@ jobs:
         env:
           NODE_ENV: production
           NEXT_PUBLIC_URL: http://localhost:3000
+          NEXT_TELEMETRY_DISABLED: "1"
           SENTRY_DSN: ""
           NEXT_PUBLIC_SENTRY_DSN: ""
           SENTRY_ENVIRONMENT: "ci"
@@ -42,6 +47,7 @@ jobs:
         env:
           NODE_ENV: production
           NEXT_PUBLIC_URL: http://localhost:3000
+          NEXT_TELEMETRY_DISABLED: "1"
           SENTRY_DSN: ""
           NEXT_PUBLIC_SENTRY_DSN: ""
           SENTRY_ENVIRONMENT: "ci"
@@ -54,9 +60,18 @@ jobs:
         env:
           NODE_ENV: production
           NEXT_PUBLIC_URL: http://localhost:3000
+          NEXT_TELEMETRY_DISABLED: "1"
           SENTRY_DSN: ""
           NEXT_PUBLIC_SENTRY_DSN: ""
           SENTRY_ENVIRONMENT: "ci"
           STRIPE_API_VERSION: "2025-07-30.basil"
           STRIPE_SECRET_KEY: "sk_test_dummy"
           NEXTAUTH_SECRET: "dummysecretforci"
+      
+      - name: Upload build artifacts on error
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-trace
+          path: .next/trace
+          if-no-files-found: ignore
