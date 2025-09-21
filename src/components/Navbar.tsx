@@ -80,18 +80,21 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-12 text-[16px] text-white/82">
           <Link 
             href="/novidades" 
+            prefetch={true}
             className="hover:text-white/95 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-lg px-2 py-1"
           >
             {t("nav:links.novidades", "Novidades")}
           </Link>
           <Link 
             href="/loja" 
+            prefetch={true}
             className="hover:text-white/95 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-lg px-2 py-1"
           >
             {t("nav:links.loja", "Loja")}
           </Link>
           <Link 
             href="/colecao" 
+            prefetch={true}
             className="hover:text-white/95 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-lg px-2 py-1"
           >
             {t("nav:links.colecao", "Coleção")}
@@ -135,6 +138,7 @@ export default function Navbar() {
           {/* Link para buscar (mantido) */}
           <Link
             href="/buscar"
+            prefetch={true}
             aria-label={t("nav:aria.search", "Pesquisar")}
             className="text-white/80 hover:text-white/95 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-lg p-2"
           >
@@ -147,6 +151,7 @@ export default function Navbar() {
           {!hideCart && (
             <Link
               href="/favoritos"
+              prefetch={true}
               aria-label="Favoritos"
               className="relative text-white/80 hover:text-white/95 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-lg p-2"
             >
@@ -196,6 +201,7 @@ function UserMenu() {
     return (
       <Link
         href="/conta/login"
+        prefetch={true}
         className="text-white/80 hover:text-white/95 transition-all duration-150 px-2 py-1 rounded-lg border border-white/10 hover:border-white/25 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       >
         Entrar
@@ -211,13 +217,13 @@ function UserMenu() {
         {String(name).split(" ")[0]}
       </button>
       <div className="absolute right-0 mt-2 hidden group-hover:block rounded-2xl border border-white/10 bg-black/70 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] p-2 w-[220px] z-[60]">
-        <Link className="block px-3 py-2 text-white/80 hover:text-white/95 hover:bg-white/8 rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1" href="/conta">
+        <Link className="block px-3 py-2 text-white/80 hover:text-white/95 hover:bg-white/8 rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1" href="/conta" prefetch={true}>
           Minha conta
         </Link>
-        <Link className="block px-3 py-2 text-white/80 hover:text-white/95 hover:bg-white/8 rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1" href="/conta/pedidos">
+        <Link className="block px-3 py-2 text-white/80 hover:text-white/95 hover:bg-white/8 rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1" href="/conta/pedidos" prefetch={true}>
           Pedidos
         </Link>
-        <Link className="block px-3 py-2 text-white/80 hover:text-white/95 hover:bg-white/8 rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1" href="/favoritos">
+        <Link className="block px-3 py-2 text-white/80 hover:text-white/95 hover:bg-white/8 rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1" href="/favoritos" prefetch={true}>
           Favoritos
         </Link>
         <form method="post" action="/api/auth/signout" className="mt-1">

@@ -27,6 +27,7 @@ export function UpdateBanner({ onUpdate, updating = false }: UpdateBannerProps) 
         className="fixed top-0 left-0 right-0 z-50 p-4"
         role="status"
         aria-live="polite"
+        aria-atomic="true"
         aria-label={t('pwa.updateAvailable', 'App update available')}
       >
         <div className="mx-auto max-w-4xl">
@@ -41,7 +42,7 @@ export function UpdateBanner({ onUpdate, updating = false }: UpdateBannerProps) 
                     ease: "linear"
                   }}
                 >
-                  <RefreshCw className="h-5 w-5 text-white" />
+                  <RefreshCw className="h-5 w-5 text-white" aria-hidden="true" />
                 </motion.div>
                 <div>
                   <p className="text-white font-medium text-sm">
@@ -75,7 +76,7 @@ export function UpdateBanner({ onUpdate, updating = false }: UpdateBannerProps) 
                   whileTap={{ scale: 0.985 }}
                   aria-label={t('pwa.dismiss', 'Dispensar')}
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4" aria-hidden="true" />
                 </motion.button>
               </div>
             </div>

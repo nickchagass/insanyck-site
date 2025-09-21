@@ -114,6 +114,7 @@ export default function ProdutoPage({
         <div className="mb-8">
           <Link
             href="/loja"
+            prefetch={true}
             className="text-white/80 underline underline-offset-4 hover:text-white transition"
           >
             ← {t("common:back", "Voltar para loja")}

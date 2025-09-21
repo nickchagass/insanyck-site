@@ -232,6 +232,7 @@ export default function SacolaPage() {
               <div className="mt-2">
                 <Link
                   href="/checkout"
+                  prefetch={true}
                   className="block text-center rounded-xl px-4 py-3 font-semibold bg-white text-black hover:bg-white/90 transition"
                 >
                   {t("bag:checkoutCta", "Ir para checkout")}

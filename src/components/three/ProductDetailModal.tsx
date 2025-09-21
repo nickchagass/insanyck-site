@@ -139,6 +139,18 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // Keyboard support for accessibility
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   const currentTextureVariant = product.model3D.textures.variants[currentVariantIndex];
 
   // Libera câmera se sair do modal (boa prática mobile)
@@ -192,6 +204,9 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         animate="visible"
         exit="exit"
         variants={modalVariants}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="product-modal-title"
       >
         <div className="absolute inset-0 backdrop-blur-2xl pointer-events-none"></div>
         <motion.div
@@ -298,7 +313,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           >
             <div className="flex justify-between items-start">
               <div>
-                <h2 className="text-3xl font-bold text-yellow-400 mb-2">{product.name}</h2>
+                <h2 id="product-modal-title" className="text-3xl font-bold text-yellow-400 mb-2">{product.name}</h2>
                 <p className="text-white mb-4 max-w-2xl">{product.description}</p>
               </div>
               <div className="text-2xl font-bold text-white">

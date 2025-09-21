@@ -28,6 +28,10 @@ class MyDocument extends Document {
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
           <link rel="dns-prefetch" href="//fonts.googleapis.com" />
           <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+          
+          {/* Resource hints for Stripe */}
+          <link rel="preconnect" href="https://js.stripe.com" />
+          <link rel="dns-prefetch" href="//js.stripe.com" />
 
           {/* OG locale por idioma */}
           <meta property="og:locale" content={ogLocale} />

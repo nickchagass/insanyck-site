@@ -46,15 +46,15 @@ export default function HeroHome() {
         }}
       />
       <div className="mx-auto max-w-[1200px] px-6">
-        {/* H1 caps com tracking exato */}
-        <h1
+        {/* H2 caps com tracking exato (h1 já está na página principal) */}
+        <h2
           id="hero-home"
           className="text-center text-[120px] leading-[1] font-semibold tracking-[0.25em] text-white/90 select-none"
           style={{ textTransform: "uppercase" }}
         >
           {/* Mantém o wordmark como texto simples, não traduzimos o nome da marca */}
           INSANYCK
-        </h1>
+        </h2>
 
         {/* Manifesto */}
         <p className="mt-8 text-center text-[28px] leading-[1.4] text-white/80">
@@ -66,12 +66,12 @@ export default function HeroHome() {
 
         {/* CTAs */}
         <div className="mt-10 flex items-center justify-center gap-4">
-          <Link href="/loja">
+          <Link href="/loja" prefetch={true}>
             <CTA>
               {t("cta.shop", "Entrar na loja") /* INSANYCK STEP 4 */}
             </CTA>
           </Link>
-          <Link href="/manifesto">
+          <Link href="/manifesto" prefetch={true}>
             <CTA variant="ghost">
               {t("cta.manifesto", "Manifesto") /* INSANYCK STEP 4 */}
             </CTA>
