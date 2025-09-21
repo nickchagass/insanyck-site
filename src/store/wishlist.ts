@@ -13,11 +13,11 @@ export type WishlistItem = {
 type WishlistState = {
   hydrated: boolean;
   items: WishlistItem[];
-  has: (slug: string) => boolean;
-  add: (item: Omit<WishlistItem, "id">) => void;
-  removeBySlug: (slug: string) => void;
+  has: (_slug: string) => boolean;
+  add: (_item: Omit<WishlistItem, "id">) => void;
+  removeBySlug: (_slug: string) => void;
   clear: () => void;
-  syncWithServer: (sessionUserId?: string) => Promise<void>;
+  syncWithServer: (_sessionUserId?: string) => Promise<void>;
 };
 
 export const useWishlist = create<WishlistState>()(

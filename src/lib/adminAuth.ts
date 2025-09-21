@@ -28,7 +28,7 @@ export async function requireAdmin(req: NextApiRequest, res: NextApiResponse) {
   return session;
 }
 
-export function withAdminAuth(handler: (req: NextApiRequest, res: NextApiResponse, session: any) => Promise<void>) {
+export function withAdminAuth(handler: (_req: NextApiRequest, _res: NextApiResponse, _session: any) => Promise<void>) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const session = await requireAdmin(req, res);

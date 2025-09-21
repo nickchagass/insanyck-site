@@ -37,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // Exemplo: ação quando pagamento é completado
   if (event.type === "checkout.session.completed") {
-    const session = event.data.object as Stripe.Checkout.Session;
+    const _session = event.data.object as Stripe.Checkout.Session;
     // Salve no banco de dados, dispare e-mail, etc.
   }
 

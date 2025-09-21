@@ -1,6 +1,5 @@
 // INSANYCK STEP 11 — Collection Page with Real Prisma Integration  
 import useSWR from "swr";
-import ProductCard from "@/components/ProductCard";
 import ProductGrid from "@/components/ProductGrid";
 import { ProductCardData } from "@/types/product";
 

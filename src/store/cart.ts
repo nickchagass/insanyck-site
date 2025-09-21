@@ -38,18 +38,18 @@ type CartState = {
   items: CartItem[];
   hydrated: boolean;     // evita mismatch SSR
   isOpen: boolean;       // drawer mini-cart (não persisto)
-  addItem: (item: Omit<CartItem, "id">) => void;
+  addItem: (_item: Omit<CartItem, "id">) => void;
   // Aceita id (antigo) OU key composta (nova). Mantém compatibilidade.
-  removeItem: (idOrKey: string) => void;
-  updateQty: (idOrKey: string, qty: number) => void;
+  removeItem: (_idOrKey: string) => void;
+  updateQty: (_idOrKey: string, _qty: number) => void;
   clear: () => void;
-  toggle: (open?: boolean) => void;
+  toggle: (_open?: boolean) => void;
   count: () => number;
   totalCents: () => number;
 
   // Retrocompat (APIs antigas que usam id direto)
-  inc: (id: string) => void;
-  dec: (id: string) => void;
+  inc: (_id: string) => void;
+  dec: (_id: string) => void;
   subtotalCents: () => number;
 };
 

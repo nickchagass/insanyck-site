@@ -7,7 +7,4 @@ export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   apiVersion: env.STRIPE_API_VERSION as Stripe.StripeConfig['apiVersion'],
 });
 
-// Development logging
-if (env.NODE_ENV === 'development') {
-  console.log('[INSANYCK][Stripe] Initialized with API version:', env.STRIPE_API_VERSION);
-}
+// Stripe initialized for development (log removed for ESLint)

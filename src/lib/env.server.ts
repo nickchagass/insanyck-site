@@ -41,10 +41,7 @@ export const env = (() => {
       }
     }
     
-    // Log validation success in development
-    if (_env.NODE_ENV === 'development') {
-      console.log('[INSANYCK][ENV] Environment validation successful');
-    }
+    // Environment validation successful (log removed for ESLint)
     
     return _env;
   } catch (error) {

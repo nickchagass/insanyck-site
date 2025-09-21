@@ -5,7 +5,6 @@ import { getServerSession } from "next-auth/next";
 import { createAuthOptions } from "../api/auth/[...nextauth]";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Package, Truck, CheckCircle, Clock, Eye } from "lucide-react";
 import Link from "next/link";

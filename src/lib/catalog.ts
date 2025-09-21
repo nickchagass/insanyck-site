@@ -1,7 +1,6 @@
 // INSANYCK STEP 11 — Catalog Utils with Real Prisma Integration
 import { prisma } from "@/lib/prisma";
 import { ProductCardData, productToCardData } from "@/types/product";
-import { env } from "@/lib/env.server";
 
 // Fallback mock data for graceful degradation during development
 const mockProducts: ProductCardData[] = [
@@ -43,9 +42,6 @@ export async function getFeaturedProducts(limit = 8): Promise<ProductCardData[]>
   } catch (error) {
     console.error('[INSANYCK][Catalog] Error fetching featured products:', error);
     // Graceful fallback with mock data during development
-    if (env.NODE_ENV === 'development') {
-      console.log('[INSANYCK][Catalog] Using fallback mock data');
-    }
     return mockProducts.slice(0, limit);
   }
 }
@@ -73,9 +69,6 @@ export async function getNewArrivals(limit = 6): Promise<ProductCardData[]> {
     return products.map(productToCardData);
   } catch (error) {
     console.error('[INSANYCK][Catalog] Error fetching new arrivals:', error);
-    if (env.NODE_ENV === 'development') {
-      console.log('[INSANYCK][Catalog] Using fallback mock data');
-    }
     return mockProducts.slice(0, limit);
   }
 }
@@ -107,9 +100,6 @@ export async function getCategoryHighlights(categorySlug: string, limit = 4): Pr
     return products.map(productToCardData);
   } catch (error) {
     console.error('[INSANYCK][Catalog] Error fetching category highlights:', error);
-    if (env.NODE_ENV === 'development') {
-      console.log('[INSANYCK][Catalog] Using fallback mock data');
-    }
     return mockProducts.slice(0, limit);
   }
 }
@@ -146,9 +136,6 @@ export async function searchProducts(query: string, limit = 20): Promise<Product
     return products.map(productToCardData);
   } catch (error) {
     console.error('[INSANYCK][Catalog] Error searching products:', error);
-    if (env.NODE_ENV === 'development') {
-      console.log('[INSANYCK][Catalog] Using fallback mock data for search');
-    }
     return mockProducts.filter(p => 
       p.title.toLowerCase().includes(query.toLowerCase())
     );
@@ -229,9 +216,6 @@ export async function getAllProducts(options: {
     return result;
   } catch (error) {
     console.error('[INSANYCK][Catalog] Error fetching all products:', error);
-    if (env.NODE_ENV === 'development') {
-      console.log('[INSANYCK][Catalog] Using fallback mock data');
-    }
     return mockProducts.slice(offset, offset + limit);
   }
 }

@@ -24,7 +24,7 @@ export function useCheckout() {
       await stripe?.redirectToCheckout({ sessionId: data.sessionId });
 
       // Fallback: modo offline/localStorage caso Stripe falhe (simples exemplo)
-    } catch (err) {
+    } catch {
       alert("Erro ao processar pagamento, tente novamente.");
     } finally {
       setIsLoading(false);

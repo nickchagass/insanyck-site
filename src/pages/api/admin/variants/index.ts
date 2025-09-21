@@ -33,7 +33,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse, session: any) 
   }
 }
 
-async function createVariant(req: NextApiRequest, res: NextApiResponse, session: any) {
+async function createVariant(req: NextApiRequest, res: NextApiResponse, _session: any) {
   try {
     const data = createVariantSchema.parse(req.body);
 
@@ -118,7 +118,7 @@ async function createVariant(req: NextApiRequest, res: NextApiResponse, session:
       },
     });
 
-    console.log(`Admin ${session.user?.email} created variant: ${data.sku}`);
+    // Admin created variant (log removed for ESLint)
 
     return res.status(201).json({ variant: fullVariant });
   } catch (error) {

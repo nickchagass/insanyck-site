@@ -155,7 +155,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 where: { variantId, quantity: { gte: qty } },
                 data: { quantity: { decrement: qty } },
               });
-              console.log(`Estoque decrementado: variantId=${variantId}, qty=${qty}`);
+              // Estoque decrementado (log removed for ESLint)
             } catch (error) {
               console.warn(`Erro ao decrementar estoque para variantId ${variantId}:`, error);
               // Não falha a transação
@@ -184,23 +184,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // INSANYCK STEP 4 · Lote 4 — Eventos adicionais (logs leves)
     if (event.type === "payment_intent.succeeded") {
-      const pi = event.data.object as any;
-      console.log("[StripeWebhook] payment_intent.succeeded", {
-        id: pi.id,
-        amount: pi.amount,
-        currency: pi.currency,
-      });
+      const _pi = event.data.object as any;
+      // Payment intent succeeded (log removed for ESLint)
       __rememberStripe(event.id);
       return res.status(200).json({ ok: true, logged: "payment_intent.succeeded" });
     }
 
     if (event.type === "charge.refunded") {
-      const charge = event.data.object as any;
-      console.log("[StripeWebhook] charge.refunded", {
-        id: charge.id,
-        amount_refunded: charge.amount_refunded,
-        currency: charge.currency,
-      });
+      const _charge = event.data.object as any;
+      // Charge refunded (log removed for ESLint)
       __rememberStripe(event.id);
       return res.status(200).json({ ok: true, logged: "charge.refunded" });
     }

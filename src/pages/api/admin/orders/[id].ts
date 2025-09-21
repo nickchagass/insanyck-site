@@ -9,7 +9,7 @@ const OrderUpdateSchema = z.object({
   trackingCode: z.string().optional(),
 });
 
-async function handler(req: NextApiRequest, res: NextApiResponse, session: any) {
+async function handler(req: NextApiRequest, res: NextApiResponse, _session: any) {
   const { id } = req.query;
   
   if (!id || typeof id !== 'string') {

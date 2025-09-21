@@ -1,12 +1,12 @@
 // INSANYCK ETAPA 11E — UI Admin Orders simples
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { Search, Eye, Package, Truck } from "lucide-react";
+import { Search, Eye, Package } from "lucide-react";
 
 interface OrderItem {
   slug: string;
@@ -110,9 +110,9 @@ export default function AdminOrdersPage() {
     if (!session?.user) return;
     
     fetchOrders();
-  }, [session, currentPage, statusFilter, emailFilter]);
+  }, [session, currentPage, statusFilter, emailFilter, fetchOrders]);
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -140,7 +140,7 @@ export default function AdminOrdersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, statusFilter, emailFilter]);
 
   const formatCurrency = (cents: number) => {
     return (cents / 100).toLocaleString('pt-BR', {

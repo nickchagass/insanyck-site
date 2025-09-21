@@ -63,7 +63,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const isDisabled = disabled || loading;
 
     // INSANYCK STEP 4 · Lote 3 — Extract motion-specific props to avoid conflicts
-    const { onDrag, onDragStart, onDragEnd, ...buttonProps } = props as any;
+    const { onDrag: _onDrag, onDragStart: _onDragStart, onDragEnd: _onDragEnd, ...buttonProps } = props as any;
 
     return (
       <motion.button

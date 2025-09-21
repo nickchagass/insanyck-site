@@ -2,9 +2,9 @@
 import mongoose, { Schema, Document, Model, Types } from "mongoose";
 
 export enum Currency {
-  BRL = "BRL",
-  USD = "USD",
-  EUR = "EUR"
+  _BRL = "BRL",
+  _USD = "USD",
+  _EUR = "EUR"
 }
 
 // Considere exportar Color/Size enums de um arquivo central depois.
@@ -88,7 +88,7 @@ CartSchema.statics.findByUserOrSession = function(userId: string | null, session
 };
 
 interface CartModel extends Model<ICart> {
-  findByUserOrSession(userId: string | null, sessionId: string): Promise<ICart | null>;
+  findByUserOrSession(_userId: string | null, _sessionId: string): Promise<ICart | null>;
 }
 
 const Cart: CartModel = mongoose.models.Cart as CartModel || mongoose.model<ICart, CartModel>('Cart', CartSchema);

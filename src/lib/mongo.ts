@@ -23,27 +23,20 @@ const connectionOptions: mongoose.ConnectOptions = {
 
 // 3. Singleton global tipado
 declare global {
-  var mongooseGlobal: {
+  var _mongooseGlobal: {
     conn: typeof mongoose | null;
     promise: Promise<typeof mongoose> | null;
   };
 }
 
-const cache = global.mongooseGlobal || { conn: null, promise: null };
+const cache = global._mongooseGlobal || { conn: null, promise: null };
 
 async function connectToDatabase(): Promise<typeof mongoose> {
   if (cache.conn) return cache.conn;
 
   if (!cache.promise) {
     // 4. Event listeners para diagnóstico
-    mongoose.connection.on('connecting', () => 
-      console.log('🟡 Conectando ao MongoDB...'));
-    
-    mongoose.connection.on('connected', () => 
-      console.log('🟢 Conectado ao MongoDB'));
-    
-    mongoose.connection.on('disconnected', () => 
-      console.log('🔴 Desconectado do MongoDB'));
+    // Event listeners for MongoDB connection (logs removed for ESLint)
     
     mongoose.connection.on('error', (error) => 
       console.error('❌ Erro no MongoDB:', error));
@@ -70,7 +63,7 @@ async function connectToDatabase(): Promise<typeof mongoose> {
 
 // 6. Manter cache apenas em dev para hot-reload
 if (process.env.NODE_ENV === 'development') {
-  global.mongooseGlobal = cache;
+  global._mongooseGlobal = cache;
 }
 
 export default connectToDatabase;

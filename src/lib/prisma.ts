@@ -4,16 +4,16 @@ import { env } from "./env.server";
 
 declare global {
   // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined;
+  var _prisma: PrismaClient | undefined;
 }
 
 export const prisma =
-  global.prisma ??
+  global._prisma ??
   new PrismaClient({
     log: env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
   });
 
-if (env.NODE_ENV !== "production") global.prisma = prisma;
+if (env.NODE_ENV !== "production") global._prisma = prisma;
 
 // INSANYCK STEP 8 — ADIÇÃO para suportar `import prisma from "@/lib/prisma"`
 export default prisma;

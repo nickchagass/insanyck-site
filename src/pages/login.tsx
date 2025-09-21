@@ -1,6 +1,6 @@
 // src/pages/login.tsx
 import { useState } from "react";
-import { signIn, getCsrfToken } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 
 Login.getInitialProps = async () => {

@@ -21,13 +21,13 @@ type CartStore = {
   version: number;
   currency: "BRL" | "USD" | "EUR";
   isLoading: boolean;
-  add: (item: CartItem) => void;
-  remove: (id: string, cor: string, tamanho: string) => void;
-  update: (id: string, cor: string, tamanho: string, data: Partial<CartItem>) => void;
+  add: (_item: CartItem) => void;
+  remove: (_id: string, _cor: string, _tamanho: string) => void;
+  update: (_id: string, _cor: string, _tamanho: string, _data: Partial<CartItem>) => void;
   clear: () => void;
-  sync: (userId?: string) => Promise<void>;
-  restore: (userId?: string) => Promise<void>;
-  setCurrency: (currency: "BRL" | "USD" | "EUR") => void;
+  sync: (_userId?: string) => Promise<void>;
+  restore: (_userId?: string) => Promise<void>;
+  setCurrency: (_currency: "BRL" | "USD" | "EUR") => void;
   checkout: () => Promise<void>;
 };
 

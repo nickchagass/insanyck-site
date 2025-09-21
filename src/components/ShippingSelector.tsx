@@ -10,7 +10,7 @@ type Id = "standard" | "express";
 
 type Props = {
   value: Id;
-  onChange: (id: Id, priceCents: number) => void; // mantém sua assinatura atual
+  onChange: (_id: Id, _priceCents: number) => void; // mantém sua assinatura atual
   locale?: Locale;
   className?: string;
 };

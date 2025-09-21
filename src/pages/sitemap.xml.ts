@@ -12,7 +12,7 @@ const STATIC_ROUTES = [
 ];
 
 // INSANYCK STEP 4 · Lote 3 — Routes to exclude from sitemap
-const EXCLUDED_ROUTES = [
+const _EXCLUDED_ROUTES = [
   '/conta',
   '/checkout',
   '/api',

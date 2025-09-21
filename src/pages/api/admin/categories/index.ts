@@ -68,7 +68,7 @@ async function getCategories(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-async function createCategory(req: NextApiRequest, res: NextApiResponse, session: any) {
+async function createCategory(req: NextApiRequest, res: NextApiResponse, _session: any) {
   try {
     const data = createCategorySchema.parse(req.body);
 
@@ -102,7 +102,7 @@ async function createCategory(req: NextApiRequest, res: NextApiResponse, session
       },
     });
 
-    console.log(`Admin ${session.user?.email} created category: ${category.slug}`);
+    // Admin created category (log removed for ESLint)
 
     return res.status(201).json({ category });
   } catch (error) {

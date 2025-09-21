@@ -1,7 +1,7 @@
 // INSANYCK STEP 11 — Payment Intent with Type-Safe Env
 import type { NextApiRequest, NextApiResponse } from "next";
 import { stripe } from "@/lib/stripe";
-import { env, isServerEnvReady } from "@/lib/env.server";
+import { isServerEnvReady } from "@/lib/env.server";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // INSANYCK STEP 11 — Runtime guards for environment

@@ -30,7 +30,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     const focusClasses = "focus-within:ring-2 focus-within:ring-white/20 focus-within:ring-offset-2 focus-within:ring-offset-black";
 
     // INSANYCK STEP 4 · Lote 3 — Extract drag-related props to avoid conflicts
-    const { onDrag, onDragStart, onDragEnd, ...divProps } = props as any;
+    const { onDrag: _onDrag, onDragStart: _onDragStart, onDragEnd: _onDragEnd, ...divProps } = props as any;
 
     return (
       <motion.div

@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import { withAdminAuth } from '@/lib/adminAuth';
 
-async function handler(req: NextApiRequest, res: NextApiResponse, session: any) {
+async function handler(req: NextApiRequest, res: NextApiResponse, _session: any) {
   switch (req.method) {
     case 'GET':
       return getOptions(req, res);

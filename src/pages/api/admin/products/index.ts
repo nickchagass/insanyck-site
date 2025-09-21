@@ -101,7 +101,7 @@ async function getProducts(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-async function createProduct(req: NextApiRequest, res: NextApiResponse, session: any) {
+async function createProduct(req: NextApiRequest, res: NextApiResponse, _session: any) {
   try {
     const data = createProductSchema.parse(req.body);
 
@@ -128,7 +128,7 @@ async function createProduct(req: NextApiRequest, res: NextApiResponse, session:
       },
     });
 
-    console.log(`Admin ${session.user?.email} created product: ${product.slug}`);
+    // Admin created product (log removed for ESLint)
 
     return res.status(201).json({ product });
   } catch (error) {

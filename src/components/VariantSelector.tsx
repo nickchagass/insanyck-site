@@ -37,7 +37,7 @@ interface Variant {
 interface VariantSelectorProps {
   options: Option[];
   variants: Variant[];
-  onVariantChange: (variant: Variant | null) => void;
+  onVariantChange: (_variant: Variant | null) => void;
 }
 
 export default function VariantSelector({

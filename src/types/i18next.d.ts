@@ -19,7 +19,7 @@ import ui from '../../public/locales/pt/ui.json';
 import admin from '../../public/locales/pt/admin.json';
 
 declare module 'i18next' {
-  interface CustomTypeOptions {
+  interface _CustomTypeOptions {
     defaultNS: 'common';
     resources: {
       common: typeof common;

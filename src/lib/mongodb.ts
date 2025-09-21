@@ -24,11 +24,9 @@ if (process.env.NODE_ENV === "development") {
   if (!global._mongoClientPromise) {
     client = new MongoClient(uri, options);
     global._mongoClientPromise = client.connect();
-    if (process.env.DEBUG)
-      console.log("🌱 [MongoDB] Nova conexão iniciada (DEV)");
+    // Nova conexão MongoDB iniciada em desenvolvimento
   } else {
-    if (process.env.DEBUG)
-      console.log("♻️ [MongoDB] Reutilizando conexão existente (DEV)");
+    // Reutilizando conexão MongoDB em desenvolvimento
   }
   clientPromise = global._mongoClientPromise!;
 } else {

@@ -7,7 +7,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ProductGrid from "@/components/ProductGrid";
 
 interface Product {
@@ -58,12 +58,12 @@ export default function Loja({
 
   useEffect(() => {
     fetchProducts();
-  }, [router.query]);
+  }, [router.query, fetchProducts]);
 
   // INSANYCK STEP 10 — Normalizar tipos de query (evitar string[])
   const asStr = (v: string | string[] | undefined) => Array.isArray(v) ? v[0] : (v ?? '');
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -84,7 +84,7 @@ export default function Loja({
     } finally {
       setLoading(false);
     }
-  };
+  }, [category, color, inStock, size, sort]);
 
   const updateFilter = (key: string, value: string | null) => {
     const newQuery = { ...router.query };

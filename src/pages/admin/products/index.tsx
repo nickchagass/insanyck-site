@@ -1,6 +1,6 @@
 // INSANYCK STEP 10 — Admin Products List
 // src/pages/admin/products/index.tsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { GetServerSideProps } from 'next';
 import { getServerSession } from 'next-auth';
 import { createAuthOptions } from '@/pages/api/auth/[...nextauth]';
@@ -45,9 +45,9 @@ export default function AdminProducts() {
 
   useEffect(() => {
     fetchProducts();
-  }, [currentPage, search]);
+  }, [currentPage, search, fetchProducts]);
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -70,7 +70,7 @@ export default function AdminProducts() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, search]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

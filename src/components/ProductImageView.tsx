@@ -40,6 +40,9 @@ export default function ProductImageView({
           priority
           className="object-contain transition-opacity duration-300 opacity-100"
           sizes="(min-width: 1024px) 640px, 100vw"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "/thumbs/placeholder.webp";
+          }}
         />
       </div>
 
@@ -65,6 +68,9 @@ export default function ProductImageView({
               width={92}
               height={92}
               className="w-full h-full object-cover opacity-95"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = "/thumbs/placeholder.webp";
+              }}
             />
             <div className="absolute inset-x-0 bottom-1 text-center drop-shadow-[0_1px_1px_rgba(0,0,0,.8)]">
               {o.label}

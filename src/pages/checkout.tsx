@@ -1,7 +1,7 @@
 // INSANYCK STEP 7 — Checkout SPA (Checkout Sessions)
 // src/pages/checkout.tsx
 
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
@@ -33,13 +33,13 @@ export default function CheckoutPage() {
   const locale = i18n.language?.startsWith("en") ? "en" : "pt";
 
   const items = useCartStore((s) => s.items);
-  const clear = useCartStore((s) => s.clear);
+  const _clear = useCartStore((s) => s.clear);
   const subtotalCents = useCartSubtotal();
 
   const [shipping, setShipping] = useState<"standard" | "express">("standard");
   const shippingCents = shipping === "express" ? 2490 : 0;
 
-  const [address, setAddress] = useState<Partial<AddressFields>>({
+  const [_address, _setAddress] = useState<Partial<AddressFields>>({
     country: locale === "en" ? "USA" : "Brasil",
     state: locale === "en" ? "CA" : "SP",
   });

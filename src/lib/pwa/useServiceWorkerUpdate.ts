@@ -19,7 +19,7 @@ export function useServiceWorkerUpdate() {
       return;
     }
 
-    let registration: ServiceWorkerRegistration | null = null;
+    let _registration: ServiceWorkerRegistration | null = null;
 
     const initServiceWorker = async () => {
       try {
@@ -27,7 +27,7 @@ export function useServiceWorkerUpdate() {
         const reg = await navigator.serviceWorker.getRegistration();
         if (!reg) return;
 
-        registration = reg;
+        _registration = reg;
 
         // Check if there's already a waiting service worker
         if (reg.waiting) {

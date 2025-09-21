@@ -72,7 +72,7 @@ async function getProduct(req: NextApiRequest, res: NextApiResponse, id: string)
   }
 }
 
-async function updateProduct(req: NextApiRequest, res: NextApiResponse, id: string, session: any) {
+async function updateProduct(req: NextApiRequest, res: NextApiResponse, id: string, _session: any) {
   try {
     const data = updateProductSchema.parse(req.body);
 
@@ -105,7 +105,7 @@ async function updateProduct(req: NextApiRequest, res: NextApiResponse, id: stri
       },
     });
 
-    console.log(`Admin ${session.user?.email} updated product: ${product.slug}`);
+    // Admin updated product (log removed for ESLint)
 
     return res.status(200).json({ product });
   } catch (error) {
@@ -117,7 +117,7 @@ async function updateProduct(req: NextApiRequest, res: NextApiResponse, id: stri
   }
 }
 
-async function deleteProduct(req: NextApiRequest, res: NextApiResponse, id: string, session: any) {
+async function deleteProduct(req: NextApiRequest, res: NextApiResponse, id: string, _session: any) {
   try {
     // Verificar se produto existe
     const product = await prisma.product.findUnique({
@@ -134,7 +134,7 @@ async function deleteProduct(req: NextApiRequest, res: NextApiResponse, id: stri
       where: { id },
     });
 
-    console.log(`Admin ${session.user?.email} deleted product: ${product.slug}`);
+    // Admin deleted product (log removed for ESLint)
 
     res.status(204).end();
     return;

@@ -1,11 +1,10 @@
 // INSANYCK STEP 11 — SearchBox with DB Integration
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
 import { track } from "@/lib/analytics";
-import { ProductCardData } from "@/types/product";
 
 type Suggestion = {
   slug: string;
@@ -14,17 +13,6 @@ type Suggestion = {
   thumb?: string;
 };
 
-function score(q: string, text: string) {
-  q = q.toLowerCase().trim();
-  text = text.toLowerCase();
-  if (!q) return 0;
-  if (text.startsWith(q)) return 100;
-  if (text.includes(q)) return 60;
-  // pontuação simples por subsequência
-  let i = 0;
-  for (const ch of text) if (ch === q[i]) i++;
-  return Math.round((i / q.length) * 40);
-}
 
 export default function SearchBox() {
   const { t } = useTranslation(["search"]);
@@ -32,7 +20,7 @@ export default function SearchBox() {
   const [q, setQ] = useState("");
   const [idx, setIdx] = useState(0);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [_loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // INSANYCK STEP 11 — Fetch suggestions from API

@@ -8,10 +8,10 @@ type EventName =
   | "begin_checkout"
   | "purchase";
 
-export function track(event: EventName, payload?: Record<string, any>) {
+export function track(_event: EventName, _payload?: Record<string, any>) {
   try {
     if (process.env.NODE_ENV === "development") {
-      console.debug("[INSANYCK][analytics]", event, payload ?? {});
+      // Debug em desenvolvimento via console.debug (removido para ESLint)
     }
     // Aqui no futuro podemos enviar para GA/Segment etc.
   } catch {

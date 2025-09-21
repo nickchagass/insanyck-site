@@ -61,7 +61,7 @@ interface ProductDetailModalProps {
 
 // --- Loader & Error UI
 function Loader3D() { return null; }
-function ErrorFallback({ message }: { message: string }) { return null; }
+function _ErrorFallback({ message: _message }: { message: string }) { return null; }
 
 // --- Componente 3D + texturização
 function ProductModel({
