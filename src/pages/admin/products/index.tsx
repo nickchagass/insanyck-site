@@ -43,10 +43,6 @@ export default function AdminProducts() {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [currentPage, search, fetchProducts]);
-
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
@@ -71,6 +67,10 @@ export default function AdminProducts() {
       setLoading(false);
     }
   }, [currentPage, search]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [currentPage, search, fetchProducts]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

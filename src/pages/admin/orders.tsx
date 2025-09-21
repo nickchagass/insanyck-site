@@ -105,13 +105,6 @@ export default function AdminOrdersPage() {
     }
   }, [session, status, router]);
 
-  // Carregar orders
-  useEffect(() => {
-    if (!session?.user) return;
-    
-    fetchOrders();
-  }, [session, currentPage, statusFilter, emailFilter, fetchOrders]);
-
   const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
@@ -141,6 +134,13 @@ export default function AdminOrdersPage() {
       setLoading(false);
     }
   }, [currentPage, statusFilter, emailFilter]);
+
+  // Carregar orders
+  useEffect(() => {
+    if (!session?.user) return;
+    
+    fetchOrders();
+  }, [session, currentPage, statusFilter, emailFilter, fetchOrders]);
 
   const formatCurrency = (cents: number) => {
     return (cents / 100).toLocaleString('pt-BR', {

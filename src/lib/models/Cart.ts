@@ -44,7 +44,7 @@ const CartItemSchema = new Schema<ICartItem>({
       message: 'URL de imagem inválida'
     }
   },
-  currency: { type: String, enum: Object.values(Currency), default: Currency.BRL },
+  currency: { type: String, enum: Object.values(Currency), default: Currency._BRL },
   variantId: String,
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }

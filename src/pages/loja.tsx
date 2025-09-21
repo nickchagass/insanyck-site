@@ -56,10 +56,6 @@ export default function Loja({
   const categorySlug = Array.isArray(category) ? category[0] : category;
   const categoryName = categories.find(c => c.slug === (categorySlug ?? ""))?.name;
 
-  useEffect(() => {
-    fetchProducts();
-  }, [router.query, fetchProducts]);
-
   // INSANYCK STEP 10 — Normalizar tipos de query (evitar string[])
   const asStr = (v: string | string[] | undefined) => Array.isArray(v) ? v[0] : (v ?? '');
 
@@ -85,6 +81,10 @@ export default function Loja({
       setLoading(false);
     }
   }, [category, color, inStock, size, sort]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [router.query, fetchProducts]);
 
   const updateFilter = (key: string, value: string | null) => {
     const newQuery = { ...router.query };
