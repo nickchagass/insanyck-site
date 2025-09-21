@@ -1,5 +1,6 @@
 {
     "title": "Favorites",
+    "description": "Your favorite pieces from the INSANYCK collection",
     "empty": "No items in favorites.",
     "add": "Add to favorites",
     "remove": "Remove from favorites",

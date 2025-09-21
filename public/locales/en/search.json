@@ -1,8 +1,46 @@
 {
-    "title": "Search",
-    "open": "Search",
-    "label": "Search products",
-    "placeholder": "Search products",
-    "empty": "No results"
-  }
+  "title": "Search",
+  "open": "Search",
+  "label": "Search products",
+  "placeholder": "Search products",
+  "empty": {
+    "noQuery": {
+      "title": "Start your search",
+      "description": "Type what you're looking for or explore our categories"
+    },
+    "withQuery": {
+      "title": "No results found",
+      "description": "We couldn't find anything for",
+      "suggestion": "Try more general terms or explore our collection"
+    },
+    "suggestions": {
+      "title": "Popular terms:"
+    },
+    "actions": {
+      "clearFilters": "Clear filters",
+      "newSearch": "New search"
+    }
+  },
+  "filters": {
+    "title": "Filters",
+    "clear": "Clear all",
+    "apply": "Apply filters",
+    "category": "Category",
+    "price": "Price",
+    "color": "Color",
+    "size": "Size",
+    "availability": "Availability"
+  },
+  "results": {
+    "showing": "Showing {{count}} results",
+    "showingFor": "Showing {{count}} results for \"{{query}}\"",
+    "sortBy": "Sort by",
+    "relevance": "Relevance",
+    "priceAsc": "Lowest price",
+    "priceDesc": "Highest price",
+    "newest": "Newest"
+  },
+  "description": "Find the perfect INSANYCK pieces",
+  "resultsFor": "Results for"
+}
   

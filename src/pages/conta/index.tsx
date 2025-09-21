@@ -9,6 +9,8 @@ import AccountLayout from "@/components/AccountLayout";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import { seoAccount } from "@/lib/seo";
 
 type Props = {
   user: { name: string | null; email: string | null };
@@ -17,10 +19,19 @@ type Props = {
 
 export default function AccountHome({ user, lastOrders }: Props) {
   const { t } = useTranslation(["account"]);
+  const router = useRouter();
+  const seo = seoAccount(router.locale);
+
   return (
     <>
       <Head>
-        <title>{t("account:dashboard.title", "Minha conta")} — INSANYCK</title>
+        <title>{seo.title}</title>
+        {seo.meta.map((tag, i) => (
+          <meta key={i} {...tag} />
+        ))}
+        {seo.link.map((l, i) => (
+          <link key={i} {...l} />
+        ))}
       </Head>
       <AccountLayout titleKey="account:dashboard.title">
         {/* INSANYCK STEP 9 — bloom sutil, sem alterar grid/tipografia */}

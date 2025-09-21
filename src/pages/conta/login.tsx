@@ -6,9 +6,12 @@ import { getServerSession } from "next-auth/next";
 import { createAuthOptions } from "../api/auth/[...nextauth]";
 import { signIn } from "next-auth/react";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import { seoAccountLogin } from "@/lib/seo";
 
 export default function LoginPage() {
   const { t } = useTranslation(["account"]);
+  const router = useRouter();
 
   const onLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,10 +19,18 @@ export default function LoginPage() {
     await signIn("credentials", { redirect: true, callbackUrl: "/conta" });
   };
 
+  const seo = seoAccountLogin(router.locale);
+
   return (
     <>
       <Head>
-        <title>{t("account:login.title", "Entrar")} — INSANYCK</title>
+        <title>{seo.title}</title>
+        {seo.meta.map((tag, i) => (
+          <meta key={i} {...tag} />
+        ))}
+        {seo.link.map((l, i) => (
+          <link key={i} {...l} />
+        ))}
       </Head>
       <section className="pt-[120px] pb-16">
         <div className="mx-auto max-w-[480px] px-6">

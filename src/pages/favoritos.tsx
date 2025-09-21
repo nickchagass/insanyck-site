@@ -9,9 +9,12 @@ import Skeleton from "@/components/Skeleton";
 import { useWishlist } from "@/store/wishlist";
 // INSANYCK STEP 4 · Lote 3 — Import WishlistEmpty para teste estável
 import WishlistEmpty from "@/components/EmptyStates/WishlistEmpty";
+import { seoWishlist } from "@/lib/seo";
+import { useRouter } from "next/router";
 
 export default function FavoritosPage() {
   const { t } = useTranslation(["wishlist", "plp"]);
+  const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
   const items = useWishlist((s) => s.items);
 
@@ -29,11 +32,18 @@ export default function FavoritosPage() {
     status: "normal" as const,
   }));
 
+  const seo = seoWishlist(router.locale);
+
   return (
     <>
       <Head>
-        <title>{t("wishlist:title", "Favoritos")} — INSANYCK</title>
-        <meta name="description" content={t("wishlist:description", "Seus produtos favoritos")} />
+        <title>{seo.title}</title>
+        {seo.meta.map((tag, i) => (
+          <meta key={i} {...tag} />
+        ))}
+        {seo.link.map((l, i) => (
+          <link key={i} {...l} />
+        ))}
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger

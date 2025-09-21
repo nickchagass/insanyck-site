@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
 import ProductGrid from "@/components/ProductGrid";
 import { ProductCardData } from "@/types/product";
+import { seoSearch } from "@/lib/seo";
 
 export default function BuscarPage() {
   const { t } = useTranslation(["search", "ui"]);
@@ -59,11 +60,18 @@ export default function BuscarPage() {
     })),
   };
 
+  const seo = seoSearch(router.locale, q);
+
   return (
     <>
       <Head>
-        <title>{q ? `${t("search:resultsFor", "Resultados para")} "${q}" — INSANYCK` : `Buscar — INSANYCK`}</title>
-        <meta name="description" content={t("search:description", "Busca INSANYCK")} />
+        <title>{seo.title}</title>
+        {seo.meta.map((tag, i) => (
+          <meta key={i} {...tag} />
+        ))}
+        {seo.link.map((l, i) => (
+          <link key={i} {...l} />
+        ))}
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger

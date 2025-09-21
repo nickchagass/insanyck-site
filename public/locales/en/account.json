@@ -25,7 +25,31 @@
     },
     "orders": {
       "title": "Orders",
-      "empty": "You don’t have orders yet."
+      "empty": {
+        "title": "Your journey starts here",
+        "description": "No orders in your account yet. Discover pieces that define your unique style."
+      },
+      "benefits": {
+        "shipping": "Express delivery",
+        "quality": "Premium quality",
+        "service": "24/7 support"
+      },
+      "status": {
+        "pending": "Pending",
+        "processing": "Processing",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+      },
+      "details": {
+        "orderNumber": "Order #{{number}}",
+        "orderDate": "Ordered on",
+        "total": "Total",
+        "items": "{{count}} item",
+        "items_plural": "{{count}} items",
+        "trackOrder": "Track order",
+        "reorder": "Reorder"
+      }
     },
     "login": {
       "title": "Sign in",

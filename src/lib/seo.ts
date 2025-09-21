@@ -50,7 +50,7 @@ export const metaTags = (config: MetaTagsConfig) => {
 
   const baseUrl = getBaseUrl();
   const fullCanonical = canonical ? `${baseUrl}${canonical}` : baseUrl;
-  const ogImage = image ? (image.startsWith('http') ? image : `${baseUrl}${image}`) : `${baseUrl}/og-default.jpg`;
+  const ogImage = image ? (image.startsWith('http') ? image : `${baseUrl}${image}`) : `${baseUrl}/brand/logo.svg`;
 
   const meta = [
     { name: 'description', content: description },
@@ -313,6 +313,98 @@ export const seoCheckout = (locale: string = 'pt-BR') => {
       title: buildTitle(title),
       description,
       canonical: '/checkout',
+      locale,
+      noIndex: true
+    }),
+    jsonLd: []
+  };
+};
+
+export const seoAccount = (locale: string = 'pt-BR') => {
+  const title = locale === 'en' ? 'My Account' : 'Minha Conta';
+  const description = locale === 'en'
+    ? 'Manage your orders, addresses and personal information • INSANYCK'
+    : 'Gerencie seus pedidos, endereços e informações pessoais • INSANYCK';
+
+  return {
+    ...metaTags({
+      title: buildTitle(title),
+      description,
+      canonical: '/conta',
+      locale,
+      noIndex: true
+    }),
+    jsonLd: []
+  };
+};
+
+export const seoAccountLogin = (locale: string = 'pt-BR') => {
+  const title = locale === 'en' ? 'Sign In' : 'Entrar';
+  const description = locale === 'en'
+    ? 'Access your INSANYCK account • Premium fashion • Secure login'
+    : 'Acesse sua conta INSANYCK • Moda premium • Login seguro';
+
+  return {
+    ...metaTags({
+      title: buildTitle(title),
+      description,
+      canonical: '/conta/login',
+      locale,
+      noIndex: true
+    }),
+    jsonLd: []
+  };
+};
+
+export const seoAccountSignup = (locale: string = 'pt-BR') => {
+  const title = locale === 'en' ? 'Create Account' : 'Criar Conta';
+  const description = locale === 'en'
+    ? 'Join INSANYCK • Premium fashion • Create your account'
+    : 'Junte-se à INSANYCK • Moda premium • Crie sua conta';
+
+  return {
+    ...metaTags({
+      title: buildTitle(title),
+      description,
+      canonical: '/conta/cadastro',
+      locale,
+      noIndex: true
+    }),
+    jsonLd: []
+  };
+};
+
+export const seoWishlist = (locale: string = 'pt-BR') => {
+  const title = locale === 'en' ? 'Wishlist' : 'Favoritos';
+  const description = locale === 'en'
+    ? 'Your favorite pieces from the INSANYCK collection • Premium fashion'
+    : 'Suas peças favoritas da coleção INSANYCK • Moda premium';
+
+  return {
+    ...metaTags({
+      title: buildTitle(title),
+      description,
+      canonical: '/favoritos',
+      locale,
+      noIndex: true
+    }),
+    jsonLd: []
+  };
+};
+
+export const seoSearch = (locale: string = 'pt-BR', query?: string) => {
+  const title = query 
+    ? (locale === 'en' ? `Search results for "${query}"` : `Resultados para "${query}"`)
+    : (locale === 'en' ? 'Search' : 'Buscar');
+  const description = locale === 'en'
+    ? 'Find the perfect INSANYCK pieces • Premium fashion search'
+    : 'Encontre as peças INSANYCK perfeitas • Busca de moda premium';
+
+  return {
+    ...metaTags({
+      title: buildTitle(title),
+      description,
+      canonical: query ? `/buscar?q=${encodeURIComponent(query)}` : '/buscar',
       locale,
       noIndex: true
     }),

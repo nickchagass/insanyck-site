@@ -13,9 +13,12 @@ class MyDocument extends Document {
     const pagePath = (this.props as any).__NEXT_DATA__?.page || "/";
     const ogLocale = currentLocale === "pt" ? "pt_BR" : "en_US";
 
-    // Helpers simples para alternates (prefix /en para inglês)
-    const hrefPt = pagePath === "/" ? "/" : pagePath;
-    const hrefEn = pagePath === "/" ? "/en" : `/en${pagePath}`;
+    // Base URL para hreflang absolutos
+    const baseUrl = process.env.NEXT_PUBLIC_URL || "https://insanyck.com";
+    
+    // Helpers com URLs absolutos para alternates
+    const hrefPt = `${baseUrl}${pagePath === "/" ? "/" : pagePath}`;
+    const hrefEn = `${baseUrl}${pagePath === "/" ? "/en" : `/en${pagePath}`}`;
 
     return (
       <Html lang={currentLocale}>

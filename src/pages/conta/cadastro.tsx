@@ -5,9 +5,12 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { getServerSession } from "next-auth/next";
 import { createAuthOptions } from "../api/auth/[...nextauth]";
 import { useTranslation } from "next-i18next";
+import { useRouter } from "next/router";
+import { seoAccountSignup } from "@/lib/seo";
 
 export default function SignupPage() {
   const { t } = useTranslation(["account"]);
+  const router = useRouter();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,10 +18,18 @@ export default function SignupPage() {
     alert(t("account:signup.mock", "Cadastro mock — configure no NextAuth"));
   };
 
+  const seo = seoAccountSignup(router.locale);
+
   return (
     <>
       <Head>
-        <title>{t("account:signup.title", "Criar conta")} — INSANYCK</title>
+        <title>{seo.title}</title>
+        {seo.meta.map((tag, i) => (
+          <meta key={i} {...tag} />
+        ))}
+        {seo.link.map((l, i) => (
+          <link key={i} {...l} />
+        ))}
       </Head>
       <section className="pt-[120px] pb-16">
         <div className="mx-auto max-w-[480px] px-6">
