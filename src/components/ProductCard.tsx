@@ -40,14 +40,15 @@ export default function ProductCard({ product }: Props) {
 
   return (
     <motion.article
-      whileHover={{ y: -3 }}
-      className="rounded-2xl border border-white/10 bg-black/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] overflow-hidden focus-within:ring-2 focus-within:ring-white/20"
+      whileHover={{ y: -3, borderColor: "rgba(255,255,255,0.15)" }}
+      transition={{ duration: 0.15, ease: [0.2, 0, 0, 1] }}
+      className="rounded-2xl border border-white/10 bg-black/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] overflow-hidden focus-within:ring-2 focus-within:ring-white/40 focus-within:ring-offset-2 focus-within:ring-offset-black"
     >
       {/* Área clicável (imagem + título) */}
       <Link
         href={`/produto/${product.slug}`}
         prefetch
-        className="block group focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/30 rounded-2xl"
+        className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-2xl"
         aria-label={`Ver detalhes de ${product.title}`}
       >
         {/* INSANYCK STEP 4 · Lote 3 — OptimizedImage para zero CLS */}
@@ -87,7 +88,7 @@ export default function ProductCard({ product }: Props) {
           <Link
             href={`/produto/${product.slug}`}
             prefetch
-            className="rounded-xl px-4 py-2 text-sm font-semibold border border-white/15 text-white hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/30 transition"
+            className="rounded-xl px-4 py-2 text-sm font-semibold border border-white/15 text-white hover:bg-white/8 hover:border-white/25 active:bg-white/12 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             {t("plp:viewDetails", "Ver detalhes")}
           </Link>
@@ -100,7 +101,7 @@ export default function ProductCard({ product }: Props) {
               image: img,
               price: product.price, // componente converte se for string
             }}
-            className="rounded-xl px-4 py-2 text-sm font-semibold border border-white/15 text-white hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/30 transition"
+            className="rounded-xl px-4 py-2 text-sm font-semibold border border-white/15 text-white hover:bg-white/8 hover:border-white/25 active:bg-white/12 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             {t("cart:addToCart", "Adicionar ao carrinho")}
           </AddToCartButton>

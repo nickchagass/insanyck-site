@@ -14,9 +14,9 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 // INSANYCK STEP 4 · Lote 3 — Button variants with INSANYCK glass aesthetic
 const buttonVariants = {
-  primary: "bg-white text-black border border-white/20 shadow-sm hover:shadow-md",
-  ghost: "bg-transparent text-white border border-white/15 hover:bg-white/5",
-  link: "bg-transparent text-white/80 hover:text-white border-none p-0"
+  primary: "bg-white text-black border border-white/20 shadow-sm hover:shadow-md hover:bg-white/95 active:bg-white/90 active:shadow-sm",
+  ghost: "bg-transparent text-white border border-white/15 hover:bg-white/8 hover:border-white/25 active:bg-white/12 active:border-white/30",
+  link: "bg-transparent text-white/80 hover:text-white/95 active:text-white/85 border-none p-0 underline-offset-4 hover:underline"
 };
 
 const buttonSizes = {
@@ -71,19 +71,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           // INSANYCK STEP 4 · Lote 3 — Base styles with INSANYCK aesthetic
           "inline-flex items-center justify-center rounded-xl font-semibold",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
           "transition-all duration-150 cubic-bezier(0.2, 0, 0, 1)",
-          "disabled:opacity-50 disabled:cursor-not-allowed",
+          "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:transform-none",
+          "relative z-0",
           buttonVariants[variant],
           variant !== "link" && buttonSizes[size],
           className
         )}
         // INSANYCK STEP 4 · Lote 3 — Micro-interactions with subtle scale and shadow
         whileHover={!isDisabled ? { 
-          scale: 1.015, 
-          boxShadow: variant === "primary" ? "0 4px 12px rgba(255,255,255,0.1)" : undefined
+          scale: variant === "link" ? 1 : 1.015, 
+          boxShadow: variant === "primary" ? "0 4px 12px rgba(255,255,255,0.12), 0 2px 4px rgba(255,255,255,0.06)" : 
+                     variant === "ghost" ? "0 2px 8px rgba(255,255,255,0.08)" : undefined
         } : undefined}
-        whileTap={!isDisabled ? { scale: 0.985 } : undefined}
+        whileTap={!isDisabled ? { scale: variant === "link" ? 1 : 0.985 } : undefined}
         disabled={isDisabled}
         aria-busy={loading}
         data-state={loading ? "loading" : "idle"}

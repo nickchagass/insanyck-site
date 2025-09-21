@@ -53,7 +53,7 @@ export default function SearchBox() {
       }
     };
 
-    const timeoutId = setTimeout(fetchSuggestions, 300); // Debounce
+    const timeoutId = setTimeout(fetchSuggestions, 150); // Debounce
     return () => clearTimeout(timeoutId);
   }, [q]);
 
@@ -92,8 +92,9 @@ export default function SearchBox() {
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="text-white/80 hover:text-white transition-colors px-2 py-1 rounded-lg border border-white/10 hover:border-white/20"
+        className="text-white/80 hover:text-white/95 transition-all duration-150 px-2 py-1 rounded-lg border border-white/10 hover:border-white/25 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
         aria-expanded={open}
+        aria-controls="search-dropdown"
       >
         {t("search:open", "Buscar")}
         <span className="ml-2 text-white/40 text-xs">/</span>
@@ -101,6 +102,7 @@ export default function SearchBox() {
 
       {open && (
         <div
+          id="search-dropdown"
           role="dialog"
           aria-modal="true"
           aria-labelledby="insanyck-search-label"
@@ -115,9 +117,11 @@ export default function SearchBox() {
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={onKeyDown}
             placeholder={t("search:placeholder", "Busque por produtos")}
-            className="w-full bg-transparent border border-white/15 rounded-lg px-3 py-2 outline-none text-white placeholder:text-white/40 focus:border-white/30"
+            className="w-full bg-transparent border border-white/15 rounded-lg px-3 py-2 outline-none text-white placeholder:text-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all duration-150"
+            autoComplete="off"
+            aria-describedby="search-results"
           />
-          <ul className="mt-3 max-h-[300px] overflow-auto flex flex-col gap-2">
+          <ul id="search-results" role="listbox" className="mt-3 max-h-[300px] overflow-auto flex flex-col gap-2">
             {data.length === 0 && (
               <li className="text-white/60 text-sm px-2 py-3">
                 {t("search:empty", "Nenhum resultado")}
@@ -127,8 +131,10 @@ export default function SearchBox() {
               <li key={s.slug}>
                 <Link
                   href={`/produto/${s.slug}`}
-                  className={`flex items-center gap-3 rounded-xl border border-white/10 p-2 hover:bg-white/5 transition ${
-                    i === idx ? "ring-2 ring-white/20" : ""
+                  role="option"
+                  aria-selected={i === idx}
+                  className={`flex items-center gap-3 rounded-xl border border-white/10 p-2 hover:bg-white/8 hover:border-white/20 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1 ${
+                    i === idx ? "ring-2 ring-white/30 bg-white/5" : ""
                   }`}
                   onClick={() => {
                     track("search", { q });

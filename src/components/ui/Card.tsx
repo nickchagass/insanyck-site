@@ -27,7 +27,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
   }, ref) => {
     const baseClasses = "rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] overflow-hidden";
     const variantClasses = cardVariants[variant];
-    const focusClasses = "focus-within:ring-2 focus-within:ring-white/20 focus-within:ring-offset-2 focus-within:ring-offset-black";
+    const focusClasses = "focus-within:ring-2 focus-within:ring-white/40 focus-within:ring-offset-2 focus-within:ring-offset-black";
 
     // INSANYCK STEP 4 · Lote 3 — Extract drag-related props to avoid conflicts
     const { onDrag: _onDrag, onDragStart: _onDragStart, onDragEnd: _onDragEnd, ...divProps } = props as any;
@@ -38,8 +38,13 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
         className={`${baseClasses} ${variantClasses} ${focusClasses} ${className}`}
         // INSANYCK STEP 4 · Lote 3 — Subtle hover animation with elevation and content lift
         whileHover={hoverable ? { 
+          y: -2,
+          boxShadow: "0 12px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.12), 0 4px 16px rgba(255,255,255,0.04)",
+          borderColor: "rgba(255,255,255,0.15)"
+        } : undefined}
+        whileTap={hoverable ? {
           y: -1,
-          boxShadow: "0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)"
+          transition: { duration: 0.1 }
         } : undefined}
         transition={{
           duration: 0.15,

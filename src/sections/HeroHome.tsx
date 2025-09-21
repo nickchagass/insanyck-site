@@ -93,7 +93,7 @@ export default function HeroHome() {
         <div className="mt-16 flex justify-center">
           <div
             ref={scroller}
-            className="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] max-w-fit"
+            className="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] max-w-fit px-6"
             style={{ WebkitOverflowScrolling: "touch" }}
             aria-label={t("aria.carousel", "Carrossel de coleções") /* INSANYCK STEP 4 */}
           >
@@ -104,8 +104,9 @@ export default function HeroHome() {
             {ITEMS.map((it, index) => (
               <motion.article
                 key={it.titleKey}
-                whileHover={{ y: -2 }}
-                className="snap-start shrink-0 w-[220px] h-[140px] rounded-2xl bg-[#0f0f10] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] relative overflow-hidden"
+                whileHover={{ y: -2, borderColor: "rgba(255,255,255,0.15)" }}
+                transition={{ duration: 0.15, ease: [0.2, 0, 0, 1] }}
+                className="snap-start shrink-0 w-[220px] h-[140px] rounded-2xl bg-[#0f0f10] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] relative overflow-hidden focus-within:ring-2 focus-within:ring-white/40 focus-within:ring-offset-2 focus-within:ring-offset-black"
               >
               {/* INSANYCK STEP 4 · Lote 3 — OptimizedImage para zero CLS */}
               <OptimizedImage

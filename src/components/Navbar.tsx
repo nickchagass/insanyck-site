@@ -78,13 +78,22 @@ export default function Navbar() {
 
         {/* Links centrais */}
         <nav className="hidden md:flex items-center gap-12 text-[16px] text-white/82">
-          <Link href="/novidades" className="hover:text-white transition-colors">
+          <Link 
+            href="/novidades" 
+            className="hover:text-white/95 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-lg px-2 py-1"
+          >
             {t("nav:links.novidades", "Novidades")}
           </Link>
-          <Link href="/loja" className="hover:text-white transition-colors">
+          <Link 
+            href="/loja" 
+            className="hover:text-white/95 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-lg px-2 py-1"
+          >
             {t("nav:links.loja", "Loja")}
           </Link>
-          <Link href="/colecao" className="hover:text-white transition-colors">
+          <Link 
+            href="/colecao" 
+            className="hover:text-white/95 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-lg px-2 py-1"
+          >
             {t("nav:links.colecao", "Coleção")}
           </Link>
         </nav>
@@ -99,8 +108,8 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => switchLocale("pt")}
-              className={`px-2 py-1 rounded-[6px] border border-white/10 hover:border-white/20 hover:text-white transition-colors ${
-                String(currentLocale).startsWith("pt") ? "text-white" : ""
+              className={`px-2 py-1 rounded-[6px] border border-white/10 hover:border-white/25 hover:text-white/95 hover:bg-white/5 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1 ${
+                String(currentLocale).startsWith("pt") ? "text-white border-white/20 bg-white/5" : ""
               }`}
               aria-pressed={String(currentLocale).startsWith("pt")}
             >
@@ -110,8 +119,8 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => switchLocale("en")}
-              className={`px-2 py-1 rounded-[6px] border border-white/10 hover:border-white/20 hover:text-white transition-colors ${
-                String(currentLocale).startsWith("en") ? "text-white" : ""
+              className={`px-2 py-1 rounded-[6px] border border-white/10 hover:border-white/25 hover:text-white/95 hover:bg-white/5 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1 ${
+                String(currentLocale).startsWith("en") ? "text-white border-white/20 bg-white/5" : ""
               }`}
               aria-pressed={String(currentLocale).startsWith("en")}
             >
@@ -127,7 +136,7 @@ export default function Navbar() {
           <Link
             href="/buscar"
             aria-label={t("nav:aria.search", "Pesquisar")}
-            className="text-white/80 hover:text-white transition-colors"
+            className="text-white/80 hover:text-white/95 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-lg p-2"
           >
             {/* INSANYCK STEP 4 · Lote 3 — Sr-only text para ícone */}
             <span className="sr-only">{t("nav:aria.search", "Pesquisar")}</span>
@@ -139,7 +148,7 @@ export default function Navbar() {
             <Link
               href="/favoritos"
               aria-label="Favoritos"
-              className="relative text-white/80 hover:text-white transition-colors"
+              className="relative text-white/80 hover:text-white/95 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-lg p-2"
             >
               {/* INSANYCK STEP 4 · Lote 3 — Sr-only text para ícone */}
               <span className="sr-only">Favoritos</span>
@@ -158,7 +167,7 @@ export default function Navbar() {
               type="button"
               onClick={() => toggleCart(true)}
               aria-label={t("nav:aria.cart", "Carrinho")}
-              className="relative text-white/80 hover:text-white transition-colors"
+              className="relative text-white/80 hover:text-white/95 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-lg p-2"
             >
               {/* INSANYCK STEP 4 · Lote 3 — Sr-only text para ícone */}
               <span className="sr-only">{t("nav:aria.cart", "Carrinho")}</span>
@@ -187,7 +196,7 @@ function UserMenu() {
     return (
       <Link
         href="/conta/login"
-        className="text-white/80 hover:text-white transition-colors px-2 py-1 rounded-lg border border-white/10 hover:border-white/20"
+        className="text-white/80 hover:text-white/95 transition-all duration-150 px-2 py-1 rounded-lg border border-white/10 hover:border-white/25 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
       >
         Entrar
       </Link>
@@ -198,21 +207,21 @@ function UserMenu() {
 
   return (
     <div className="relative group">
-      <button className="text-white/80 hover:text-white transition-colors px-2 py-1 rounded-lg border border-white/10 hover:border-white/20">
+      <button className="text-white/80 hover:text-white/95 transition-all duration-150 px-2 py-1 rounded-lg border border-white/10 hover:border-white/25 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black">
         {String(name).split(" ")[0]}
       </button>
       <div className="absolute right-0 mt-2 hidden group-hover:block rounded-2xl border border-white/10 bg-black/70 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] p-2 w-[220px] z-[60]">
-        <Link className="block px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg" href="/conta">
+        <Link className="block px-3 py-2 text-white/80 hover:text-white/95 hover:bg-white/8 rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1" href="/conta">
           Minha conta
         </Link>
-        <Link className="block px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg" href="/conta/pedidos">
+        <Link className="block px-3 py-2 text-white/80 hover:text-white/95 hover:bg-white/8 rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1" href="/conta/pedidos">
           Pedidos
         </Link>
-        <Link className="block px-3 py-2 text-white/80 hover:text-white hover:bg-white/5 rounded-lg" href="/favoritos">
+        <Link className="block px-3 py-2 text-white/80 hover:text-white/95 hover:bg-white/8 rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1" href="/favoritos">
           Favoritos
         </Link>
         <form method="post" action="/api/auth/signout" className="mt-1">
-          <button className="w-full text-left px-3 py-2 text-white/70 hover:text-white hover:bg-white/5 rounded-lg">
+          <button className="w-full text-left px-3 py-2 text-white/70 hover:text-white/95 hover:bg-white/8 rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1">
             Sair
           </button>
         </form>

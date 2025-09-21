@@ -1,6 +1,6 @@
 // INSANYCK STEP 3 — Viewer estático (sem WebGL), troca Frente/Verso/Detalhe
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import Image from "next/image";
 
@@ -17,6 +17,29 @@ export default function ProductImageView({
   className,
 }: { initial?: Variant; className?: string }) {
   const [variant, setVariant] = useState<Variant>(initial);
+  
+  // INSANYCK STEP 4 · Lote 3 — Keyboard navigation for gallery
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target !== document.body) return; // Only when no input is focused
+      
+      const variants: Variant[] = ["front", "back", "detail"];
+      const currentIndex = variants.indexOf(variant);
+      
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        const nextIndex = currentIndex > 0 ? currentIndex - 1 : variants.length - 1;
+        setVariant(variants[nextIndex]);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        const nextIndex = currentIndex < variants.length - 1 ? currentIndex + 1 : 0;
+        setVariant(variants[nextIndex]);
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [variant]);
 
   return (
     <div
@@ -35,7 +58,7 @@ export default function ProductImageView({
         <Image
           key={variant}
           src={SRC[variant]}
-          alt=""
+          alt={`Produto INSANYCK - ${variant === "front" ? "Frente" : variant === "back" ? "Verso" : "Detalhes"}`}
           fill
           priority
           className="object-contain transition-opacity duration-300 opacity-100"
@@ -57,14 +80,17 @@ export default function ProductImageView({
             key={o.k}
             onClick={() => setVariant(o.k)}
             className={clsx(
-              "w-[92px] h-[92px] rounded-xl border text-white/85 text-sm bg-white/[0.04] overflow-hidden relative",
-              variant === o.k ? "border-white/40 bg-white/[0.08]" : "border-white/10"
+              "w-[92px] h-[92px] rounded-xl border text-white/85 text-sm bg-white/[0.04] overflow-hidden relative transition-all duration-150",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black",
+              "hover:border-white/25 hover:bg-white/[0.06]",
+              variant === o.k ? "border-white/40 bg-white/[0.08] ring-2 ring-white/20" : "border-white/10"
             )}
-            aria-label={o.label}
+            aria-label={`Ver ${o.label.toLowerCase()}`}
+            aria-pressed={variant === o.k}
           >
             <Image
               src={`/hero/thumbs/${o.k}.webp`}
-              alt=""
+              alt={`Thumbnail ${o.label.toLowerCase()}`}
               width={92}
               height={92}
               className="w-full h-full object-cover opacity-95"

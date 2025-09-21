@@ -47,6 +47,7 @@
   --duration-slow: 300ms;
   --ease-out: cubic-bezier(.25,.46,.45,.94);
   --ease-in-out: cubic-bezier(.4,0,.2,1);
+  --ease-premium: cubic-bezier(.2,0,0,1);
   --spring: cubic-bezier(.34,1.56,.64,1);
 
   /* ===== Aliases p/ retrocompatibilidade (seu CSS antigo) ===== */
@@ -112,8 +113,15 @@ body {
     animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
   }
   html { scroll-behavior: auto !important; }
+  
+  /* Disable framer-motion animations */
+  [data-framer-motion] {
+    transform: none !important;
+    animation: none !important;
+  }
 }
 
 /* =========================================================
@@ -280,6 +288,31 @@ body {
    ========================================================= */
 @media print {
   * { background: #fff !important; color: #000 !important; box-shadow: none !important; }
+}
+
+/* =========================================================
+   TRANSIÇÕES PREMIUM - Utilitárias consistentes
+   ========================================================= */
+.transition-premium {
+  transition: all var(--duration-fast) var(--ease-premium);
+}
+
+.transition-premium-slow {
+  transition: all var(--duration-normal) var(--ease-premium);
+}
+
+.transition-colors-premium {
+  transition: color var(--duration-fast) var(--ease-premium), 
+              background-color var(--duration-fast) var(--ease-premium),
+              border-color var(--duration-fast) var(--ease-premium);
+}
+
+.transition-transform-premium {
+  transition: transform var(--duration-fast) var(--ease-premium);
+}
+
+.transition-shadow-premium {
+  transition: box-shadow var(--duration-fast) var(--ease-premium);
 }
 /* INSANYCK STEP 7.1 PATCH — defensivo para textos que apareçam verticais por engano */
 .insanyck-reset-text {

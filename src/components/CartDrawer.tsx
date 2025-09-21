@@ -35,15 +35,17 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
       // Store previously focused element to restore later
       const previouslyFocused = document.activeElement as HTMLElement;
       
-      // Focus the heading when drawer opens (small delay for animation)
+      // Focus the close button when drawer opens (better UX for quick closing)
       const focusTimer = setTimeout(() => {
-        titleRef.current?.focus();
+        closeButtonRef.current?.focus();
       }, 150);
       
       return () => {
         clearTimeout(focusTimer);
         // Restore focus when drawer closes
-        previouslyFocused?.focus?.();
+        if (previouslyFocused && document.contains(previouslyFocused)) {
+          previouslyFocused?.focus?.();
+        }
       };
     }
   }, [open]);
