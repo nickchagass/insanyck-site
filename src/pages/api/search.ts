@@ -27,7 +27,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    console.error('[Search API] Error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    const backendDisabled = process.env.BACKEND_DISABLED === "1";
+    if (!backendDisabled) console.error('[INSANYCK][Search API] Error:', error);
+    res.status(200).json({ results: [], total: 0 });
   }
 }
