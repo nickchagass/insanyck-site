@@ -7,7 +7,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 export default function NotFound() {
   return (
     <>
-      <Head><title>404 — Página não encontrada</title></Head>
+      <Head><title>{`404 — Página não encontrada | INSANYCK`}</title></Head>
       <main className="pt-[120px] px-6 max-w-[900px] mx-auto text-white">
         <h1 className="text-3xl font-bold mb-3">Página não encontrada</h1>
         <p className="text-white/70">Volte para a <Link className="underline" href="/">home</Link>.</p>
