@@ -2,26 +2,34 @@
 import { prisma } from "@/lib/prisma";
 import { ProductCardData, productToCardData } from "@/types/product";
 
-// Fallback mock data for graceful degradation during development
+const PLACEHOLDER = "/thumbs/placeholder.webp";
+const backendDisabled = process.env.BACKEND_DISABLED === "1";
+
 const mockProducts: ProductCardData[] = [
-  {
-    id: "1",
-    slug: "produto-exemplo",
-    title: "Produto Exemplo",
-    price: "R$ 99,00",
-    images: {
-      front: "/products/placeholder/front.webp"
-    },
-    thumbs: {
-      front: "/products/placeholder/front.webp"
-    },
-  },
+  { id:"m1", slug:"tee-oversized-preta", title:"Oversized Tee Preta", price:"R$ 149,00",
+    images:{ front: PLACEHOLDER }, thumbs:{ front: PLACEHOLDER } },
+  { id:"m2", slug:"tee-classic-branca", title:"Classic Tee Branca", price:"R$ 139,00",
+    images:{ front: PLACEHOLDER }, thumbs:{ front: PLACEHOLDER } },
+  { id:"m3", slug:"regata-essential-preta", title:"Regata Essential Preta", price:"R$ 99,00",
+    images:{ front: PLACEHOLDER }, thumbs:{ front: PLACEHOLDER } },
+  { id:"m4", slug:"drop-zero-limited", title:"Drop Zero Limited", price:"R$ 199,00",
+    images:{ front: PLACEHOLDER }, thumbs:{ front: PLACEHOLDER } },
+  { id:"m5", slug:"acessorio-bucket-preto", title:"Bucket Hat Preto", price:"R$ 119,00",
+    images:{ front: PLACEHOLDER }, thumbs:{ front: PLACEHOLDER } },
+  { id:"m6", slug:"moletom-classic-cinza", title:"Moletom Classic Cinza", price:"R$ 249,00",
+    images:{ front: PLACEHOLDER }, thumbs:{ front: PLACEHOLDER } },
+  { id:"m7", slug:"oversized-classic-off", title:"Oversized Classic Off", price:"R$ 159,00",
+    images:{ front: PLACEHOLDER }, thumbs:{ front: PLACEHOLDER } },
+  { id:"m8", slug:"regatas-verao-pack", title:"Pack Regatas Verão", price:"R$ 179,00",
+    images:{ front: PLACEHOLDER }, thumbs:{ front: PLACEHOLDER } },
 ];
 
 /**
  * Get featured products for home page carousels
  */
 export async function getFeaturedProducts(limit = 8): Promise<ProductCardData[]> {
+  if (backendDisabled) return mockProducts.slice(0, limit);
+  
   try {
     const products = await prisma.product.findMany({
       where: { status: 'active' },
@@ -40,8 +48,7 @@ export async function getFeaturedProducts(limit = 8): Promise<ProductCardData[]>
 
     return products.map(productToCardData);
   } catch (error) {
-    console.error('[INSANYCK][Catalog] Error fetching featured products:', error);
-    // Graceful fallback with mock data during development
+    if (!backendDisabled) console.error('[INSANYCK][Catalog] featured:', error);
     return mockProducts.slice(0, limit);
   }
 }
@@ -50,6 +57,8 @@ export async function getFeaturedProducts(limit = 8): Promise<ProductCardData[]>
  * Get new arrivals for home page
  */
 export async function getNewArrivals(limit = 6): Promise<ProductCardData[]> {
+  if (backendDisabled) return mockProducts.slice(0, limit);
+  
   try {
     const products = await prisma.product.findMany({
       where: { status: 'active' },
@@ -68,7 +77,7 @@ export async function getNewArrivals(limit = 6): Promise<ProductCardData[]> {
 
     return products.map(productToCardData);
   } catch (error) {
-    console.error('[INSANYCK][Catalog] Error fetching new arrivals:', error);
+    if (!backendDisabled) console.error('[INSANYCK][Catalog] new arrivals:', error);
     return mockProducts.slice(0, limit);
   }
 }
@@ -77,6 +86,8 @@ export async function getNewArrivals(limit = 6): Promise<ProductCardData[]> {
  * Get category highlights
  */
 export async function getCategoryHighlights(categorySlug: string, limit = 4): Promise<ProductCardData[]> {
+  if (backendDisabled) return mockProducts.slice(0, limit);
+  
   try {
     const products = await prisma.product.findMany({
       where: {
@@ -99,7 +110,7 @@ export async function getCategoryHighlights(categorySlug: string, limit = 4): Pr
 
     return products.map(productToCardData);
   } catch (error) {
-    console.error('[INSANYCK][Catalog] Error fetching category highlights:', error);
+    if (!backendDisabled) console.error('[INSANYCK][Catalog] cat highlights:', error);
     return mockProducts.slice(0, limit);
   }
 }
@@ -109,6 +120,12 @@ export async function getCategoryHighlights(categorySlug: string, limit = 4): Pr
  */
 export async function searchProducts(query: string, limit = 20): Promise<ProductCardData[]> {
   if (!query.trim()) return [];
+  
+  if (backendDisabled) {
+    return mockProducts
+      .filter(p => p.title.toLowerCase().includes(query.toLowerCase()))
+      .slice(0, limit);
+  }
 
   try {
     const products = await prisma.product.findMany({
@@ -135,10 +152,10 @@ export async function searchProducts(query: string, limit = 20): Promise<Product
 
     return products.map(productToCardData);
   } catch (error) {
-    console.error('[INSANYCK][Catalog] Error searching products:', error);
-    return mockProducts.filter(p => 
-      p.title.toLowerCase().includes(query.toLowerCase())
-    );
+    if (!backendDisabled) console.error('[INSANYCK][Catalog] search:', error);
+    return mockProducts
+      .filter(p => p.title.toLowerCase().includes(query.toLowerCase()))
+      .slice(0, limit);
   }
 }
 
@@ -152,6 +169,8 @@ export async function getAllProducts(options: {
   offset?: number;
 } = {}): Promise<ProductCardData[]> {
   const { categorySlug, sortBy = 'newest', limit = 20, offset = 0 } = options;
+
+  if (backendDisabled) return mockProducts.slice(offset, offset + limit);
 
   try {
     // Build where clause
@@ -215,7 +234,7 @@ export async function getAllProducts(options: {
     const result = products.map(productToCardData);
     return result;
   } catch (error) {
-    console.error('[INSANYCK][Catalog] Error fetching all products:', error);
+    if (!backendDisabled) console.error('[INSANYCK][Catalog] all products:', error);
     return mockProducts.slice(offset, offset + limit);
   }
 }
