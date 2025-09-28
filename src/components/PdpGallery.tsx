@@ -1,6 +1,7 @@
 // INSANYCK · PDP 3D fallback estável (sem deps, zero-CLS)
+import React from "react";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ErrorInfo } from "react";
 import OptimizedImage from "@/components/ui/OptimizedImage";
 
 // Use o viewer 3D já existente no repo (ajuste o path se necessário):
@@ -21,6 +22,35 @@ interface Product {
   title: string;
   image: string | null;
   model3d?: { url: string };
+}
+
+// Simple error boundary for 3D model
+class Model3DErrorBoundary extends React.Component<
+  { children: React.ReactNode; onError: () => void },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; onError: () => void }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(): { hasError: boolean } {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    if (!BACKEND_DISABLED) {
+      console.error("3D model error boundary caught:", error, errorInfo);
+    }
+    this.props.onError();
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return null;
+    }
+    return this.props.children;
+  }
 }
 
 export default function PdpGallery({ product }: { product: Product }) {
@@ -48,12 +78,9 @@ export default function PdpGallery({ product }: { product: Product }) {
       <div className="relative w-full" style={{ aspectRatio: "3 / 4" }} data-testid="pdp-hero">
         {show3D ? (
           <div data-testid="model-viewer" className="w-full h-full">
-            {/* ATENÇÃO: use o nome de prop correto do componente real; na base costuma ser `modelUrl` */}
-            <Product3DView
-              modelUrl={modelUrl!}
-              onError={handleModelError}
-              onLoadError={handleModelError}
-            />
+            <Model3DErrorBoundary onError={handleModelError}>
+              <Product3DView modelUrl={modelUrl!} />
+            </Model3DErrorBoundary>
           </div>
         ) : (
           <OptimizedImage
