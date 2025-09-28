@@ -114,7 +114,9 @@ test.describe('Product Detail Page (PDP)', () => {
         await expect(page.locator('[data-testid="pdp-hero"] img').first()).toBeVisible();
       }
 
+      await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.waitForLoadState('networkidle');
+      await page.locator('[data-testid="pdp-hero"]').first().waitFor({ state: 'visible' });
       await expect(page.locator('[data-testid="pdp-hero"]').first()).toHaveScreenshot('pdp-hero-stable.png');
     }
   });

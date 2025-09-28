@@ -1,0 +1,5 @@
+{
+  // Claude Code — travar o modelo
+  "claudeCode.preferredModel": "sonnet-4",
+  "claudeCode.autoSelectBestModel": false
+}

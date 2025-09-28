@@ -29,6 +29,8 @@ test.describe('Home Page', () => {
     await expect(page.locator('main')).toBeVisible();
     
     // Take visual snapshot of hero area
+    await page.waitForLoadState('networkidle');
+    await page.locator('header').first().waitFor({ state: 'visible' });
     await expect(page.locator('header').first()).toHaveScreenshot('header-home.png');
     
     // Check navigation is present

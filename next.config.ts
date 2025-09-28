@@ -49,14 +49,56 @@ const runtimeCaching: RuntimeCaching[] = [
   },
 ];
 
-const allowTsErrors = process.env.INSANYCK_ALLOW_TS_ERRORS === "1";
 const baseConfig: NextConfig = {
   reactStrictMode: true,
   images: { remotePatterns: [] },
   i18n,
-  // Mantém o build fluindo em dev/preview; travamos no CI/produção quando quisermos
-  typescript: { ignoreBuildErrors: allowTsErrors || !isProd },
-  eslint: { ignoreDuringBuilds: allowTsErrors || !isProd },
+  // Em desenvolvimento tudo bem ignorar (opcional),
+  // em produção NUNCA ignorar erros de TS
+  typescript: {
+    ignoreBuildErrors: !isProd,
+  },
+  eslint: {
+    // Em desenvolvimento pode ignorar (opcional),
+    // em produção NUNCA ignorar erros de ESLint
+    ignoreDuringBuilds: !isProd,
+  },
+
+  async headers() {
+    const baseHeaders = [
+      { key: "X-Frame-Options", value: "DENY" },
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+      { key: "Permissions-Policy", value: "geolocation=(), microphone=(), camera=()" },
+      // CSP mínima e compatível (mantemos 'unsafe-inline' para JSON-LD; ideal no futuro: nonce)
+      {
+        key: "Content-Security-Policy",
+        value: [
+          "default-src 'self'",
+          // Stripe e analytics necessários; 'unsafe-inline' por causa dos scripts JSON-LD do SEO
+          "script-src 'self' 'unsafe-inline' https://js.stripe.com https://*.vercel-insights.com",
+          "style-src 'self' 'unsafe-inline'",
+          "img-src 'self' data: blob:",
+          "connect-src 'self' https://api.stripe.com https://*.vercel-insights.com",
+          "frame-src https://js.stripe.com",
+          "object-src 'none'",
+          "base-uri 'self'",
+        ].join("; "),
+      },
+    ];
+
+    // HSTS somente em produção (para evitar afetar dev)
+    const hsts = isProd
+      ? [{ key: "Strict-Transport-Security", value: "max-age=15552000; includeSubDomains; preload" }]
+      : [];
+
+    return [
+      {
+        source: "/:path*",
+        headers: [...baseHeaders, ...hsts],
+      },
+    ];
+  },
 };
 
 export default withPWA({

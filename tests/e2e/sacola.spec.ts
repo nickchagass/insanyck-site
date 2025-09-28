@@ -68,7 +68,8 @@ test.describe('Sacola (Cart) Page', () => {
     // Take visual snapshot of cart page
     // INSANYCK STEP 4 · Lote 3 — reduced motion and wait
     await page.emulateMedia({ reducedMotion: 'reduce' });
-    await page.waitForTimeout(100);
+    await page.waitForLoadState('networkidle');
+    await page.locator('main').waitFor({ state: 'visible' });
     await expect(page.locator('main')).toHaveScreenshot('cart-main.png');
   });
 });
