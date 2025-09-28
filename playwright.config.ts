@@ -1,6 +1,8 @@
 // INSANYCK STEP 4 · Lote 3 — Playwright E2E/Visual config final
 import { defineConfig, devices } from '@playwright/test';
 
+const baseURL = process.env.BASE_URL ?? "http://localhost:3001";
+
 export default defineConfig({
   testDir: './tests/e2e',
   timeout: 30 * 1000,
@@ -23,7 +25,7 @@ export default defineConfig({
     : 'list',
 
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL,
     locale: 'pt-BR',
     viewport: { width: 1366, height: 900 },
     trace: 'retain-on-failure',
@@ -37,8 +39,8 @@ export default defineConfig({
   ],
 
   webServer: process.env.CI ? undefined : {
-    command: 'npm run dev',
-    port: 3000,
+    command: 'npm run dev -- -p 3001',
+    port: 3001,
     reuseExistingServer: !process.env.CI,
   },
 
