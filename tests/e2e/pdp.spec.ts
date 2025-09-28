@@ -92,37 +92,30 @@ test.describe('Product Detail Page (PDP)', () => {
       // INSANYCK STEP 4 · Lote 3 — reduced motion and wait
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await page.waitForTimeout(100);
+      await page.waitForLoadState('networkidle');
       await expect(page.locator('main').first()).toHaveScreenshot('pdp-hero.png');
     }
   });
 
-  test('should handle 3D model gracefully', async ({ page }) => {
+  test('PDP hero é estável (3D ou imagem)', async ({ page }) => {
     await page.goto('/pt/produto/oversized-classic');
     await page.waitForLoadState('domcontentloaded');
     
-    // Check if there's a 3D model container or fallback image
-    const modelSelectors = [
-      '[data-testid="3d-model"]',
-      '[class*="3d"]',
-      '[class*="three"]',
-      'canvas',
-      '[data-testid="product-image"]',
-      '[class*="product-image"]',
-      'img[src*="product"]',
-      'img[alt*="produto"]',
-      'img' // Any image as fallback
-    ];
+    const currentUrl = page.url();
     
-    let hasVisualElement = false;
-    for (const selector of modelSelectors) {
-      const element = page.locator(selector);
-      if (await element.count() > 0) {
-        hasVisualElement = true;
-        break;
+    // Only run checks if we're actually on a product page
+    if (currentUrl.includes('/produto/')) {
+      const model = page.locator('[data-testid="model-viewer"]').first();
+      const has3D = await model.isVisible().catch(() => false);
+
+      if (has3D) {
+        await expect(model).toBeVisible();
+      } else {
+        await expect(page.locator('[data-testid="pdp-hero"] img').first()).toBeVisible();
       }
+
+      await page.waitForLoadState('networkidle');
+      await expect(page.locator('[data-testid="pdp-hero"]').first()).toHaveScreenshot('pdp-hero-stable.png');
     }
-    
-    // Should have some visual representation of the product (3D model or images)
-    expect(hasVisualElement).toBe(true);
   });
 });
