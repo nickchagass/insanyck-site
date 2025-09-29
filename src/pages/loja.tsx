@@ -104,20 +104,57 @@ export default function Loja({
     return router.query[key] === value;
   };
 
+  // INSANYCK FIX — Safe mapping para suportar legacy + variants schemas
+  const toCard = (product: any) => {
+    // Obter minCents por ordem de preferência
+    let minCents = 0;
+    if (product.pricing?.minCents) {
+      minCents = product.pricing.minCents;
+    } else if (product.variants?.length > 0) {
+      const activeVariant = product.variants.find((v: any) => v.status === 'active');
+      if (activeVariant?.price?.cents) {
+        minCents = activeVariant.price.cents;
+      }
+    }
+
+    // Montar priceDisplay
+    const priceDisplay = minCents > 0 
+      ? (minCents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+      : "Consulte";
+
+    // inStock por ordem de preferência
+    let inStock = false;
+    if (product.availability?.inStock !== undefined) {
+      inStock = product.availability.inStock;
+    } else if (product.variants?.length > 0) {
+      inStock = product.variants.some((v: any) => 
+        v.status === 'active' && 
+        ((v.inventory?.quantity ?? 0) > (v.inventory?.reserved ?? 0))
+      );
+    }
+
+    // imageFront por ordem de preferência
+    const imageFront = product.image || 
+                      product.images?.[0]?.url || 
+                      "/products/placeholder/front.webp";
+
+    return {
+      id: product.id,
+      slug: product.slug,
+      title: product.title,
+      price: priceDisplay,
+      status: inStock ? undefined : ("soldout" as const),
+      images: {
+        front: imageFront,
+      },
+      thumbs: {
+        front: imageFront,
+      },
+    };
+  };
+
   // INSANYCK STEP 10 — Converter produtos para formato do ProductGrid existente
-  const gridProducts = products.map((product) => ({
-    id: product.id,
-    slug: product.slug,
-    title: product.title,
-    price: (product.pricing.minCents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-    status: product.availability.inStock ? undefined : ("soldout" as const),
-    images: {
-      front: product.image,
-    },
-    thumbs: {
-      front: product.image,
-    },
-  }));
+  const gridProducts = products.map(toCard);
 
   return (
     <>
