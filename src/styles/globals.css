@@ -1,6 +1,11 @@
 /* INSANYCK — GLOBALS (Design System Premium, Tailwind v4) */
 @import "tailwindcss";
 
+/* Fix: Força exibição do body enquanto CSS não hidrata */
+body {
+  display: block !important;
+}
+
 /* =========================================================
    TOKENS (CSS Vars) — cores, tipografia, motion, etc.
    ========================================================= */

@@ -63,6 +63,7 @@ const baseConfig: NextConfig = {
     // em produção NUNCA ignorar erros de ESLint
     ignoreDuringBuilds: !isProd,
   },
+  
 
   async headers() {
     const baseHeaders = [
