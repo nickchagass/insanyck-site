@@ -12,6 +12,11 @@ export default function HomePage() {
   const { t } = useTranslation('home');
   const seo = seoHome(locale);
 
+  // [DEV] Diagnostic log
+  if (process.env.NODE_ENV === 'development') {
+    console.debug('[dev] HomePage render');
+  }
+
   return (
     <>
       <Head>

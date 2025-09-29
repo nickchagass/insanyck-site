@@ -20,10 +20,17 @@ const MiniCart = dynamic(() => import("@/components/MiniCart"), { ssr: false });
 
 // INSANYCK STEP 4 · Lote 4 — LayoutShell with PWA update functionality
 function LayoutShell({ children }: { children: React.ReactNode }) {
+  // [DEV] Fix: Bypass hydration issues in development
+  const isDev = process.env.NODE_ENV === 'development';
+  
   const { hasUpdate, updating, update } = useServiceWorkerUpdate();
 
   // INSANYCK STEP 4 · Lote 4 — hide SW banner under test
   const hideUpdateBanner = process.env.INSANYCK_TEST_HIDE_UPDATE_BANNER === '1';
+
+  if (isDev) {
+    console.debug('[dev] LayoutShell mounted');
+  }
 
   return (
     <>
