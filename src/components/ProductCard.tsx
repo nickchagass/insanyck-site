@@ -42,7 +42,7 @@ export default function ProductCard({ product }: Props) {
     <motion.article
       whileHover={{ y: -3, borderColor: "rgba(255,255,255,0.15)" }}
       transition={{ duration: 0.15, ease: [0.2, 0, 0, 1] }}
-      className="rounded-2xl border border-white/10 bg-black/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] overflow-hidden focus-within:ring-2 focus-within:ring-white/40 focus-within:ring-offset-2 focus-within:ring-offset-black"
+      className="ins-card focus-within:ring-2 focus-within:ring-white/40 focus-within:ring-offset-2 focus-within:ring-offset-black"
     >
       {/* Área clicável (imagem + título) */}
       <Link
@@ -75,7 +75,7 @@ export default function ProductCard({ product }: Props) {
             </span>
           ) : null}
           {product.status === "soldout" ? (
-            <span className="ml-3 text-xs rounded-full px-2 py-1 bg-white/5 text-white/50 border border-white/10">
+            <span className="ml-3 ins-chip">
               {t("plp:badge.soldout", "Esgotado")}
             </span>
           ) : null}

@@ -471,3 +471,92 @@ body::after {
 .skl--text    { height: 1rem; }
 .skl--text-lg { height: 1.25rem; }
 .skl--thumb   { aspect-ratio: 4 / 5; width: 100%; }
+
+/* =========================================================
+   INSANYCK — Premium Polish (Loja & PDP)
+   ========================================================= */
+@layer components {
+  /* Grid da Loja: respiro e ritmo */
+  .ins-grid {
+    @apply grid gap-6 sm:gap-8;
+  }
+
+  /* Card premium da Loja */
+  .ins-card {
+    position: relative;
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 8px 30px rgba(0,0,0,.35);
+    transition: transform .18s var(--ease-premium), box-shadow .18s var(--ease-premium), border-color .18s var(--ease-premium);
+    overflow: hidden;
+  }
+  .ins-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,.14);
+    box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 16px 50px rgba(0,0,0,.45);
+  }
+  /* filete dourado discretíssimo ao passar o mouse */
+  .ins-card::after {
+    content:"";
+    position:absolute; inset:-1px;
+    border-radius: 19px;
+    pointer-events:none;
+    opacity:0; transition:opacity .18s var(--ease-premium);
+    background: conic-gradient(from 180deg at 50% 50%, rgba(250,204,21,.0), rgba(250,204,21,.25), rgba(250,204,21,.0));
+    mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+    -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  }
+  .ins-card:hover::after { opacity:.6; }
+
+  /* Badge "esgotado"/estado */
+  .ins-chip {
+    @apply inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.12);
+    color: rgba(255,255,255,.75);
+    backdrop-filter: blur(6px);
+  }
+
+  /* PDP: palco de herói */
+  .pdp-hero {
+    position: relative;
+    padding: 24px 0 32px;
+  }
+  .pdp-hero::before {
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(60% 40% at 50% 0%, rgba(255,255,255,.05), transparent 70%),
+      radial-gradient(40% 60% at 100% 20%, rgba(250,204,21,.06), transparent 70%);
+    opacity:.7; pointer-events:none;
+  }
+  .pdp-hero__title {
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+
+  /* PDP: moldura da mídia (galeria) */
+  .pdp-media {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.10);
+    box-shadow: 0 12px 40px rgba(0,0,0,.45);
+  }
+  .pdp-media::after {
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
+    pointer-events:none;
+  }
+
+  /* PDP: buybar (mobile) com scrim sutil */
+  .pdp-buybar {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.65));
+    backdrop-filter: blur(6px);
+    border-top: 1px solid rgba(255,255,255,.10);
+  }
+}

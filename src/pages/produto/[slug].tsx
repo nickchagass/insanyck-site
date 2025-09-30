@@ -122,16 +122,19 @@ export default function ProdutoPage({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* INSANYCK STEP 4 · Lote 3 — PdpGallery com 3D fallback para zero CLS */}
-          <PdpGallery product={product} />
+          <div className="pdp-media">
+            <PdpGallery product={product} />
+          </div>
 
           {/* Detalhes */}
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-white text-3xl font-semibold tracking-tight">{product.title}</h1>
-              {product.description && (
-                <p className="text-white/70 mt-3 text-lg">{product.description}</p>
-              )}
-            </div>
+          <section className="pdp-hero">
+            <div className="space-y-6">
+              <div>
+                <h1 className="pdp-hero__title text-white text-3xl font-semibold tracking-tight">{product.title}</h1>
+                {product.description && (
+                  <p className="text-white/70 mt-3 text-lg">{product.description}</p>
+                )}
+              </div>
 
             {displayPrice && (
               <div className="text-white text-2xl font-semibold">{displayPrice}</div>
@@ -188,7 +191,8 @@ export default function ProdutoPage({
                   : t("pdp:outOfStock", "Fora de estoque")}
               </div>
             )}
-          </div>
+            </div>
+          </section>
         </div>
       </main>
     </>
@@ -241,13 +245,17 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
       return { notFound: true };
     }
 
-    // INSANYCK STEP 10 — Construir options (size, color, etc.)
+    // INSANYCK STEP 10 — Construir options (size, color, etc.) - defensivo
     const byOption = new Map<string, Option>();
+    const variants = product?.variants ?? [];
 
-    for (const variant of product.variants) {
-      for (const option of variant.options) {
-        const opt = option.optionValue.option; // { id, slug, name }
-        const val = option.optionValue; // { slug?, name?, value }
+    for (const variant of variants) {
+      const vOptions = variant?.options ?? [];
+      for (const option of vOptions) {
+        const opt = option?.optionValue?.option;
+        const val = option?.optionValue;
+        if (!opt || !val) continue;
+        
         const key = opt.slug;
 
         if (!byOption.has(key)) {
@@ -274,8 +282,8 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
 
     const options: Option[] = Array.from(byOption.values());
 
-    // INSANYCK STEP 10 — Variants no shape do VariantSelector
-    const variants: PDPVariant[] = product.variants.map((variant) => {
+    // INSANYCK STEP 10 — Variants no shape do VariantSelector - defensivo
+    const processedVariants: PDPVariant[] = variants.map((variant) => {
       const available = Math.max(
         0,
         (variant.inventory?.quantity ?? 0) - (variant.inventory?.reserved ?? 0)
@@ -292,9 +300,9 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
           reserved: variant.inventory?.reserved ?? 0,
           available,
         },
-        options: variant.options.map((o) => ({
-          option: o.optionValue.option.slug,
-          value: o.optionValue.slug ?? o.optionValue.value,
+        options: (variant.options ?? []).map((o) => ({
+          option: o?.optionValue?.option?.slug ?? '',
+          value: o?.optionValue?.slug ?? o?.optionValue?.value ?? '',
         })),
       };
     });
@@ -312,7 +320,7 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
           image: heroImage,
         },
         options,
-        variants,
+        variants: processedVariants,
         ...(await serverSideTranslations(locale ?? "pt", [
           "common",
           "nav",

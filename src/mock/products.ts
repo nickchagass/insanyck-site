@@ -3,37 +3,49 @@ export const mockProducts = [
     id: 'm1',
     slug: 'tee-oversized-preta',
     title: 'Oversized Tee Preta',
-    description: 'Camiseta oversized em algodão premium',
-    images: [{ url: '/products/placeholder/front.webp' }],
-    variants: [{
-      status: 'active',
-      price: { cents: 12990 },
-      inventory: { quantity: 25, reserved: 0 }
-    }],
-    category: { id: 'c1', name: 'Camisetas', slug: 'camisetas' },
-    isFeatured: true,
+    description: 'Corte amplo premium.',
     status: 'active',
+    images: [{ url: '/products/placeholder/front.webp', alt: 'Oversized Tee Preta' }],
+    category: null,
+    variants: [
+      {
+        status: 'active',
+        sku: 'TEE-OV-BLK-M1',
+        title: 'Padrão',
+        price: { cents: 12990, currency: 'BRL' },
+        inventory: { quantity: 25, reserved: 0 },
+        options: [], // importante existir (mesmo vazio)
+      },
+    ],
+    isFeatured: true,
     updatedAt: new Date()
   },
   {
-    id: 'm2', 
+    id: 'm2',
     slug: 'regata-essential-preta',
     title: 'Regata Essential Preta',
-    description: 'Regata essencial em tecido respirável',
-    images: [{ url: '/products/placeholder/front.webp' }],
-    variants: [{
-      status: 'active',
-      price: { cents: 9990 },
-      inventory: { quantity: 18, reserved: 0 }
-    }],
-    category: { id: 'c2', name: 'Regatas', slug: 'regatas' },
-    isFeatured: false,
+    description: 'Leve e respirável.',
     status: 'active',
+    images: [{ url: '/products/placeholder/front.webp', alt: 'Regata Essential Preta' }],
+    category: null,
+    variants: [
+      {
+        status: 'active',
+        sku: 'REG-ESS-BLK-M2',
+        title: 'Padrão',
+        price: { cents: 9990, currency: 'BRL' },
+        inventory: { quantity: 18, reserved: 0 },
+        options: [],
+      },
+    ],
+    isFeatured: false,
     updatedAt: new Date()
-  }
+  },
 ] as const;
 
-export const findBySlug = (slug: string) => mockProducts.find(p => p.slug === slug);
+export function findBySlug(slug: string) {
+  return (mockProducts as readonly any[]).find(p => p.slug === slug);
+}
 
 export const mockCategories = [
   { id: 'c1', name: 'Camisetas', slug: 'camisetas' },
