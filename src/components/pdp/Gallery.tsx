@@ -188,7 +188,7 @@ export default function Gallery({ product, className = "" }: GalleryProps) {
               />
             )}
             
-            {/* Zoom hint overlay */}
+            {/* Zoom hint overlay - minimal, no gold */}
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
               <div className="bg-white/90 backdrop-blur-sm text-black px-3 py-1.5 rounded-lg text-sm font-medium">
                 🔍 {t('product:gallery.clickToExpand', 'Clique para ampliar')}

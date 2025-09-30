@@ -11,6 +11,8 @@ import AddToCartButton from "@/components/AddToCartButton";
 import WishlistButton from "@/components/WishlistButton";
 import Gallery from "@/components/pdp/Gallery";
 import VariantPicker from "@/components/pdp/VariantPicker";
+import { pdpBenefits } from "@/config/site";
+import React from "react";
 import { seoPDP } from "@/lib/seo";
 
 type OptionValue = { slug: string; name: string; value: string };
@@ -49,13 +51,34 @@ export default function ProdutoPage({
   options,
   variants,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const { t } = useTranslation(["pdp", "common", "cart"]);
+  const { t } = useTranslation(["product", "common", "cart"]);
   const router = useRouter();
   const [selectedVariant, setSelectedVariant] = useState<PDPVariant | null>(null);
+  const [showMobileCTA, setShowMobileCTA] = useState(false);
 
   const handleVariantChange = (variant: PDPVariant | null) => {
     setSelectedVariant(variant);
   };
+
+  // Auto-select if only one variant or no variants (for mock/simple products)
+  React.useEffect(() => {
+    if (variants.length === 1 && !selectedVariant) {
+      setSelectedVariant(variants[0]);
+    }
+  }, [variants, selectedVariant]);
+
+  // Mobile sticky CTA visibility
+  React.useEffect(() => {
+    const handleScroll = () => {
+      const threshold = window.innerHeight * 0.5;
+      setShowMobileCTA(window.scrollY > threshold);
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
 
   const displayPrice = selectedVariant
     ? (selectedVariant.priceCents / 100).toLocaleString("pt-BR", {
@@ -68,6 +91,14 @@ export default function ProdutoPage({
           currency: variants[0].currency,
         })
       : "";
+
+  const currentBenefits = pdpBenefits[router.locale === 'en' ? 'en' : 'pt'];
+  const hasVariants = variants.length > 0;
+  const needsVariantSelection = options.length > 0 && !selectedVariant;
+  const canAddToCart = hasVariants ? !!selectedVariant : true;
+  const ctaText = needsVariantSelection 
+    ? t("product:selectOptions", "Selecione as opções")
+    : t("cart:addToCart", "Adicionar ao carrinho");
 
   const seo = seoPDP(
     {
@@ -141,9 +172,9 @@ export default function ProdutoPage({
               </div>
 
               {/* Price */}
-              <div className="space-y-2">
+              <div className="relative p-4 rounded-xl border border-white/10 bg-white/[0.02]">
                 {displayPrice ? (
-                  <div className="text-white text-3xl font-semibold">
+                  <div className="text-white text-3xl font-bold tracking-tight">
                     {displayPrice}
                   </div>
                 ) : (
@@ -154,7 +185,7 @@ export default function ProdutoPage({
                 
                 {/* Stock status */}
                 {selectedVariant && (
-                  <div className={`text-sm font-medium ${
+                  <div className={`mt-2 text-sm font-medium ${
                     selectedVariant.inventory.available > 0
                       ? "text-green-400"
                       : "text-red-400"
@@ -177,30 +208,29 @@ export default function ProdutoPage({
 
               {/* Actions */}
               <div className="space-y-4">
-                <div className="flex gap-3">
-                  {selectedVariant ? (
+                <div className="flex gap-3 items-stretch">
+                  {canAddToCart ? (
                     <AddToCartButton
                       product={{
                         slug: product.slug,
                         title: product.title,
                         image: product.image || undefined,
-                        variantId: selectedVariant.id,
-                        sku: selectedVariant.sku,
-                        priceCents: selectedVariant.priceCents,
-                        currency: selectedVariant.currency,
+                        variantId: selectedVariant?.id || 'default',
+                        sku: selectedVariant?.sku || product.slug,
+                        priceCents: selectedVariant?.priceCents || 0,
+                        currency: selectedVariant?.currency || 'BRL',
                       }}
-                      className="pdp-btn-primary rounded-xl px-8 py-3 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 flex-1"
+                      className="btn-insanyck--primary rounded-xl px-8 py-3 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 flex-1"
                     >
-                      {t("cart:addToCart", "Adicionar ao carrinho")}
+                      {ctaText}
                     </AddToCartButton>
-                  ) : variants.length > 0 ? (
-                    <div className="flex-1 pdp-btn-secondary rounded-xl px-8 py-3 font-semibold text-center text-white/60 cursor-not-allowed">
-                      {t("product:selectVariant", "Selecione as opções")}
-                    </div>
                   ) : (
-                    <div className="flex-1 pdp-btn-secondary rounded-xl px-8 py-3 font-semibold text-center text-white/60 cursor-not-allowed">
-                      {t("product:unavailable", "Produto indisponível")}
-                    </div>
+                    <button
+                      disabled
+                      className="btn-insanyck--secondary rounded-xl px-8 py-3 font-semibold text-center text-white/60 cursor-not-allowed flex-1"
+                    >
+                      {ctaText}
+                    </button>
                   )}
                   
                   {/* Wishlist */}
@@ -209,7 +239,7 @@ export default function ProdutoPage({
                     title={product.title}
                     priceCents={selectedVariant?.priceCents || 0}
                     image={product.image || undefined}
-                    className="pdp-btn-secondary w-12 h-12 rounded-xl flex items-center justify-center"
+                    className="btn-insanyck--secondary w-12 h-12 rounded-xl flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
                   />
                 </div>
               </div>
@@ -217,27 +247,63 @@ export default function ProdutoPage({
               {/* Benefits */}
               <div className="pt-6 border-t border-white/10">
                 <div className="grid grid-cols-1 gap-3 text-sm text-white/70">
-                  <div className="flex items-center gap-3">
-                    <span className="text-white/40">🚚</span>
-                    <span>{t("product:shipping", "Frete grátis acima de R$ 299")}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-white/40">↩️</span>
-                    <span>{t("product:returns", "Trocas em até 30 dias")}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-white/40">💳</span>
-                    <span>{t("product:installments", "Parcele em até 12x sem juros")}</span>
-                  </div>
+                  {currentBenefits.map((benefit, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <span className="text-white/40" role="img" aria-hidden="true">{benefit.icon}</span>
+                      <span>{benefit.text}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        {/* Mobile Sticky CTA */}
+        {showMobileCTA && (
+          <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-black/90 backdrop-blur-xl border-t border-white/10 p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                {displayPrice && (
+                  <div className="text-white text-lg font-semibold">
+                    {displayPrice}
+                  </div>
+                )}
+              </div>
+              {canAddToCart ? (
+                <AddToCartButton
+                  product={{
+                    slug: product.slug,
+                    title: product.title,
+                    image: product.image || undefined,
+                    variantId: selectedVariant?.id || 'default',
+                    sku: selectedVariant?.sku || product.slug,
+                    priceCents: selectedVariant?.priceCents || 0,
+                    currency: selectedVariant?.currency || 'BRL',
+                  }}
+                  className="btn-insanyck--primary rounded-xl px-6 py-3 font-semibold text-sm"
+                >
+                  {needsVariantSelection ? t("product:selectFirst", "Selecionar") : t("cart:addToCart", "Adicionar")}
+                </AddToCartButton>
+              ) : (
+                <button
+                  disabled
+                  className="btn-insanyck--secondary rounded-xl px-6 py-3 font-semibold text-sm cursor-not-allowed"
+                >
+                  {needsVariantSelection ? t("product:selectFirst", "Selecionar") : t("product:unavailable", "Indisponível")}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </main>
     </>
   );
 }
+
+// JSON-safety helpers
+const asArray = <T>(v: any): T[] => (Array.isArray(v) ? v : []);
+const jsonSafe = <T,>(o: T): T => JSON.parse(JSON.stringify(o, (_k,v)=>v===undefined?null:v));
 
 export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params, locale, res }) => {
   res.setHeader("Cache-Control", "public, s-maxage=600, stale-while-revalidate=86400");
@@ -286,12 +352,8 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
       return { notFound: true };
     }
 
-    // GSSP Guard: Garantir estrutura válida para serialização JSON
-    if (!product.variants || !Array.isArray(product.variants)) {
-      product.variants = [];
-    }
-    
-    product.variants = product.variants.map((v, i) => {
+    // JSON-safe normalization
+    product.variants = asArray(product?.variants).map((v, i) => {
       if (!v || typeof v !== 'object') {
         return {
           id: `fallback-${product.slug}-v${i}`,
@@ -305,21 +367,21 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
       
       return {
         ...v,
-        id: v.id ?? `mock-${product.slug}-v${i}`,
-        options: Array.isArray(v.options) ? v.options : [],
+        id: v.id ?? v.sku ?? `v-${i}`,
+        options: asArray(v.options),
         price: v.price || { cents: 0, currency: 'BRL' },
         inventory: v.inventory || { quantity: 0, reserved: 0 }
       };
     });
 
-    // GSSP Guard: Construir options de forma defensiva
+    // JSON-safe option building
     const byOption = new Map<string, Option>();
-    const variants = Array.isArray(product.variants) ? product.variants : [];
+    const variants = asArray(product.variants);
 
     for (const variant of variants) {
       if (!variant || typeof variant !== 'object') continue;
       
-      const vOptions = Array.isArray(variant.options) ? variant.options : [];
+      const vOptions = asArray(variant.options);
       for (const option of vOptions) {
         if (!option || typeof option !== 'object') continue;
         
@@ -353,7 +415,7 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
 
     const options: Option[] = Array.from(byOption.values());
 
-    // GSSP Guard: Processar variants de forma defensiva
+    // JSON-safe variant processing
     const processedVariants: PDPVariant[] = variants
       .filter(v => v && typeof v === 'object' && v.id)
       .map((variant) => {
@@ -364,7 +426,7 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
         );
         const price = variant.price || { cents: 0, currency: 'BRL' };
 
-        return {
+        return jsonSafe({
           id: String(variant.id),
           sku: String(variant.sku || ""),
           title: variant.title ? String(variant.title) : undefined,
@@ -375,26 +437,24 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
             reserved: Number(inventory.reserved) || 0,
             available,
           },
-          options: Array.isArray(variant.options) 
-            ? variant.options
-                .filter(o => o && typeof o === 'object')
-                .map((o) => ({
-                  option: String(o?.optionValue?.option?.slug || ''),
-                  value: String(o?.optionValue?.slug || o?.optionValue?.value || ''),
-                }))
-            : [],
-        };
+          options: asArray(variant.options)
+            .filter(o => o && typeof o === 'object')
+            .map((o) => ({
+              option: String(o?.optionValue?.option?.slug || ''),
+              value: String(o?.optionValue?.slug || o?.optionValue?.value || ''),
+            })),
+        });
       });
 
-    // GSSP Guard: Processar imagens de forma defensiva
-    const images = Array.isArray(product.images) ? product.images : [];
+    // JSON-safe image processing
+    const images = asArray(product.images);
     const heroImage = images.find((i) => i && i.order === 1)?.url 
       ?? images.find(i => i && i.url)?.url 
       ?? null;
     
     const galleryImages = images
       .filter(i => i && i.url)
-      .map(i => ({
+      .map(i => jsonSafe({
         url: i.url,
         alt: i.alt || `${product.title} - Imagem do produto`,
         order: i.order || 999
@@ -402,7 +462,7 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
 
     return {
       props: {
-        product: sanitizeForNext({
+        product: jsonSafe({
           id: product.id,
           slug: product.slug,
           title: product.title,
@@ -410,8 +470,8 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
           image: heroImage,
           images: galleryImages,
         }),
-        options: sanitizeForNext(options),
-        variants: sanitizeForNext(processedVariants),
+        options: jsonSafe(options),
+        variants: processedVariants, // Already jsonSafe'd
         ...(await serverSideTranslations(locale ?? "pt", [
           "common",
           "nav",
