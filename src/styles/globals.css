@@ -712,3 +712,88 @@ body::after {
   );
   pointer-events: none;
 }
+
+/* === PDP Gallery & Thumbnails === */
+.pdp-thumbnails {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.pdp-thumbnails::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.pdp-thumbnails .flex {
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+}
+
+.pdp-thumbnails .flex > * {
+  scroll-snap-align: center;
+}
+
+/* === Premium Button Styles === */
+.btn-insanyck--primary {
+  background: linear-gradient(135deg, rgba(255,255,255,.95), rgba(255,255,255,.88));
+  color: var(--bg-0);
+  border: 1px solid rgba(255,255,255,.15);
+  box-shadow: 
+    0 1px 0 rgba(255,255,255,.2) inset,
+    var(--shadow-md),
+    0 0 20px rgba(255,255,255,.08);
+  transition: all var(--duration-fast) var(--ease-premium);
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.btn-insanyck--primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(255,255,255,1), rgba(255,255,255,.95));
+  transform: translateY(-1px);
+  box-shadow: 
+    0 1px 0 rgba(255,255,255,.25) inset,
+    var(--shadow-lg),
+    0 0 25px rgba(255,255,255,.12);
+}
+
+.btn-insanyck--primary:active:not(:disabled) {
+  transform: translateY(0);
+  transition-duration: var(--duration-fast);
+}
+
+.btn-insanyck--primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-insanyck--secondary {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.95);
+  backdrop-filter: blur(12px);
+  transition: all var(--duration-fast) var(--ease-premium);
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.btn-insanyck--secondary:hover:not(:disabled) {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.25);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-insanyck--secondary:active:not(:disabled) {
+  transform: translateY(0);
+  transition-duration: var(--duration-fast);
+}
+
+.btn-insanyck--secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}

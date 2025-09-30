@@ -8,12 +8,9 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import AddToCartButton from "@/components/AddToCartButton";
-import PdpGallery from "@/components/PdpGallery";
-
-const VariantSelector = dynamic(() => import("@/components/VariantSelector"), {
-  ssr: true,
-  loading: () => <div className="h-[120px] w-full animate-pulse bg-white/5 rounded-xl" />,
-});
+import WishlistButton from "@/components/WishlistButton";
+import Gallery from "@/components/pdp/Gallery";
+import VariantPicker from "@/components/pdp/VariantPicker";
 import { seoPDP } from "@/lib/seo";
 
 type OptionValue = { slug: string; name: string; value: string };
@@ -41,6 +38,7 @@ type PDPProps = {
     title: string;
     description: string | null;
     image: string | null;
+    images?: { url: string; alt?: string; order?: number }[];
   };
   options: Option[];
   variants: PDPVariant[];
@@ -108,91 +106,133 @@ export default function ProdutoPage({
         ))}
       </Head>
 
-      <main className="mx-auto max-w-[1200px] px-6 pt-24 pb-16 pdp-premium">
-        {/* Link voltar */}
-        <div className="mb-8">
+      <main className="mx-auto max-w-[1200px] px-6 py-10">
+        {/* Breadcrumb */}
+        <nav className="mb-6" aria-label="Breadcrumb">
           <Link
             href="/loja"
             prefetch={true}
-            className="text-white/80 underline underline-offset-4 hover:text-white transition"
+            className="inline-flex items-center text-white/70 hover:text-white transition-colors text-sm font-medium"
           >
             ← {t("common:back", "Voltar para loja")}
           </Link>
-        </div>
+        </nav>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {/* Galeria Premium */}
-          <div className="pdp-gallery">
-            <PdpGallery product={product} />
+        <div className="md:grid md:grid-cols-12 gap-8 space-y-8 md:space-y-0">
+          {/* Gallery */}
+          <div className="md:col-span-7">
+            <Gallery product={product} />
           </div>
 
-          {/* Detalhes */}
-          <section className="pdp-hero">
-            <div className="space-y-6">
-              <div>
-                <h1 className="pdp-hero__title text-white text-3xl font-semibold tracking-tight">{product.title}</h1>
+          {/* Content Panel */}
+          <div className="md:col-span-5">
+            <div className="card-insanyck p-6 space-y-6">
+              {/* Header */}
+              <div className="space-y-3">
+                <h1 className="text-display-xl text-white font-bold tracking-tight">
+                  {product.title}
+                </h1>
+                
                 {product.description && (
-                  <p className="text-white/70 mt-3 text-lg">{product.description}</p>
+                  <p className="text-white/70 text-lg leading-relaxed">
+                    {product.description}
+                  </p>
                 )}
               </div>
 
-            {displayPrice && (
-              <div className="text-white text-2xl font-semibold">{displayPrice}</div>
-            )}
+              {/* Price */}
+              <div className="space-y-2">
+                {displayPrice ? (
+                  <div className="text-white text-3xl font-semibold">
+                    {displayPrice}
+                  </div>
+                ) : (
+                  <div className="text-white/60 text-xl font-medium">
+                    {t("product:priceOnRequest", "Consulte")}
+                  </div>
+                )}
+                
+                {/* Stock status */}
+                {selectedVariant && (
+                  <div className={`text-sm font-medium ${
+                    selectedVariant.inventory.available > 0
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }`}>
+                    {selectedVariant.inventory.available > 0
+                      ? t("product:inStock", `${selectedVariant.inventory.available} em estoque`)
+                      : t("product:outOfStock", "Fora de estoque")}
+                  </div>
+                )}
+              </div>
 
-            {/* Seletor de Variantes */}
-            {options.length > 0 && variants.length > 0 && (
-              <div className="space-y-6">
-                <VariantSelector
+              {/* Variant Picker */}
+              {options.length > 0 && variants.length > 0 && (
+                <VariantPicker
                   options={options}
                   variants={variants}
                   onVariantChange={handleVariantChange}
                 />
-              </div>
-            )}
-
-            {/* Ações */}
-            <div className="flex items-center gap-4 pt-4">
-              {selectedVariant && (
-                <AddToCartButton
-                  product={{
-                    slug: product.slug,
-                    title: product.title,
-                    image: product.image || undefined,
-                    variantId: selectedVariant.id,
-                    sku: selectedVariant.sku,
-                    priceCents: selectedVariant.priceCents,
-                    currency: selectedVariant.currency,
-                  }}
-                  className="pdp-btn-primary rounded-xl px-8 py-3 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 flex-1"
-                >
-                  {t("cart:addToCart", "Adicionar ao carrinho")}
-                </AddToCartButton>
               )}
 
-              {!selectedVariant && variants.length > 0 && (
-                <div className="flex-1 pdp-btn-secondary rounded-xl px-8 py-3 font-semibold text-center text-white/60">
-                  {t("pdp:selectVariant", "Selecione as opções")}
+              {/* Actions */}
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  {selectedVariant ? (
+                    <AddToCartButton
+                      product={{
+                        slug: product.slug,
+                        title: product.title,
+                        image: product.image || undefined,
+                        variantId: selectedVariant.id,
+                        sku: selectedVariant.sku,
+                        priceCents: selectedVariant.priceCents,
+                        currency: selectedVariant.currency,
+                      }}
+                      className="pdp-btn-primary rounded-xl px-8 py-3 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 flex-1"
+                    >
+                      {t("cart:addToCart", "Adicionar ao carrinho")}
+                    </AddToCartButton>
+                  ) : variants.length > 0 ? (
+                    <div className="flex-1 pdp-btn-secondary rounded-xl px-8 py-3 font-semibold text-center text-white/60 cursor-not-allowed">
+                      {t("product:selectVariant", "Selecione as opções")}
+                    </div>
+                  ) : (
+                    <div className="flex-1 pdp-btn-secondary rounded-xl px-8 py-3 font-semibold text-center text-white/60 cursor-not-allowed">
+                      {t("product:unavailable", "Produto indisponível")}
+                    </div>
+                  )}
+                  
+                  {/* Wishlist */}
+                  <WishlistButton
+                    slug={product.slug}
+                    title={product.title}
+                    priceCents={selectedVariant?.priceCents || 0}
+                    image={product.image || undefined}
+                    className="pdp-btn-secondary w-12 h-12 rounded-xl flex items-center justify-center"
+                  />
                 </div>
-              )}
-
-              {variants.length === 0 && (
-                <div className="flex-1 pdp-btn-secondary rounded-xl px-8 py-3 font-semibold text-center text-white/60">
-                  {t("pdp:outOfStock", "Produto indisponível")}
-                </div>
-              )}
-            </div>
-
-            {/* Estoque */}
-            {selectedVariant && (
-              <div className="text-white/60 text-sm">
-                {selectedVariant.inventory.available > 0
-                  ? t("pdp:inStock", `${selectedVariant.inventory.available} em estoque`)
-                  : t("pdp:outOfStock", "Fora de estoque")}
               </div>
-            )}
+
+              {/* Benefits */}
+              <div className="pt-6 border-t border-white/10">
+                <div className="grid grid-cols-1 gap-3 text-sm text-white/70">
+                  <div className="flex items-center gap-3">
+                    <span className="text-white/40">🚚</span>
+                    <span>{t("product:shipping", "Frete grátis acima de R$ 299")}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-white/40">↩️</span>
+                    <span>{t("product:returns", "Trocas em até 30 dias")}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-white/40">💳</span>
+                    <span>{t("product:installments", "Parcele em até 12x sem juros")}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-          </section>
+          </div>
         </div>
       </main>
     </>
@@ -351,6 +391,14 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
     const heroImage = images.find((i) => i && i.order === 1)?.url 
       ?? images.find(i => i && i.url)?.url 
       ?? null;
+    
+    const galleryImages = images
+      .filter(i => i && i.url)
+      .map(i => ({
+        url: i.url,
+        alt: i.alt || `${product.title} - Imagem do produto`,
+        order: i.order || 999
+      }));
 
     return {
       props: {
@@ -360,6 +408,7 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
           title: product.title,
           description: product.description ?? null,
           image: heroImage,
+          images: galleryImages,
         }),
         options: sanitizeForNext(options),
         variants: sanitizeForNext(processedVariants),
