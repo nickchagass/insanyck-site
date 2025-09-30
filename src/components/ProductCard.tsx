@@ -42,7 +42,7 @@ export default function ProductCard({ product }: Props) {
     <motion.article
       whileHover={{ y: -3, borderColor: "rgba(255,255,255,0.15)" }}
       transition={{ duration: 0.15, ease: [0.2, 0, 0, 1] }}
-      className="ins-card focus-within:ring-2 focus-within:ring-white/40 focus-within:ring-offset-2 focus-within:ring-offset-black"
+      className="card-insanyck focus-within:ring-2 focus-within:ring-white/40 focus-within:ring-offset-2 focus-within:ring-offset-black"
     >
       {/* Área clicável (imagem + título) */}
       <Link

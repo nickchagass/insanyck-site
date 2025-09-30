@@ -496,18 +496,18 @@ body::after {
     border-color: rgba(255,255,255,.14);
     box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 16px 50px rgba(0,0,0,.45);
   }
-  /* filete dourado discretíssimo ao passar o mouse */
+  /* filete neutro discreto ao passar o mouse */
   .ins-card::after {
     content:"";
     position:absolute; inset:-1px;
     border-radius: 19px;
     pointer-events:none;
     opacity:0; transition:opacity .18s var(--ease-premium);
-    background: conic-gradient(from 180deg at 50% 50%, rgba(250,204,21,.0), rgba(250,204,21,.25), rgba(250,204,21,.0));
+    background: conic-gradient(from 180deg at 50% 50%, rgba(255,255,255,.0), rgba(255,255,255,.15), rgba(255,255,255,.0));
     mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
     -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
   }
-  .ins-card:hover::after { opacity:.6; }
+  .ins-card:hover::after { opacity:.4; }
 
   /* Badge "esgotado"/estado */
   .ins-chip {
@@ -528,7 +528,7 @@ body::after {
     position:absolute; inset:0;
     background:
       radial-gradient(60% 40% at 50% 0%, rgba(255,255,255,.05), transparent 70%),
-      radial-gradient(40% 60% at 100% 20%, rgba(250,204,21,.06), transparent 70%);
+      radial-gradient(40% 60% at 100% 20%, rgba(255,255,255,.04), transparent 70%);
     opacity:.7; pointer-events:none;
   }
   .pdp-hero__title {
@@ -605,4 +605,110 @@ body::after {
 .ins-card .gold-sheen {
   background: none !important;
   mix-blend-mode: normal !important;
+}
+
+/* === INSANYCK — Cards premium sem dourado (Loja/PDP) === */
+.card-insanyck {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 20px;
+  box-shadow: var(--shadow-md);
+  transition:
+    transform var(--duration-fast) var(--ease-premium),
+    box-shadow var(--duration-fast) var(--ease-premium),
+    border-color var(--duration-fast) var(--ease-premium),
+    background var(--duration-fast) var(--ease-premium);
+}
+.card-insanyck:hover {
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.18);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Nunca tinte a imagem no hover */
+.card-insanyck img { filter: none; }
+.card-insanyck:hover img { filter: none; }
+
+/* Botões nas cards com contraste consistente */
+.card-insanyck .btn {
+  border-radius: 12px;
+}
+
+/* === INSANYCK — PDP Premium Polish === */
+.pdp-premium {
+  position: relative;
+}
+
+.pdp-premium::before {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  background: 
+    radial-gradient(50% 40% at 30% 20%, rgba(255,255,255,.03) 0%, transparent 70%),
+    radial-gradient(60% 50% at 70% 80%, rgba(255,255,255,.02) 0%, transparent 60%);
+  pointer-events: none;
+  border-radius: 24px;
+  filter: blur(8px);
+}
+
+/* Botões premium no PDP */
+.pdp-btn-primary {
+  background: linear-gradient(135deg, rgba(255,255,255,.95), rgba(255,255,255,.88));
+  color: var(--bg-0);
+  border: 1px solid rgba(255,255,255,.15);
+  box-shadow: 
+    0 1px 0 rgba(255,255,255,.2) inset,
+    var(--shadow-md),
+    0 0 20px rgba(255,255,255,.08);
+  transition: all var(--duration-fast) var(--ease-premium);
+}
+
+.pdp-btn-primary:hover {
+  background: linear-gradient(135deg, rgba(255,255,255,1), rgba(255,255,255,.95));
+  transform: translateY(-1px);
+  box-shadow: 
+    0 1px 0 rgba(255,255,255,.25) inset,
+    var(--shadow-lg),
+    0 0 25px rgba(255,255,255,.12);
+}
+
+.pdp-btn-secondary {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.95);
+  backdrop-filter: blur(12px);
+  transition: all var(--duration-fast) var(--ease-premium);
+}
+
+.pdp-btn-secondary:hover {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.25);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Galeria premium */
+.pdp-gallery {
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 
+    0 1px 0 rgba(255,255,255,.08) inset,
+    0 20px 40px rgba(0,0,0,.4);
+  position: relative;
+}
+
+.pdp-gallery::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.04) 0%,
+    rgba(255,255,255,0) 30%,
+    rgba(255,255,255,0) 70%,
+    rgba(0,0,0,.02) 100%
+  );
+  pointer-events: none;
 }

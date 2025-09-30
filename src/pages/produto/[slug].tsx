@@ -108,7 +108,7 @@ export default function ProdutoPage({
         ))}
       </Head>
 
-      <main className="mx-auto max-w-[1200px] px-6 pt-24 pb-16 insanyck-bloom insanyck-bloom--soft">
+      <main className="mx-auto max-w-[1200px] px-6 pt-24 pb-16 pdp-premium">
         {/* Link voltar */}
         <div className="mb-8">
           <Link
@@ -121,8 +121,8 @@ export default function ProdutoPage({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          {/* INSANYCK STEP 4 · Lote 3 — PdpGallery com 3D fallback para zero CLS */}
-          <div className="pdp-media">
+          {/* Galeria Premium */}
+          <div className="pdp-gallery">
             <PdpGallery product={product} />
           </div>
 
@@ -164,20 +164,20 @@ export default function ProdutoPage({
                     priceCents: selectedVariant.priceCents,
                     currency: selectedVariant.currency,
                   }}
-                  className="bg-white text-black rounded-xl px-8 py-3 font-semibold hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 transition flex-1"
+                  className="pdp-btn-primary rounded-xl px-8 py-3 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 flex-1"
                 >
                   {t("cart:addToCart", "Adicionar ao carrinho")}
                 </AddToCartButton>
               )}
 
               {!selectedVariant && variants.length > 0 && (
-                <div className="flex-1 bg-white/10 text-white/60 rounded-xl px-8 py-3 font-semibold text-center">
+                <div className="flex-1 pdp-btn-secondary rounded-xl px-8 py-3 font-semibold text-center text-white/60">
                   {t("pdp:selectVariant", "Selecione as opções")}
                 </div>
               )}
 
               {variants.length === 0 && (
-                <div className="flex-1 bg-white/10 text-white/60 rounded-xl px-8 py-3 font-semibold text-center">
+                <div className="flex-1 pdp-btn-secondary rounded-xl px-8 py-3 font-semibold text-center text-white/60">
                   {t("pdp:outOfStock", "Produto indisponível")}
                 </div>
               )}
@@ -246,24 +246,46 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
       return { notFound: true };
     }
 
-    // Garantir que variants existe e cada variant tem id
-    product.variants = Array.isArray(product.variants) ? product.variants : [];
-    product.variants = product.variants.map((v, i) => ({
-      id: v.id ?? `mock-${product.slug}-v${i}`,
-      options: Array.isArray(v.options) ? v.options : [],
-      ...v
-    }));
+    // GSSP Guard: Garantir estrutura válida para serialização JSON
+    if (!product.variants || !Array.isArray(product.variants)) {
+      product.variants = [];
+    }
+    
+    product.variants = product.variants.map((v, i) => {
+      if (!v || typeof v !== 'object') {
+        return {
+          id: `fallback-${product.slug}-v${i}`,
+          status: 'active',
+          sku: '',
+          options: [],
+          price: { cents: 0, currency: 'BRL' },
+          inventory: { quantity: 0, reserved: 0 }
+        };
+      }
+      
+      return {
+        ...v,
+        id: v.id ?? `mock-${product.slug}-v${i}`,
+        options: Array.isArray(v.options) ? v.options : [],
+        price: v.price || { cents: 0, currency: 'BRL' },
+        inventory: v.inventory || { quantity: 0, reserved: 0 }
+      };
+    });
 
-    // INSANYCK STEP 10 — Construir options (size, color, etc.) - defensivo
+    // GSSP Guard: Construir options de forma defensiva
     const byOption = new Map<string, Option>();
-    const variants = product?.variants ?? [];
+    const variants = Array.isArray(product.variants) ? product.variants : [];
 
     for (const variant of variants) {
-      const vOptions = variant?.options ?? [];
+      if (!variant || typeof variant !== 'object') continue;
+      
+      const vOptions = Array.isArray(variant.options) ? variant.options : [];
       for (const option of vOptions) {
+        if (!option || typeof option !== 'object') continue;
+        
         const opt = option?.optionValue?.option;
         const val = option?.optionValue;
-        if (!opt || !val) continue;
+        if (!opt || !val || typeof opt !== 'object' || typeof val !== 'object') continue;
         
         const key = opt.slug;
 
@@ -291,33 +313,44 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
 
     const options: Option[] = Array.from(byOption.values());
 
-    // INSANYCK STEP 10 — Variants no shape do VariantSelector - defensivo
-    const processedVariants: PDPVariant[] = variants.map((variant) => {
-      const available = Math.max(
-        0,
-        (variant.inventory?.quantity ?? 0) - (variant.inventory?.reserved ?? 0)
-      );
+    // GSSP Guard: Processar variants de forma defensiva
+    const processedVariants: PDPVariant[] = variants
+      .filter(v => v && typeof v === 'object' && v.id)
+      .map((variant) => {
+        const inventory = variant.inventory || { quantity: 0, reserved: 0 };
+        const available = Math.max(
+          0,
+          (inventory.quantity || 0) - (inventory.reserved || 0)
+        );
+        const price = variant.price || { cents: 0, currency: 'BRL' };
 
-      return {
-        id: variant.id,
-        sku: variant.sku ?? "",
-        title: variant.title ?? undefined,
-        priceCents: variant.price?.cents ?? 0,
-        currency: variant.price?.currency ?? "BRL",
-        inventory: {
-          quantity: variant.inventory?.quantity ?? 0,
-          reserved: variant.inventory?.reserved ?? 0,
-          available,
-        },
-        options: (variant.options ?? []).map((o) => ({
-          option: o?.optionValue?.option?.slug ?? '',
-          value: o?.optionValue?.slug ?? o?.optionValue?.value ?? '',
-        })),
-      };
-    });
+        return {
+          id: String(variant.id),
+          sku: String(variant.sku || ""),
+          title: variant.title ? String(variant.title) : undefined,
+          priceCents: Number(price.cents) || 0,
+          currency: String(price.currency || "BRL"),
+          inventory: {
+            quantity: Number(inventory.quantity) || 0,
+            reserved: Number(inventory.reserved) || 0,
+            available,
+          },
+          options: Array.isArray(variant.options) 
+            ? variant.options
+                .filter(o => o && typeof o === 'object')
+                .map((o) => ({
+                  option: String(o?.optionValue?.option?.slug || ''),
+                  value: String(o?.optionValue?.slug || o?.optionValue?.value || ''),
+                }))
+            : [],
+        };
+      });
 
-    const heroImage =
-      product.images.find((i) => i.order === 1)?.url ?? product.images[0]?.url ?? null;
+    // GSSP Guard: Processar imagens de forma defensiva
+    const images = Array.isArray(product.images) ? product.images : [];
+    const heroImage = images.find((i) => i && i.order === 1)?.url 
+      ?? images.find(i => i && i.url)?.url 
+      ?? null;
 
     return {
       props: {

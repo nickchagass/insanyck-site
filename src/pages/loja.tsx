@@ -283,9 +283,10 @@ export const getServerSideProps: GetServerSideProps<LojaProps> = async ({
   try {
     const { category, size, color, inStock, sort = "newest" } = query;
 
-    // Import fallback utilities
+    // Import fallback utilities  
     const { withDb } = await import('@/lib/db/prismaGuard');
     const { mockProducts, mockCategories } = await import('@/mock/products');
+    const { sanitizeForNext } = await import('@/lib/json/sanitizeForNext');
 
     // Construir filtros
     const where: any = { status: "active" };
@@ -355,48 +356,62 @@ export const getServerSideProps: GetServerSideProps<LojaProps> = async ({
       [mockProducts as any, mockCategories as any, mockProducts.length]
     );
 
-    // Transformar produtos
-    const transformedProducts = products.map((product) => {
-      const activeVariants = product.variants.filter((v) => v.status === "active");
-      const prices = activeVariants.map((v) => v.price?.cents || 0).filter((p) => p > 0);
-      
-      const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
-      const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
-      
-      const totalStock = activeVariants.reduce((sum, v) => {
-        const available = (v.inventory?.quantity || 0) - (v.inventory?.reserved || 0);
-        return sum + Math.max(0, available);
-      }, 0);
+    // GSSP Guard: Transformar produtos de forma defensiva
+    const transformedProducts = (Array.isArray(products) ? products : [])
+      .filter(p => p && typeof p === 'object' && p.id)
+      .map((product) => {
+        const variants = Array.isArray(product.variants) ? product.variants : [];
+        const activeVariants = variants.filter((v) => v && v.status === "active");
+        
+        const prices = activeVariants
+          .map((v) => v?.price?.cents || 0)
+          .filter((p) => typeof p === 'number' && p > 0);
+        
+        const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+        const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+        
+        const totalStock = activeVariants.reduce((sum, v) => {
+          if (!v || !v.inventory) return sum;
+          const available = (v.inventory.quantity || 0) - (v.inventory.reserved || 0);
+          return sum + Math.max(0, available);
+        }, 0);
 
-      return {
-        id: product.id,
-        title: product.title,
-        slug: product.slug,
-        description: product.description,
-        image: product.images[0]?.url,
-        pricing: {
-          minCents: minPrice,
-          maxCents: maxPrice,
-          currency: "BRL",
-        },
-        availability: {
-          inStock: totalStock > 0,
-          totalStock,
-        },
-        variantCount: activeVariants.length,
-        isFeatured: product.isFeatured,
-      };
+        // GSSP Guard: Retornar objeto válido
+        const images = Array.isArray(product.images) ? product.images : [];
+        
+        return sanitizeForNext({
+          id: String(product.id),
+          title: String(product.title || ''),
+          slug: String(product.slug || ''),
+          description: product.description ? String(product.description) : null,
+          image: images.find(i => i && i.url)?.url || undefined,
+          pricing: {
+            minCents: Number(minPrice),
+            maxCents: Number(maxPrice),
+            currency: "BRL",
+          },
+          availability: {
+            inStock: Boolean(totalStock > 0),
+            totalStock: Number(totalStock),
+          },
+          variantCount: Number(activeVariants.length),
+          isFeatured: Boolean(product.isFeatured),
+        });
     });
 
     return {
       props: {
         initialProducts: transformedProducts,
-        categories: categories.map((cat) => ({
-          id: cat.id,
-          name: cat.name,
-          slug: cat.slug,
-        })),
-        totalProducts,
+        categories: sanitizeForNext(
+          (Array.isArray(categories) ? categories : [])
+            .filter(c => c && typeof c === 'object' && c.id)
+            .map((cat) => ({
+              id: String(cat.id),
+              name: String(cat.name || ''),
+              slug: String(cat.slug || ''),
+            }))
+        ),
+        totalProducts: Number(totalProducts) || 0,
         ...(await serverSideTranslations(locale ?? "pt", ["common", "nav", "plp", "catalog"])),
       },
     };

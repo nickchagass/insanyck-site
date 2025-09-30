@@ -14,7 +14,7 @@ export default function ProductGrid({ items = [], className, showSkeleton = fals
       <ul role="list" className={`ins-grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 list-none p-0 m-0 ${className || ''}`} aria-live="polite">
         {Array.from({ length: skeletonCount }).map((_, i) => (
           <li key={i} role="listitem" className="contents">
-            <article className="ins-card p-3">
+            <article className="card-insanyck p-3">
               <Skeleton.Thumb />
               <div className="mt-3 space-y-2">
                 <Skeleton.TextLg className="w-4/5" />
