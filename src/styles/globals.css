@@ -560,3 +560,49 @@ body::after {
     border-top: 1px solid rgba(255,255,255,.10);
   }
 }
+
+/* =========================
+   INSANYCK — Premium Card Hover (neutro, sem dourado)
+   ========================= */
+.ins-card {
+  position: relative;
+  border-radius: 18px;
+  background: rgba(255,255,255,.04);         /* vidro leve */
+  border: 1px solid rgba(255,255,255,.08);
+  transition: transform 160ms var(--ease-premium),
+              box-shadow 160ms var(--ease-premium),
+              border-color 160ms var(--ease-premium),
+              background 160ms var(--ease-premium);
+  will-change: transform, box-shadow;
+}
+
+.ins-card:hover,
+.ins-card:focus-within {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(255,255,255,.14);
+  background: rgba(255,255,255,.06);         /* leve, NEUTRO (sem dourado) */
+}
+
+/* Zera qualquer bloom dourado dentro de cards de produto */
+.ins-card .insanyck-bloom::before,
+.ins-card.insanyck-bloom::before {
+  /* substitui o gold tint por luz fria */
+  background:
+    radial-gradient(60% 60% at 50% 30%, rgba(255,255,255,.06) 0%, rgba(255,255,255,0) 50%);
+  opacity: .10;     /* discreto */
+}
+
+/* No hover do card, NÃO aumentar dourado */
+.ins-card:hover .insanyck-bloom::before,
+.ins-card:focus-within .insanyck-bloom::before {
+  opacity: .12;     /* leve acréscimo, ainda neutro */
+  filter: blur(10px) saturate(1.0);
+}
+
+/* Se alguma imagem tiver overlay dourado próprio, neutralizar */
+.ins-card [data-gold-overlay],
+.ins-card .gold-sheen {
+  background: none !important;
+  mix-blend-mode: normal !important;
+}

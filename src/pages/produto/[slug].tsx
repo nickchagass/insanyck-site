@@ -214,6 +214,7 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
     // Import fallback utilities
     const { withDb } = await import('@/lib/db/prismaGuard');
     const { findBySlug } = await import('@/mock/products');
+    const { sanitizeForNext } = await import('@/lib/json/sanitizeForNext');
 
     const product = await withDb(
       async (prisma) => prisma.product.findUnique({
@@ -244,6 +245,14 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
       console.warn(`PDP: Produto não encontrado para slug: ${slug}`);
       return { notFound: true };
     }
+
+    // Garantir que variants existe e cada variant tem id
+    product.variants = Array.isArray(product.variants) ? product.variants : [];
+    product.variants = product.variants.map((v, i) => ({
+      id: v.id ?? `mock-${product.slug}-v${i}`,
+      options: Array.isArray(v.options) ? v.options : [],
+      ...v
+    }));
 
     // INSANYCK STEP 10 — Construir options (size, color, etc.) - defensivo
     const byOption = new Map<string, Option>();
@@ -312,15 +321,15 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
 
     return {
       props: {
-        product: {
+        product: sanitizeForNext({
           id: product.id,
           slug: product.slug,
           title: product.title,
           description: product.description ?? null,
           image: heroImage,
-        },
-        options,
-        variants: processedVariants,
+        }),
+        options: sanitizeForNext(options),
+        variants: sanitizeForNext(processedVariants),
         ...(await serverSideTranslations(locale ?? "pt", [
           "common",
           "nav",

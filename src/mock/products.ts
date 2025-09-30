@@ -9,6 +9,7 @@ export const mockProducts = [
     category: null,
     variants: [
       {
+        id: 'mv1',
         status: 'active',
         sku: 'TEE-OV-BLK-M1',
         title: 'Padrão',
@@ -30,6 +31,7 @@ export const mockProducts = [
     category: null,
     variants: [
       {
+        id: 'mv2',
         status: 'active',
         sku: 'REG-ESS-BLK-M2',
         title: 'Padrão',
