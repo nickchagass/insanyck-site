@@ -46,6 +46,11 @@ function MyApp({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps<{ session: Session | null }>) {
+  // [DEV] Fix: Debug logging for development
+  if (process.env.NODE_ENV === 'development') {
+    console.debug('[dev] _app render');
+  }
+
   return (
     <SessionProvider session={session}>
       <LayoutShell>

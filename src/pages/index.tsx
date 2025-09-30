@@ -12,9 +12,9 @@ export default function HomePage() {
   const { t } = useTranslation('home');
   const seo = seoHome(locale);
 
-  // [DEV] Diagnostic log
+  // [DEV] Fix: Debug logging for development
   if (process.env.NODE_ENV === 'development') {
-    console.debug('[dev] HomePage render');
+    console.debug('[dev] home render');
   }
 
   return (

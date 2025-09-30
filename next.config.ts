@@ -64,6 +64,16 @@ const baseConfig: NextConfig = {
     ignoreDuringBuilds: !isProd,
   },
   
+  webpack: (config, { isServer }) => {
+    // Em dev, ignorar arquivos de sistema do Windows para evitar problemas de watcher
+    if (!isProd && !isServer) {
+      config.watchOptions = {
+        ...config.watchOptions,
+        ignored: "**/node_modules/**",
+      };
+    }
+    return config;
+  },
 
   async headers() {
     const baseHeaders = [
@@ -77,10 +87,12 @@ const baseConfig: NextConfig = {
         value: [
           "default-src 'self'",
           // Stripe e analytics necessários; 'unsafe-inline' por causa dos scripts JSON-LD do SEO
-          "script-src 'self' 'unsafe-inline' https://js.stripe.com https://*.vercel-insights.com",
+          // Em dev: 'unsafe-eval' para HMR/webpack
+          `script-src 'self' 'unsafe-inline' https://js.stripe.com https://*.vercel-insights.com${!isProd ? " 'unsafe-eval'" : ""}`,
           "style-src 'self' 'unsafe-inline'",
           "img-src 'self' data: blob:",
-          "connect-src 'self' https://api.stripe.com https://*.vercel-insights.com",
+          // Em dev: ws: para HMR websocket
+          `connect-src 'self' https://api.stripe.com https://*.vercel-insights.com${!isProd ? " ws:" : ""}`,
           "frame-src https://js.stripe.com",
           "object-src 'none'",
           "base-uri 'self'",

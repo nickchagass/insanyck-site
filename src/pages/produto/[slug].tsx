@@ -207,30 +207,34 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
       return { notFound: true };
     }
 
-    // INSANYCK STEP 10 — Import dinâmico do Prisma
-    const { prisma } = await import("@/lib/prisma");
+    // Import fallback utilities
+    const { withDb } = await import('@/lib/db/prismaGuard');
+    const { findBySlug } = await import('@/mock/products');
 
-    const product = await prisma.product.findUnique({
-      where: { slug },
-      include: {
-        category: true,
-        images: { orderBy: { order: "asc" } },
-        variants: {
-          where: { status: "active" },
-          include: {
-            price: true,
-            inventory: true,
-            options: {
-              include: {
-                optionValue: {
-                  include: { option: true },
+    const product = await withDb(
+      async (prisma) => prisma.product.findUnique({
+        where: { slug },
+        include: {
+          category: true,
+          images: { orderBy: { order: "asc" } },
+          variants: {
+            where: { status: "active" },
+            include: {
+              price: true,
+              inventory: true,
+              options: {
+                include: {
+                  optionValue: {
+                    include: { option: true },
+                  },
                 },
               },
             },
           },
         },
-      },
-    });
+      }),
+      findBySlug(slug) as any
+    );
 
     if (!product) {
       console.warn(`PDP: Produto não encontrado para slug: ${slug}`);

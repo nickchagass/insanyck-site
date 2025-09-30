@@ -283,8 +283,9 @@ export const getServerSideProps: GetServerSideProps<LojaProps> = async ({
   try {
     const { category, size, color, inStock, sort = "newest" } = query;
 
-    // INSANYCK STEP 10 — Import dinâmico (server-only)  
-    const { prisma } = await import('@/lib/prisma');
+    // Import fallback utilities
+    const { withDb } = await import('@/lib/db/prismaGuard');
+    const { mockProducts, mockCategories } = await import('@/mock/products');
 
     // Construir filtros
     const where: any = { status: "active" };
@@ -324,32 +325,35 @@ export const getServerSideProps: GetServerSideProps<LojaProps> = async ({
       };
     }
 
-    // Buscar produtos e categorias
-    const [products, categories, totalProducts] = await Promise.all([
-      prisma.product.findMany({
-        where,
-        include: {
-          category: true,
-          images: {
-            where: { order: 1 },
-            take: 1,
-          },
-          variants: {
-            where: { status: "active" },
-            include: {
-              price: true,
-              inventory: true,
+    // Buscar produtos e categorias com fallback
+    const [products, categories, totalProducts] = await withDb(
+      async (prisma) => Promise.all([
+        prisma.product.findMany({
+          where,
+          include: {
+            category: true,
+            images: {
+              where: { order: 1 },
+              take: 1,
+            },
+            variants: {
+              where: { status: "active" },
+              include: {
+                price: true,
+                inventory: true,
+              },
             },
           },
-        },
-        orderBy: sort === "name" ? { title: "asc" } : { updatedAt: "desc" },
-        take: 12,
-      }),
-      prisma.category.findMany({
-        orderBy: { name: "asc" },
-      }),
-      prisma.product.count({ where }),
-    ]);
+          orderBy: sort === "name" ? { title: "asc" } : { updatedAt: "desc" },
+          take: 12,
+        }),
+        prisma.category.findMany({
+          orderBy: { name: "asc" },
+        }),
+        prisma.product.count({ where }),
+      ]),
+      [mockProducts as any, mockCategories as any, mockProducts.length]
+    );
 
     // Transformar produtos
     const transformedProducts = products.map((product) => {

@@ -33,6 +33,14 @@ body {
   --gold-500: #eab308;
   --brand: var(--gold-400);
 
+  /* Cinematic Background */
+  --ins-bg-gradients:
+    radial-gradient(1000px 700px at 22% -12%, rgba(250,204,21,.055), rgba(250,204,21,0) 60%),
+    radial-gradient(900px 620px at 78% 112%, rgba(255,255,255,.04), rgba(255,255,255,0) 55%);
+  --ins-bg-base: var(--bg-0);
+  --ins-vignette: radial-gradient(120% 85% at 50% 35%, rgba(0,0,0,.28) 0%, rgba(0,0,0,0) 62%);
+  --ins-grain-opacity: .18;
+
   /* Sombras */
   --shadow-sm: 0 1px 2px rgba(0,0,0,.15);
   --shadow-md: 0 4px 6px -1px rgba(0,0,0,.20), 0 2px 4px -1px rgba(0,0,0,.10);
@@ -87,17 +95,43 @@ html {
   text-rendering: optimizeLegibility;
 }
 
-html, body, #__next { height: 100%; margin: 0; padding: 0; }
+html, body, #__next { height: 100%; }
 
 body {
   font-family: var(--font-body);
   color: var(--text-primary);
-  background:
-    radial-gradient(ellipse 1400px 800px at 20% -20%, rgba(250,204,21,.06), transparent 60%),
-    radial-gradient(ellipse 1000px 600px at 80% 120%, rgba(255,255,255,.03), transparent 50%),
-    var(--bg-0);
+  background: var(--ins-bg-gradients), var(--ins-bg-base);
+  background-repeat: no-repeat;
+  background-attachment: scroll;
   line-height: 1.6;
   overflow-x: hidden;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Vinheta + grain */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* vinheta sutil */
+body::before {
+  background: var(--ins-vignette);
+  opacity: .8;
+}
+
+/* film grain leve (SVG embutido) */
+body::after {
+  mix-blend-mode: overlay;
+  opacity: var(--ins-grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0 0 .035 .07 .035 0 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  image-rendering: pixelated;
 }
 
 /* A11y */
@@ -154,6 +188,9 @@ body {
 /* =========================================================
    CONTAINERS / LAYOUT
    ========================================================= */
+/* Containers não pintam fundo sólido */
+.insanyck-container, .insanyck-section, main { background: transparent; }
+
 .insanyck-container { min-height: 100vh; position: relative; }
 
 .insanyck-section {
