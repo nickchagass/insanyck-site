@@ -42,9 +42,10 @@ export default function ProductStage({ imageUrl, alt = "", hint }: Props) {
       const cy = r.top + r.height / 2;
       const dx = (x - cx) / (r.width / 2);
       const dy = (y - cy) / (r.height / 2);
-      // limites suaves
-      tx = Math.max(-10, Math.min(10, dx * 10));
-      ty = Math.max(-10, Math.min(10, dy * 10));
+      // limite a 7 graus
+      const MAX = 7;
+      tx = Math.max(-MAX, Math.min(MAX, dx * MAX));
+      ty = Math.max(-MAX, Math.min(MAX, dy * MAX));
       loop();
     };
 
@@ -87,23 +88,24 @@ export default function ProductStage({ imageUrl, alt = "", hint }: Props) {
       className="pdp-stage relative isolate overflow-hidden rounded-3xl border border-white/10 bg-black/30"
       aria-label="Visual do produto"
     >
-      {/* halo de luz suave */}
       <div aria-hidden className="pdp-stage__halo" />
-      {/* imagem "flutuando" */}
-      <div className="pdp-stage__imgWrap">
-        {/* use <img> para preservar proporção original do asset */}
-        <img
-          ref={imgRef}
-          src={imageUrl}
-          alt={alt}
-          className="pdp-stage__img"
-          decoding="async"
-          loading="eager"
-        />
+
+      {/* Frame 4/5 com área útil previsível */}
+      <div className="pdp-stage__frame">
+        <div className="pdp-stage__imgWrap">
+          <img
+            ref={imgRef}
+            src={imageUrl}
+            alt={alt}
+            className="pdp-stage__img"
+            decoding="async"
+            loading="eager"
+          />
+        </div>
       </div>
-      {/* base/pedestal */}
+
       <div aria-hidden className="pdp-stage__pedestal" />
-      {/* dica de interação */}
+
       {mounted && supportsHover() && !reduceMotion && hint && (
         <div className="pdp-stage__hint">{hint}</div>
       )}

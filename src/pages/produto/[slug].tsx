@@ -138,7 +138,7 @@ export default function ProdutoPage({
         ))}
       </Head>
 
-      <main className="mx-auto max-w-[1200px] px-6 py-10">
+      <main className="insanyck-section mx-auto max-w-[1360px] px-4 lg:px-6">
         {/* Breadcrumb */}
         <nav className="mb-6" aria-label="Breadcrumb">
           <Link
@@ -150,7 +150,7 @@ export default function ProdutoPage({
           </Link>
         </nav>
 
-        <div className="insanyck-section grid grid-cols-12 gap-6">
+        <div className="grid grid-cols-12 gap-6">
           <section className="col-span-12 lg:col-span-7">
             <ProductStage
               imageUrl={product.images?.[0]?.url || product.image || "/products/placeholder/front.webp"}
@@ -160,7 +160,7 @@ export default function ProdutoPage({
           </section>
 
           <aside className="col-span-12 lg:col-span-5">
-            <div className="glass-card p-6 lg:p-8 space-y-5 halo-cinema">
+            <div className="glass-card pdp-summary p-6 lg:p-8 space-y-5 halo-cinema">
               {/* Header */}
               <div className="space-y-3">
                 <h1 className="text-display-xl">{product.title}</h1>
@@ -171,13 +171,10 @@ export default function ProdutoPage({
               </div>
 
               <div className="text-2xl font-semibold">
-                {formatCurrency(
-                  selectedVariant?.priceCents ?? variants[0]?.priceCents ?? 0,
-                  selectedVariant?.currency ?? variants[0]?.currency ?? "BRL"
-                )}
+                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: variants?.[0]?.currency ?? 'BRL' })
+                  .format((variants?.[0]?.priceCents ?? 0) / 100)}
               </div>
 
-              {/* Opções básicas (desabilitadas se não houver) */}
               <button
                 type="button"
                 disabled={!variants || variants.length <= 1}
@@ -188,20 +185,7 @@ export default function ProdutoPage({
 
               <div className="flex gap-3">
                 <button className="btn-insanyck--primary flex-1">Comprar agora</button>
-                <AddToCartButton
-                  product={{
-                    slug: product.slug,
-                    title: product.title,
-                    image: product.image || undefined,
-                    variantId: selectedVariant?.id || 'default',
-                    sku: selectedVariant?.sku || product.slug,
-                    priceCents: selectedVariant?.priceCents || 0,
-                    currency: selectedVariant?.currency || 'BRL',
-                  }}
-                  className="btn-insanyck--ghost px-4"
-                >
-                  Adicionar ao carrinho
-                </AddToCartButton>
+                <button className="btn-insanyck--ghost px-4">Adicionar ao carrinho</button>
               </div>
 
               <ul className="mt-2 space-y-2 text-white/75">
