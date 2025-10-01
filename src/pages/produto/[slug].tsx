@@ -9,8 +9,9 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 import AddToCartButton from "@/components/AddToCartButton";
 import WishlistButton from "@/components/WishlistButton";
-import Gallery from "@/components/pdp/Gallery";
-import VariantPicker from "@/components/pdp/VariantPicker";
+import { formatCurrency } from "@/store/cart";
+
+const ProductStage = dynamic(() => import("@/components/pdp/ProductStage"), { ssr: false });
 import { pdpBenefits } from "@/config/site";
 import React from "react";
 import { seoPDP } from "@/lib/seo";
@@ -149,114 +150,67 @@ export default function ProdutoPage({
           </Link>
         </nav>
 
-        <div className="md:grid md:grid-cols-12 gap-8 space-y-8 md:space-y-0">
-          {/* Gallery */}
-          <div className="md:col-span-7">
-            <Gallery product={product} />
-          </div>
+        <div className="insanyck-section grid grid-cols-12 gap-6">
+          <section className="col-span-12 lg:col-span-7">
+            <ProductStage
+              imageUrl={product.images?.[0]?.url || product.image || "/products/placeholder/front.webp"}
+              alt={product.title}
+              hint="Arraste para girar — passe o mouse"
+            />
+          </section>
 
-          {/* Content Panel */}
-          <div className="md:col-span-5">
-            <div className="card-insanyck p-6 space-y-6">
+          <aside className="col-span-12 lg:col-span-5">
+            <div className="glass-card p-6 lg:p-8 space-y-5 halo-cinema">
               {/* Header */}
               <div className="space-y-3">
-                <h1 className="text-display-xl text-white font-bold tracking-tight">
-                  {product.title}
-                </h1>
+                <h1 className="text-display-xl">{product.title}</h1>
                 
                 {product.description && (
-                  <p className="text-white/70 text-lg leading-relaxed">
-                    {product.description}
-                  </p>
+                  <p className="text-body">{product.description}</p>
                 )}
               </div>
 
-              {/* Price */}
-              <div className="relative p-4 rounded-xl border border-white/10 bg-white/[0.02]">
-                {displayPrice ? (
-                  <div className="text-white text-3xl font-bold tracking-tight">
-                    {displayPrice}
-                  </div>
-                ) : (
-                  <div className="text-white/60 text-xl font-medium">
-                    {t("product:priceOnRequest", "Consulte")}
-                  </div>
-                )}
-                
-                {/* Stock status */}
-                {selectedVariant && (
-                  <div className={`mt-2 text-sm font-medium ${
-                    selectedVariant.inventory.available > 0
-                      ? "text-green-400"
-                      : "text-red-400"
-                  }`}>
-                    {selectedVariant.inventory.available > 0
-                      ? t("product:inStock", `${selectedVariant.inventory.available} em estoque`)
-                      : t("product:outOfStock", "Fora de estoque")}
-                  </div>
+              <div className="text-2xl font-semibold">
+                {formatCurrency(
+                  selectedVariant?.priceCents ?? variants[0]?.priceCents ?? 0,
+                  selectedVariant?.currency ?? variants[0]?.currency ?? "BRL"
                 )}
               </div>
 
-              {/* Variant Picker */}
-              {options.length > 0 && variants.length > 0 && (
-                <VariantPicker
-                  options={options}
-                  variants={variants}
-                  onVariantChange={handleVariantChange}
-                />
-              )}
+              {/* Opções básicas (desabilitadas se não houver) */}
+              <button
+                type="button"
+                disabled={!variants || variants.length <= 1}
+                className="btn-insanyck--ghost w-full"
+              >
+                Selecione as opções
+              </button>
 
-              {/* Actions */}
-              <div className="space-y-4">
-                <div className="flex gap-3 items-stretch">
-                  {canAddToCart ? (
-                    <AddToCartButton
-                      product={{
-                        slug: product.slug,
-                        title: product.title,
-                        image: product.image || undefined,
-                        variantId: selectedVariant?.id || 'default',
-                        sku: selectedVariant?.sku || product.slug,
-                        priceCents: selectedVariant?.priceCents || 0,
-                        currency: selectedVariant?.currency || 'BRL',
-                      }}
-                      className="btn-insanyck--primary rounded-xl px-8 py-3 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 flex-1"
-                    >
-                      {ctaText}
-                    </AddToCartButton>
-                  ) : (
-                    <button
-                      disabled
-                      className="btn-insanyck--secondary rounded-xl px-8 py-3 font-semibold text-center text-white/60 cursor-not-allowed flex-1"
-                    >
-                      {ctaText}
-                    </button>
-                  )}
-                  
-                  {/* Wishlist */}
-                  <WishlistButton
-                    slug={product.slug}
-                    title={product.title}
-                    priceCents={selectedVariant?.priceCents || 0}
-                    image={product.image || undefined}
-                    className="btn-insanyck--secondary w-12 h-12 rounded-xl flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
-                  />
-                </div>
+              <div className="flex gap-3">
+                <button className="btn-insanyck--primary flex-1">Comprar agora</button>
+                <AddToCartButton
+                  product={{
+                    slug: product.slug,
+                    title: product.title,
+                    image: product.image || undefined,
+                    variantId: selectedVariant?.id || 'default',
+                    sku: selectedVariant?.sku || product.slug,
+                    priceCents: selectedVariant?.priceCents || 0,
+                    currency: selectedVariant?.currency || 'BRL',
+                  }}
+                  className="btn-insanyck--ghost px-4"
+                >
+                  Adicionar ao carrinho
+                </AddToCartButton>
               </div>
 
-              {/* Benefits */}
-              <div className="pt-6 border-t border-white/10">
-                <div className="grid grid-cols-1 gap-3 text-sm text-white/70">
-                  {currentBenefits.map((benefit, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <span className="text-white/40" role="img" aria-hidden="true">{benefit.icon}</span>
-                      <span>{benefit.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <ul className="mt-2 space-y-2 text-white/75">
+                <li>Pagamento seguro</li>
+                <li>Troca em até 30 dias</li>
+                <li>Autenticidade garantida</li>
+              </ul>
             </div>
-          </div>
+          </aside>
         </div>
 
         {/* Mobile Sticky CTA */}
@@ -305,6 +259,11 @@ export default function ProdutoPage({
 const asArray = <T,>(v: any): T[] => (Array.isArray(v) ? v : []);
 const jsonSafe = <T,>(o: T): T => JSON.parse(JSON.stringify(o, (_k,v)=>v===undefined?null:v));
 
+// remove undefined para evitar "undefined cannot be serialized as JSON"
+function safeSerialize<T>(obj: T): T {
+  return JSON.parse(JSON.stringify(obj));
+}
+
 export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params, locale, res }) => {
   res.setHeader("Cache-Control", "public, s-maxage=600, stale-while-revalidate=86400");
 
@@ -352,7 +311,14 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
       return { notFound: true };
     }
 
-    // JSON-safe normalization
+    // JSON-safe normalization + garantir ID sempre presente
+    if (Array.isArray(product?.variants)) {
+      product.variants = product.variants.map((v: any, i: number) => ({
+        id: v?.id ?? `v${i+1}`,
+        ...v,
+      }));
+    }
+    
     product.variants = asArray(product?.variants).map((v, i) => {
       if (!v || typeof v !== 'object') {
         return {
@@ -461,17 +427,17 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
       }));
 
     return {
-      props: {
-        product: jsonSafe({
+      props: safeSerialize({
+        product: {
           id: product.id,
           slug: product.slug,
           title: product.title,
           description: product.description ?? null,
           image: heroImage,
           images: galleryImages,
-        }),
-        options: jsonSafe(options),
-        variants: processedVariants, // Already jsonSafe'd
+        },
+        options,
+        variants: processedVariants,
         ...(await serverSideTranslations(locale ?? "pt", [
           "common",
           "nav",
@@ -480,7 +446,7 @@ export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params,
           "catalog",
           "cart",
         ])),
-      },
+      }),
     };
   } catch (err) {
     console.error("PDP GSSP error:", err);
