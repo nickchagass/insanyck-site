@@ -21,6 +21,7 @@ export type ProductCardData = {
   id: string;
   slug: string;
   title: string;
+  description?: string | null;
   price: string | number; // display price, calculated from variants
   thumbs?: {
     front?: string;
@@ -56,6 +57,7 @@ export function productToCardData(product: Product): ProductCardData {
     id: product.id,
     slug: product.slug,
     title: product.title,
+    description: product.description,
     price: priceDisplay,
     thumbs: {
       front: firstImage

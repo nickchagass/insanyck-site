@@ -732,6 +732,183 @@ body::after {
   scroll-snap-align: center;
 }
 
+/* =========================================================
+   INSANYCK SHOWROOM — Grid & Card Utilities
+   ========================================================= */
+
+/* Spotlight card specific styles */
+.spotlight-card {
+  min-height: 600px;
+}
+
+@media (max-width: 768px) {
+  .spotlight-card {
+    min-height: 400px;
+  }
+}
+
+/* Wide card variant styles */
+.wide-card {
+  min-height: 300px;
+}
+
+.wide-card .aspect-\[2\/1\] {
+  aspect-ratio: 2/1;
+}
+
+/* Micro-tilt transform utilities */
+.micro-tilt {
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+
+/* CTAs reveal animation */
+.ctas-reveal {
+  transform: translateY(8px);
+  opacity: 0;
+  transition: 
+    opacity var(--duration-normal) var(--ease-premium),
+    transform var(--duration-normal) var(--ease-premium);
+}
+
+.ctas-reveal.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Swatches styles */
+.product-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.2);
+  transition: transform var(--duration-fast) var(--ease-premium);
+  cursor: pointer;
+}
+
+.product-swatch:hover {
+  transform: scale(1.1);
+  border-color: rgba(255,255,255,.4);
+}
+
+.product-swatch[aria-pressed="true"] {
+  border-width: 2px;
+  border-color: rgba(255,255,255,.6);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.15);
+}
+
+/* Filters dock styles */
+.filters-dock {
+  backdrop-filter: blur(20px);
+  background: rgba(0,0,0,.6);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+/* Grid responsive utilities */
+@media (min-width: 1280px) {
+  .showroom-grid-desktop {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .spotlight-span {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  
+  .wide-span {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1279px) {
+  .showroom-grid-tablet {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .spotlight-span-tablet {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+}
+
+@media (max-width: 767px) {
+  .showroom-grid-mobile {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .spotlight-span-mobile {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+}
+
+/* Infinite scroll sentinel */
+.scroll-sentinel {
+  height: 1px;
+  position: relative;
+}
+
+/* Loading states */
+.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,.03) 25%,
+    rgba(255,255,255,.06) 50%,
+    rgba(255,255,255,.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Focus states for cards */
+.card-focus {
+  outline: 2px solid rgba(255,255,255,.4);
+  outline-offset: 4px;
+}
+
+/* Parallax image container */
+.parallax-container {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* Reduced motion overrides */
+@media (prefers-reduced-motion: reduce) {
+  .micro-tilt,
+  .parallax-container,
+  .spotlight-card,
+  .product-card {
+    transform: none !important;
+    transition: none !important;
+  }
+  
+  .ctas-reveal {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
 /* === Premium Button Styles === */
 .btn-insanyck--primary {
   background: linear-gradient(135deg, rgba(255,255,255,.95), rgba(255,255,255,.88));

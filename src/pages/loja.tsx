@@ -8,7 +8,8 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useState, useEffect, useCallback } from "react";
-import ProductGrid from "@/components/ProductGrid";
+import ShowroomGrid from "@/components/catalog/ShowroomGrid";
+import FiltersDock from "@/components/catalog/FiltersDock";
 
 interface Product {
   id: string;
@@ -50,6 +51,8 @@ export default function Loja({
   const router = useRouter();
   const [products, setProducts] = useState(initialProducts);
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(totalProducts > initialProducts.length);
+  const [page, setPage] = useState(1);
 
   const { category, size, color, inStock, sort = "newest" } = router.query;
   // Normalize category param for SEO
@@ -59,7 +62,7 @@ export default function Loja({
   // INSANYCK STEP 10 — Normalizar tipos de query (evitar string[])
   const asStr = (v: string | string[] | undefined) => Array.isArray(v) ? v[0] : (v ?? '');
 
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = useCallback(async (resetPage = true) => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -69,11 +72,21 @@ export default function Loja({
       if (color)    params.set("color",    asStr(color));
       if (inStock)  params.set("inStock",  asStr(inStock));
       if (sort)     params.set("sort",     asStr(sort));
+      
+      if (resetPage) {
+        params.set("page", "1");
+        setPage(1);
+      }
 
       const response = await fetch(`/api/products?${params}`);
       if (response.ok) {
         const data = await response.json();
-        setProducts(data.products);
+        if (resetPage) {
+          setProducts(data.products);
+        } else {
+          setProducts(prev => [...prev, ...data.products]);
+        }
+        setHasMore(data.products.length === 12); // Assuming 12 per page
       }
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -83,26 +96,39 @@ export default function Loja({
   }, [category, color, inStock, size, sort]);
 
   useEffect(() => {
-    fetchProducts();
+    fetchProducts(true);
   }, [router.query, fetchProducts]);
 
-  const updateFilter = (key: string, value: string | null) => {
-    const newQuery = { ...router.query };
+  // Load more function for infinite scroll
+  const loadMoreProducts = useCallback(async () => {
+    if (loading || !hasMore) return [];
     
-    if (value) {
-      newQuery[key] = value;
-    } else {
-      delete newQuery[key];
+    const nextPage = page + 1;
+    const params = new URLSearchParams();
+    
+    if (category) params.set("category", asStr(category));
+    if (size)     params.set("size",     asStr(size));
+    if (color)    params.set("color",    asStr(color));
+    if (inStock)  params.set("inStock",  asStr(inStock));
+    if (sort)     params.set("sort",     asStr(sort));
+    params.set("page", nextPage.toString());
+
+    try {
+      const response = await fetch(`/api/products?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        setPage(nextPage);
+        setHasMore(data.products.length === 12);
+        return data.products.map(toCard);
+      }
+    } catch (error) {
+      console.error("Error loading more products:", error);
     }
+    
+    return [];
+  }, [category, color, inStock, size, sort, page, loading, hasMore]);
 
-    router.push({ pathname: router.pathname, query: newQuery }, undefined, {
-      shallow: true,
-    });
-  };
-
-  const isFilterActive = (key: string, value: string) => {
-    return router.query[key] === value;
-  };
+  // Note: Filter functions moved to FiltersDock component
 
   // INSANYCK FIX — Safe mapping para suportar legacy + variants schemas
   const toCard = (product: any) => {
@@ -180,90 +206,40 @@ export default function Loja({
         })()}
       </Head>
 
-      {/* INSANYCK STEP 9 — bloom sutil; não altera layout/tipografia */}
-      <main className="mx-auto max-w-[1200px] px-6 pt-24 pb-16 insanyck-bloom insanyck-bloom--soft">
-        <h1 className="text-white/95 text-[40px] font-semibold tracking-[-0.01em]">
-          {t("plp:title", "Loja INSANYCK")}
-        </h1>
-        <p className="mt-2 text-white/60">
-          {t("plp:subtitle", `${totalProducts} produto(s) • Vidro leve • borda hairline`)}
-        </p>
+      {/* INSANYCK Showroom Catalog — Cinematic Hero + Premium Grid */}
+      <main className="min-h-screen insanyck-bloom insanyck-bloom--soft">
+        {/* Optional Hero Section */}
+        <section className="relative py-16 px-6">
+          <div className="max-w-[1200px] mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white/95 tracking-tight mb-4">
+              {t("plp:title", "Showroom INSANYCK")}
+            </h1>
+            <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto">
+              {t("plp:subtitle", "Coleção premium • Design exclusivo • Qualidade superior")}
+            </p>
+          </div>
+        </section>
 
-        {/* INSANYCK STEP 10 — Filtros reais funcionais */}
-        <div className="mt-8 flex flex-wrap items-center gap-3 text-white/75">
-          {/* Categorias */}
-          <label htmlFor="category-filter" className="sr-only">
-            {t("catalog:filters.category_label", "Filtrar por categoria")}
-          </label>
-          <select
-            id="category-filter"
-            value={Array.isArray(category) ? category[0] : (category ?? "")}
-            onChange={(e) => updateFilter("category", e.target.value || null)}
-            className="rounded-full px-4 py-2 border border-white/15 bg-black/50 hover:bg-white/5 text-white"
-            aria-label={t("catalog:filters.category_label", "Filtrar por categoria")}
-          >
-            <option value="">{t("catalog:filters.all_categories", "Todas Categorias")}</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.slug}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
+        {/* Filters Dock */}
+        <FiltersDock categories={categories} totalProducts={totalProducts} />
 
-          {/* Tamanhos */}
-          {["P", "M", "G", "EG"].map((sizeOption) => (
-            <button
-              key={sizeOption}
-              onClick={() =>
-                updateFilter("size", isFilterActive("size", sizeOption) ? null : sizeOption)
-              }
-              className={`rounded-full px-3 py-2 border border-white/15 hover:bg-white/5 transition-colors ${
-                isFilterActive("size", sizeOption) ? "bg-white/20 text-white" : ""
-              }`}
-            >
-              {sizeOption}
-            </button>
-          ))}
-
-          {/* Filtro de estoque */}
-          <button
-            onClick={() =>
-              updateFilter("inStock", isFilterActive("inStock", "true") ? null : "true")
-            }
-            className={`rounded-full px-4 py-2 border border-white/15 hover:bg-white/5 transition-colors ${
-              isFilterActive("inStock", "true") ? "bg-white/20 text-white" : ""
-            }`}
-          >
-            {t("catalog:filters.in_stock", "Em Estoque")}
-          </button>
-
-          {/* Ordenação */}
-          <label htmlFor="sort-filter" className="sr-only">
-            {t("catalog:sort.label", "Ordenar por")}
-          </label>
-          <select
-            id="sort-filter"
-            value={String(sort ?? 'newest')}
-            onChange={(e) => updateFilter("sort", e.target.value)}
-            className="rounded-full px-4 py-2 border border-white/15 bg-black/50 hover:bg-white/5 text-white"
-            aria-label={t("catalog:sort.label", "Ordenar por")}
-          >
-            <option value="newest">{t("catalog:sort.newest", "Mais Recentes")}</option>
-            <option value="name">{t("catalog:sort.name", "Nome")}</option>
-            <option value="price_asc">{t("catalog:sort.price_asc", "Menor Preço")}</option>
-            <option value="price_desc">{t("catalog:sort.price_desc", "Maior Preço")}</option>
-          </select>
-        </div>
-
-        <div className="mt-8">
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <div className="animate-spin h-8 w-8 border-2 border-white/20 border-t-white rounded-full"></div>
-            </div>
-          ) : (
-            <ProductGrid items={gridProducts} />
-          )}
-        </div>
+        {/* Showroom Grid */}
+        <section className="px-6 py-8">
+          <div className="max-w-[1400px] mx-auto">
+            {loading && products.length === 0 ? (
+              <div className="flex justify-center py-20">
+                <div className="animate-spin h-12 w-12 border-2 border-white/20 border-t-white rounded-full"></div>
+              </div>
+            ) : (
+              <ShowroomGrid 
+                initialProducts={gridProducts}
+                onLoadMore={loadMoreProducts}
+                hasMore={hasMore}
+                loading={loading}
+              />
+            )}
+          </div>
+        </section>
       </main>
     </>
   );
@@ -358,19 +334,19 @@ export const getServerSideProps: GetServerSideProps<LojaProps> = async ({
 
     // GSSP Guard: Transformar produtos de forma defensiva
     const transformedProducts = (Array.isArray(products) ? products : [])
-      .filter(p => p && typeof p === 'object' && p.id)
-      .map((product) => {
+      .filter((p: any) => p && typeof p === 'object' && p.id)
+      .map((product: any) => {
         const variants = Array.isArray(product.variants) ? product.variants : [];
-        const activeVariants = variants.filter((v) => v && v.status === "active");
+        const activeVariants = variants.filter((v: any) => v && v.status === "active");
         
         const prices = activeVariants
-          .map((v) => v?.price?.cents || 0)
-          .filter((p) => typeof p === 'number' && p > 0);
+          .map((v: any) => v?.price?.cents || 0)
+          .filter((p: number) => typeof p === 'number' && p > 0);
         
         const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
         const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
         
-        const totalStock = activeVariants.reduce((sum, v) => {
+        const totalStock = activeVariants.reduce((sum: number, v: any) => {
           if (!v || !v.inventory) return sum;
           const available = (v.inventory.quantity || 0) - (v.inventory.reserved || 0);
           return sum + Math.max(0, available);
@@ -384,7 +360,7 @@ export const getServerSideProps: GetServerSideProps<LojaProps> = async ({
           title: String(product.title || ''),
           slug: String(product.slug || ''),
           description: product.description ? String(product.description) : null,
-          image: images.find(i => i && i.url)?.url || undefined,
+          image: images.find((i: any) => i && i.url)?.url || undefined,
           pricing: {
             minCents: Number(minPrice),
             maxCents: Number(maxPrice),
@@ -404,8 +380,8 @@ export const getServerSideProps: GetServerSideProps<LojaProps> = async ({
         initialProducts: transformedProducts,
         categories: sanitizeForNext(
           (Array.isArray(categories) ? categories : [])
-            .filter(c => c && typeof c === 'object' && c.id)
-            .map((cat) => ({
+            .filter((c: any) => c && typeof c === 'object' && c.id)
+            .map((cat: any) => ({
               id: String(cat.id),
               name: String(cat.name || ''),
               slug: String(cat.slug || ''),

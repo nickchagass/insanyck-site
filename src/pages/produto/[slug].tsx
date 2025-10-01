@@ -302,7 +302,7 @@ export default function ProdutoPage({
 }
 
 // JSON-safety helpers
-const asArray = <T>(v: any): T[] => (Array.isArray(v) ? v : []);
+const asArray = <T,>(v: any): T[] => (Array.isArray(v) ? v : []);
 const jsonSafe = <T,>(o: T): T => JSON.parse(JSON.stringify(o, (_k,v)=>v===undefined?null:v));
 
 export const getServerSideProps: GetServerSideProps<PDPProps> = async ({ params, locale, res }) => {
