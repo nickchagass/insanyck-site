@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 type Props = {
   imageUrl: string;
   alt?: string;
-  hint?: string; // ex.: "Arraste para girar — passe o mouse"
+  hint?: string;
 };
 
 function supportsHover() {
@@ -14,27 +14,24 @@ function supportsHover() {
 }
 
 export default function ProductStage({ imageUrl, alt = "", hint }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const [mounted, setMounted] = useState(false);
+
   const reduceMotion =
     typeof window !== "undefined" &&
     window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
 
   useEffect(() => setMounted(true), []);
 
-  // Tilting/parallax control
+  // Tilt / parallax suave
   useEffect(() => {
-    const el = ref.current;
+    const el = rootRef.current;
     const img = imgRef.current;
-    if (!el || !img) return;
-    if (reduceMotion) return;
+    if (!el || !img || reduceMotion) return;
 
     let raf = 0;
-    let rx = 0,
-      ry = 0,
-      tx = 0,
-      ty = 0;
+    let rx = 0, ry = 0, tx = 0, ty = 0;
 
     const onMove = (x: number, y: number) => {
       const r = el.getBoundingClientRect();
@@ -42,31 +39,27 @@ export default function ProductStage({ imageUrl, alt = "", hint }: Props) {
       const cy = r.top + r.height / 2;
       const dx = (x - cx) / (r.width / 2);
       const dy = (y - cy) / (r.height / 2);
-      // limite a 7 graus
-      const MAX = 7;
-      tx = Math.max(-MAX, Math.min(MAX, dx * MAX));
-      ty = Math.max(-MAX, Math.min(MAX, dy * MAX));
+      tx = Math.max(-10, Math.min(10, dx * 10));
+      ty = Math.max(-10, Math.min(10, dy * 10));
       loop();
     };
 
     const loop = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
-        rx += (ty - rx) * 0.12; // inverte e suaviza
-        ry += (-tx - ry) * 0.12;
+        // limite 7°
+        rx += (Math.max(-7, Math.min(7, ty)) - rx) * 0.12;
+        ry += (Math.max(-7, Math.min(7, -tx)) - ry) * 0.12;
         img.style.transform = `translateZ(0) rotateX(${rx}deg) rotateY(${ry}deg)`;
       });
     };
 
     const onMouse = (e: MouseEvent) => onMove(e.clientX, e.clientY);
     const onTouch = (e: TouchEvent) => {
-      if (!e.touches[0]) return;
-      onMove(e.touches[0].clientX, e.touches[0].clientY);
+      const t = e.touches?.[0]; if (!t) return;
+      onMove(t.clientX, t.clientY);
     };
-    const reset = () => {
-      tx = ty = 0;
-      loop();
-    };
+    const reset = () => { tx = ty = 0; loop(); };
 
     el.addEventListener("mousemove", onMouse);
     el.addEventListener("mouseleave", reset);
@@ -84,13 +77,11 @@ export default function ProductStage({ imageUrl, alt = "", hint }: Props) {
 
   return (
     <div
-      ref={ref}
-      className="pdp-stage relative isolate overflow-hidden rounded-3xl border border-white/10 bg-black/30"
+      ref={rootRef}
+      className="pdp-stage"
       aria-label="Visual do produto"
     >
       <div aria-hidden className="pdp-stage__halo" />
-
-      {/* Frame 4/5 com área útil previsível */}
       <div className="pdp-stage__frame">
         <div className="pdp-stage__imgWrap">
           <img
@@ -102,10 +93,8 @@ export default function ProductStage({ imageUrl, alt = "", hint }: Props) {
             loading="eager"
           />
         </div>
+        <div aria-hidden className="pdp-stage__pedestal" />
       </div>
-
-      <div aria-hidden className="pdp-stage__pedestal" />
-
       {mounted && supportsHover() && !reduceMotion && hint && (
         <div className="pdp-stage__hint">{hint}</div>
       )}
