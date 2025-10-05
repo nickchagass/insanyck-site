@@ -29,6 +29,23 @@ test.describe('Home Page', () => {
     await expect(page.locator('main')).toBeVisible();
     
     // Take visual snapshot of hero area
+    await page.addInitScript(() => {
+      // Freeze Date
+      const fixed = new Date('2025-01-01T12:00:00Z').valueOf();
+      const _Date = Date;
+      // @ts-ignore
+      globalThis.Date = class extends _Date {
+        constructor(...args: any[]) { return args.length ? new _Date(...args) : new _Date(fixed); }
+        static now() { return fixed; }
+      };
+
+      // Freeze Math.random
+      const seq = [0.11, 0.42, 0.73, 0.33, 0.89];
+      let i = 0;
+      Math.random = () => { const v = seq[i % seq.length]; i++; return v; };
+    });
+
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.waitForLoadState('networkidle');
     await page.locator('header').first().waitFor({ state: 'visible' });
     await expect(page.locator('header').first()).toHaveScreenshot('header-home.png');
