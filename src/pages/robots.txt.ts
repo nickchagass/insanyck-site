@@ -1,10 +1,10 @@
-// INSANYCK · Hotfix — robots.txt seguro (SSR)
+// INSANYCK · Hotfix — robots.txt seguro
 import type { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const origin =
+  const host =
     (process.env.NEXT_PUBLIC_URL && new URL(process.env.NEXT_PUBLIC_URL).origin) ||
-    (req?.headers?.host ? `https://${req.headers.host}` : "https://insanyck.com");
+    (req.headers.host ? `https://${req.headers.host}` : "https://insanyck.com");
 
   const isProd =
     process.env.NODE_ENV === "production" &&
@@ -14,7 +14,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const body = isProd
     ? `User-agent: *
 Allow: /
-Sitemap: ${origin}/sitemap.xml
+Sitemap: ${host}/sitemap.xml
 `
     : `User-agent: *
 Allow: /
@@ -22,7 +22,6 @@ Allow: /
 `;
 
   res.setHeader("Content-Type", "text/plain; charset=utf-8");
-  res.setHeader("Cache-Control", "public, s-maxage=86400");
   res.write(body);
   res.end();
   return { props: {} };
