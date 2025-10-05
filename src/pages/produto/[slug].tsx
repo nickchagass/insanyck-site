@@ -56,7 +56,7 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
     });
     // feedback simples
     if (typeof window !== "undefined") {
-      console.debug("[cart] item adicionado");
+      console.warn("[cart] item adicionado");
       alert("Adicionado ao carrinho.");
     }
   };
@@ -160,6 +160,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       } as Product;
     } catch (err: any) {
       // DB offline
+      console.error("[INSANYCK][produto]", err);
       return null;
     }
   }
@@ -168,7 +169,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   if (!product) {
     const { findBySlug, mockProducts } = await import("@/mock/products");
-    const mock = findBySlug(slug) ?? (mockProducts as any[])[0];
+    const mock = findBySlug(slug) ?? (mockProducts as unknown as any[])[0];
     if (!mock) return { notFound: true };
     product = {
       id: String(mock.id),

@@ -29,7 +29,7 @@ function LayoutShell({ children }: { children: React.ReactNode }) {
   const hideUpdateBanner = process.env.INSANYCK_TEST_HIDE_UPDATE_BANNER === '1';
 
   if (isDev) {
-    console.debug('[dev] LayoutShell mounted');
+    console.warn('[dev] LayoutShell mounted');
   }
 
   return (
@@ -48,7 +48,7 @@ function MyApp({
 }: AppProps<{ session: Session | null }>) {
   // [DEV] Fix: Debug logging for development
   if (process.env.NODE_ENV === 'development') {
-    console.debug('[dev] _app render');
+    console.warn('[dev] _app render');
   }
 
   return (

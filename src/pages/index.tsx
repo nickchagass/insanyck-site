@@ -14,7 +14,7 @@ export default function HomePage() {
 
   // [DEV] Fix: Debug logging for development
   if (process.env.NODE_ENV === 'development') {
-    console.debug('[dev] home render');
+    console.warn('[dev] home render');
   }
 
   return (

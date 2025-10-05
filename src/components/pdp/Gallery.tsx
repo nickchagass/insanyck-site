@@ -144,7 +144,7 @@ export default function Gallery({ product, className = "" }: GalleryProps) {
     document.body.style.overflow = '';
   }, []);
 
-  const handleModelError = () => {
+  const _handleModelError = () => {
     console.error("3D model failed to load, falling back to image");
     setHas3DError(true);
   };

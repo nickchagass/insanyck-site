@@ -19,7 +19,7 @@ export async function withDb<T>(fn: (prisma: any) => Promise<T>, fallback: T): P
   } catch (err) {
     const dev = process.env.NODE_ENV === 'development';
     if (dev && isPrismaDown(err)) {
-      console.debug('[dev] DB offline -> usando fallback');
+      console.warn('[dev] DB offline -> usando fallback');
       return fallback;
     }
     throw err;
