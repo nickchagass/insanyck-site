@@ -24,7 +24,8 @@
     "test:e2e:ci": "playwright test -c playwright.config.ts --reporter=list,html",
     "test:e2e:update": "playwright test -c playwright.config.ts --update-snapshots",
     "test:a11y": "playwright test -c playwright.a11y.config.ts",
-    "test:all": "npm run test:e2e && npm run test:a11y"
+    "test:all": "npm run test:e2e && npm run test:a11y",
+    "verify:media": "node scripts/verify-media.mjs"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",
