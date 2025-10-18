@@ -16,7 +16,7 @@
     "clean": "rimraf .next || rd /s /q .next 2>nul || true",
     "prepare": "husky",
     "postinstall": "prisma generate",
-    "db:seed": "tsx prisma/seed.ts",
+    "db:seed": "node scripts/seed.mjs",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release-notes": "changeset status --verbose",
