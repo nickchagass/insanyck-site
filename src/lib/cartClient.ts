@@ -36,7 +36,12 @@ function saveCart(items: CartItem[]) {
 
 export function addToCart(item: CartItem) {
   const items = getCart();
-  const idx = items.findIndex(i => (i.variantId && i.variantId === item.variantId) || (i.sku && i.sku === item.sku) || i.id === item.id);
+  // INSANYCK STEP C-fix — comparação robusta de item
+  const idx = items.findIndex(i =>
+    (i.variantId && item.variantId && i.variantId === item.variantId) ||
+    (i.sku && item.sku && i.sku === item.sku) ||
+    i.id === item.id
+  );
   if (idx >= 0) items[idx].qty += item.qty;
   else items.push(item);
   saveCart(items);

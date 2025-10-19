@@ -15,6 +15,9 @@ const serverEnvSchema = z.object({
   // Database (required for Prisma)
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   
+  // INSANYCK STEP C-fix — backend toggle
+  BACKEND_DISABLED: z.enum(["0","1"]).default("0"),
+  
   // URLs (must be coherent)
   NEXT_PUBLIC_URL: z.string().url('NEXT_PUBLIC_URL must be a valid URL'),
   
@@ -57,6 +60,9 @@ export const env = (() => {
     throw new Error('Invalid environment configuration');
   }
 })();
+
+// INSANYCK STEP C-fix — backend toggle helper
+export const isBackendDisabled = () => env.BACKEND_DISABLED === "1";
 
 // Helper to check if server env is ready
 export const isServerEnvReady = () => {

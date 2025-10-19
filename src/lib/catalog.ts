@@ -1,9 +1,11 @@
 // INSANYCK STEP 11 — Catalog Utils with Real Prisma Integration
+// INSANYCK STEP C-fix — uso do helper centralizado
+import { isBackendDisabled } from "./env.server";
 import { prisma } from "@/lib/prisma";
 import { ProductCardData, productToCardData } from "@/types/product";
 
 const PLACEHOLDER = "/thumbs/placeholder.webp";
-const backendDisabled = process.env.BACKEND_DISABLED === "1";
+const backendDisabled = isBackendDisabled();
 
 const mockProducts: ProductCardData[] = [
   { id:"m1", slug:"tee-oversized-preta", title:"Oversized Tee Preta", price:"R$ 149,00",

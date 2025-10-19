@@ -80,42 +80,41 @@ const baseConfig: NextConfig = {
     return config;
   },
 
+  // INSANYCK STEP C-fix — CSP headers sólidos
   async headers() {
+    const isProd = process.env.NODE_ENV === "production";
     const baseHeaders = [
       { key: "X-Frame-Options", value: "DENY" },
       { key: "X-Content-Type-Options", value: "nosniff" },
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
       { key: "Permissions-Policy", value: "geolocation=(), microphone=(), camera=()" },
-      // CSP mínima e compatível (mantemos 'unsafe-inline' para JSON-LD; ideal no futuro: nonce)
       {
         key: "Content-Security-Policy",
         value: [
           "default-src 'self'",
-          // Stripe e analytics necessários; 'unsafe-inline' por causa dos scripts JSON-LD do SEO
-          // Em dev: 'unsafe-eval' para HMR/webpack
-          `script-src 'self' 'unsafe-inline' https://js.stripe.com https://*.vercel-insights.com${!isProd ? " 'unsafe-eval'" : ""}`,
+          // Em dev adicionamos 'unsafe-eval' para HMR/webpack
+          `script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com https://*.vercel-insights.com${!isProd ? " 'unsafe-eval'" : ""}`,
           "style-src 'self' 'unsafe-inline'",
-          "img-src 'self' data: blob:",
-          // Em dev: ws: para HMR websocket
+          // Permitimos https para imagens CDN futuras + data/blob locais
+          "img-src 'self' https: data: blob:",
+          // APIs: Stripe + Vercel insights; em dev também ws: para HMR
           `connect-src 'self' https://api.stripe.com https://*.vercel-insights.com${!isProd ? " ws:" : ""}`,
+          // Stripe embeda <iframe>
           "frame-src https://js.stripe.com",
+          "font-src 'self' data:",
           "object-src 'none'",
           "base-uri 'self'",
-        ].join("; "),
-      },
+          "form-action 'self'",
+          "frame-ancestors 'none'",
+        ].join("; ")
+      }
     ];
 
-    // HSTS somente em produção (para evitar afetar dev)
     const hsts = isProd
       ? [{ key: "Strict-Transport-Security", value: "max-age=15552000; includeSubDomains; preload" }]
       : [];
 
-    return [
-      {
-        source: "/:path*",
-        headers: [...baseHeaders, ...hsts],
-      },
-    ];
+    return [{ source: "/:path*", headers: [...baseHeaders, ...hsts] }];
   },
 };
 
