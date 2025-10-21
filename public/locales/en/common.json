@@ -34,6 +34,26 @@
   "save": "Save",
   "cancel": "Cancel",
   "confirm": "Confirm",
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "description": "Access your INSANYCK account",
+      "emailPlaceholder": "Your email",
+      "ctaEmail": "Sign in with email",
+      "ctaGoogle": "Sign in with Google",
+      "loading": "Loading...",
+      "or": "or",
+      "privacy": "Your data is safe with us"
+    },
+    "verify": {
+      "title": "Check your email",
+      "description": "We sent an access link to your email",
+      "message": "We sent a secure login link to your email.",
+      "instructions": "Click the link we sent to access your account. The link expires in 10 minutes.",
+      "backToLogin": "Back to login",
+      "footer": "Didn't receive the email? Check your spam folder"
+    }
+  },
   "aria": {
     "collection": "INSANYCK Collection",
     "productImage": "Product image",

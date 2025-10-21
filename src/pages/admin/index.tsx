@@ -2,7 +2,7 @@
 // src/pages/admin/index.tsx
 import { GetServerSideProps } from 'next';
 import { getServerSession } from 'next-auth';
-import { createAuthOptions } from '@/pages/api/auth/[...nextauth]';
+import { authOptions } from '@/lib/auth';
 import AdminLayout from '@/components/AdminLayout';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
@@ -111,7 +111,6 @@ export default function AdminDashboard({ stats }: AdminDashboardProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const authOptions = await createAuthOptions();
   const session = await getServerSession(context.req, context.res, authOptions);
 
   // INSANYCK STEP 10 — Verificar se é admin

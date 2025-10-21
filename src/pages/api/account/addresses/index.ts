@@ -1,7 +1,7 @@
 // INSANYCK STEP 8
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth/next";
-import { createAuthOptions } from "../../auth/[...nextauth]";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 type AddressPayload = {
@@ -20,7 +20,6 @@ type AddressPayload = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse): Promise<void> {
   // PWA/Workbox: esta rota deve ser NetworkOnly (sem cache)
-  const authOptions = await createAuthOptions();
   const session = await getServerSession(req, res, authOptions);
   if (!session?.user?.id) {
     res.status(401).json({ error: "Unauthorized" });

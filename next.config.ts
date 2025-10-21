@@ -98,7 +98,7 @@ const baseConfig: NextConfig = {
           // Permitimos https para imagens CDN futuras + data/blob locais
           "img-src 'self' https: data: blob:",
           // APIs: Stripe + Vercel insights; em dev também ws: para HMR
-          `connect-src 'self' https://api.stripe.com https://*.vercel-insights.com${!isProd ? " ws:" : ""}`,
+          `connect-src 'self' https://api.stripe.com https://*.vercel-insights.com https://www.google-analytics.com https://www.googletagmanager.com${!isProd ? " ws:" : ""}`,
           // Stripe embeda <iframe>
           "frame-src https://js.stripe.com",
           "font-src 'self' data:",
@@ -114,7 +114,16 @@ const baseConfig: NextConfig = {
       ? [{ key: "Strict-Transport-Security", value: "max-age=15552000; includeSubDomains; preload" }]
       : [];
 
-    return [{ source: "/:path*", headers: [...baseHeaders, ...hsts] }];
+    return [
+      // Regras específicas para páginas de conta (privacidade)
+      {
+        source: "/conta/:path*",
+        headers: [
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      },
+      { source: "/:path*", headers: [...baseHeaders, ...hsts] }
+    ];
   },
 };
 

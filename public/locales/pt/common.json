@@ -34,6 +34,26 @@
   "save": "Salvar",
   "cancel": "Cancelar",
   "confirm": "Confirmar",
+  "auth": {
+    "login": {
+      "title": "Entrar",
+      "description": "Acesse sua conta INSANYCK",
+      "emailPlaceholder": "Seu e-mail",
+      "ctaEmail": "Entrar por e-mail",
+      "ctaGoogle": "Entrar com Google",
+      "loading": "Carregando...",
+      "or": "ou",
+      "privacy": "Seus dados estão seguros conosco"
+    },
+    "verify": {
+      "title": "Verifique seu e-mail",
+      "description": "Enviamos um link de acesso para seu e-mail",
+      "message": "Enviamos um link de login seguro para seu e-mail.",
+      "instructions": "Clique no link que enviamos para acessar sua conta. O link expira em 10 minutos.",
+      "backToLogin": "Voltar ao login",
+      "footer": "Não recebeu o e-mail? Verifique sua caixa de spam"
+    }
+  },
   "aria": {
     "collection": "Coleção INSANYCK",
     "productImage": "Imagem do produto",

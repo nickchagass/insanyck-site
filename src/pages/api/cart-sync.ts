@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { connectToDatabase } = await import("@/lib/mongo");
   const { default: Cart } = await import("@/lib/models/Cart");
   const { getServerSession } = await import("next-auth");
-  const { createAuthOptions } = await import("./auth/[...nextauth]");
+  const { authOptions } = await import("@/lib/auth");
 
   // 1. Conexão universal
   await connectToDatabase();
@@ -25,7 +25,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   let sessionId: string | undefined = undefined;
 
   // Exemplo para NextAuth (usuário logado)
-  const authOptions = await createAuthOptions();
   const session = await getServerSession(req, res, authOptions).catch(() => null);
   if (session?.user?.id) {
     userId = session.user.id;

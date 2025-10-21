@@ -4,6 +4,7 @@ import { backendDisabled, missingEnv } from "@/lib/backendGuard";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@/lib/stripe";
 import { env, isServerEnvReady } from "@/lib/env.server";
+import { sendOrderConfirmation } from "@/lib/email"; // FASE D
 
 // INSANYCK STEP 4 · Lote 4 — Idempotência em memória (com TTL)
 const __seenStripeEvents = new Map<string, number>();
@@ -85,23 +86,50 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as any;
 
-      // Idempotência
-      const exists = await prisma.order.findFirst({ where: { stripeSessionId: session.id } });
-      if (exists) {
-        res.status(200).json({ ok: true, skipped: "duplicate" });
-        return;
+      // Segurança extra: só processa pedidos pagos
+      if (session.payment_status && session.payment_status !== "paid") {
+        __rememberStripe(event.id);
+        return res.status(200).json({ ok: true, skipped: "not_paid" });
       }
 
+      // Email e contexto básicos
+      const email = session.customer_details?.email ?? "";
+      const currency = (session.currency || "brl").toUpperCase();
+      const amountTotal = session.amount_total ?? 0;
+
+      // 1) Se já existe pedido dessa session, decidimos pelo email idempotente
+      const existing = await prisma.order.findFirst({
+        where: { stripeSessionId: session.id },
+      });
+
+      if (existing) {
+        try {
+          if (email && !existing.emailSentAt) {
+            const locale = "pt" as const;
+            await sendOrderConfirmation({ to: email, order: existing, locale });
+            await prisma.order.update({
+              where: { id: existing.id },
+              data: { emailSentAt: new Date() },
+            });
+            console.log(`[INSANYCK][Webhook] Email (retry) enviado p/ ${email}`);
+            __rememberStripe(event.id);
+            return res.status(200).json({ ok: true, email: "sent_on_retry" });
+          }
+        } catch (emailError) {
+          console.error("[INSANYCK][Webhook] Falha no email (retry):", emailError);
+          // Não falha o webhook
+        }
+        __rememberStripe(event.id);
+        return res.status(200).json({ ok: true, skipped: "duplicate" });
+      }
+
+      // 2) Não existe: cria pedido e decrementa estoque numa transação
       const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
         expand: ["data.price.product"],
       });
 
-      const email = session.customer_details?.email ?? "";
-      const currency = (session.currency || "brl").toUpperCase();
-      const amountTotal = session.amount_total ?? 0;
       const user = email ? await prisma.user.findFirst({ where: { email } }) : null;
 
-      // Criar pedido e decrementar estoque em transação
       const order = await prisma.$transaction(async (tx) => {
         const newOrder = await tx.order.create({
           data: {
@@ -119,10 +147,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const product = (li.price?.product as any) || {};
                 const slug =
                   product?.metadata?.slug ||
-                  title
-                    .toLowerCase()
-                    .replace(/[^\w]+/g, "-")
-                    .replace(/(^-|-$)/g, "");
+                  title.toLowerCase().replace(/[^\w]+/g, "-").replace(/(^-|-$)/g, "");
                 const image = Array.isArray(product?.images) ? product.images[0] : undefined;
 
                 const variantId = product?.metadata?.variantId;
@@ -143,22 +168,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           },
         });
 
-        // Decrementar estoque por variantId (quando houver)
+        // Decrementa estoque (best effort)
         for (const li of lineItems.data || []) {
           const product = (li.price?.product as any) || {};
           const variantId = product?.metadata?.variantId;
           const qty = li.quantity ?? 1;
-
           if (variantId) {
             try {
               await tx.inventory.updateMany({
                 where: { variantId, quantity: { gte: qty } },
                 data: { quantity: { decrement: qty } },
               });
-              // Estoque decrementado (log removed for ESLint)
             } catch (error) {
-              console.warn(`Erro ao decrementar estoque para variantId ${variantId}:`, error);
-              // Não falha a transação
+              console.warn(`Erro ao decrementar estoque p/ ${variantId}:`, error);
             }
           }
         }
@@ -166,9 +188,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return newOrder;
       });
 
+      // 3) E-mail idempotente persistente (somente 1x por pedido)
+      try {
+        if (email && !order.emailSentAt) {
+          const locale = "pt" as const;
+          await sendOrderConfirmation({ to: email, order, locale });
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { emailSentAt: new Date() },
+          });
+          console.log(`[INSANYCK][Webhook] Email enviado para ${email}`);
+        }
+      } catch (emailError) {
+        console.error("[INSANYCK][Webhook] Falha no email:", emailError);
+        // Não falha o webhook
+      }
+
       __rememberStripe(event.id);
-      res.status(200).json({ ok: true, orderId: order.id });
-      return;
+      return res.status(200).json({ ok: true, orderId: order.id });
     }
     if (event.type === "payment_intent.payment_failed") {
       const paymentIntent = event.data.object as any;
