@@ -5,9 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { backendDisabled } from "@/lib/backendGuard";
 
-const querySchema = z.object({
-  offset: z.coerce.number().int().min(0).default(0),
-  limit: z.coerce.number().int().min(1).max(50).default(20),
+const paramsSchema = z.object({
+  id: z.string().min(1),
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -21,30 +20,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const userId = (session.user as any).id as string;
 
-  // Validação da query
-  const parsed = querySchema.safeParse(req.query);
+  // Validação dos parâmetros
+  const parsed = paramsSchema.safeParse(req.query);
   if (!parsed.success) {
-    return res.status(400).json({ error: "Invalid query parameters", details: parsed.error.flatten() });
+    return res.status(400).json({ error: "Invalid order ID" });
   }
-  const { offset, limit } = parsed.data;
+  const { id } = parsed.data;
 
   try {
-    const [orders, total] = await Promise.all([
-      prisma.order.findMany({
-        where: { userId },
-        orderBy: { createdAt: "desc" },
-        skip: offset,
-        take: limit,
-        include: {
-          items: {
-            select: { slug: true, title: true, qty: true, priceCents: true },
-          },
+    const order = await prisma.order.findUnique({
+      where: { id },
+      include: {
+        items: {
+          select: { slug: true, title: true, qty: true, priceCents: true },
         },
-      }),
-      prisma.order.count({ where: { userId } }),
-    ]);
+      },
+    });
 
-    const items = orders.map((order) => ({
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    // Verificar se o pedido pertence ao usuário
+    if (order.userId !== userId) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const orderDetails = {
       id: order.id,
       status: order.status,
       amountTotal: order.amountTotal,
@@ -59,9 +61,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         qty: it.qty,
         priceCents: it.priceCents,
       })),
-    }));
+    };
 
-    return res.status(200).json({ items, total, offset, limit });
+    return res.status(200).json(orderDetails);
   } catch (err: any) {
     return res.status(500).json({ error: err?.message ?? "Server error" });
   }

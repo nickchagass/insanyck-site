@@ -109,6 +109,8 @@ model Order {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   emailSentAt     DateTime?
+  trackingCode    String?     @db.VarChar(64)
+  shippedAt       DateTime?
   items           OrderItem[]
 }
 

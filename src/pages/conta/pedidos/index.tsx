@@ -1,4 +1,3 @@
-// INSANYCK STEP 4 · Lote 4 — Enhanced orders page with table and states
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { getServerSession } from "next-auth/next";
@@ -6,34 +5,60 @@ import { authOptions } from "@/lib/auth";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { motion } from "framer-motion";
-import { Package, Truck, CheckCircle, Clock, Eye } from "lucide-react";
+import { Package, Truck, CheckCircle, Clock, Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 import AccountLayout from "@/components/AccountLayout";
 import OrdersEmpty from "@/components/EmptyStates/OrdersEmpty";
 import { Button } from "@/components/ui/Button";
 import useSWR from "swr";
 
+type OrderItem = {
+  slug: string;
+  title: string;
+  qty: number;
+  priceCents: number;
+};
+
 type Order = {
   id: string;
   status: string;
   amountTotal: number;
+  currency: string;
+  trackingCode: string | null;
+  shippedAt: string | null;
   createdAt: string;
-  items: { id: string; title: string; qty: number; priceCents: number }[];
+  updatedAt: string;
+  items: OrderItem[];
+};
+
+type OrdersResponse = {
+  items: Order[];
+  total: number;
+  offset: number;
+  limit: number;
 };
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export default function OrdersPage() {
-  const { t } = useTranslation(["account", "common"]);
-  const { data, isLoading } = useSWR<{ orders: Order[] }>("/api/account/orders", fetcher);
-  const orders = data?.orders ?? [];
+  const { t, i18n } = useTranslation(["account", "common"]);
+  const [offset, setOffset] = useState(0);
+  const limit = 20;
+  
+  const { data, error, isLoading } = useSWR<OrdersResponse>(
+    `/api/account/orders?offset=${offset}&limit=${limit}`,
+    fetcher,
+    { revalidateOnFocus: false }
+  );
+  
+  const orders = data?.items ?? [];
+  const total = data?.total ?? 0;
 
   const getStatusFromOrder = (order: Order): 'preparing' | 'shipped' | 'delivered' => {
-    // Map order status to our predefined statuses
-    const status = order.status.toLowerCase();
-    if (status.includes('delivered') || status.includes('completed')) return 'delivered';
-    if (status.includes('shipped') || status.includes('transit')) return 'shipped';
+    if (order.shippedAt) return 'shipped';
+    if (order.status === 'paid') return 'preparing';
     return 'preparing';
   };
 
@@ -76,20 +101,49 @@ export default function OrdersPage() {
     }
   };
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('pt-BR', {
+  const formatPrice = (price: number, currency: string) => {
+    const locale = i18n.language === 'en' ? 'en-US' : 'pt-BR';
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
-      currency: 'BRL',
+      currency: currency || 'BRL',
     }).format(price / 100);
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR', {
+    const locale = i18n.language === 'en' ? 'en-US' : 'pt-BR';
+    return new Date(dateString).toLocaleDateString(locale, {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
     });
   };
+
+  const handlePrevious = () => {
+    setOffset(Math.max(0, offset - limit));
+  };
+
+  const handleNext = () => {
+    setOffset(offset + limit);
+  };
+
+  if (error) {
+    return (
+      <>
+        <Head>
+          <title>{t('account:orders.title', 'Meus Pedidos')} — INSANYCK</title>
+        </Head>
+        <AccountLayout titleKey="account:orders.title">
+          <div className="text-center py-8">
+            <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 max-w-md mx-auto">
+              <p className="text-red-400 text-sm">
+                {t('account:orders.error', 'Erro ao carregar pedidos. Tente novamente.')}
+              </p>
+            </div>
+          </div>
+        </AccountLayout>
+      </>
+    );
+  }
 
   if (orders.length === 0 && !isLoading) {
     return (
@@ -117,9 +171,9 @@ export default function OrdersPage() {
             <p className="text-white/60">
               {t('account:orders.subtitle', 'Acompanhe seus pedidos e histórico de compras')}
             </p>
-            {!isLoading && (
+            {!isLoading && data && (
               <span className="text-sm text-white/40">
-                {orders.length} {orders.length === 1 ? 'pedido' : 'pedidos'}
+                {total} {total === 1 ? 'pedido' : 'pedidos'}
               </span>
             )}
           </div>
@@ -189,11 +243,11 @@ export default function OrdersPage() {
                             </span>
                           </td>
                           <td className="py-4 px-4 font-medium text-white">
-                            {formatPrice(order.amountTotal)}
+                            {formatPrice(order.amountTotal, order.currency)}
                           </td>
                           <td className="py-4 px-4 text-right">
                             <Link 
-                              href={`/pedido/${order.id}`}
+                              href={`/conta/pedidos/${order.id}`}
                               className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors"
                             >
                               <Eye className="h-4 w-4" />
@@ -240,10 +294,10 @@ export default function OrdersPage() {
                             {order.items.length} {order.items.length === 1 ? 'item' : 'itens'}
                           </p>
                           <p className="font-medium text-white">
-                            {formatPrice(order.amountTotal)}
+                            {formatPrice(order.amountTotal, order.currency)}
                           </p>
                         </div>
-                        <Link href={`/pedido/${order.id}`}>
+                        <Link href={`/conta/pedidos/${order.id}`}>
                           <Button variant="ghost" size="sm">
                             <Eye className="h-4 w-4 mr-2" />
                             {t('account:orders.viewOrder', 'Ver')}
@@ -254,6 +308,37 @@ export default function OrdersPage() {
                   );
                 })}
               </div>
+
+              {/* Pagination */}
+              {total > limit && (
+                <div className="flex items-center justify-between pt-6 border-t border-white/10">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handlePrevious}
+                    disabled={offset <= 0}
+                    className="flex items-center gap-2"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    {t('common:pagination.previous', 'Anterior')}
+                  </Button>
+                  
+                  <span className="text-sm text-white/60">
+                    {Math.floor(offset / limit) + 1} de {Math.ceil(total / limit)}
+                  </span>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleNext}
+                    disabled={offset + limit >= total}
+                    className="flex items-center gap-2"
+                  >
+                    {t('common:pagination.next', 'Próxima')}
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
             </>
           )}
         </div>
