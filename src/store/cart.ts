@@ -166,13 +166,8 @@ export const useCartStore = create<CartState>()(
   )
 );
 
-// INSANYCK STEP 10 — Helpers de formatação e seletores
-export const formatCurrency = (cents: number, currency = 'BRL') => {
-  return (cents / 100).toLocaleString('pt-BR', {
-    style: 'currency',
-    currency,
-  });
-};
+// INSANYCK STEP 10 + FASE G-01 — Helpers de formatação (reexport centralizados)
+export { formatCurrency, formatBRL, formatPrice } from "@/lib/price";
 
 // Selectors auxiliares (SSR-safe)
 export const useCartHydrated = () => useCartStore((s) => s.hydrated);

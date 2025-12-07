@@ -98,20 +98,35 @@ model Address {
 }
 
 model Order {
-  id              String      @id @default(cuid())
-  userId          String?
-  user            User?       @relation(fields: [userId], references: [id])
-  email           String
-  stripeSessionId String      @unique
-  status          String
-  currency        String
-  amountTotal     Int
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  emailSentAt     DateTime?
-  trackingCode    String?     @db.VarChar(64)
-  shippedAt       DateTime?
-  items           OrderItem[]
+  id       String @id @default(cuid())
+  userId   String?
+  user     User?  @relation(fields: [userId], references: [id])
+  email    String
+
+  // INSANYCK FASE F-02 — Suporte a múltiplos provedores de pagamento
+  paymentProvider       String  @default("stripe") // 'stripe' | 'mercado_pago'
+  stripeSessionId       String? @unique
+  stripePaymentIntentId String? @unique
+  mpPaymentId           String? @unique
+  mpPreferenceId        String? @unique
+
+  status      String
+  currency    String
+  amountTotal Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  emailSentAt DateTime?
+
+  trackingCode String?   @db.VarChar(64)
+  shippedAt    DateTime?
+
+  items OrderItem[]
+
+  // INSANYCK STEP E-05 — Índices para otimizar listagens
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
+  // INSANYCK FASE F-02 — Índice para buscar por provedor
+  @@index([paymentProvider, status])
 }
 
 model OrderItem {

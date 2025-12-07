@@ -1,4 +1,4 @@
-// INSANYCK STEP 4 + STEP 8 + HOTFIX + Lote 4
+// INSANYCK STEP 4 + STEP 8 + HOTFIX + Lote 4 + FASE G-02
 import type { AppProps } from "next/app";
 import { appWithTranslation } from "next-i18next";
 import dynamic from "next/dynamic";
@@ -14,9 +14,14 @@ import type { Session } from "next-auth";
 import { useServiceWorkerUpdate } from "@/lib/pwa/useServiceWorkerUpdate";
 import { UpdateBanner } from "@/components/pwa/UpdateBanner";
 
-// Layout global components
-const Navbar = dynamic(() => import("@/components/Navbar"), { ssr: false });
+// INSANYCK FASE G-02 PERF-02 — Navbar com SSR para melhorar FCP/LCP
+import Navbar from "@/components/Navbar";
+
+// MiniCart permanece lazy (drawer pesado, não crítico para FCP)
 const MiniCart = dynamic(() => import("@/components/MiniCart"), { ssr: false });
+
+// INSANYCK FASE G-03.1 UX-10 — Toast Provider de Luxo
+import { InsanyckToastProvider } from "@/components/InsanyckToastProvider";
 
 // INSANYCK STEP 4 · Lote 4 — LayoutShell with PWA update functionality
 function LayoutShell({ children }: { children: React.ReactNode }) {
@@ -38,6 +43,8 @@ function LayoutShell({ children }: { children: React.ReactNode }) {
       <Navbar />
       {children}
       <MiniCart />
+      {/* INSANYCK FASE G-03.1 UX-10 — Toast container global */}
+      <InsanyckToastProvider />
     </>
   );
 }

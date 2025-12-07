@@ -96,8 +96,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const email = session.customer_details?.email ?? "";
       const currency = (session.currency || "brl").toUpperCase();
       const amountTotal = session.amount_total ?? 0;
+      const paymentIntentId = typeof session.payment_intent === "string" ? session.payment_intent : null;
 
-      // 1) Se já existe pedido dessa session, decidimos pelo email idempotente
+      // INSANYCK STEP F-03 — Idempotência robusta baseada em stripePaymentIntentId
+      // 1) Se já existe pedido pago com esse PaymentIntent, não processar novamente
+      if (paymentIntentId) {
+        const paidOrder = await prisma.order.findFirst({
+          where: {
+            stripePaymentIntentId: paymentIntentId,
+            status: "paid",
+          },
+        });
+        if (paidOrder) {
+          // INSANYCK FASE F-04 — Idempotência: não logar em produção
+          __rememberStripe(event.id);
+          return res.status(200).json({ ok: true, skipped: "duplicate_payment_intent" });
+        }
+      }
+
+      // 2) Se já existe pedido dessa session, decidimos pelo email idempotente
       const existing = await prisma.order.findFirst({
         where: { stripeSessionId: session.id },
       });
@@ -111,7 +128,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               where: { id: existing.id },
               data: { emailSentAt: new Date() },
             });
-            console.log(`[INSANYCK][Webhook] Email (retry) enviado p/ ${email}`);
+            // INSANYCK FASE F-04 — Não logar email retry em produção
             __rememberStripe(event.id);
             return res.status(200).json({ ok: true, email: "sent_on_retry" });
           }
@@ -135,7 +152,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           data: {
             userId: user?.id ?? null,
             email,
+            // INSANYCK STEP F-03 — Campos multi-provider consolidados
+            paymentProvider: "stripe",
             stripeSessionId: session.id,
+            stripePaymentIntentId: paymentIntentId,
             status: "paid",
             currency,
             amountTotal,
@@ -197,7 +217,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             where: { id: order.id },
             data: { emailSentAt: new Date() },
           });
-          console.log(`[INSANYCK][Webhook] Email enviado para ${email}`);
+          // INSANYCK FASE F-04 — Não logar email em produção
         }
       } catch (emailError) {
         console.error("[INSANYCK][Webhook] Falha no email:", emailError);
@@ -209,11 +229,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     if (event.type === "payment_intent.payment_failed") {
       const paymentIntent = event.data.object as any;
-      console.warn(`Payment failed for intent: ${paymentIntent.id}`, {
-        amount: paymentIntent.amount,
-        currency: paymentIntent.currency,
-        lastPaymentError: paymentIntent.last_payment_error,
-      });
+      // INSANYCK FASE F-04 — Manter apenas log de erro crítico
+      console.error(`[Stripe Webhook] Payment failed for intent: ${paymentIntent.id}`);
       __rememberStripe(event.id);
       res.status(200).json({ ok: true, logged: "payment_failed" });
       return;

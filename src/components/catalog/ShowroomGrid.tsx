@@ -1,3 +1,4 @@
+// INSANYCK STEP G-04.2.1 — Guard console.error no frontend
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -33,7 +34,9 @@ export default function ShowroomGrid({
         const newProducts = await onLoadMore();
         setProducts(prev => [...prev, ...newProducts]);
       } catch (error) {
-        console.error("Error loading more products:", error);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Error loading more products:", error);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -52,26 +55,24 @@ export default function ShowroomGrid({
     return () => observer.disconnect();
   }, [handleIntersection, hasMore]);
 
-  // Grid layout calculation
+  // INSANYCK FASE G-02 PERF-01 — Grid layout 100% CSS (zero CLS, zero JS)
+  // Layout responsivo controlado APENAS via Tailwind breakpoints:
+  // - Mobile (< 768px): grid-cols-2, todos os cards 1x1
+  // - Tablet (768-1279px): grid-cols-3, primeiro card 2x2, resto 1x1
+  // - Desktop (≥1280px): grid-cols-4, primeiro card 2x2, cada 6º card 2x1, resto 1x1
   const getGridItemClass = (index: number) => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    const isTablet = typeof window !== 'undefined' && window.innerWidth >= 768 && window.innerWidth < 1280;
-    
-    if (isMobile) {
-      // Mobile: all cards 1x1
-      return "col-span-1 row-span-1";
+    // Primeiro card (spotlight): 2x2 em tablet+ (1x1 em mobile)
+    if (index === 0) {
+      return "col-span-1 row-span-1 md:col-span-2 md:row-span-2";
     }
-    
-    if (isTablet) {
-      // Tablet: 3 cols, spotlight becomes 2 col/auto-rows
-      if (index === 0) return "col-span-2 row-span-2"; // First card spotlight
-      return "col-span-1 row-span-1";
+
+    // Cada 6º card (começando do 5º índice): 2x1 apenas em desktop (1x1 em mobile/tablet)
+    if ((index + 5) % 6 === 0) {
+      return "col-span-1 row-span-1 xl:col-span-2";
     }
-    
-    // Desktop: 4 cols pattern
-    if (index === 0) return "col-span-2 row-span-2"; // First card spotlight (2x2)
-    if ((index + 5) % 6 === 0) return "col-span-2 row-span-1"; // Every 6th card wide (2x1)
-    return "col-span-1 row-span-1"; // Regular cards (1x1)
+
+    // Resto: sempre 1x1 em todos os breakpoints
+    return "col-span-1 row-span-1";
   };
 
   const getGridClass = () => {
@@ -84,7 +85,7 @@ export default function ShowroomGrid({
   if (!products.length && !loading) {
     return (
       <div className="text-center py-12">
-        <p className="text-white/60">
+        <p className="text-ds-accentSoft">
           {t("plp:no_products", "Nenhum produto encontrado")}
         </p>
       </div>
@@ -130,10 +131,10 @@ export default function ShowroomGrid({
         {isLoading && Array.from({ length: 12 }).map((_, i) => (
           <div key={`skeleton-${i}`} className="col-span-1 row-span-1">
             <div className="card-insanyck p-4 animate-pulse">
-              <div className="aspect-[3/4] bg-white/10 rounded-lg"></div>
+              <div className="aspect-[3/4] bg-ds-elevated rounded-lg"></div>
               <div className="mt-3 space-y-2">
-                <div className="h-4 bg-white/10 rounded w-4/5"></div>
-                <div className="h-3 bg-white/10 rounded w-2/5"></div>
+                <div className="h-4 bg-ds-elevated rounded w-4/5"></div>
+                <div className="h-3 bg-ds-elevated rounded w-2/5"></div>
               </div>
             </div>
           </div>
@@ -142,18 +143,18 @@ export default function ShowroomGrid({
 
       {/* Infinite scroll sentinel */}
       {hasMore && (
-        <div 
+        <div
           ref={sentinelRef}
           className="h-20 flex items-center justify-center"
         >
-          <div className="animate-spin h-8 w-8 border-2 border-white/20 border-t-white rounded-full"></div>
+          <div className="animate-spin h-8 w-8 border-2 border-ds-borderSubtle border-t-ds-accent rounded-full"></div>
         </div>
       )}
 
       {/* End indicator */}
       {!hasMore && products.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-white/40 text-sm">
+          <p className="text-ds-accentSoft text-sm opacity-60">
             {t("plp:end_of_results", "Fim dos resultados")}
           </p>
         </div>

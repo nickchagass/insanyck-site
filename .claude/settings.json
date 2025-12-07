@@ -1,3 +1,56 @@
 {
-  "model": "sonnet"
+  "model": "claude-sonnet-4-5",
+  "permissions": {
+    "allow": [
+      "Read(./**)",
+      "Edit(./**)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run test)",
+      "Bash(npm run test:*)",
+      "Bash(npm run test:e2e)",
+      "Bash(npm run test:e2e:*)",
+      "Bash(npm run typecheck)",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run build)",
+      "Bash(npm run build:*)",
+      "Bash(git status*)",
+      "Bash(git diff*)"
+    ],
+    "ask": [
+      "Bash(npm run dev)",
+      "Bash(npm run dev:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
+    ],
+    "deny": [
+      "Bash(npm install*)",
+      "Bash(pnpm install*)",
+      "Bash(yarn install*)",
+      "Bash(rm:*)",
+      "Bash(del:*)",
+      "Bash(rmdir:*)",
+      "Bash(mkfs:*)",
+      "Bash(format:*)",
+      "Bash(sudo:*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Read(./config/credentials.json)"
+    ],
+    "defaultMode": "acceptEdits",
+    "disableBypassPermissionsMode": "disable"
+  },
+  "env": {
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "claude-sonnet-4-5",
+    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
+    "MAX_THINKING_TOKENS": "8000",
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "16384",
+    "DISABLE_AUTOUPDATER": "1",
+    "DISABLE_ERROR_REPORTING": "1"
+  },
+  "spinnerTipsEnabled": false
 }

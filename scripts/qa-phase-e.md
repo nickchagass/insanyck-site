@@ -259,3 +259,13 @@ curl -i -X POST http://localhost:3000/api/admin/orders/mark-shipped \
 ```
 
 Esperado: 200 com { idempotent: true }.
+
+---
+
+## 🔐 CSP & Security baseline (check rápido)
+
+// INSANYCK STEP E-06 — Nota de segurança
+
+- [ ] Confirmar que os headers de segurança definidos na Fase C (CSP, X-Frame-Options, etc.) continuam ativos em produção.
+- [ ] Confirmar que as rotas sensíveis de API estão com `Cache-Control: no-store` e `Vary: Authorization`.
+- [ ] Endurecimento adicional de CSP e rate limiting ficam para a V2 Essencial.

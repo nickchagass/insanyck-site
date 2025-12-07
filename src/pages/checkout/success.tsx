@@ -1,3 +1,4 @@
+// INSANYCK STEP E-03 / E-04
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -6,6 +7,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useEffect, useState } from "react";
 import { prisma } from "@/lib/prisma";
+import { formatPrice } from "@/lib/price";
 
 type OrderItem = {
   slug: string;
@@ -30,18 +32,13 @@ interface SuccessPageProps {
 }
 
 export default function CheckoutSuccessPage({ sessionId, order, isProcessing }: SuccessPageProps) {
-  const { t, i18n } = useTranslation(["checkout", "common"]);
+  const { t, i18n } = useTranslation(["success", "common", "nav"]);
   const [pollingAttempts, setPollingAttempts] = useState(0);
   const [currentOrder, setCurrentOrder] = useState<Order | null>(order);
   const [isPolling, setIsPolling] = useState(isProcessing);
 
-  const formatPrice = (price: number, currency: string) => {
-    const locale = i18n.language === 'en' ? 'en-US' : 'pt-BR';
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: currency || 'BRL',
-    }).format(price / 100);
-  };
+  // INSANYCK STEP E-04 — Usa helper de preço consolidado
+  const locale = i18n.language === "en" ? "en" : "pt";
 
   // Polling leve para casos de processing
   useEffect(() => {
@@ -72,8 +69,8 @@ export default function CheckoutSuccessPage({ sessionId, order, isProcessing }: 
   return (
     <>
       <Head>
-        <title>{t("checkout:success.title", "Pedido Confirmado")} — INSANYCK</title>
-        <meta name="description" content={t("checkout:success.description", "Seu pedido foi processado com sucesso")} />
+        <title>{t("title")} — INSANYCK</title>
+        <meta name="description" content={t("description")} />
         <meta name="robots" content="noindex,nofollow" />
       </Head>
 
@@ -96,19 +93,19 @@ export default function CheckoutSuccessPage({ sessionId, order, isProcessing }: 
                 </div>
 
                 <h1 className="text-white text-3xl font-semibold mb-4">
-                  {t("checkout:success.processing.title", "Processando Pagamento")}
+                  {t("processing.title")}
                 </h1>
 
                 <div className="text-white/70 mb-8 space-y-3">
                   <p>
-                    {t("checkout:success.processing.message", "Aguarde enquanto confirmamos seu pagamento.")}
+                    {t("processing.message")}
                   </p>
                   <p className="text-sm">
-                    {t("checkout:success.processing.refresh", "Esta página será atualizada automaticamente.")}
+                    {t("processing.refresh")}
                   </p>
                   {pollingAttempts >= 2 && (
                     <p className="text-sm text-orange-400">
-                      {t("checkout:success.processing.manual", "Você também pode atualizar a página manualmente.")}
+                      {t("processing.manual")}
                     </p>
                   )}
                 </div>
@@ -139,15 +136,15 @@ export default function CheckoutSuccessPage({ sessionId, order, isProcessing }: 
                   </div>
 
                   <h1 className="text-white text-3xl font-semibold mb-4">
-                    {t("checkout:success.title", "Pedido Confirmado!")}
+                    {t("title")}
                   </h1>
 
                   <div className="text-white/70 space-y-2">
                     <p>
-                      {t("checkout:success.message", "Seu pedido foi processado com sucesso.")}
+                      {t("message")}
                     </p>
                     <p className="text-sm">
-                      {t("checkout:success.emailSent", "Em breve você receberá um email com os detalhes do pedido.")}
+                      {t("emailSent")}
                     </p>
                   </div>
                 </div>
@@ -156,7 +153,7 @@ export default function CheckoutSuccessPage({ sessionId, order, isProcessing }: 
                 <div className="bg-black/20 border border-white/10 rounded-2xl p-6 mb-8">
                   <div className="flex items-center justify-between mb-4">
                     <h2 className="text-white font-semibold">
-                      {t("checkout:success.orderSummary", "Resumo do Pedido")}
+                      {t("orderSummary")}
                     </h2>
                     <span className="text-white/60 text-sm">
                       #{currentOrder.id.slice(0, 8).toUpperCase()}
@@ -170,12 +167,12 @@ export default function CheckoutSuccessPage({ sessionId, order, isProcessing }: 
                         <div>
                           <p className="text-white font-medium">{item.title}</p>
                           <p className="text-white/60 text-sm">
-                            {t("checkout:success.quantity", "Qtd")}: {item.qty}
+                            {t("quantity")}: {item.qty}
                           </p>
                         </div>
                         <div className="text-right">
                           <p className="text-white font-medium">
-                            {formatPrice(item.priceCents * item.qty, currentOrder.currency)}
+                            {formatPrice(item.priceCents * item.qty, locale, currentOrder.currency as "BRL" | "USD")}
                           </p>
                         </div>
                       </div>
@@ -186,10 +183,10 @@ export default function CheckoutSuccessPage({ sessionId, order, isProcessing }: 
                   <div className="pt-4 border-t border-white/10">
                     <div className="flex justify-between items-center">
                       <span className="text-white font-semibold">
-                        {t("checkout:success.total", "Total")}
+                        {t("total")}
                       </span>
                       <span className="text-white font-semibold text-lg">
-                        {formatPrice(currentOrder.amountTotal, currentOrder.currency)}
+                        {formatPrice(currentOrder.amountTotal, locale, currentOrder.currency as "BRL" | "USD")}
                       </span>
                     </div>
                   </div>
@@ -201,14 +198,14 @@ export default function CheckoutSuccessPage({ sessionId, order, isProcessing }: 
                     href="/loja"
                     className="flex-1 rounded-xl px-6 py-3 font-semibold border border-white/20 text-white hover:bg-white/10 transition-colors text-center"
                   >
-                    {t("checkout:success.continueShopping", "Continuar comprando")}
+                    {t("continueShopping")}
                   </Link>
                   <Link
                     href="/conta/pedidos"
                     className="flex-1 rounded-xl px-6 py-3 font-semibold bg-white text-black hover:brightness-95 transition-transform hover:scale-[1.02] flex items-center justify-center gap-2"
                   >
                     <Eye className="w-4 h-4" />
-                    {t("checkout:success.viewOrders", "Meus pedidos")}
+                    {t("viewOrders")}
                   </Link>
                 </div>
               </div>
@@ -218,9 +215,9 @@ export default function CheckoutSuccessPage({ sessionId, order, isProcessing }: 
           {/* Info adicional */}
           <div className="mt-8 text-center text-white/60 text-sm">
             <p>
-              {t("checkout:success.support", "Dúvidas? Entre em contato conosco através do")} {" "}
+              {t("support.support")} {" "}
               <Link href="/contato" className="text-white hover:underline">
-                {t("common:support", "suporte")}
+                {t("common:support")}
               </Link>
             </p>
           </div>
@@ -281,7 +278,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, locale }) 
 
   return {
     props: {
-      ...(await serverSideTranslations(locale ?? "pt", ["common", "checkout"])),
+      ...(await serverSideTranslations(locale ?? "pt", ["common", "nav", "success"])),
       sessionId,
       order,
       isProcessing,

@@ -12,6 +12,17 @@
     },
     "viewDetails": "View details",
     "loadMore": "Load more",
-    "empty": "No products found."
+    "empty": "No products found.",
+    "new": {
+      "title": "What's New",
+      "subtitle": "Newly released pieces. Exclusivity, premium design and limited edition.",
+      "description": "Check out the latest releases from INSANYCK. Exclusive luxury streetwear pieces.",
+      "emptyTitle": "No new items at the moment",
+      "emptyDescription": "We're preparing exclusive releases. Come back soon to check out what's new.",
+      "browseAll": "Browse full catalog"
+    },
+    "no_products": "No products found",
+    "products_grid": "Products grid",
+    "end_of_results": "End of results"
   }
   

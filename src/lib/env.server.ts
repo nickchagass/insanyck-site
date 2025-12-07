@@ -7,20 +7,27 @@ const serverEnvSchema = z.object({
   STRIPE_SECRET_KEY: z.string().min(1, 'STRIPE_SECRET_KEY is required'),
   STRIPE_WEBHOOK_SECRET: z.string().min(1, 'STRIPE_WEBHOOK_SECRET is required'),
   STRIPE_API_VERSION: z.string().default('2025-07-30.basil'),
-  
+
+  // INSANYCK FASE F-01 — Mercado Pago (payment provider alternativo)
+  MP_ACCESS_TOKEN: z.string().default(''),
+  MP_PUBLIC_KEY: z.string().default(''),
+  MP_NOTIFICATION_URL: z.string().default(''),
+  // INSANYCK FASE F-04 — Segurança do webhook MP
+  MP_WEBHOOK_SECRET: z.string().default(''),
+
   // Auth (required for NextAuth)
   NEXTAUTH_URL: z.string().url('NEXTAUTH_URL must be a valid URL'),
   NEXTAUTH_SECRET: z.string().min(1, 'NEXTAUTH_SECRET is required'),
-  
+
   // Database (required for Prisma)
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
-  
+
   // INSANYCK STEP C-fix — backend toggle
   BACKEND_DISABLED: z.enum(["0","1"]).default("0"),
-  
+
   // URLs (must be coherent)
   NEXT_PUBLIC_URL: z.string().url('NEXT_PUBLIC_URL must be a valid URL'),
-  
+
   // Optional
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
 });

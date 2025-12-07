@@ -69,6 +69,41 @@ body {
   --stroke: var(--stroke-default);
   --ghost: var(--glass-weak);
   --cta: #f3f3f3;
+
+  /* =========================================================
+     INSANYCK FASE G-04.1 — DESIGN SYSTEM TOKENS
+     Tema: insanyck-noir (base para white-label futuro)
+     ========================================================= */
+
+  /* Surfaces (para backgrounds de componentes) */
+  --ds-surface: rgba(255, 255, 255, 0.04);
+  --ds-elevated: rgba(255, 255, 255, 0.08);
+  --ds-surface-soft: rgba(255, 255, 255, 0.02);
+
+  /* Borders */
+  --ds-border-subtle: rgba(255, 255, 255, 0.08);
+  --ds-border-strong: rgba(255, 255, 255, 0.20);
+
+  /* Accents */
+  --ds-accent: rgba(255, 255, 255, 0.95);
+  --ds-accent-soft: rgba(255, 255, 255, 0.75);
+
+  /* Status colors */
+  --ds-danger: rgba(239, 68, 68, 0.95);
+  --ds-danger-soft: rgba(239, 68, 68, 0.20);
+
+  /* Radius */
+  --ds-radius-sm: 8px;
+  --ds-radius-md: 12px;
+  --ds-radius-lg: 18px;
+  --ds-radius-pill: 9999px;
+
+  /* Shadows */
+  --ds-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.15);
+  --ds-shadow-2: 0 4px 12px rgba(0, 0, 0, 0.25);
+
+  /* Focus ring */
+  --ds-focus-ring: rgba(250, 204, 21, 0.6);
 }
 
 /* =========================================================

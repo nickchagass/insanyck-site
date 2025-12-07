@@ -1,10 +1,15 @@
+// INSANYCK HOTFIX CART-02 + FASE G-01 + FASE G-02 — PDP com helpers centralizados + SSR
 import Head from "next/head";
-import dynamic from "next/dynamic";
 import type { GetServerSideProps, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
-import { addToCart, buyNow } from "@/lib/cartClient";
+import { useCartStore } from "@/store/cart";
+import { formatBRL, safeSerialize } from "@/lib/price";
 
-const ProductStage = dynamic(() => import("@/components/pdp/ProductStage"), { ssr: false });
+// INSANYCK FASE G-02 PERF-04 — ProductStage com SSR para melhorar LCP da PDP
+import ProductStage from "@/components/pdp/ProductStage";
+
+// INSANYCK FASE G-04.1 — Design System
+import DsButton from "@/components/ds/DsButton";
 
 type Variant = {
   id: string;
@@ -26,52 +31,47 @@ type Product = {
 
 interface Params extends ParsedUrlQuery { slug: string; }
 
-function formatBRL(cents: number, currency: string = "BRL") {
-  try {
-    return (cents / 100).toLocaleString("pt-BR", { style: "currency", currency });
-  } catch {
-    return `R$ ${(cents / 100).toFixed(2)}`;
-  }
-}
-
-function safeSerialize<T>(obj: T): T {
-  return JSON.parse(JSON.stringify(obj));
-}
-
 const PDP: NextPage<{ product: Product }> = ({ product }) => {
+  // INSANYCK HOTFIX CART-02 — usar store oficial do Zustand
+  const addItem = useCartStore((s) => s.addItem);
+  const toggle = useCartStore((s) => s.toggle);
+
   const v0 = product.variants?.[0];
-  const price = formatBRL(v0?.price?.cents ?? 0, v0?.price?.currency ?? "BRL");
+  const price = formatBRL(v0?.price?.cents ?? 0); // INSANYCK FASE G-01 — helper centralizado
   const image = product.images?.[0]?.url || "/products/placeholder/front.webp";
 
+  // INSANYCK HOTFIX CART-02 — delega para a store oficial
   const handleAdd = () => {
-    addToCart({
-      id: product.id,
+    addItem({
+      slug: product.slug,
       title: product.title,
       priceCents: v0?.price?.cents ?? 0,
-      currency: v0?.price?.currency ?? "BRL",
+      currency: (v0?.price?.currency as "BRL") ?? "BRL",
       qty: 1,
       image,
       variantId: v0?.id,
       sku: v0?.sku,
     });
-    // feedback simples
-    if (typeof window !== "undefined") {
-      console.warn("[cart] item adicionado");
-      alert("Adicionado ao carrinho.");
-    }
+    // abre o drawer automaticamente (já é chamado dentro de addItem, mas deixo explícito)
+    toggle(true);
   };
 
+  // INSANYCK HOTFIX CART-02 — buyNow adiciona e redireciona
   const handleBuyNow = () => {
-    buyNow({
-      id: product.id,
+    addItem({
+      slug: product.slug,
       title: product.title,
       priceCents: v0?.price?.cents ?? 0,
-      currency: v0?.price?.currency ?? "BRL",
+      currency: (v0?.price?.currency as "BRL") ?? "BRL",
       qty: 1,
       image,
       variantId: v0?.id,
       sku: v0?.sku,
     });
+    // redireciona direto para checkout (sem abrir o drawer)
+    if (typeof window !== "undefined") {
+      window.location.href = "/checkout";
+    }
   };
 
   return (
@@ -111,9 +111,24 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
                 Selecione as opções
               </button>
 
+              {/* INSANYCK FASE G-04.1 — Migração para DsButton */}
               <div className="flex gap-3">
-                <button onClick={handleBuyNow} className="btn-insanyck--primary flex-1">Comprar agora</button>
-                <button onClick={handleAdd} className="btn-insanyck--ghost px-4">Adicionar ao carrinho</button>
+                <DsButton
+                  onClick={handleBuyNow}
+                  variant="primary"
+                  size="lg"
+                  className="flex-1"
+                >
+                  Comprar agora
+                </DsButton>
+                <DsButton
+                  onClick={handleAdd}
+                  variant="ghost"
+                  size="lg"
+                  className="px-4"
+                >
+                  Adicionar ao carrinho
+                </DsButton>
               </div>
 
               <ul className="mt-2 space-y-2 text-white/75">

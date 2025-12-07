@@ -39,7 +39,16 @@
     "emailSent": "Em breve você receberá um email com os detalhes do pedido.",
     "continueShopping": "Continuar comprando",
     "viewOrders": "Meus pedidos",
-    "support": "Dúvidas? Entre em contato conosco através do"
+    "support": "Dúvidas? Entre em contato conosco através do",
+    "orderSummary": "Resumo do Pedido",
+    "quantity": "Qtd",
+    "total": "Total",
+    "processing": {
+      "title": "Processando Pagamento",
+      "message": "Aguarde enquanto confirmamos seu pagamento.",
+      "refresh": "Esta página será atualizada automaticamente.",
+      "manual": "Você também pode atualizar a página manualmente."
+    }
   },
   "cancel": {
     "title": "Checkout Cancelado",

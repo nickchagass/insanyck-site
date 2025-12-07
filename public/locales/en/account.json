@@ -24,7 +24,18 @@
       "remove": "Remove"
     },
     "orders": {
-      "title": "Orders",
+      "title": "My Orders",
+      "subtitle": "Track your orders and purchase history",
+      "error": "Error loading orders. Please try again.",
+      "viewOrder": "View details",
+      "tableCaption": "List of placed orders",
+      "table": {
+        "order": "Order",
+        "date": "Date",
+        "status": "Status",
+        "total": "Total",
+        "actions": "Actions"
+      },
       "empty": {
         "title": "Your journey starts here",
         "description": "No orders in your account yet. Discover pieces that define your unique style."
@@ -36,19 +47,27 @@
       },
       "status": {
         "pending": "Pending",
+        "paid": "Paid",
         "processing": "Processing",
+        "preparing": "Preparing",
         "shipped": "Shipped",
         "delivered": "Delivered",
+        "canceled": "Canceled",
         "cancelled": "Cancelled"
       },
-      "details": {
-        "orderNumber": "Order #{{number}}",
-        "orderDate": "Ordered on",
+      "detail": {
+        "title": "Order Details",
+        "error": "Order not found or error loading.",
+        "notFound": "Order not found",
+        "backToOrders": "Back to orders",
+        "orderNumber": "Order",
+        "orderDate": "Order date",
         "total": "Total",
-        "items": "{{count}} item",
-        "items_plural": "{{count}} items",
-        "trackOrder": "Track order",
-        "reorder": "Reorder"
+        "tracking": "Tracking code",
+        "shippedDate": "Shipped date",
+        "items": "Order items",
+        "quantity": "Quantity",
+        "each": "each"
       }
     },
     "login": {

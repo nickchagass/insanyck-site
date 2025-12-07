@@ -1,30 +1,57 @@
+// INSANYCK HOTFIX CART-03
+// INSANYCK STEP G-04.2.1 — Guard console.error no frontend
 // src/hooks/useCheckout.ts
-import { useCart } from "@/store/useCart";
+import { useCartStore } from "@/store/cart";
 import { useState } from "react";
-import { loadStripe } from "@stripe/stripe-js";
 
 export function useCheckout() {
-  const cart = useCart((s) => s.items);
+  // INSANYCK HOTFIX CART-03 — usar store oficial do Zustand
+  const items = useCartStore((s) => s.items);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCheckout = async () => {
     setIsLoading(true);
     try {
-      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string);
-      // Chamada para endpoint seguro que cria PaymentIntent
-      const res = await fetch("/api/create-payment-intent", {
+      // INSANYCK HOTFIX CART-03 — transformar items para o formato da API
+      const checkoutItems = items.map((item) => ({
+        variantId: item.variantId,
+        sku: item.sku,
+        qty: item.qty,
+      }));
+
+      // INSANYCK HOTFIX CART-03 — chamar a API correta de checkout
+      const res = await fetch("/api/checkout/create-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cart, currency: "BRL" }),
+        body: JSON.stringify({
+          items: checkoutItems,
+          currency: "BRL",
+        }),
       });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: "Unknown error" }));
+        if (process.env.NODE_ENV === "development") {
+          console.error("[INSANYCK][CHECKOUT] API error:", res.status, errorData);
+        }
+        throw new Error(errorData.error || "Checkout API error");
+      }
+
       const data = await res.json();
-      if (!data.clientSecret) throw new Error("Falha no pagamento");
 
-      // Stripe Payment Flow
-      await stripe?.redirectToCheckout({ sessionId: data.sessionId });
+      if (!data.url) {
+        if (process.env.NODE_ENV === "development") {
+          console.error("[INSANYCK][CHECKOUT] No session URL in response:", data);
+        }
+        throw new Error("No session URL");
+      }
 
-      // Fallback: modo offline/localStorage caso Stripe falhe (simples exemplo)
-    } catch {
+      // INSANYCK HOTFIX CART-03 — redirecionar para a sessão do Stripe
+      window.location.href = data.url;
+    } catch (err) {
+      if (process.env.NODE_ENV === "development") {
+        console.error("[INSANYCK][CHECKOUT] Error:", err);
+      }
       alert("Erro ao processar pagamento, tente novamente.");
     } finally {
       setIsLoading(false);

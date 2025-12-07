@@ -1,3 +1,4 @@
+// INSANYCK STEP E-03 / E-04
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { getServerSession } from "next-auth/next";
@@ -12,6 +13,8 @@ import { useState } from "react";
 import AccountLayout from "@/components/AccountLayout";
 import { Button } from "@/components/ui/Button";
 import useSWR from "swr";
+import { formatPrice } from "@/lib/price";
+import { formatDateTime } from "@/lib/date";
 
 type OrderItem = {
   slug: string;
@@ -70,11 +73,11 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
   const getStatusText = (status: 'preparing' | 'shipped' | 'delivered') => {
     switch (status) {
       case 'preparing':
-        return t('account:orders.status.preparing', 'Em preparo');
+        return t('account:orders.status.preparing');
       case 'shipped':
-        return t('account:orders.status.shipped', 'Enviado');
+        return t('account:orders.status.shipped');
       case 'delivered':
-        return t('account:orders.status.delivered', 'Entregue');
+        return t('account:orders.status.delivered');
       default:
         return status;
     }
@@ -93,24 +96,9 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
     }
   };
 
-  const formatPrice = (price: number, currency: string) => {
-    const locale = i18n.language === 'en' ? 'en-US' : 'pt-BR';
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: currency || 'BRL',
-    }).format(price / 100);
-  };
-
-  const formatDate = (dateString: string) => {
-    const locale = i18n.language === 'en' ? 'en-US' : 'pt-BR';
-    return new Date(dateString).toLocaleDateString(locale, {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
+  // INSANYCK STEP E-04 — Usa helpers consolidados
+  const locale = i18n.language === "en" ? "en" : "pt";
+  const dateLocale = i18n.language === "en" ? "en-US" : "pt-BR";
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -126,18 +114,18 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
     return (
       <>
         <Head>
-          <title>{t('account:orders.detail.title', 'Detalhes do Pedido')} — INSANYCK</title>
+          <title>{t('account:orders.detail.title')} — INSANYCK</title>
         </Head>
         <AccountLayout titleKey="account:orders.detail.title">
           <div className="text-center py-8">
             <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 max-w-md mx-auto">
               <p className="text-red-400 text-sm">
-                {t('account:orders.detail.error', 'Pedido não encontrado ou erro ao carregar.')}
+                {t('account:orders.detail.error')}
               </p>
               <Link href="/conta/pedidos" className="mt-3 inline-block">
                 <Button variant="ghost" size="sm">
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  {t('account:orders.detail.backToOrders', 'Voltar aos pedidos')}
+                  {t('account:orders.detail.backToOrders')}
                 </Button>
               </Link>
             </div>
@@ -151,7 +139,7 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
     return (
       <>
         <Head>
-          <title>{t('account:orders.detail.title', 'Detalhes do Pedido')} — INSANYCK</title>
+          <title>{t('account:orders.detail.title')} — INSANYCK</title>
         </Head>
         <AccountLayout titleKey="account:orders.detail.title">
           <div className="flex items-center justify-center py-8">
@@ -166,17 +154,17 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
     return (
       <>
         <Head>
-          <title>{t('account:orders.detail.title', 'Detalhes do Pedido')} — INSANYCK</title>
+          <title>{t('account:orders.detail.title')} — INSANYCK</title>
         </Head>
         <AccountLayout titleKey="account:orders.detail.title">
           <div className="text-center py-8">
             <p className="text-white/60 mb-4">
-              {t('account:orders.detail.notFound', 'Pedido não encontrado')}
+              {t('account:orders.detail.notFound')}
             </p>
             <Link href="/conta/pedidos">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                {t('account:orders.detail.backToOrders', 'Voltar aos pedidos')}
+                {t('account:orders.detail.backToOrders')}
               </Button>
             </Link>
           </div>
@@ -191,7 +179,7 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
     <>
       <Head>
         <title>
-          {t('account:orders.detail.title', 'Detalhes do Pedido')} #{order.id.slice(0, 8).toUpperCase()} — INSANYCK
+          {t('account:orders.detail.title')} #{order.id.slice(0, 8).toUpperCase()} — INSANYCK
         </title>
       </Head>
       
@@ -202,7 +190,7 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
             <Link href="/conta/pedidos">
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                {t('account:orders.detail.backToOrders', 'Voltar aos pedidos')}
+                {t('account:orders.detail.backToOrders')}
               </Button>
             </Link>
           </div>
@@ -216,7 +204,7 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
             <div className="flex items-start justify-between mb-4">
               <div>
                 <h1 className="text-xl font-semibold text-white mb-2">
-                  {t('account:orders.detail.orderNumber', 'Pedido')} #{order.id.slice(0, 8).toUpperCase()}
+                  {t('account:orders.detail.orderNumber')} #{order.id.slice(0, 8).toUpperCase()}
                 </h1>
                 <div className="flex items-center gap-2 text-sm text-white/60">
                   <button
@@ -224,7 +212,7 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
                     className="flex items-center gap-2 hover:text-white transition-colors"
                   >
                     <Copy className="h-3 w-3" />
-                    {copied ? t('common:copied', 'Copiado!') : t('common:copyId', 'Copiar ID completo')}
+                    {copied ? t('common:copied') : t('common:copyId')}
                   </button>
                 </div>
               </div>
@@ -236,16 +224,16 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div>
-                <p className="text-white/60 mb-1">{t('account:orders.detail.orderDate', 'Data do pedido')}</p>
-                <p className="text-white">{formatDate(order.createdAt)}</p>
+                <p className="text-white/60 mb-1">{t('account:orders.detail.orderDate')}</p>
+                <p className="text-white">{formatDateTime(order.createdAt, dateLocale)}</p>
               </div>
               <div>
-                <p className="text-white/60 mb-1">{t('account:orders.detail.total', 'Total')}</p>
-                <p className="text-white font-medium">{formatPrice(order.amountTotal, order.currency)}</p>
+                <p className="text-white/60 mb-1">{t('account:orders.detail.total')}</p>
+                <p className="text-white font-medium">{formatPrice(order.amountTotal, locale, order.currency as "BRL" | "USD")}</p>
               </div>
               {order.trackingCode && (
                 <div>
-                  <p className="text-white/60 mb-1">{t('account:orders.detail.tracking', 'Código de rastreio')}</p>
+                  <p className="text-white/60 mb-1">{t('account:orders.detail.tracking')}</p>
                   <button
                     onClick={() => copyToClipboard(order.trackingCode!)}
                     className="text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2"
@@ -259,8 +247,8 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
 
             {order.shippedAt && (
               <div className="mt-4 pt-4 border-t border-white/10">
-                <p className="text-white/60 text-sm mb-1">{t('account:orders.detail.shippedDate', 'Data de envio')}</p>
-                <p className="text-white text-sm">{formatDate(order.shippedAt)}</p>
+                <p className="text-white/60 text-sm mb-1">{t('account:orders.detail.shippedDate')}</p>
+                <p className="text-white text-sm">{formatDateTime(order.shippedAt, dateLocale)}</p>
               </div>
             )}
           </motion.div>
@@ -273,24 +261,24 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
             className="bg-black/20 border border-white/10 rounded-2xl p-6"
           >
             <h2 className="text-lg font-medium text-white mb-4">
-              {t('account:orders.detail.items', 'Itens do pedido')}
+              {t('account:orders.detail.items')}
             </h2>
-            
+
             <div className="space-y-4">
               {order.items.map((item, index) => (
                 <div key={index} className="flex items-center justify-between py-3 border-b border-white/10 last:border-b-0 last:pb-0">
                   <div className="flex-1">
                     <h3 className="font-medium text-white">{item.title}</h3>
                     <p className="text-sm text-white/60">
-                      {t('account:orders.detail.quantity', 'Quantidade')}: {item.qty}
+                      {t('account:orders.detail.quantity')}: {item.qty}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="font-medium text-white">
-                      {formatPrice(item.priceCents * item.qty, order.currency)}
+                      {formatPrice(item.priceCents * item.qty, locale, order.currency as "BRL" | "USD")}
                     </p>
                     <p className="text-sm text-white/60">
-                      {formatPrice(item.priceCents, order.currency)} {t('account:orders.detail.each', 'cada')}
+                      {formatPrice(item.priceCents, locale, order.currency as "BRL" | "USD")} {t('account:orders.detail.each')}
                     </p>
                   </div>
                 </div>
@@ -300,10 +288,10 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
             <div className="mt-6 pt-4 border-t border-white/10">
               <div className="flex justify-between items-center">
                 <span className="text-lg font-medium text-white">
-                  {t('account:orders.detail.total', 'Total')}
+                  {t('account:orders.detail.total')}
                 </span>
                 <span className="text-lg font-semibold text-white">
-                  {formatPrice(order.amountTotal, order.currency)}
+                  {formatPrice(order.amountTotal, locale, order.currency as "BRL" | "USD")}
                 </span>
               </div>
             </div>

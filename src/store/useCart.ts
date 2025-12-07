@@ -1,9 +1,11 @@
+// INSANYCK HOTFIX CART-01 — Unificar carrinho
 // src/store/useCart.ts
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { set as idbSet, get as idbGet, del as idbDel } from "idb-keyval";
+// Adaptador fino para manter compatibilidade com componentes legados,
+// redirecionando tudo para a store oficial em "@/store/cart".
 
-// -- Cart Item Tipo
+import { useCartStore, type CartItem as NewCartItem } from "@/store/cart";
+
+// INSANYCK HOTFIX CART-01 — Tipo legado para compatibilidade
 export type CartItem = {
   id: string;
   nome: string;
@@ -16,111 +18,82 @@ export type CartItem = {
   variantId?: string;
 };
 
-type CartStore = {
+// INSANYCK HOTFIX CART-01 — Transforma item novo → item legado
+function toLegacyItem(item: NewCartItem): CartItem {
+  return {
+    id: item.id,
+    nome: item.title,
+    preco: item.priceCents / 100,
+    cor: item.options?.color || item.options?.cor || "padrão",
+    tamanho: item.options?.size || item.options?.tamanho || "único",
+    quantidade: item.qty,
+    image: item.image,
+    currency: item.currency as "BRL" | "USD" | "EUR",
+    variantId: item.variantId,
+  };
+}
+
+// INSANYCK HOTFIX CART-01 — Tipo de store legado para modo seletor
+type LegacyCartStore = {
   items: CartItem[];
-  version: number;
-  currency: "BRL" | "USD" | "EUR";
-  isLoading: boolean;
-  add: (_item: CartItem) => void;
-  remove: (_id: string, _cor: string, _tamanho: string) => void;
-  update: (_id: string, _cor: string, _tamanho: string, _data: Partial<CartItem>) => void;
-  clear: () => void;
-  sync: (_userId?: string) => Promise<void>;
-  restore: (_userId?: string) => Promise<void>;
-  setCurrency: (_currency: "BRL" | "USD" | "EUR") => void;
+  remove: (_id: string, _cor?: string, _tamanho?: string) => Promise<void>;
+  update: (_id: string, _cor: string, _tamanho: string, _data: Partial<CartItem>) => Promise<void>;
   checkout: () => Promise<void>;
+  isLoading: boolean;
 };
 
-const CART_VERSION = 2;
+/**
+ * useCart — compat layer
+ * 1) Modo seletor: useCart(s => s.items)
+ * 2) Modo objeto:  const { items, remove, update, checkout, isLoading } = useCart()
+ */
+export function useCart(): {
+  items: CartItem[];
+  remove: (_id: string, _cor?: string, _tamanho?: string) => Promise<void>;
+  update: (_id: string, _cor: string, _tamanho: string, _data: Partial<CartItem>) => Promise<void>;
+  checkout: () => Promise<void>;
+  isLoading: false;
+};
+export function useCart<T>(_selector: (_s: LegacyCartStore) => T): T;
+export function useCart<T = any>(
+  _selector?: (_s: LegacyCartStore) => T
+): any {
+  // INSANYCK HOTFIX CART-01 — SEMPRE chama hooks incondicionalmente (regra de hooks)
+  const legacyItems = useCartStore((s) => s.items.map(toLegacyItem));
+  const removeItem = useCartStore((s) => s.removeItem);
+  const updateQty = useCartStore((s) => s.updateQty);
 
-// Função para gerar chave única (composta)
-function cartKey(item: Pick<CartItem, "id" | "cor" | "tamanho">) {
-  return `${item.id}-${item.cor}-${item.tamanho}`;
-}
-
-// Função para persistir após qualquer alteração
-async function autoSync(items: CartItem[], userId?: string) {
-  await idbSet(`cart-${userId || "anon"}-v${CART_VERSION}`, items);
-}
-
-export const useCart = create<CartStore>()(
-  persist(
-    (set, get) => ({
-      items: [],
-      version: CART_VERSION,
-      currency: "BRL",
-      isLoading: false,
-
-      add: (item) => set((state) => {
-        // Atualiza item se já existir, soma quantidade
-        const idx = state.items.findIndex(
-          i => cartKey(i) === cartKey(item)
-        );
-        let items;
-        if (idx > -1) {
-          items = [...state.items];
-          items[idx].quantidade += item.quantidade;
-        } else {
-          items = [...state.items, item];
-        }
-        autoSync(items);
-        return { items };
-      }),
-
-      remove: (id, cor, tamanho) => set((state) => {
-        const items = state.items.filter(
-          i => !(i.id === id && i.cor === cor && i.tamanho === tamanho)
-        );
-        autoSync(items);
-        return { items };
-      }),
-
-      update: (id, cor, tamanho, data) => set((state) => {
-        const items = state.items.map(i =>
-          i.id === id && i.cor === cor && i.tamanho === tamanho
-            ? { ...i, ...data }
-            : i
-        );
-        autoSync(items);
-        return { items };
-      }),
-
-      clear: () => {
-        autoSync([]);
-        set({ items: [] });
-      },
-
-      setCurrency: (currency) => set({ currency }),
-
-      sync: async (userId) => {
-        await idbSet(`cart-${userId || "anon"}-v${CART_VERSION}`, get().items);
-      },
-
-      restore: async (userId) => {
-        const saved = await idbGet<CartItem[]>(`cart-${userId || "anon"}-v${CART_VERSION}`);
-        if (saved) set({ items: saved });
-      },
-
-      checkout: async () => {
-        set({ isLoading: true });
-        try {
-          // Checkout implementation placeholder
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        } finally {
-          set({ isLoading: false });
-        }
-      },
-    }),
-    {
-      name: "insanyck-cart-v2",
-      storage: {
-        getItem: async (name: string) => {
-          try { return (await idbGet(name)) || null; }
-          catch { return null; }
-        },
-        setItem: async (name: string, value: any) => { await idbSet(name, value); },
-        removeItem: async (name: string) => { await idbDel(name); }
+  // INSANYCK HOTFIX CART-01 — monta store legado para seletor
+  const legacyStore: LegacyCartStore = {
+    items: legacyItems,
+    remove: async (_id: string, _cor?: string, _tamanho?: string) => { removeItem(_id); },
+    update: async (_id: string, _cor: string, _tamanho: string, _data: Partial<CartItem>) => {
+      if (_data.quantidade !== undefined) {
+        updateQty(_id, _data.quantidade);
       }
-    }
-  )
-);
+    },
+    checkout: async () => {
+      if (typeof window !== "undefined") {
+        window.location.href = "/checkout";
+      }
+    },
+    isLoading: false,
+  };
+
+  // INSANYCK HOTFIX CART-01 — modo seletor: aplica transformação
+  if (typeof _selector === "function") {
+    return _selector(legacyStore);
+  }
+
+  // INSANYCK HOTFIX CART-01 — modo objeto: retorna objeto compatível
+  return {
+    items: legacyItems,
+    remove: legacyStore.remove,
+    update: legacyStore.update,
+    checkout: legacyStore.checkout,
+    isLoading: false as const,
+  };
+}
+
+// (Opcional para migrações futuras): reexport da store oficial
+export { useCartStore };

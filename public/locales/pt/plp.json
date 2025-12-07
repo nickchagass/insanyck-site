@@ -12,6 +12,17 @@
     },
     "viewDetails": "Ver detalhes",
     "loadMore": "Carregar mais",
-    "empty": "Nenhum produto encontrado."
+    "empty": "Nenhum produto encontrado.",
+    "new": {
+      "title": "Novidades",
+      "subtitle": "Peças recém-lançadas. Exclusividade, design premium e edição limitada.",
+      "description": "Confira os lançamentos mais recentes da INSANYCK. Peças exclusivas de streetwear de luxo.",
+      "emptyTitle": "Nenhuma novidade no momento",
+      "emptyDescription": "Estamos preparando lançamentos exclusivos. Volte em breve para conferir as novidades.",
+      "browseAll": "Ver todo o catálogo"
+    },
+    "no_products": "Nenhum produto encontrado",
+    "products_grid": "Grade de produtos",
+    "end_of_results": "Fim dos resultados"
   }
   

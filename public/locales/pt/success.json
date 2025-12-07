@@ -1,0 +1,20 @@
+{
+  "processing": {
+    "title": "Estamos processando o seu pedido",
+    "message": "Seu pagamento foi aprovado e estamos finalizando os últimos detalhes.",
+    "refresh": "Esta página será atualizada automaticamente em alguns instantes.",
+    "manual": "Se isso não acontecer, clique abaixo para voltar para a loja."
+  },
+  "support": {
+    "support": "Precisa de ajuda? Fale com o nosso suporte."
+  },
+  "title": "Pedido Confirmado!",
+  "description": "Seu pedido foi processado com sucesso",
+  "message": "Seu pedido foi processado com sucesso.",
+  "emailSent": "Em breve você receberá um email com os detalhes do pedido.",
+  "continueShopping": "Continuar comprando",
+  "viewOrders": "Meus pedidos",
+  "orderSummary": "Resumo do Pedido",
+  "quantity": "Qtd",
+  "total": "Total"
+}

@@ -25,8 +25,16 @@
     }
   },
   "loading": "Carregando...",
-  "error": "Algo deu errado",
+  "error": {
+    "generic": "Algo deu errado",
+    "notFound": "Página não encontrada",
+    "notFoundTitle": "Página não encontrada",
+    "notFoundDescription": "A página que você procura não existe ou foi movida. Tente voltar ao início ou explorar a loja.",
+    "hint": "Se você acredita que isso é um erro, entre em contato conosco."
+  },
   "retry": "Tentar novamente",
+  "backHome": "Voltar ao início",
+  "search": "Buscar",
   "close": "Fechar",
   "back": "Voltar",
   "next": "Próximo",

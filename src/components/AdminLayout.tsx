@@ -1,4 +1,4 @@
-// INSANYCK STEP 10 — Admin Layout
+// INSANYCK FASE G-04.2 — Admin Layout com tokens DS (white-label ready)
 // src/components/AdminLayout.tsx
 import { ReactNode } from 'react';
 import Link from 'next/link';
@@ -35,11 +35,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-[color:var(--ins-bg-base)]">
       {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-black/90 backdrop-blur-xl border-r border-white/10">
-        <div className="flex h-16 items-center justify-center border-b border-white/10">
-          <h1 className="text-xl font-semibold text-white tracking-tight">
+      <div className="fixed inset-y-0 left-0 z-50 w-64 bg-ds-surface backdrop-blur-xl border-r border-ds-borderSubtle">
+        <div className="flex h-16 items-center justify-center border-b border-ds-borderSubtle">
+          <h1 className="text-xl font-semibold text-ds-accent tracking-tight">
             INSANYCK Admin
           </h1>
         </div>
@@ -56,8 +56,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       group flex items-center px-3 py-2 text-sm font-medium rounded-lg
                       transition-all duration-200
                       ${isActive(item.href)
-                        ? 'bg-white/10 text-white border border-white/20'
-                        : 'text-white/70 hover:text-white hover:bg-white/5'
+                        ? 'bg-ds-elevated text-ds-accent border border-ds-borderStrong'
+                        : 'text-ds-accentSoft hover:text-ds-accent hover:bg-ds-elevated'
                       }
                     `}
                   >
@@ -71,22 +71,22 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </nav>
 
         {/* User menu */}
-        <div className="absolute bottom-0 w-full p-4 border-t border-white/10">
+        <div className="absolute bottom-0 w-full p-4 border-t border-ds-borderSubtle">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <div className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center">
-                <User className="h-4 w-4 text-white/70" />
+              <div className="h-8 w-8 rounded-full bg-ds-elevated flex items-center justify-center">
+                <User className="h-4 w-4 text-ds-accentSoft" />
               </div>
             </div>
             <div className="ml-3 flex-1 min-w-0">
-              <p className="text-sm font-medium text-white truncate">
+              <p className="text-sm font-medium text-ds-accent truncate">
                 {session?.user?.name || session?.user?.email}
               </p>
-              <p className="text-xs text-white/50">Admin</p>
+              <p className="text-xs text-ds-accentSoft">Admin</p>
             </div>
             <button
               onClick={() => signOut({ callbackUrl: '/login' })}
-              className="ml-2 p-1 rounded-md text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+              className="ml-2 p-1 rounded-md text-ds-accentSoft hover:text-ds-accent hover:bg-ds-elevated transition-colors"
             >
               <LogOut className="h-4 w-4" />
             </button>

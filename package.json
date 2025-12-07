@@ -17,6 +17,7 @@
     "prepare": "is-ci || husky",
     "postinstall": "prisma generate",
     "db:seed": "node scripts/seed.mjs",
+    "db:check": "tsx scripts/db-check.ts",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release-notes": "changeset status --verbose",

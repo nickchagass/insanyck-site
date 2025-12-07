@@ -39,7 +39,16 @@
     "emailSent": "You will soon receive an email with order details.",
     "continueShopping": "Continue shopping",
     "viewOrders": "My orders",
-    "support": "Questions? Contact us through"
+    "support": "Questions? Contact us through",
+    "orderSummary": "Order Summary",
+    "quantity": "Qty",
+    "total": "Total",
+    "processing": {
+      "title": "Processing Payment",
+      "message": "Please wait while we confirm your payment.",
+      "refresh": "This page will be updated automatically.",
+      "manual": "You can also refresh the page manually."
+    }
   },
   "cancel": {
     "title": "Checkout Cancelled",

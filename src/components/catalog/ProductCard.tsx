@@ -118,13 +118,13 @@ export default function ProductCard({
       style={cardStyle}
     >
       {/* Micro-elevation shadow on hover */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--ds-surface-soft)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
       
       {/* Image container */}
       <div className={`relative overflow-hidden rounded-t-[18px] ${variant === "wide" ? "aspect-[2/1]" : "aspect-[3/4]"}`}>
         <Link
           href={`/produto/${product.slug}`}
-          className="block h-full group/link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-t-[18px]"
+          className="block h-full group/link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-t-[18px]"
           aria-label={`Ver detalhes de ${product.title}`}
         >
           <OptimizedImage
@@ -153,7 +153,7 @@ export default function ProductCard({
         
         {product.status === "soldout" && (
           <div className="absolute top-3 right-3">
-            <span className="ins-chip bg-red-500/20 text-red-300 border-red-500/30 text-xs">
+            <span className="ins-chip bg-[color:var(--ds-danger-soft)] text-[color:var(--ds-danger)] border-[color:var(--ds-danger)] text-xs">
               {t("plp:badge.soldout", "Esgotado")}
             </span>
           </div>
@@ -164,28 +164,28 @@ export default function ProductCard({
       {/* Content section */}
       <div className="p-4 flex flex-col h-full">
         <div className="flex-1">
-          <h3 className="font-semibold text-white/90 mb-1 line-clamp-2">
+          <h3 className="font-semibold text-ds-accent mb-1 line-clamp-2">
             {product.title}
           </h3>
-          
-          <div className="text-white/70 font-medium">
+
+          <div className="text-ds-accentSoft font-medium">
             {product.price}
           </div>
         </div>
 
-        {/* CTAs - revealed with fade/transition */}
-        <div 
-          className={`mt-4 transition-all duration-300 ${
-            showCTAs 
-              ? "opacity-100 translate-y-0" 
-              : "opacity-0 translate-y-2 pointer-events-none"
-          }`}
+        {/* CTAs - INSANYCK FASE G-03.1 UX-01 — Mobile First: sempre visível em mobile, hover em desktop */}
+        <div
+          className={`
+            mt-4 transition-all duration-300
+            opacity-100 translate-y-0 pointer-events-auto
+            md:opacity-0 md:translate-y-2 md:pointer-events-none
+            ${showCTAs ? 'md:opacity-100 md:translate-y-0 md:pointer-events-auto' : ''}
+          `}
         >
           <div className="flex gap-2">
             <Link
               href={`/produto/${product.slug}`}
-              className="flex-1 text-center text-sm font-semibold py-2 px-3 rounded-lg border border-white/15 text-white/90 hover:bg-white/8 hover:border-white/25 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-              tabIndex={showCTAs ? 0 : -1}
+              className="flex-1 text-center text-sm font-semibold py-2 px-3 rounded-lg border border-ds-borderSubtle text-ds-accent hover:bg-ds-elevated hover:border-ds-borderStrong transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
             >
               {t("plp:viewDetails", "Ver detalhes")}
             </Link>
@@ -198,7 +198,7 @@ export default function ProductCard({
                   image: img,
                   price: product.price,
                 }}
-                className="flex-1 text-sm font-semibold py-2 px-3 rounded-lg border border-white/15 text-white/90 hover:bg-white/8 hover:border-white/25 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                className="flex-1 text-sm font-semibold py-2 px-3 rounded-lg border border-ds-borderSubtle text-ds-accent hover:bg-ds-elevated hover:border-ds-borderStrong transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
               >
                 {t("cart:addToCart", "Adicionar")}
               </AddToCartButton>
@@ -210,7 +210,7 @@ export default function ProductCard({
               title={product.title}
               priceCents={priceCents}
               image={img}
-              className="p-2 rounded-lg border border-white/15 text-white/90 hover:bg-white/8 hover:border-white/25 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              className="p-2 rounded-lg border border-ds-borderSubtle text-ds-accent hover:bg-ds-elevated hover:border-ds-borderStrong transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
             />
           </div>
         </div>

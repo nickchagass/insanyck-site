@@ -25,8 +25,16 @@
     }
   },
   "loading": "Loading...",
-  "error": "Something went wrong",
+  "error": {
+    "generic": "Something went wrong",
+    "notFound": "Page not found",
+    "notFoundTitle": "Page not found",
+    "notFoundDescription": "The page you're looking for doesn't exist or has been moved. Try going back home or explore the shop.",
+    "hint": "If you believe this is an error, please contact us."
+  },
   "retry": "Try again",
+  "backHome": "Back to home",
+  "search": "Search",
   "close": "Close",
   "back": "Back",
   "next": "Next",

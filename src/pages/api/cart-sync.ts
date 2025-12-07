@@ -39,7 +39,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(503).json({ error: "Missing env", missing: need.absent });
   }
 
+  // INSANYCK STEP E-01 — Headers em APIs sensíveis
   res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Vary", "Authorization");
 
   // Lazy imports (mantém cold start baixo)
   const { connectToDatabase } = await import("@/lib/mongo");

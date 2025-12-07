@@ -1,3 +1,4 @@
+// INSANYCK FASE G-04.2.1.B — Página de pedidos com DsTable e DsEmptyState
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { getServerSession } from "next-auth/next";
@@ -5,14 +6,18 @@ import { authOptions } from "@/lib/auth";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { motion } from "framer-motion";
-import { Package, Truck, CheckCircle, Clock, Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { Package, Truck, CheckCircle, Clock, Eye, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 import AccountLayout from "@/components/AccountLayout";
-import OrdersEmpty from "@/components/EmptyStates/OrdersEmpty";
+import DsTable from "@/components/ds/DsTable";
+import DsEmptyState from "@/components/ds/DsEmptyState";
+import DsButton from "@/components/ds/DsButton";
 import { Button } from "@/components/ui/Button";
 import useSWR from "swr";
+import { formatPrice } from "@/lib/price";
+import { formatDate } from "@/lib/date";
 
 type OrderItem = {
   slug: string;
@@ -46,13 +51,13 @@ export default function OrdersPage() {
   const { t, i18n } = useTranslation(["account", "common"]);
   const [offset, setOffset] = useState(0);
   const limit = 20;
-  
+
   const { data, error, isLoading } = useSWR<OrdersResponse>(
     `/api/account/orders?offset=${offset}&limit=${limit}`,
     fetcher,
     { revalidateOnFocus: false }
   );
-  
+
   const orders = data?.items ?? [];
   const total = data?.total ?? 0;
 
@@ -78,11 +83,11 @@ export default function OrdersPage() {
   const getStatusText = (status: 'preparing' | 'shipped' | 'delivered') => {
     switch (status) {
       case 'preparing':
-        return t('account:orders.status.preparing', 'Em preparo');
+        return t('account:orders.status.preparing');
       case 'shipped':
-        return t('account:orders.status.shipped', 'Enviado');
+        return t('account:orders.status.shipped');
       case 'delivered':
-        return t('account:orders.status.delivered', 'Entregue');
+        return t('account:orders.status.delivered');
       default:
         return status;
     }
@@ -101,22 +106,9 @@ export default function OrdersPage() {
     }
   };
 
-  const formatPrice = (price: number, currency: string) => {
-    const locale = i18n.language === 'en' ? 'en-US' : 'pt-BR';
-    return new Intl.NumberFormat(locale, {
-      style: 'currency',
-      currency: currency || 'BRL',
-    }).format(price / 100);
-  };
-
-  const formatDate = (dateString: string) => {
-    const locale = i18n.language === 'en' ? 'en-US' : 'pt-BR';
-    return new Date(dateString).toLocaleDateString(locale, {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-    });
-  };
+  // INSANYCK STEP E-04 — Usa helpers consolidados
+  const locale = i18n.language === "en" ? "en" : "pt";
+  const dateLocale = i18n.language === "en" ? "en-US" : "pt-BR";
 
   const handlePrevious = () => {
     setOffset(Math.max(0, offset - limit));
@@ -130,13 +122,13 @@ export default function OrdersPage() {
     return (
       <>
         <Head>
-          <title>{t('account:orders.title', 'Meus Pedidos')} — INSANYCK</title>
+          <title>{t('account:orders.title')} — INSANYCK</title>
         </Head>
         <AccountLayout titleKey="account:orders.title">
           <div className="text-center py-8">
-            <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 max-w-md mx-auto">
-              <p className="text-red-400 text-sm">
-                {t('account:orders.error', 'Erro ao carregar pedidos. Tente novamente.')}
+            <div className="bg-[color:var(--ds-danger-soft)] border border-[color:var(--ds-danger)] rounded-2xl p-4 max-w-md mx-auto">
+              <p className="text-[color:var(--ds-danger)] text-sm">
+                {t('account:orders.error')}
               </p>
             </div>
           </div>
@@ -145,14 +137,32 @@ export default function OrdersPage() {
     );
   }
 
+  // INSANYCK FASE G-04.2.1.B — DsEmptyState quando não há pedidos
   if (orders.length === 0 && !isLoading) {
     return (
       <>
         <Head>
-          <title>{t('account:orders.title', 'Meus Pedidos')} — INSANYCK</title>
+          <title>{t('account:orders.title')} — INSANYCK</title>
         </Head>
         <AccountLayout titleKey="account:orders.title">
-          <OrdersEmpty />
+          <DsEmptyState
+            icon={<Package className="w-16 h-16" />}
+            title={t('account:orders.emptyTitle', 'Nenhum pedido ainda')}
+            description={t('account:orders.emptyDescription', 'Quando você fizer compras, seus pedidos aparecerão aqui.')}
+            primaryAction={
+              <Link href="/loja">
+                <DsButton variant="primary" size="lg">
+                  <ShoppingBag className="w-5 h-5 mr-2" />
+                  {t('account:orders.startShopping', 'Começar a comprar')}
+                </DsButton>
+              </Link>
+            }
+            secondaryAction={
+              <Link href="/novidades" className="text-sm text-ds-accentSoft hover:text-ds-accent transition-colors">
+                {t('account:orders.seeNew', 'Ver novidades')}
+              </Link>
+            }
+          />
         </AccountLayout>
       </>
     );
@@ -161,18 +171,18 @@ export default function OrdersPage() {
   return (
     <>
       <Head>
-        <title>{t('account:orders.title', 'Meus Pedidos')} — INSANYCK</title>
+        <title>{t('account:orders.title')} — INSANYCK</title>
       </Head>
-      
+
       <AccountLayout titleKey="account:orders.title">
         <div className="space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">
-            <p className="text-white/60">
-              {t('account:orders.subtitle', 'Acompanhe seus pedidos e histórico de compras')}
+            <p className="text-ds-accentSoft">
+              {t('account:orders.subtitle')}
             </p>
             {!isLoading && data && (
-              <span className="text-sm text-white/40">
+              <span className="text-sm text-ds-accentSoft opacity-60">
                 {total} {total === 1 ? 'pedido' : 'pedidos'}
               </span>
             )}
@@ -181,87 +191,72 @@ export default function OrdersPage() {
           {/* Loading State */}
           {isLoading && (
             <div className="flex items-center justify-center py-8">
-              <div className="animate-spin h-6 w-6 border-2 border-white/20 border-t-white rounded-full" />
+              <div className="animate-spin h-6 w-6 border-2 border-ds-borderSubtle border-t-ds-accent rounded-full" />
             </div>
           )}
 
           {!isLoading && orders.length > 0 && (
             <>
-              {/* Desktop Table */}
-              <div className="hidden md:block overflow-hidden">
-                <table className="w-full">
-                  <caption className="sr-only">
-                    {t('account:orders.tableCaption', 'Lista de pedidos realizados')}
-                  </caption>
-                  <thead>
-                    <tr className="border-b border-white/10">
-                      <th scope="col" className="text-left py-3 px-4 text-sm font-medium text-white/60">
-                        {t('account:orders.table.order', 'Pedido')}
-                      </th>
-                      <th scope="col" className="text-left py-3 px-4 text-sm font-medium text-white/60">
-                        {t('account:orders.table.date', 'Data')}
-                      </th>
-                      <th scope="col" className="text-left py-3 px-4 text-sm font-medium text-white/60">
-                        {t('account:orders.table.status', 'Status')}
-                      </th>
-                      <th scope="col" className="text-left py-3 px-4 text-sm font-medium text-white/60">
-                        {t('account:orders.table.total', 'Total')}
-                      </th>
-                      <th scope="col" className="text-right py-3 px-4 text-sm font-medium text-white/60">
-                        {t('account:orders.table.actions', 'Ações')}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/10">
-                    {orders.map((order, index) => {
+              {/* INSANYCK FASE G-04.2.1.B — Desktop: DsTable */}
+              <div className="hidden md:block">
+                <DsTable density="default" ariaLabel={t('account:orders.tableCaption', 'Lista de pedidos')}>
+                  <DsTable.Header>
+                    <DsTable.Row>
+                      <DsTable.HeaderCell>{t('account:orders.table.order')}</DsTable.HeaderCell>
+                      <DsTable.HeaderCell>{t('account:orders.table.date')}</DsTable.HeaderCell>
+                      <DsTable.HeaderCell>{t('account:orders.table.status')}</DsTable.HeaderCell>
+                      <DsTable.HeaderCell>{t('account:orders.table.total')}</DsTable.HeaderCell>
+                      <DsTable.HeaderCell align="right">{t('account:orders.table.actions')}</DsTable.HeaderCell>
+                    </DsTable.Row>
+                  </DsTable.Header>
+                  <DsTable.Body>
+                    {orders.map((order) => {
                       const status = getStatusFromOrder(order);
                       return (
-                        <motion.tr
-                          key={order.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
-                          className="hover:bg-white/5 transition-colors"
-                        >
-                          <td className="py-4 px-4">
+                        <DsTable.Row key={order.id} isClickable>
+                          <DsTable.Cell>
                             <div>
-                              <div className="font-medium text-white">
+                              <div className="font-medium text-ds-accent">
                                 #{order.id.slice(0, 8).toUpperCase()}
                               </div>
-                              <div className="text-sm text-white/60">
+                              <div className="text-sm text-ds-accentSoft">
                                 {order.items.length} {order.items.length === 1 ? 'item' : 'itens'}
                               </div>
                             </div>
-                          </td>
-                          <td className="py-4 px-4 text-white/80">
-                            {formatDate(order.createdAt)}
-                          </td>
-                          <td className="py-4 px-4">
+                          </DsTable.Cell>
+                          <DsTable.Cell>
+                            <span className="text-ds-accentSoft">
+                              {formatDate(order.createdAt, dateLocale)}
+                            </span>
+                          </DsTable.Cell>
+                          <DsTable.Cell>
                             <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(status)}`}>
                               {getStatusIcon(status)}
                               {getStatusText(status)}
                             </span>
-                          </td>
-                          <td className="py-4 px-4 font-medium text-white">
-                            {formatPrice(order.amountTotal, order.currency)}
-                          </td>
-                          <td className="py-4 px-4 text-right">
-                            <Link 
+                          </DsTable.Cell>
+                          <DsTable.Cell>
+                            <span className="font-medium">
+                              {formatPrice(order.amountTotal, locale, order.currency as "BRL" | "USD")}
+                            </span>
+                          </DsTable.Cell>
+                          <DsTable.Cell align="right">
+                            <Link
                               href={`/conta/pedidos/${order.id}`}
-                              className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors"
+                              className="inline-flex items-center gap-2 text-sm text-ds-accentSoft hover:text-ds-accent transition-colors"
                             >
                               <Eye className="h-4 w-4" />
-                              {t('account:orders.viewOrder', 'Ver detalhes')}
+                              {t('account:orders.viewOrder')}
                             </Link>
-                          </td>
-                        </motion.tr>
+                          </DsTable.Cell>
+                        </DsTable.Row>
                       );
                     })}
-                  </tbody>
-                </table>
+                  </DsTable.Body>
+                </DsTable>
               </div>
 
-              {/* Mobile Cards */}
+              {/* Mobile Cards (mantido da versão original, mas com tokens DS) */}
               <div className="md:hidden space-y-4">
                 {orders.map((order, index) => {
                   const status = getStatusFromOrder(order);
@@ -271,15 +266,15 @@ export default function OrdersPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-black/20 border border-white/10 rounded-2xl p-4 hover:bg-black/30 transition-colors"
+                      className="bg-ds-surface border border-ds-borderSubtle rounded-2xl p-4 hover:bg-ds-elevated transition-colors"
                     >
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <h3 className="font-medium text-white">
+                          <h3 className="font-medium text-ds-accent">
                             #{order.id.slice(0, 8).toUpperCase()}
                           </h3>
-                          <p className="text-sm text-white/60">
-                            {formatDate(order.createdAt)}
+                          <p className="text-sm text-ds-accentSoft">
+                            {formatDate(order.createdAt, dateLocale)}
                           </p>
                         </div>
                         <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(status)}`}>
@@ -290,17 +285,17 @@ export default function OrdersPage() {
 
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm text-white/60">
+                          <p className="text-sm text-ds-accentSoft">
                             {order.items.length} {order.items.length === 1 ? 'item' : 'itens'}
                           </p>
-                          <p className="font-medium text-white">
-                            {formatPrice(order.amountTotal, order.currency)}
+                          <p className="font-medium text-ds-accent">
+                            {formatPrice(order.amountTotal, locale, order.currency as "BRL" | "USD")}
                           </p>
                         </div>
                         <Link href={`/conta/pedidos/${order.id}`}>
                           <Button variant="ghost" size="sm">
                             <Eye className="h-4 w-4 mr-2" />
-                            {t('account:orders.viewOrder', 'Ver')}
+                            {t('account:orders.viewOrder')}
                           </Button>
                         </Link>
                       </div>
@@ -309,9 +304,9 @@ export default function OrdersPage() {
                 })}
               </div>
 
-              {/* Pagination */}
+              {/* Pagination (com tokens DS) */}
               {total > limit && (
-                <div className="flex items-center justify-between pt-6 border-t border-white/10">
+                <div className="flex items-center justify-between pt-6 border-t border-ds-borderSubtle">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -320,13 +315,13 @@ export default function OrdersPage() {
                     className="flex items-center gap-2"
                   >
                     <ChevronLeft className="h-4 w-4" />
-                    {t('common:pagination.previous', 'Anterior')}
+                    {t('common:pagination.previous')}
                   </Button>
-                  
-                  <span className="text-sm text-white/60">
+
+                  <span className="text-sm text-ds-accentSoft">
                     {Math.floor(offset / limit) + 1} de {Math.ceil(total / limit)}
                   </span>
-                  
+
                   <Button
                     variant="ghost"
                     size="sm"
@@ -334,7 +329,7 @@ export default function OrdersPage() {
                     disabled={offset + limit >= total}
                     className="flex items-center gap-2"
                   >
-                    {t('common:pagination.next', 'Próxima')}
+                    {t('common:pagination.next')}
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </div>

@@ -1,0 +1,20 @@
+{
+  "processing": {
+    "title": "We are processing your order",
+    "message": "Your payment was approved and we are finalizing the last details.",
+    "refresh": "This page will refresh automatically in a few moments.",
+    "manual": "If that doesn't happen, click below to return to the store."
+  },
+  "support": {
+    "support": "Need help? Contact our support team."
+  },
+  "title": "Order Confirmed!",
+  "description": "Your order has been processed successfully",
+  "message": "Your order has been processed successfully.",
+  "emailSent": "You will soon receive an email with order details.",
+  "continueShopping": "Continue shopping",
+  "viewOrders": "My orders",
+  "orderSummary": "Order Summary",
+  "quantity": "Qty",
+  "total": "Total"
+}

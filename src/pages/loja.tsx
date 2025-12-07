@@ -1,5 +1,6 @@
 // INSANYCK STEP 10 — PLP lendo DB com filtros reais
 // INSANYCK STEP 5 + STEP 9 (bloom sutil) + DB integration
+// INSANYCK STEP G-04.2.1 — Guard console.error no frontend
 
 import Head from "next/head";
 import { seoPLP } from "@/lib/seo";
@@ -89,7 +90,9 @@ export default function Loja({
         setHasMore(data.products.length === 12); // Assuming 12 per page
       }
     } catch (error) {
-      console.error("Error fetching products:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Error fetching products:", error);
+      }
     } finally {
       setLoading(false);
     }
@@ -122,9 +125,11 @@ export default function Loja({
         return data.products.map(toCard);
       }
     } catch (error) {
-      console.error("Error loading more products:", error);
+      if (process.env.NODE_ENV === "development") {
+        console.error("Error loading more products:", error);
+      }
     }
-    
+
     return [];
   }, [category, color, inStock, size, sort, page, loading, hasMore]);
 

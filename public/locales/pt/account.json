@@ -24,7 +24,18 @@
       "remove": "Remover"
     },
     "orders": {
-      "title": "Pedidos",
+      "title": "Meus Pedidos",
+      "subtitle": "Acompanhe seus pedidos e histórico de compras",
+      "error": "Erro ao carregar pedidos. Tente novamente.",
+      "viewOrder": "Ver detalhes",
+      "tableCaption": "Lista de pedidos realizados",
+      "table": {
+        "order": "Pedido",
+        "date": "Data",
+        "status": "Status",
+        "total": "Total",
+        "actions": "Ações"
+      },
       "empty": {
         "title": "Sua jornada começa aqui",
         "description": "Ainda não há pedidos em sua conta. Descubra peças que definem seu estilo único."
@@ -36,19 +47,27 @@
       },
       "status": {
         "pending": "Pendente",
+        "paid": "Pago",
         "processing": "Processando",
+        "preparing": "Em preparo",
         "shipped": "Enviado",
         "delivered": "Entregue",
+        "canceled": "Cancelado",
         "cancelled": "Cancelado"
       },
-      "details": {
-        "orderNumber": "Pedido #{{number}}",
-        "orderDate": "Pedido em",
+      "detail": {
+        "title": "Detalhes do Pedido",
+        "error": "Pedido não encontrado ou erro ao carregar.",
+        "notFound": "Pedido não encontrado",
+        "backToOrders": "Voltar aos pedidos",
+        "orderNumber": "Pedido",
+        "orderDate": "Data do pedido",
         "total": "Total",
-        "items": "{{count}} item",
-        "items_plural": "{{count}} itens",
-        "trackOrder": "Rastrear pedido",
-        "reorder": "Repetir pedido"
+        "tracking": "Código de rastreio",
+        "shippedDate": "Data de envio",
+        "items": "Itens do pedido",
+        "quantity": "Quantidade",
+        "each": "cada"
       }
     },
     "login": {

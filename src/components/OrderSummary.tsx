@@ -1,4 +1,4 @@
-// INSANYCK STEP 7 — Order Summary refinado (usa lib/price, mantém sua API)
+// INSANYCK FASE G-04.2 — Order Summary com tokens DS (white-label ready)
 // src/components/OrderSummary.tsx
 "use client";
 
@@ -28,14 +28,14 @@ export default function OrderSummary({
 
   return (
     <aside
-      className={`rounded-2xl border border-white/10 bg-black/40 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] p-5 ${className}`}
+      className={`rounded-2xl border border-ds-borderSubtle bg-ds-surface shadow-ds-1 p-5 ${className}`}
       aria-label={t("bag:summary", "Resumo do pedido")}
     >
-      <h2 className="text-white/90 text-lg font-semibold">
+      <h2 className="text-ds-accent text-lg font-semibold">
         {t("checkout:orderSummary", "Resumo do pedido")}
       </h2>
 
-      <div className="mt-4 space-y-3 text-white/80 text-sm">
+      <div className="mt-4 space-y-3 text-ds-accentSoft text-sm">
         <div className="flex items-center justify-between">
           <span>{t("bag:subtotal", "Subtotal")}</span>
           <span className="font-medium">{formatPrice(subtotalCents, locale)}</span>
@@ -52,14 +52,14 @@ export default function OrderSummary({
             <span>-{formatPrice(discountCents, locale)}</span>
           </div>
         )}
-        <div className="h-px bg-white/10 my-2" />
-        <div className="flex items-center justify-between text-white">
+        <div className="h-px bg-ds-borderSubtle my-2" />
+        <div className="flex items-center justify-between text-ds-accent">
           <span className="font-semibold">{t("bag:total", "Total")}</span>
           <span className="font-semibold">{formatPrice(total, locale)}</span>
         </div>
       </div>
 
-      {noteBelow ? <p className="mt-3 text-xs text-white/50">{noteBelow}</p> : null}
+      {noteBelow ? <p className="mt-3 text-xs text-ds-accentSoft opacity-60">{noteBelow}</p> : null}
     </aside>
   );
 }

@@ -11,10 +11,14 @@ const querySchema = z.object({
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Coerência com o restante do projeto (preview/dev sem backend)
+  // INSANYCK STEP E-01
   if (backendDisabled) return res.status(503).json({ error: "Backend disabled for preview/dev" });
 
   if (req.method !== "GET") return res.status(405).json({ error: "Method Not Allowed" });
+
+  // INSANYCK STEP E-01 — Headers em APIs sensíveis
+  res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Vary", "Authorization");
 
   const session = await getServerSession(req, res, authOptions);
   if (!session?.user?.id) return res.status(401).json({ error: "Unauthorized" });
