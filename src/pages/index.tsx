@@ -36,9 +36,11 @@ export default function HomePage() {
         ))}
       </Head>
       {/* INSANYCK STEP 4 · Lote 3 — Skip link para navegação A11y + neutralização de layout */}
-      <a 
-        href="#conteudo" 
-        className="sr-only focus:not-sr-only focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 absolute left-2 top-2 z-50 px-3 py-2 rounded-2xl bg-black/60 backdrop-blur text-white"
+      {/* INSANYCK STEP G-05.1 — Corrigido hardcode bg-black/60 */}
+      {/* INSANYCK HOTFIX G-05.1.2 — z-index z-[60] para ficar acima da navbar (z-50) */}
+      <a
+        href="#conteudo"
+        className="sr-only focus:not-sr-only focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 absolute left-2 top-2 z-[60] px-3 py-2 rounded-2xl bg-[color:var(--ds-elevated)] backdrop-blur text-[color:var(--ds-accent)]"
       >
         Pular para conteúdo
       </a>

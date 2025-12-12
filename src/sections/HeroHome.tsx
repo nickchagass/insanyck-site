@@ -1,131 +1,101 @@
+// INSANYCK STEP G-05.1 — Hero Home com Brushed Platinum Wordmark + Platinum Edge Frame
 "use client";
 
-import { CTA } from "@/components/CTA";
+import DsButton from "@/components/ds/DsButton";
 import Link from "next/link";
-import { useRef } from "react";
-import { motion } from "framer-motion";
-import { useTranslation } from "next-i18next"; // INSANYCK STEP 4
-// INSANYCK STEP 4 · Lote 3 — OptimizedImage para zero CLS
-import OptimizedImage from "@/components/ui/OptimizedImage";
-
-// INSANYCK STEP 4 — tipagem das chaves usadas neste componente
-type HomeKey =
-  | "carousel.dropZero"
-  | "carousel.oversizedClassic"
-  | "carousel.regatas"
-  | "carousel.acessorios";
-
-// INSANYCK STEP 4 — não repita o namespace no item; usamos useTranslation("home")
-const ITEMS: ReadonlyArray<{ titleKey: HomeKey; img: string }> = [
-  { titleKey: "carousel.dropZero",         img: "/thumbs/drop-zero.png" },
-  { titleKey: "carousel.oversizedClassic", img: "/thumbs/oversized-classic.png" },
-  { titleKey: "carousel.regatas",          img: "/thumbs/regatas.png" },
-  { titleKey: "carousel.acessorios",       img: "/thumbs/acessorios.png" },
-] as const;
+import { useTranslation } from "next-i18next";
 
 export default function HeroHome() {
-  const scroller = useRef<HTMLDivElement>(null);
-  const { t } = useTranslation("home"); // INSANYCK STEP 4 — use string única, não array
+  const { t } = useTranslation("home");
 
   return (
     <section
-      className="relative pt-[120px] pb-[80px] overflow-hidden"
+      className="relative pt-[140px] pb-[100px] overflow-visible"
       aria-labelledby="hero-home"
     >
-      {/* Halo/aneis de fundo (leve) */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background:
-            "radial-gradient(60% 60% at 50% 40%, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 35%, rgba(0,0,0,0) 60%)",
-          maskImage:
-            "radial-gradient(60% 60% at 50% 40%, #000 0%, #000 55%, transparent 70%)",
-          WebkitMaskImage:
-            "radial-gradient(60% 60% at 50% 40%, #000 0%, #000 55%, transparent 70%)",
-        }}
-      />
-      <div className="mx-auto max-w-[1200px] px-6">
-        {/* H2 caps com tracking exato (h1 já está na página principal) */}
-        <h2
-          id="hero-home"
-          className="text-center text-[120px] leading-[1] font-semibold tracking-[0.25em] text-white/90 select-none"
-          style={{ textTransform: "uppercase" }}
+      {/* INSANYCK STEP G-05.1 — Platinum Edge Frame (hairline contornando Hero com micro brilho nos cantos) */}
+      <div className="mx-auto max-w-[900px] px-6 relative">
+        {/* Frame hairline (filete quase invisível) */}
+        <div
+          className="absolute inset-0 pointer-events-none rounded-[24px]"
+          style={{
+            border: "1px solid rgba(255, 255, 255, 0.06)",
+            boxShadow: "0 1px 0 rgba(255, 255, 255, 0.04) inset",
+          }}
+          aria-hidden="true"
         >
-          {/* Mantém o wordmark como texto simples, não traduzimos o nome da marca */}
-          INSANYCK
-        </h2>
-
-        {/* Manifesto */}
-        <p className="mt-8 text-center text-[28px] leading-[1.4] text-white/80">
-          {/* INSANYCK STEP 4 — sem prefixo 'home:' porque o namespace já está resolvido */}
-          {t("manifesto.line1", "Desconstruir o ordinário.")}
-          <br />
-          {t("manifesto.line2", "Reconstruir o extraordinário.")}
-        </p>
-
-        {/* CTAs */}
-        <div className="mt-10 flex items-center justify-center gap-4">
-          <Link href="/loja" prefetch={true}>
-            <CTA>
-              {t("cta.shop", "Entrar na loja") /* INSANYCK STEP 4 */}
-            </CTA>
-          </Link>
-          <Link href="/manifesto" prefetch={true}>
-            <CTA variant="ghost">
-              {t("cta.manifesto", "Manifesto") /* INSANYCK STEP 4 */}
-            </CTA>
-          </Link>
-        </div>
-
-        {/* "Role para explorar" + bullets - MAIS ESPAÇO */}
-        <div className="mt-20 text-center text-white/70">
-          {t("scrollToExplore", "Role para explorar") /* INSANYCK STEP 4 */}
-        </div>
-        <div className="mt-3 flex justify-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-white/30" />
-          <span className="w-1.5 h-1.5 rounded-full bg-white/30" />
-          <span className="w-1.5 h-1.5 rounded-full bg-white/30" />
-          <span className="w-1.5 h-1.5 rounded-full bg-white/30" />
-        </div>
-
-        {/* Carrossel CENTRALIZADO e com mais espaço */}
-        <div className="mt-16 flex justify-center">
+          {/* Micro brilho top-left */}
           <div
-            ref={scroller}
-            className="flex gap-6 overflow-x-auto pb-6 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] max-w-fit px-6"
-            style={{ WebkitOverflowScrolling: "touch" }}
-            aria-label={t("aria.carousel", "Carrossel de coleções") /* INSANYCK STEP 4 */}
-          >
-            <style jsx global>{`
-              /* esconder scrollbar; mantém acessibilidade por teclado */
-              .snap-x::-webkit-scrollbar { display: none; }
-            `}</style>
-            {ITEMS.map((it, index) => (
-              <motion.article
-                key={it.titleKey}
-                whileHover={{ y: -2, borderColor: "rgba(255,255,255,0.15)" }}
-                transition={{ duration: 0.15, ease: [0.2, 0, 0, 1] }}
-                className="snap-start shrink-0 w-[220px] h-[140px] rounded-2xl bg-[#0f0f10] border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] relative overflow-hidden focus-within:ring-2 focus-within:ring-white/40 focus-within:ring-offset-2 focus-within:ring-offset-black"
-              >
-              {/* INSANYCK STEP 4 · Lote 3 — OptimizedImage para zero CLS */}
-              <OptimizedImage
-                src={it.img}
-                alt={`${t(it.titleKey)} — ${t("aria.collection", "Coleção INSANYCK")}`}
-                aspectRatio="22/14"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 220px"
-                className="object-cover opacity-[0.92]"
-                priority={index === 0}
-                loading={index === 0 ? "eager" : "lazy"}
-                fallbackSrc="/thumbs/placeholder.webp"
-              />
+            className="absolute top-0 left-0 w-[80px] h-[80px] opacity-30"
+            style={{
+              background: "radial-gradient(circle at top left, rgba(255, 255, 255, 0.15), transparent 60%)",
+            }}
+          />
+          {/* Micro brilho bottom-right */}
+          <div
+            className="absolute bottom-0 right-0 w-[80px] h-[80px] opacity-30"
+            style={{
+              background: "radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.15), transparent 60%)",
+            }}
+          />
+        </div>
 
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_0%,rgba(0,0,0,0.5)_100%)]" />
-                <div className="absolute bottom-3 left-4 text-white/90 text-sm font-medium">
-                  {t(it.titleKey) /* INSANYCK STEP 4 — exibirá 'Drop Zero', etc. */}
-                </div>
-              </motion.article>
-            ))}
+        {/* Conteúdo do Hero */}
+        <div className="relative py-16">
+          {/* INSANYCK STEP G-05.1 — Wordmark "Brushed Platinum" (metal escovado moderno) */}
+          {/* INSANYCK HOTFIX G-05.1.1 — Mobile-safe: fontSize min 44px + letterSpacing responsivo */}
+          {/* INSANYCK HOTFIX G-05.1.2 — Tracking por breakpoint: premium desktop + safe mobile */}
+          <h2
+            id="hero-home"
+            className="text-center select-none tracking-[0.12em] sm:tracking-[0.18em] lg:tracking-[0.25em]"
+            style={{
+              fontSize: "clamp(44px, 11vw, 120px)",
+              lineHeight: "1",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              whiteSpace: "nowrap",
+              background: `
+                linear-gradient(135deg, rgba(220, 220, 225, 0.95) 0%, rgba(200, 200, 210, 0.90) 25%, rgba(220, 220, 225, 0.95) 50%, rgba(200, 200, 210, 0.90) 75%, rgba(220, 220, 225, 0.95) 100%),
+                repeating-linear-gradient(90deg, transparent 0px, rgba(255, 255, 255, 0.03) 1px, transparent 2px, transparent 4px)
+              `,
+              backgroundClip: "text",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+            }}
+          >
+            INSANYCK
+          </h2>
+
+          {/* INSANYCK STEP G-05.1 — Tagline editorial uppercase fina */}
+          <p
+            className="mt-8 text-center select-none"
+            style={{
+              fontSize: "clamp(14px, 2vw, 18px)",
+              lineHeight: "1.6",
+              fontWeight: 400,
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+              color: "rgba(255, 255, 255, 0.65)",
+            }}
+          >
+            {t("manifesto.line1", "Desconstruir o ordinário")}
+            {" · "}
+            {t("manifesto.line2", "Reconstruir o extraordinário")}
+          </p>
+
+          {/* INSANYCK STEP G-05.1 — Botões premium usando DsButton (Primary e Ghost) */}
+          <div className="mt-12 flex items-center justify-center gap-4">
+            <Link href="/loja" prefetch={true}>
+              <DsButton variant="primary" size="lg">
+                {t("cta.shop", "Entrar na loja")}
+              </DsButton>
+            </Link>
+            <Link href="/manifesto" prefetch={true}>
+              <DsButton variant="ghost" size="lg">
+                {t("cta.manifesto", "Manifesto")}
+              </DsButton>
+            </Link>
           </div>
         </div>
       </div>

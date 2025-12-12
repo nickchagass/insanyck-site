@@ -33,13 +33,20 @@ body {
   --gold-500: #eab308;
   --brand: var(--gold-400);
 
-  /* Cinematic Background */
-  --ins-bg-gradients:
-    radial-gradient(1000px 700px at 22% -12%, rgba(250,204,21,.055), rgba(250,204,21,0) 60%),
-    radial-gradient(900px 620px at 78% 112%, rgba(255,255,255,.04), rgba(255,255,255,0) 55%);
-  --ins-bg-base: var(--bg-0);
-  --ins-vignette: radial-gradient(120% 85% at 50% 35%, rgba(0,0,0,.28) 0%, rgba(0,0,0,0) 62%);
-  --ins-grain-opacity: .18;
+  /* INSANYCK STEP G-05.1 — Platinum Stealth Background (luxo real, menos ruído) */
+  /* Base: dark grafite com vinheta controlada */
+  --ins-bg-base: #0a0a0b;
+
+  /* Streaks diagonais/smoke MUITO suaves (opacidade baixa) */
+  --ins-bg-streaks:
+    linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.015) 30%, rgba(255,255,255,0) 60%),
+    linear-gradient(-45deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.008) 50%, rgba(255,255,255,0) 70%);
+
+  /* Vinheta controlada (escura, suave) */
+  --ins-vignette: radial-gradient(110% 80% at 50% 40%, rgba(0,0,0,0) 0%, rgba(0,0,0,.35) 80%);
+
+  /* Grain mínimo (quase imperceptível, sem banding) */
+  --ins-grain-opacity: .08;
 
   /* Sombras */
   --shadow-sm: 0 1px 2px rgba(0,0,0,.15);
@@ -132,12 +139,13 @@ html {
 
 html, body, #__next { height: 100%; }
 
+/* INSANYCK STEP G-05.1 — Background Platinum Stealth com 3 camadas controladas */
 body {
   font-family: var(--font-body);
   color: var(--text-primary);
-  background: var(--ins-bg-gradients), var(--ins-bg-base);
+  background: var(--ins-bg-streaks), var(--ins-bg-base);
   background-repeat: no-repeat;
-  background-attachment: scroll;
+  background-attachment: fixed;
   line-height: 1.6;
   overflow-x: hidden;
   position: relative;
@@ -167,6 +175,30 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0 0 .035 .07 .035 0 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-repeat: repeat;
   image-rendering: pixelated;
+}
+
+/* INSANYCK HOTFIX G-05.1.1 — iOS/touch safe: fallback para scroll + absolute (evita jank) */
+@media (hover: none) and (pointer: coarse) {
+  body {
+    background-attachment: scroll;
+  }
+
+  body::before,
+  body::after {
+    position: absolute;
+  }
+}
+
+/* INSANYCK HOTFIX G-05.1.1 — Prefers-reduced-motion: também usa fallback scroll + absolute */
+@media (prefers-reduced-motion: reduce) {
+  body {
+    background-attachment: scroll;
+  }
+
+  body::before,
+  body::after {
+    position: absolute;
+  }
 }
 
 /* A11y */

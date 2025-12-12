@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Search, ShoppingBag, Heart } from "lucide-react";
+import { ShoppingBag, Heart, User } from "lucide-react";
 import { useTranslation } from "next-i18next";
 // INSANYCK FASE G-03.1 — Micro-animação do carrinho
 import { motion } from "framer-motion";
@@ -81,18 +81,24 @@ export default function Navbar() {
   const wishlistCount = mounted ? wishlistLen : 0;
   // -----------------------------------------
 
+  // INSANYCK STEP G-05.1 — Floating Island Pill Navbar
+  // INSANYCK HOTFIX G-05.1.2 — Mobile 360px fit: paddings responsivos
   return (
     <header
-      className="
-        fixed inset-x-0 top-0 z-50
-        backdrop-blur-[10px]
-        bg-ds-surface
-        border-b border-ds-borderSubtle
-      "
+      className="fixed inset-x-0 top-4 z-50 flex justify-center px-3 sm:px-6"
       role="navigation"
       aria-label={t("nav:aria.mainNav", "Principal")}
     >
-      <div className="mx-auto max-w-[1280px] px-6 py-4 flex items-center justify-between">
+      <nav className="
+        max-w-[1180px] w-full
+        backdrop-blur-[16px]
+        bg-[color:var(--ds-surface)]
+        border border-[color:var(--ds-border-subtle)]
+        rounded-[20px]
+        shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_8px_30px_rgba(0,0,0,0.4)]
+        px-3 sm:px-6 py-3
+        flex items-center justify-between
+      ">
         {/* Logo */}
         <Link
           href="/"
@@ -107,33 +113,37 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Links centrais */}
-        <nav className="hidden md:flex items-center gap-12 text-[16px] text-ds-accentSoft">
+        {/* INSANYCK STEP G-05.1 — Links centrais com underline hairline sutil no hover */}
+        <div className="hidden md:flex items-center gap-10 text-[15px] text-[color:var(--ds-accent-soft)]">
           <Link
             href="/novidades"
             prefetch={true}
-            className="hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-lg px-2 py-1"
+            className="relative hover:text-[color:var(--ds-accent)] hover:opacity-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-md px-2 py-1.5
+              after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[1px] after:bg-[color:var(--ds-border-subtle)] after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-150"
           >
             {t("nav:links.novidades", "Novidades")}
           </Link>
           <Link
             href="/loja"
             prefetch={true}
-            className="hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-lg px-2 py-1"
+            className="relative hover:text-[color:var(--ds-accent)] hover:opacity-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-md px-2 py-1.5
+              after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[1px] after:bg-[color:var(--ds-border-subtle)] after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-150"
           >
             {t("nav:links.loja", "Loja")}
           </Link>
           <Link
             href="/colecao"
             prefetch={true}
-            className="hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-lg px-2 py-1"
+            className="relative hover:text-[color:var(--ds-accent)] hover:opacity-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-md px-2 py-1.5
+              after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[1px] after:bg-[color:var(--ds-border-subtle)] after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-150"
           >
             {t("nav:links.colecao", "Coleção")}
           </Link>
-        </nav>
+        </div>
 
         {/* Ações (direita) */}
-        <div className="flex items-center gap-6">
+        {/* INSANYCK HOTFIX G-05.1.2 — Gap responsivo: gap-2 mobile, gap-4 sm, gap-6 md+ */}
+        <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
           {/* Switcher idioma */}
           <div
             className="hidden sm:flex items-center gap-2 text-ds-accentSoft text-[12px] leading-none select-none"
@@ -166,29 +176,19 @@ export default function Navbar() {
           <SearchBox />
           <UserMenu />
 
-          {/* Link para buscar (mantido) — INSANYCK FASE G-03.2: hit area confortável */}
-          <Link
-            href="/buscar"
-            prefetch={true}
-            aria-label={t("nav:aria.search", "Pesquisar")}
-            className="flex items-center justify-center h-11 w-11 text-ds-accentSoft hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-xl"
-          >
-            {/* INSANYCK STEP 4 · Lote 3 — Sr-only text para ícone */}
-            <span className="sr-only">{t("nav:aria.search", "Pesquisar")}</span>
-            <Search size={22} strokeWidth={1.5} aria-hidden="true" focusable="false" />
-          </Link>
+          {/* INSANYCK HOTFIX G-05.1.2 — Removido link /buscar redundante (SearchBox já fornece busca) */}
 
-          {/* Favoritos (com contador) — oculta em checkout/pagamento — INSANYCK FASE G-03.2: hit area confortável */}
+          {/* Favoritos (com contador) — oculta em checkout/pagamento */}
+          {/* INSANYCK HOTFIX G-05.1.2 — Hit area responsiva: h-10 w-10 mobile, h-11 w-11 sm+ */}
           {!hideCart && (
             <Link
               href="/favoritos"
               prefetch={true}
               aria-label="Favoritos"
-              className="relative flex items-center justify-center h-11 w-11 text-ds-accentSoft hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-xl"
+              className="relative flex items-center justify-center h-10 w-10 sm:h-11 sm:w-11 text-ds-accentSoft hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-xl"
             >
-              {/* INSANYCK STEP 4 · Lote 3 — Sr-only text para ícone */}
               <span className="sr-only">Favoritos</span>
-              <Heart size={22} strokeWidth={1.5} aria-hidden="true" focusable="false" />
+              <Heart size={20} className="sm:w-[22px] sm:h-[22px]" strokeWidth={1.5} aria-hidden="true" focusable="false" />
               {wishlistCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-ds-accent text-[color:var(--bg-0)] text-[10px] leading-4 font-semibold ring-1 ring-[color:var(--ds-border-subtle)] text-center">
                   {wishlistCount}
@@ -197,13 +197,13 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* Sacola (drawer) — oculta em checkout/pagamento — INSANYCK FASE G-03.2: hit area confortável */}
+          {/* Sacola (drawer) — oculta em checkout/pagamento */}
           {!hideCart && (
             <motion.button
               type="button"
               onClick={() => toggleCart(true)}
               aria-label={t("nav:aria.cart", "Carrinho")}
-              className="relative flex items-center justify-center h-11 w-11 text-ds-accentSoft hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-xl"
+              className="relative flex items-center justify-center h-10 w-10 sm:h-11 sm:w-11 text-ds-accentSoft hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-xl"
               // INSANYCK FASE G-03.1 — Micro-animação ao adicionar item
               animate={animateCart ? {
                 scale: [1, 1.15, 1],
@@ -214,9 +214,8 @@ export default function Navbar() {
                 ease: [0.34, 1.56, 0.64, 1], // Easing premium/bouncy
               }}
             >
-              {/* INSANYCK STEP 4 · Lote 3 — Sr-only text para ícone */}
               <span className="sr-only">{t("nav:aria.cart", "Carrinho")}</span>
-              <ShoppingBag size={22} strokeWidth={1.5} aria-hidden="true" focusable="false" />
+              <ShoppingBag size={20} className="sm:w-[22px] sm:h-[22px]" strokeWidth={1.5} aria-hidden="true" focusable="false" />
               {count > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-ds-accent text-[color:var(--bg-0)] text-[10px] leading-4 font-semibold ring-1 ring-[color:var(--ds-border-subtle)] text-center">
                   {count}
@@ -225,7 +224,7 @@ export default function Navbar() {
             </motion.button>
           )}
         </div>
-      </div>
+      </nav>
 
       {/* Drawer Mini-Cart (lazy) */}
       {!hideCart && <MiniCart />}
@@ -234,6 +233,7 @@ export default function Navbar() {
 }
 
 /* ======================= INSANYCK FASE G-04.2 — UserMenu com tokens DS ======================= */
+/* INSANYCK HOTFIX G-05.1.2 — UserMenu responsivo: ícone mobile, ícone+texto sm+ */
 function UserMenu() {
   const { data: session, status } = useSession();
 
@@ -242,9 +242,11 @@ function UserMenu() {
       <Link
         href="/conta/login"
         prefetch={true}
-        className="text-ds-accentSoft hover:text-ds-accent transition-all duration-150 px-2 py-1 rounded-lg border border-ds-borderSubtle hover:border-ds-borderStrong hover:bg-ds-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]"
+        className="flex items-center gap-1.5 text-ds-accentSoft hover:text-ds-accent transition-all duration-150 px-2 py-1 rounded-lg border border-ds-borderSubtle hover:border-ds-borderStrong hover:bg-ds-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]"
+        aria-label="Entrar"
       >
-        Entrar
+        <User size={18} strokeWidth={1.5} aria-hidden="true" />
+        <span className="hidden sm:inline">Entrar</span>
       </Link>
     );
   }
@@ -253,8 +255,9 @@ function UserMenu() {
 
   return (
     <div className="relative group">
-      <button className="text-ds-accentSoft hover:text-ds-accent transition-all duration-150 px-2 py-1 rounded-lg border border-ds-borderSubtle hover:border-ds-borderStrong hover:bg-ds-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]">
-        {String(name).split(" ")[0]}
+      <button className="flex items-center gap-1.5 text-ds-accentSoft hover:text-ds-accent transition-all duration-150 px-2 py-1 rounded-lg border border-ds-borderSubtle hover:border-ds-borderStrong hover:bg-ds-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]">
+        <User size={18} strokeWidth={1.5} aria-hidden="true" />
+        <span className="hidden sm:inline">{String(name).split(" ")[0]}</span>
       </button>
       <div className="absolute right-0 mt-2 hidden group-hover:block rounded-2xl border border-ds-borderSubtle bg-ds-elevated backdrop-blur-md shadow-ds-2 p-2 w-[220px] z-[60]">
         <Link className="block px-3 py-2 text-ds-accentSoft hover:text-ds-accent hover:bg-ds-surface rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-1" href="/conta" prefetch={true}>
