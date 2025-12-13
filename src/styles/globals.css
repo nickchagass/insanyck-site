@@ -48,6 +48,34 @@ body {
   /* Grain mínimo (quase imperceptível, sem banding) */
   --ins-grain-opacity: .08;
 
+  /* ===== INSANYCK STEP G-05.3 — HERO V3 "Titanium Shadow" Tokens ===== */
+  /* Wordmark: metal shader (grafite líquido + highlights frios) */
+  --hero-ti-hi: rgba(225, 235, 245, 0.92);        /* highlight frio (azul gelo) */
+  --hero-ti-mid: rgba(180, 190, 200, 0.85);       /* mid metal */
+  --hero-ti-lo: rgba(140, 150, 165, 0.75);        /* shadow metal */
+  --hero-ti-ink: rgba(30, 35, 45, 0.88);          /* grafite líquido (base) */
+
+  /* Background "Titanium Shadow Atmosphere" */
+  --hero-ti-grain: 0.06;                          /* 6% grain (faixa 5-8%) */
+  --hero-ti-spot: 0.12;                           /* spotlight frio */
+  --hero-ti-vig: 0.78;                            /* vinheta inteligente */
+
+  /* ===== INSANYCK HOTFIX G-05.3.1 — HERO CTAs "Titanium Shadow" Tokens ===== */
+  /* INSANYCK HOTFIX G-05.3.3 — "Titanium Jewel Buttons" (hairline 0.10 + easing premium) */
+  --hero-cta-radius: 9999px;
+  --hero-cta-h: 44px;
+  --hero-cta-text: rgba(235, 242, 250, 0.92);
+  --hero-cta-text-muted: rgba(220, 230, 240, 0.82);
+  --hero-cta-border-strong: rgba(255, 255, 255, 0.10);  /* hairline couture (era 0.18) */
+  --hero-cta-border-soft: rgba(255, 255, 255, 0.08);    /* hairline ghost (era 0.12) */
+  --hero-cta-hi: rgba(235, 245, 255, 0.20);             /* highlight frio */
+  --hero-cta-mid: rgba(255, 255, 255, 0.06);            /* vidro */
+  --hero-cta-lo: rgba(0, 0, 0, 0.35);                   /* profundidade */
+  --hero-cta-focus: rgba(225, 235, 245, 0.22);          /* ring frio, sem neon */
+
+  /* Easing premium (Apple-level) */
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
   /* Sombras */
   --shadow-sm: 0 1px 2px rgba(0,0,0,.15);
   --shadow-md: 0 4px 6px -1px rgba(0,0,0,.20), 0 2px 4px -1px rgba(0,0,0,.10);
@@ -1110,4 +1138,264 @@ body::after {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+}
+
+/* =========================================================
+   INSANYCK STEP G-05.3 — HERO V3 "Titanium Shadow" Atmosphere
+   Spotlight frio + vinheta inteligente + graphite depth + grain
+   ========================================================= */
+.hero-titanium {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Atmosphere Layer (spotlight + vignette + graphite depth) */
+.hero-titanium::before {
+  content: "";
+  position: absolute;
+  inset: -15%;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    radial-gradient(55% 45% at 50% 38%, rgba(210, 220, 235, var(--hero-ti-spot)) 0%, rgba(0, 0, 0, 0) 62%),
+    radial-gradient(120% 110% at 50% 45%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.55) 68%, rgba(0, 0, 0, 0.88) 100%),
+    radial-gradient(80% 70% at 50% 60%, rgba(30, 35, 45, 0.35) 0%, rgba(0, 0, 0, 0) 70%);
+  opacity: 1;
+}
+
+/* Film Grain (5-8%) */
+.hero-titanium::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--hero-ti-grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='11'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0 0 .035 .07 .035 0 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  image-rendering: pixelated;
+  mix-blend-mode: overlay;
+}
+
+/* =========================================================
+   INSANYCK STEP G-05.3 — Wordmark "Titanium Metal Shader"
+   Multi-layer gradients + specular + edge + brushed texture
+   ========================================================= */
+.hero-wordmark-titanium {
+  position: relative;
+  display: inline-block;
+  color: transparent;
+  background-image:
+    linear-gradient(180deg, var(--hero-ti-hi) 0%, var(--hero-ti-mid) 28%, rgba(140, 150, 165, 0.35) 55%, var(--hero-ti-lo) 100%),
+    radial-gradient(120% 140% at 20% 10%, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 55%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, rgba(0, 0, 0, 0) 1px 6px);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.60));
+  text-shadow:
+    0 -1px 0 rgba(255, 255, 255, 0.10),
+    0 1px 0 rgba(0, 0, 0, 0.55),
+    0 10px 26px rgba(0, 0, 0, 0.35);
+}
+
+/* Specular Sweep (diagonal highlight) */
+.hero-wordmark-titanium::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0) 0%, rgba(235, 245, 255, 0.22) 45%, rgba(255, 255, 255, 0) 70%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  mix-blend-mode: screen;
+  opacity: 0.55;
+  transform: translateY(-1px);
+  pointer-events: none;
+}
+
+/* Edge Stroke (hairline couture) */
+.hero-wordmark-titanium::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.10);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* =========================================================
+   INSANYCK STEP G-05.3 — Hero Card "Tactile"
+   Hairline highlight + inner shadow + cinema depth
+   ========================================================= */
+.hero-card-titanium {
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0%, rgba(255, 255, 255, 0.02) 45%, rgba(0, 0, 0, 0.12) 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.14) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    inset 0 -18px 40px rgba(0, 0, 0, 0.35),
+    0 30px 90px rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(18px);
+}
+
+/* =========================================================
+   Reduced Motion: neutralizar efeitos atmosféricos
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .hero-titanium::before {
+    opacity: 0.35 !important;
+  }
+
+  .hero-titanium::after {
+    opacity: 0.03 !important;
+  }
+
+  .hero-wordmark-titanium::before {
+    display: none !important;
+  }
+}
+
+/* =========================================================
+   INSANYCK HOTFIX G-05.3.1 — HERO CTAs "Titanium Shadow"
+   INSANYCK HOTFIX G-05.3.3 — "Titanium Jewel Buttons" (couture-level)
+   Botões com material joia: hairline 0.10 + sheen sutil + easing premium
+   ========================================================= */
+.hero-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--hero-cta-h);
+  padding: 0 18px;
+  border-radius: var(--hero-cta-radius);
+  font-weight: 600;
+  letter-spacing: 0.05em;  /* editorial (era 0.01em) */
+  line-height: 1;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: none;
+  overflow: hidden;  /* sheen clip */
+  transition: transform 480ms var(--ease-expo), box-shadow 480ms var(--ease-expo), border-color 480ms var(--ease-expo), background 480ms var(--ease-expo), color 480ms var(--ease-expo);
+}
+
+.hero-cta:focus {
+  outline: none;
+}
+
+.hero-cta:focus-visible {
+  outline: 2px solid var(--hero-cta-focus);
+  outline-offset: 3px;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55);
+}
+
+/* PRIMARY — Graphite Jewel + Platinum Hairline */
+.hero-cta-primary {
+  color: var(--hero-cta-text);
+  border: 1px solid var(--hero-cta-border-strong);  /* hairline 0.10 */
+  background:
+    radial-gradient(120% 140% at 30% 15%, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.00) 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 38%, rgba(0, 0, 0, 0.26) 100%),
+    linear-gradient(180deg, rgba(30, 35, 45, 0.72) 0%, rgba(18, 20, 26, 0.92) 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.16) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    inset 0 -16px 26px rgba(0, 0, 0, 0.40),
+    0 22px 70px rgba(0, 0, 0, 0.60);
+  backdrop-filter: blur(14px);
+}
+
+/* Sheen sutil (pseudo-element premium) */
+.hero-cta-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.08) 50%, transparent 70%);
+  opacity: 0;
+  transition: opacity 480ms var(--ease-expo);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .hero-cta-primary:hover {
+    border-color: rgba(255, 255, 255, 0.16);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.20) inset,
+      0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+      inset 0 -18px 28px rgba(0, 0, 0, 0.42),
+      0 26px 80px rgba(0, 0, 0, 0.62);
+  }
+
+  .hero-cta-primary:hover::before {
+    opacity: 1;
+  }
+}
+
+.hero-cta-primary:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.16) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    inset 0 -18px 34px rgba(0, 0, 0, 0.55),
+    0 14px 45px rgba(0, 0, 0, 0.55);
+}
+
+/* SECONDARY — Ghost Jewel + Hairline */
+.hero-cta-secondary {
+  color: var(--hero-cta-text-muted);
+  border: 1px solid var(--hero-cta-border-soft);  /* hairline 0.08 */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.040) 0%, rgba(255, 255, 255, 0.020) 55%, rgba(0, 0, 0, 0.14) 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.10) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    inset 0 -14px 22px rgba(0, 0, 0, 0.32),
+    0 18px 60px rgba(0, 0, 0, 0.52);
+  backdrop-filter: blur(14px);
+}
+
+/* Sheen sutil (pseudo-element premium) */
+.hero-cta-secondary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.06) 50%, transparent 70%);
+  opacity: 0;
+  transition: opacity 480ms var(--ease-expo);
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .hero-cta-secondary:hover {
+    color: rgba(235, 242, 250, 0.90);
+    border-color: rgba(255, 255, 255, 0.12);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.060) 0%, rgba(255, 255, 255, 0.030) 55%, rgba(0, 0, 0, 0.16) 100%);
+  }
+
+  .hero-cta-secondary:hover::before {
+    opacity: 1;
+  }
+}
+
+.hero-cta-secondary:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.10) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    inset 0 -16px 28px rgba(0, 0, 0, 0.46),
+    0 12px 40px rgba(0, 0, 0, 0.50);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-cta {
+    transition: none !important;
+  }
+
+  .hero-cta-primary::before,
+  .hero-cta-secondary::before {
+    opacity: 0 !important;
+  }
 }

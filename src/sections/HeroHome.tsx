@@ -1,8 +1,9 @@
 // INSANYCK STEP G-05.1 — Hero Home com Brushed Platinum Wordmark + Platinum Edge Frame
 // INSANYCK HOTFIX G-05.1.4 — CTAs 360px-safe (stack mobile, row desktop)
+// INSANYCK HOTFIX G-05.3.1 — CTAs Titanium Shadow (hero-cta classes)
 "use client";
 
-import DsButton from "@/components/ds/DsButton";
+import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
 
@@ -11,18 +12,16 @@ export default function HeroHome() {
 
   return (
     <section
-      className="relative pt-[140px] pb-[100px] overflow-visible"
+      className="hero-titanium relative pt-[140px] pb-[100px] overflow-visible"
       aria-labelledby="hero-home"
     >
       {/* INSANYCK STEP G-05.1 — Platinum Edge Frame (hairline contornando Hero com micro brilho nos cantos) */}
+      {/* INSANYCK STEP G-05.2 — Frame V2 com hairline highlight e sombra interna */}
+      {/* INSANYCK STEP G-05.3 — Titanium Shadow: card tactile + z-index correto */}
       <div className="mx-auto max-w-[900px] px-6 relative">
         {/* Frame hairline (filete quase invisível) */}
         <div
-          className="absolute inset-0 pointer-events-none rounded-[24px]"
-          style={{
-            border: "1px solid rgba(255, 255, 255, 0.06)",
-            boxShadow: "0 1px 0 rgba(255, 255, 255, 0.04) inset",
-          }}
+          className="hero-card-titanium absolute inset-0 pointer-events-none rounded-[24px]"
           aria-hidden="true"
         >
           {/* Micro brilho top-left */}
@@ -42,30 +41,29 @@ export default function HeroHome() {
         </div>
 
         {/* Conteúdo do Hero */}
-        <div className="relative py-16">
+        <div className="relative z-10 py-16">
           {/* INSANYCK STEP G-05.1 — Wordmark "Brushed Platinum" (metal escovado moderno) */}
           {/* INSANYCK HOTFIX G-05.1.1 — Mobile-safe: fontSize min 44px + letterSpacing responsivo */}
           {/* INSANYCK HOTFIX G-05.1.2 — Tracking por breakpoint: premium desktop + safe mobile */}
+          {/* INSANYCK STEP G-05.2 — Wordmark V2 "Platinum Neutral" (sem rosa, highlight hairline, sombra interna) */}
+          {/* INSANYCK STEP G-05.3 — Wordmark V3 "Titanium Metal Shader" (bevel + specular + edge) */}
+          {/* INSANYCK HOTFIX G-05.3.2 — Wordmark PNG (imagem /brand/insanyck.png) */}
           <h2
             id="hero-home"
-            className="text-center select-none tracking-[0.12em] sm:tracking-[0.18em] lg:tracking-[0.25em]"
-            style={{
-              fontSize: "clamp(44px, 11vw, 120px)",
-              lineHeight: "1",
-              fontWeight: 700,
-              textTransform: "uppercase",
-              whiteSpace: "nowrap",
-              background: `
-                linear-gradient(135deg, rgba(220, 220, 225, 0.95) 0%, rgba(200, 200, 210, 0.90) 25%, rgba(220, 220, 225, 0.95) 50%, rgba(200, 200, 210, 0.90) 75%, rgba(220, 220, 225, 0.95) 100%),
-                repeating-linear-gradient(90deg, transparent 0px, rgba(255, 255, 255, 0.03) 1px, transparent 2px, transparent 4px)
-              `,
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              textShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
-            }}
+            className="text-center select-none"
           >
-            INSANYCK
+            <span className="relative inline-block mx-auto w-[min(820px,92vw)] sm:w-[min(900px,90vw)]">
+              <Image
+                src="/brand/insanyck.png"
+                alt=""
+                width={1600}
+                height={300}
+                priority={true}
+                sizes="(max-width: 640px) 92vw, 900px"
+                className="drop-shadow-[0_18px_40px_rgba(0,0,0,0.60)] w-full h-auto"
+              />
+            </span>
+            <span className="sr-only">INSANYCK</span>
           </h2>
 
           {/* INSANYCK STEP G-05.1 — Tagline editorial uppercase fina */}
@@ -87,16 +85,21 @@ export default function HeroHome() {
 
           {/* INSANYCK STEP G-05.1 — Botões premium usando DsButton (Primary e Ghost) */}
           {/* INSANYCK HOTFIX G-05.1.4 — Stack mobile, row sm+ */}
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto px-6 sm:px-0">
-            <Link href="/loja" prefetch={true} className="w-full sm:w-auto">
-              <DsButton variant="primary" size="lg" className="w-full sm:w-auto">
-                {t("cta.shop", "Entrar na loja")}
-              </DsButton>
+          {/* INSANYCK HOTFIX G-05.3.1 — CTAs Titanium Shadow (graphite liquid + hairline) */}
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-3 w-full sm:w-auto px-6 sm:px-0">
+            <Link
+              href="/loja"
+              prefetch={true}
+              className="hero-cta hero-cta-primary w-full sm:w-auto"
+            >
+              {t("cta.shop", "Entrar na loja")}
             </Link>
-            <Link href="/manifesto" prefetch={true} className="w-full sm:w-auto">
-              <DsButton variant="ghost" size="lg" className="w-full sm:w-auto">
-                {t("cta.manifesto", "Manifesto")}
-              </DsButton>
+            <Link
+              href="/manifesto"
+              prefetch={true}
+              className="hero-cta hero-cta-secondary w-full sm:w-auto"
+            >
+              {t("cta.manifesto", "Manifesto")}
             </Link>
           </div>
         </div>
