@@ -137,7 +137,8 @@ html {
   text-rendering: optimizeLegibility;
 }
 
-html, body, #__next { height: 100%; }
+/* INSANYCK HOTFIX G-05.1.4 — min-height garante background coverage em páginas longas */
+html, body, #__next { min-height: 100%; }
 
 /* INSANYCK STEP G-05.1 — Background Platinum Stealth com 3 camadas controladas */
 body {

@@ -1,4 +1,5 @@
 // INSANYCK STEP G-05.1 — Hero Home com Brushed Platinum Wordmark + Platinum Edge Frame
+// INSANYCK HOTFIX G-05.1.4 — CTAs 360px-safe (stack mobile, row desktop)
 "use client";
 
 import DsButton from "@/components/ds/DsButton";
@@ -85,14 +86,15 @@ export default function HeroHome() {
           </p>
 
           {/* INSANYCK STEP G-05.1 — Botões premium usando DsButton (Primary e Ghost) */}
-          <div className="mt-12 flex items-center justify-center gap-4">
-            <Link href="/loja" prefetch={true}>
-              <DsButton variant="primary" size="lg">
+          {/* INSANYCK HOTFIX G-05.1.4 — Stack mobile, row sm+ */}
+          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto px-6 sm:px-0">
+            <Link href="/loja" prefetch={true} className="w-full sm:w-auto">
+              <DsButton variant="primary" size="lg" className="w-full sm:w-auto">
                 {t("cta.shop", "Entrar na loja")}
               </DsButton>
             </Link>
-            <Link href="/manifesto" prefetch={true}>
-              <DsButton variant="ghost" size="lg">
+            <Link href="/manifesto" prefetch={true} className="w-full sm:w-auto">
+              <DsButton variant="ghost" size="lg" className="w-full sm:w-auto">
                 {t("cta.manifesto", "Manifesto")}
               </DsButton>
             </Link>

@@ -1,5 +1,6 @@
 // INSANYCK STEP 9 — Navbar com favoritos + hideCart (FIX hooks)
 // INSANYCK STEP G-04.2.1 — Navbar Imaculada (sem cores literais)
+// INSANYCK HOTFIX G-05.1.4 — Touch comfort (44px hit areas) + Keyboard-safe UserMenu
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -179,16 +180,16 @@ export default function Navbar() {
           {/* INSANYCK HOTFIX G-05.1.2 — Removido link /buscar redundante (SearchBox já fornece busca) */}
 
           {/* Favoritos (com contador) — oculta em checkout/pagamento */}
-          {/* INSANYCK HOTFIX G-05.1.2 — Hit area responsiva: h-10 w-10 mobile, h-11 w-11 sm+ */}
+          {/* INSANYCK HOTFIX G-05.1.4 — Hit area 44px (Apple comfort) */}
           {!hideCart && (
             <Link
               href="/favoritos"
               prefetch={true}
               aria-label="Favoritos"
-              className="relative flex items-center justify-center h-10 w-10 sm:h-11 sm:w-11 text-ds-accentSoft hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-xl"
+              className="relative flex items-center justify-center h-11 w-11 text-ds-accentSoft hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-xl"
             >
               <span className="sr-only">Favoritos</span>
-              <Heart size={20} className="sm:w-[22px] sm:h-[22px]" strokeWidth={1.5} aria-hidden="true" focusable="false" />
+              <Heart size={20} strokeWidth={1.5} aria-hidden="true" focusable="false" />
               {wishlistCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-ds-accent text-[color:var(--bg-0)] text-[10px] leading-4 font-semibold ring-1 ring-[color:var(--ds-border-subtle)] text-center">
                   {wishlistCount}
@@ -203,7 +204,7 @@ export default function Navbar() {
               type="button"
               onClick={() => toggleCart(true)}
               aria-label={t("nav:aria.cart", "Carrinho")}
-              className="relative flex items-center justify-center h-10 w-10 sm:h-11 sm:w-11 text-ds-accentSoft hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-xl"
+              className="relative flex items-center justify-center h-11 w-11 text-ds-accentSoft hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-xl"
               // INSANYCK FASE G-03.1 — Micro-animação ao adicionar item
               animate={animateCart ? {
                 scale: [1, 1.15, 1],
@@ -215,7 +216,7 @@ export default function Navbar() {
               }}
             >
               <span className="sr-only">{t("nav:aria.cart", "Carrinho")}</span>
-              <ShoppingBag size={20} className="sm:w-[22px] sm:h-[22px]" strokeWidth={1.5} aria-hidden="true" focusable="false" />
+              <ShoppingBag size={20} strokeWidth={1.5} aria-hidden="true" focusable="false" />
               {count > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 min-w-4 h-4 px-1 rounded-full bg-ds-accent text-[color:var(--bg-0)] text-[10px] leading-4 font-semibold ring-1 ring-[color:var(--ds-border-subtle)] text-center">
                   {count}
@@ -234,6 +235,7 @@ export default function Navbar() {
 
 /* ======================= INSANYCK FASE G-04.2 — UserMenu com tokens DS ======================= */
 /* INSANYCK HOTFIX G-05.1.2 — UserMenu responsivo: ícone mobile, ícone+texto sm+ */
+/* INSANYCK HOTFIX G-05.1.4 — Keyboard-safe dropdown (focus-within) */
 function UserMenu() {
   const { data: session, status } = useSession();
 
@@ -259,7 +261,7 @@ function UserMenu() {
         <User size={18} strokeWidth={1.5} aria-hidden="true" />
         <span className="hidden sm:inline">{String(name).split(" ")[0]}</span>
       </button>
-      <div className="absolute right-0 mt-2 hidden group-hover:block rounded-2xl border border-ds-borderSubtle bg-ds-elevated backdrop-blur-md shadow-ds-2 p-2 w-[220px] z-[60]">
+      <div className="absolute right-0 mt-2 hidden group-hover:block group-focus-within:block rounded-2xl border border-ds-borderSubtle bg-ds-elevated backdrop-blur-md shadow-ds-2 p-2 w-[220px] z-[60]">
         <Link className="block px-3 py-2 text-ds-accentSoft hover:text-ds-accent hover:bg-ds-surface rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-1" href="/conta" prefetch={true}>
           Minha conta
         </Link>

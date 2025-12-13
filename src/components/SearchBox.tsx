@@ -1,8 +1,10 @@
 // INSANYCK STEP 11 — SearchBox with DB Integration
+// INSANYCK HOTFIX G-05.1.4 — Mobile-first + Luxury Glass Dropdown
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { Search } from "lucide-react";
 import { useTranslation } from "next-i18next";
 import { track } from "@/lib/analytics";
 
@@ -92,12 +94,14 @@ export default function SearchBox() {
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="text-white/80 hover:text-white/95 transition-all duration-150 px-2 py-1 rounded-lg border border-white/10 hover:border-white/25 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+        className="flex items-center justify-center gap-1.5 h-11 w-11 sm:w-auto sm:px-3 text-ds-accentSoft hover:text-ds-accent transition-all duration-150 rounded-lg border border-ds-borderSubtle hover:border-ds-borderStrong hover:bg-ds-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]"
         aria-expanded={open}
         aria-controls="search-dropdown"
+        aria-label={t("search:open", "Buscar")}
       >
-        {t("search:open", "Buscar")}
-        <span className="ml-2 text-white/40 text-xs">/</span>
+        <Search size={18} strokeWidth={1.5} aria-hidden="true" />
+        <span className="hidden sm:inline">{t("search:open", "Buscar")}</span>
+        <span className="hidden sm:inline text-ds-accentSoft/40 text-xs">/</span>
       </button>
 
       {open && (
@@ -106,7 +110,7 @@ export default function SearchBox() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="insanyck-search-label"
-          className="absolute right-0 mt-2 w-[380px] rounded-2xl border border-white/10 bg-black/70 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] p-3 z-[60]"
+          className="absolute right-0 mt-2 w-[calc(100vw-24px)] sm:w-[380px] rounded-2xl border border-[color:var(--ds-border-subtle)] bg-[color:var(--ds-elevated)] backdrop-blur-xl shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_8px_30px_rgba(0,0,0,0.4)] p-3 z-[60]"
         >
           <label id="insanyck-search-label" className="sr-only">
             {t("search:label", "Buscar produtos")}
