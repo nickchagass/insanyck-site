@@ -58,12 +58,13 @@ export default function LoginPage() {
             {/* Email form */}
             <form onSubmit={handleEmailLogin} className="space-y-4">
               <div>
+                {/* INSANYCK HOTFIX G-05.3.5 — Input com Cold Fusion Focus (CSS global assume) */}
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={t('auth.login.emailPlaceholder')}
-                  className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/20"
+                  className="w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white placeholder-white/60"
                   required
                   disabled={isLoading}
                 />
@@ -72,7 +73,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading || !email.trim()}
-                className="w-full bg-white text-black font-semibold py-3 px-6 rounded-xl hover:bg-white/90 focus:outline-none focus:ring-2 focus:ring-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="w-full bg-white text-black font-semibold py-3 px-6 rounded-xl hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 {isLoading ? t('auth.login.loading') : t('auth.login.ctaEmail')}
               </button>
@@ -85,11 +86,11 @@ export default function LoginPage() {
               <div className="flex-1 h-px bg-white/10"></div>
             </div>
 
-            {/* Google login */}
+            {/* Google login — INSANYCK HOTFIX G-05.3.5 — Titanium Hairline (focus via CSS global) */}
             <button
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className="w-full bg-white/[0.05] border border-white/10 text-white font-semibold py-3 px-6 rounded-xl hover:bg-white/[0.08] focus:outline-none focus:ring-2 focus:ring-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3"
+              className="w-full bg-white/[0.05] border border-white/[0.08] text-white font-semibold py-3 px-6 rounded-xl hover:bg-white/[0.08] hover:border-white/[0.14] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

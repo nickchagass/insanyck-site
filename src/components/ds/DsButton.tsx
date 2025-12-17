@@ -88,16 +88,10 @@ export default function DsButton({
   }[size];
 
   // Variant styles (100% token-based)
+  // INSANYCK HOTFIX G-05.3.4 — Primary com "Titanium Plate" (joia premium)
   const variantStyles = {
     primary: `
-      bg-[color:var(--ds-accent)]
-      text-black
-      border-[color:var(--ds-border-subtle)]
-      shadow-[var(--ds-shadow-2)]
-      hover:not(:disabled):bg-[color:var(--ds-accent)]
-      hover:not(:disabled):brightness-95
-      hover:not(:disabled):-translate-y-px
-      active:not(:disabled):translate-y-0
+      ds-btn--titanium
     `,
     secondary: `
       bg-[color:var(--ds-elevated)]

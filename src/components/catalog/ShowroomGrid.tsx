@@ -1,9 +1,9 @@
 // INSANYCK STEP G-04.2.1 — Guard console.error no frontend
+// INSANYCK STEP G-05.4-B — Removed SpotlightCard (showroom consistency)
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useTranslation } from "next-i18next";
-import SpotlightCard from "./SpotlightCard";
 import ProductCard from "./ProductCard";
 import { ProductCardData } from "@/types/product";
 
@@ -55,30 +55,22 @@ export default function ShowroomGrid({
     return () => observer.disconnect();
   }, [handleIntersection, hasMore]);
 
-  // INSANYCK FASE G-02 PERF-01 — Grid layout 100% CSS (zero CLS, zero JS)
+  // INSANYCK STEP G-05.4-B — Showroom Grid: consistent spacing, no giant spotlight
   // Layout responsivo controlado APENAS via Tailwind breakpoints:
   // - Mobile (< 768px): grid-cols-2, todos os cards 1x1
-  // - Tablet (768-1279px): grid-cols-3, primeiro card 2x2, resto 1x1
-  // - Desktop (≥1280px): grid-cols-4, primeiro card 2x2, cada 6º card 2x1, resto 1x1
-  const getGridItemClass = (index: number) => {
-    // Primeiro card (spotlight): 2x2 em tablet+ (1x1 em mobile)
-    if (index === 0) {
-      return "col-span-1 row-span-1 md:col-span-2 md:row-span-2";
-    }
-
-    // Cada 6º card (começando do 5º índice): 2x1 apenas em desktop (1x1 em mobile/tablet)
-    if ((index + 5) % 6 === 0) {
-      return "col-span-1 row-span-1 xl:col-span-2";
-    }
-
-    // Resto: sempre 1x1 em todos os breakpoints
+  // - Tablet (768-1279px): grid-cols-3, todos os cards 1x1
+  // - Desktop (≥1280px): grid-cols-4, todos os cards 1x1
+  // CHANGE: Removed spotlight 2x2 giant card, now all cards are uniform for showroom consistency
+  const getGridItemClass = () => {
+    // STEP G-05.4-B: All cards are now uniform 1x1 (no more giant spotlight)
     return "col-span-1 row-span-1";
   };
 
   const getGridClass = () => {
+    // STEP G-05.4-B: Premium spacing with consistent gaps
     return "grid gap-6 auto-rows-fr " +
            "grid-cols-2 " + // Mobile: 2 cols
-           "md:grid-cols-3 " + // Tablet: 3 cols  
+           "md:grid-cols-3 " + // Tablet: 3 cols
            "xl:grid-cols-4"; // Desktop: 4 cols
   };
 
@@ -92,40 +84,29 @@ export default function ShowroomGrid({
     );
   }
 
+  // STEP G-05.4-B — Showroom Grid: consistent card layout, no giant spotlight
   return (
     <div className="space-y-8">
-      {/* Showroom Grid */}
-      <div 
+      {/* Showroom Grid — STEP G-05.4-B: uniform cards, premium spacing */}
+      <div
         className={getGridClass()}
         role="list"
         aria-label={t("plp:products_grid", "Grade de produtos")}
       >
-        {products.map((product, index) => {
-          const isSpotlight = index === 0;
-          const isWide = !isSpotlight && (index + 5) % 6 === 0;
-          const gridClass = getGridItemClass(index);
-
-          return (
-            <div
-              key={product.id || product.slug}
-              className={gridClass}
-              role="listitem"
-            >
-              {isSpotlight ? (
-                <SpotlightCard 
-                  product={product}
-                  priority={true}
-                />
-              ) : (
-                <ProductCard 
-                  product={product}
-                  variant={isWide ? "wide" : "standard"}
-                  priority={index < 4}
-                />
-              )}
-            </div>
-          );
-        })}
+        {products.map((product, index) => (
+          <div
+            key={product.id || product.slug}
+            className={getGridItemClass()}
+            role="listitem"
+          >
+            {/* STEP G-05.4-B: All cards use ProductCard (standard variant), no more SpotlightCard giant */}
+            <ProductCard
+              product={product}
+              variant="standard"
+              priority={index < 4}
+            />
+          </div>
+        ))}
 
         {/* Loading skeletons during fetch */}
         {isLoading && Array.from({ length: 12 }).map((_, i) => (

@@ -137,8 +137,18 @@ body {
   --ds-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.15);
   --ds-shadow-2: 0 4px 12px rgba(0, 0, 0, 0.25);
 
-  /* Focus ring */
-  --ds-focus-ring: rgba(250, 204, 21, 0.6);
+  /* INSANYCK STEP G-05.4-A — Cold Ray Focus (premium, sem amarelo) */
+  --cold-ray-ring: rgba(210, 220, 235, 0.22);      /* hairline fria (azul-gelo) */
+  --cold-ray-glow: rgba(210, 220, 235, 0.12);      /* halo externo sutil */
+  --cold-ray-ring-soft: rgba(210, 220, 235, 0.15); /* variant suave */
+
+  /* Focus ring — AGORA USA COLD RAY (era dourado, agora frio/premium) */
+  --ds-focus-ring: var(--cold-ray-ring);
+
+  /* INSANYCK HOTFIX G-05.3.5 — Cold Fusion Focus (animado, energia fria) */
+  --ins-focus-fusion: rgba(225, 235, 245, 0.85);      /* borda ativa (mais intensa) */
+  --ins-focus-fusion-glow: rgba(225, 235, 245, 0.20); /* glow externo premium */
+  --ins-focus-fusion-inner: rgba(225, 235, 245, 0.10); /* highlight interno */
 }
 
 /* =========================================================
@@ -230,10 +240,64 @@ body::after {
   }
 }
 
-/* A11y */
+/* A11y — INSANYCK STEP G-05.4-A — Cold Ray Focus (premium hairline + halo) */
 *:focus-visible {
-  outline: 2px solid var(--gold-400);
-  outline-offset: 2px;
+  outline: 2px solid var(--cold-ray-ring);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px var(--cold-ray-glow);
+  transition: outline 180ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *:focus-visible {
+    transition: none;
+    box-shadow: none;
+  }
+}
+
+/* =========================================================
+   INSANYCK HOTFIX G-05.3.5 — Cold Fusion Focus (Inputs)
+   Animação premium: energia fria passando no metal (pulso sutil)
+   ========================================================= */
+@keyframes cold-pulse {
+  0% {
+    box-shadow:
+      inset 0 1px 0 var(--ins-focus-fusion-inner),
+      0 0 0 0 var(--ins-focus-fusion-glow);
+  }
+  45% {
+    box-shadow:
+      inset 0 1px 0 var(--ins-focus-fusion-inner),
+      0 0 16px 4px var(--ins-focus-fusion-glow);
+  }
+  100% {
+    box-shadow:
+      inset 0 1px 0 var(--ins-focus-fusion-inner),
+      0 0 12px 3px var(--ins-focus-fusion-glow);
+  }
+}
+
+/* Aplicar Cold Fusion em inputs/textarea/select */
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select):focus,
+:where(input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea, select):focus-visible {
+  outline: none !important;
+  border-color: var(--ins-focus-fusion) !important;
+  box-shadow:
+    inset 0 1px 0 var(--ins-focus-fusion-inner),
+    0 0 12px 3px var(--ins-focus-fusion-glow) !important;
+  animation: cold-pulse 900ms cubic-bezier(0.16, 1, 0.3, 1) 1;
+}
+
+/* Reduced-motion: sem animação, estado estático premium */
+@media (prefers-reduced-motion: reduce) {
+  :where(input, textarea, select):focus,
+  :where(input, textarea, select):focus-visible {
+    animation: none !important;
+    box-shadow:
+      inset 0 1px 0 var(--ins-focus-fusion-inner),
+      0 0 8px 2px var(--ins-focus-fusion-glow) !important;
+  }
 }
 
 /* Scrollbar (WebKit) */
@@ -1291,55 +1355,93 @@ body::after {
   box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55);
 }
 
-/* PRIMARY — Graphite Jewel + Platinum Hairline */
+/* PRIMARY — Titanium Lightframe (cinema/enterprise) */
 .hero-cta-primary {
   color: var(--hero-cta-text);
-  border: 1px solid var(--hero-cta-border-strong);  /* hairline 0.10 */
+  border: 1px solid rgba(255, 255, 255, 0.10);  /* hairline base */
+
+  /* Base material: radial highlight frio + bevel gradient + brushed texture + graphite */
   background:
-    radial-gradient(120% 140% at 30% 15%, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.00) 55%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 38%, rgba(0, 0, 0, 0.26) 100%),
+    radial-gradient(130% 150% at 30% 15%, rgba(230, 238, 245, 0.12) 0%, rgba(255, 255, 255, 0.00) 58%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.018) 0 1px, rgba(0, 0, 0, 0) 1px 4px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.04) 40%, rgba(0, 0, 0, 0.28) 100%),
     linear-gradient(180deg, rgba(30, 35, 45, 0.72) 0%, rgba(18, 20, 26, 0.92) 100%);
+
+  /* Lightframe: bevel interno + edge glow externo duplo (curto + longo) */
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.16) inset,
-    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-    inset 0 -16px 26px rgba(0, 0, 0, 0.40),
-    0 22px 70px rgba(0, 0, 0, 0.60);
+    /* Inset top highlight (bevel) */
+    0 1px 0 rgba(255, 255, 255, 0.22) inset,
+    /* Inset edge (hairline interno) */
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    /* Inset bottom shadow (profundidade) */
+    inset 0 -18px 28px rgba(0, 0, 0, 0.42),
+    /* Edge glow curto (light frame) */
+    0 0 4px rgba(210, 220, 235, 0.08),
+    /* Edge glow longo (aura) */
+    0 0 16px rgba(210, 220, 235, 0.06),
+    /* Depth shadow */
+    0 24px 72px rgba(0, 0, 0, 0.62);
+
   backdrop-filter: blur(14px);
 }
 
-/* Sheen sutil (pseudo-element premium) */
+/* Light sweep estático (não anima, só reforça no hover) */
 .hero-cta-primary::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.08) 50%, transparent 70%);
-  opacity: 0;
-  transition: opacity 480ms var(--ease-expo);
+  background: linear-gradient(115deg, transparent 25%, rgba(255, 255, 255, 0.10) 50%, transparent 75%);
+  opacity: 0.12;
+  pointer-events: none;
+}
+
+/* Edge glow ring (ênfase nos cantos, muito sutil) */
+.hero-cta-primary::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: radial-gradient(
+    ellipse 100% 60% at 50% 0%,
+    rgba(235, 245, 255, 0.08) 0%,
+    rgba(235, 245, 255, 0) 50%
+  );
+  opacity: 0.6;
   pointer-events: none;
 }
 
 @media (hover: hover) {
   .hero-cta-primary:hover {
-    border-color: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.14);
+    transform: translateY(-1px);
+
     box-shadow:
-      0 1px 0 rgba(255, 255, 255, 0.20) inset,
+      0 1px 0 rgba(255, 255, 255, 0.26) inset,
       0 0 0 1px rgba(255, 255, 255, 0.06) inset,
-      inset 0 -18px 28px rgba(0, 0, 0, 0.42),
-      0 26px 80px rgba(0, 0, 0, 0.62);
+      inset 0 -20px 30px rgba(0, 0, 0, 0.44),
+      0 0 6px rgba(210, 220, 235, 0.12),
+      0 0 20px rgba(210, 220, 235, 0.08),
+      0 28px 80px rgba(0, 0, 0, 0.64);
   }
 
   .hero-cta-primary:hover::before {
-    opacity: 1;
+    opacity: 0.18;
+  }
+
+  .hero-cta-primary:hover::after {
+    opacity: 0.8;
   }
 }
 
 .hero-cta-primary:active {
   transform: translateY(1px);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.16) inset,
+    0 1px 0 rgba(255, 255, 255, 0.20) inset,
     0 0 0 1px rgba(255, 255, 255, 0.04) inset,
-    inset 0 -18px 34px rgba(0, 0, 0, 0.55),
-    0 14px 45px rgba(0, 0, 0, 0.55);
+    inset 0 -20px 36px rgba(0, 0, 0, 0.58),
+    0 0 3px rgba(210, 220, 235, 0.06),
+    0 0 12px rgba(210, 220, 235, 0.04),
+    0 16px 50px rgba(0, 0, 0, 0.60);
 }
 
 /* SECONDARY — Ghost Jewel + Hairline */
@@ -1395,7 +1497,452 @@ body::after {
   }
 
   .hero-cta-primary::before,
+  .hero-cta-primary::after,
   .hero-cta-secondary::before {
     opacity: 0 !important;
   }
 }
+
+/* =========================================================
+   INSANYCK HOTFIX G-05.3.4 — DsButton "Titanium Plate"
+   Joia premium: camadas de metal + borda glow + inner highlight
+   (sem neon, frio, peso cinematográfico)
+   ========================================================= */
+.ds-btn--titanium {
+  /* Graphite liquid metal base + cold highlight + micro texture */
+  background:
+    radial-gradient(120% 140% at 28% 12%, rgba(230, 238, 245, 0.14) 0%, rgba(255, 255, 255, 0.00) 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.04) 42%, rgba(0, 0, 0, 0.18) 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.020) 0 1px, rgba(0, 0, 0, 0) 1px 5px),
+    linear-gradient(180deg, rgba(35, 40, 50, 0.68) 0%, rgba(20, 25, 32, 0.88) 100%);
+
+  /* Hairline platinum (alpha baixo, como na referência) */
+  border: 1px solid rgba(255, 255, 255, 0.11) !important;
+
+  /* Triple shadow: (1) inset highlight (2) edge glow frio (3) depth/weight */
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.045) inset,
+    inset 0 -14px 24px rgba(0, 0, 0, 0.38),
+    0 20px 65px rgba(0, 0, 0, 0.58),
+    0 0 16px rgba(210, 220, 235, 0.08) !important;
+
+  /* Text: cold silver (não branco puro) */
+  color: rgba(235, 242, 250, 0.94) !important;
+
+  /* Premium weight: slow polish (160-220ms range, sem bounce) */
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 180ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+
+  backdrop-filter: blur(12px);
+}
+
+/* Hover: micro highlight increase + borda mais nítida */
+@media (hover: hover) {
+  .ds-btn--titanium:hover:not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.22) inset,
+      0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+      inset 0 -16px 26px rgba(0, 0, 0, 0.40),
+      0 24px 75px rgba(0, 0, 0, 0.60),
+      0 0 20px rgba(210, 220, 235, 0.12) !important;
+    background:
+      radial-gradient(120% 140% at 28% 12%, rgba(235, 245, 255, 0.18) 0%, rgba(255, 255, 255, 0.00) 58%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 42%, rgba(0, 0, 0, 0.20) 100%),
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.024) 0 1px, rgba(0, 0, 0, 0) 1px 5px),
+      linear-gradient(180deg, rgba(38, 43, 53, 0.70) 0%, rgba(22, 27, 34, 0.90) 100%);
+  }
+}
+
+/* Active: settle (sem bounce, peso) */
+.ds-btn--titanium:active:not(:disabled) {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.045) inset,
+    inset 0 -16px 30px rgba(0, 0, 0, 0.50),
+    0 12px 40px rgba(0, 0, 0, 0.55),
+    0 0 14px rgba(210, 220, 235, 0.08) !important;
+}
+
+/* Prefers-reduced-motion: neutralizar transições */
+@media (prefers-reduced-motion: reduce) {
+  .ds-btn--titanium {
+    transition: none !important;
+  }
+}
+
+/* =========================================================
+   INSANYCK HOTFIX G-05.4 — Titanium Cohesion Tokens
+   Navbar, controles, wordmark halo: hairlines discretos + placa fake 3D
+   ========================================================= */
+:root {
+  --nav-ti-hairline: rgba(255, 255, 255, 0.08);
+  --nav-ti-hairline-hover: rgba(255, 255, 255, 0.12);
+  --nav-ti-hairline-active: rgba(255, 255, 255, 0.14);
+  --nav-ti-glass: rgba(255, 255, 255, 0.04);
+  --nav-ti-glass-hover: rgba(255, 255, 255, 0.06);
+  --nav-ti-glass-active: rgba(255, 255, 255, 0.08);
+
+  /* INSANYCK TITANIUM SHADOW UX — Navbar "Titanium Hairline 0.08" (quiet luxury) */
+  --nav-hairline: rgba(255, 255, 255, 0.08);
+  --nav-hairline-hi: rgba(255, 255, 255, 0.06);
+  --nav-glass-a: rgba(255, 255, 255, 0.035);
+  --nav-glass-b: rgba(0, 0, 0, 0.18);
+}
+
+/* Navbar Pill Titanium: hairline discreto + inset highlight sutil */
+.nav-pill-ti {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--nav-ti-hairline);
+  background: linear-gradient(180deg, var(--nav-ti-glass) 0%, rgba(255, 255, 255, 0.02) 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.875rem;
+  line-height: 1;
+  user-select: none;
+  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .nav-pill-ti:hover {
+    border-color: var(--nav-ti-hairline-hover);
+    background: linear-gradient(180deg, var(--nav-ti-glass-hover) 0%, rgba(255, 255, 255, 0.03) 100%);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.08) inset,
+      0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+    color: rgba(255, 255, 255, 0.95);
+  }
+}
+
+.nav-pill-ti:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.3);
+  outline-offset: 2px;
+}
+
+/* Active state */
+.nav-pill-ti--active {
+  border-color: var(--nav-ti-hairline-active);
+  background: linear-gradient(180deg, var(--nav-ti-glass-active) 0%, rgba(255, 255, 255, 0.04) 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.10) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-pill-ti {
+    transition: none !important;
+  }
+}
+
+/* =========================================================
+   INSANYCK TITANIUM SHADOW UX — Navbar Pill "Titanium Hairline 0.08"
+   Quiet luxury: sem borda branca gritante, hairline 0.08 + inset sutil
+   ========================================================= */
+.nav-pill-titanium {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--nav-hairline);
+  background: linear-gradient(180deg, var(--nav-glass-a) 0%, rgba(255, 255, 255, 0.02) 100%);
+  box-shadow:
+    inset 0 1px 0 var(--nav-hairline-hi),
+    inset 0 -12px 20px var(--nav-glass-b);
+  backdrop-filter: blur(8px);
+  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (hover: hover) {
+  .nav-pill-titanium:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.03) 100%);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 -12px 20px rgba(0, 0, 0, 0.22);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-pill-titanium {
+    transition: none !important;
+  }
+}
+
+/* =========================================================
+   INSANYCK HOTFIX G-05.4 FIX — Logo Stage Premium
+   Occlusion + halo frio + drop-shadow (SEM placa retangular)
+   ========================================================= */
+.hero-logo-stage {
+  position: relative;
+  isolation: isolate;
+  display: inline-block;
+}
+
+/* Occlusion shadow: curta, densa, sem forma geométrica perceptível */
+.hero-logo-stage::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 95%;
+  height: 90%;
+  z-index: -1;
+  pointer-events: none;
+
+  /* Radial puro (sem border, sem background sólido) */
+  background: radial-gradient(
+    ellipse 85% 75% at 50% 45%,
+    rgba(0, 0, 0, 0.65) 0%,
+    rgba(0, 0, 0, 0.40) 35%,
+    rgba(0, 0, 0, 0) 70%
+  );
+}
+
+/* Halo frio: amplo, azul-gelo, muito sutil (NÃO pode lavar o fundo) */
+.hero-logo-stage::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 110%;
+  height: 105%;
+  z-index: -2;
+  pointer-events: none;
+
+  /* Radial amplo com feather (azul-gelo frio, alpha MUITO baixo) */
+  background: radial-gradient(
+    ellipse 90% 80% at 50% 40%,
+    rgba(210, 220, 235, 0.06) 0%,
+    rgba(210, 220, 235, 0.03) 40%,
+    rgba(210, 220, 235, 0) 70%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-logo-stage::after {
+    opacity: 0.3;
+  }
+}
+
+/* =========================================================
+   INSANYCK TITANIUM SHADOW UX — Hero "Titanium Stage" (2 camadas)
+   Placa maior atrás + double hairline + depth (vitrine cinema)
+   ========================================================= */
+.hero-stage-titanium {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Placa de fundo (stage layer): vignette + depth + blur cinema */
+.hero-stage-titanium::before {
+  content: "";
+  position: absolute;
+  inset: -5%;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 28px;
+  background:
+    radial-gradient(70% 50% at 50% 30%, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.12) 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0.08) 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    inset 0 -20px 40px rgba(0, 0, 0, 0.40),
+    0 40px 100px rgba(0, 0, 0, 0.60);
+  backdrop-filter: blur(12px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-stage-titanium::before {
+    opacity: 0.5;
+  }
+}
+
+/* =========================================================
+   INSANYCK TITANIUM SHADOW UX — App Background Global
+   Spotlight + vignette + grain (excluir /checkout e /conta/pagamento)
+   ========================================================= */
+.app-bg-titanium {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+/* Atmosphere layer (spotlight frio + vignette inteligente) */
+.app-bg-titanium::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    radial-gradient(50% 40% at 50% 35%, rgba(210, 220, 235, 0.08) 0%, rgba(0, 0, 0, 0) 60%),
+    radial-gradient(110% 100% at 50% 40%, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.45) 75%, rgba(0, 0, 0, 0.75) 100%);
+  opacity: 1;
+}
+
+/* Grain layer (film texture) */
+.app-bg-titanium::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='11'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0 0 .035 .07 .035 0 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  image-rendering: pixelated;
+  mix-blend-mode: overlay;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-bg-titanium::before {
+    opacity: 0.35;
+  }
+  .app-bg-titanium::after {
+    opacity: 0.03;
+  }
+}
+
+/* =========================================================
+   INSANYCK STEP G-05.4-B — MiniCart "Cofre" + Jewel Button
+   Premium glassmorphism drawer + jewel CTA styling
+   ========================================================= */
+
+/* MiniCart Cofre Overlay (dark backdrop with high blur) */
+.minicart-overlay-cofre {
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+}
+
+/* MiniCart Cofre Panel (premium dark glass + titanium hairline) */
+.minicart-panel-cofre {
+  background: linear-gradient(180deg, rgba(20, 22, 26, 0.92) 0%, rgba(12, 14, 18, 0.96) 100%);
+  border-left: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    inset 0 -40px 80px rgba(0, 0, 0, 0.40),
+    -20px 0 80px rgba(0, 0, 0, 0.60);
+  backdrop-filter: blur(24px);
+}
+
+/* MiniCart Hairline Separators */
+.minicart-hairline {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Jewel Button (checkout CTA) — Premium metal, cold glow, no neon */
+.btn-jewel {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  user-select: none;
+  cursor: pointer;
+  text-decoration: none;
+  overflow: hidden;
+
+  /* Titanium material: radial highlight + bevel + brushed texture + graphite */
+  background:
+    radial-gradient(120% 140% at 30% 15%, rgba(230, 238, 245, 0.12) 0%, rgba(255, 255, 255, 0.00) 58%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.018) 0 1px, rgba(0, 0, 0, 0) 1px 4px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.04) 40%, rgba(0, 0, 0, 0.28) 100%),
+    linear-gradient(180deg, rgba(30, 35, 45, 0.72) 0%, rgba(18, 20, 26, 0.92) 100%);
+
+  /* Hairline platinum + triple shadow (bevel + edge glow + depth) */
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.045) inset,
+    inset 0 -14px 24px rgba(0, 0, 0, 0.38),
+    0 16px 48px rgba(0, 0, 0, 0.58),
+    0 0 12px rgba(210, 220, 235, 0.08);
+
+  /* Cold silver text */
+  color: rgba(235, 242, 250, 0.94);
+
+  /* Premium easing (no bounce) */
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    background 180ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  backdrop-filter: blur(12px);
+}
+
+/* Jewel Button Hover */
+@media (hover: hover) {
+  .btn-jewel:hover:not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.16);
+    transform: translateY(-1px);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.22) inset,
+      0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+      inset 0 -16px 26px rgba(0, 0, 0, 0.40),
+      0 20px 60px rgba(0, 0, 0, 0.62),
+      0 0 16px rgba(210, 220, 235, 0.12);
+    background:
+      radial-gradient(120% 140% at 30% 15%, rgba(235, 245, 255, 0.16) 0%, rgba(255, 255, 255, 0.00) 58%),
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.022) 0 1px, rgba(0, 0, 0, 0) 1px 4px),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 40%, rgba(0, 0, 0, 0.30) 100%),
+      linear-gradient(180deg, rgba(33, 38, 48, 0.74) 0%, rgba(20, 23, 29, 0.94) 100%);
+  }
+}
+
+/* Jewel Button Active */
+.btn-jewel:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.045) inset,
+    inset 0 -16px 30px rgba(0, 0, 0, 0.50),
+    0 10px 35px rgba(0, 0, 0, 0.55),
+    0 0 10px rgba(210, 220, 235, 0.08);
+}
+
+/* Jewel Button Disabled */
+.btn-jewel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Jewel Button Focus */
+.btn-jewel:focus-visible {
+  outline: 2px solid var(--cold-ray-ring);
+  outline-offset: 3px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.045) inset,
+    inset 0 -14px 24px rgba(0, 0, 0, 0.38),
+    0 16px 48px rgba(0, 0, 0, 0.58),
+    0 0 12px rgba(210, 220, 235, 0.08),
+    0 0 0 4px var(--cold-ray-glow);
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .btn-jewel {
+    transition: none !important;
+  }
+}
+

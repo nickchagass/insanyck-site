@@ -18,7 +18,8 @@ export default function HeroHome() {
       {/* INSANYCK STEP G-05.1 — Platinum Edge Frame (hairline contornando Hero com micro brilho nos cantos) */}
       {/* INSANYCK STEP G-05.2 — Frame V2 com hairline highlight e sombra interna */}
       {/* INSANYCK STEP G-05.3 — Titanium Shadow: card tactile + z-index correto */}
-      <div className="mx-auto max-w-[900px] px-6 relative">
+      {/* INSANYCK TITANIUM SHADOW UX — Hero Stage (2 camadas: stage + card, vitrine cinema) */}
+      <div className="hero-stage-titanium mx-auto max-w-[900px] px-6 relative">
         {/* Frame hairline (filete quase invisível) */}
         <div
           className="hero-card-titanium absolute inset-0 pointer-events-none rounded-[24px]"
@@ -48,11 +49,12 @@ export default function HeroHome() {
           {/* INSANYCK STEP G-05.2 — Wordmark V2 "Platinum Neutral" (sem rosa, highlight hairline, sombra interna) */}
           {/* INSANYCK STEP G-05.3 — Wordmark V3 "Titanium Metal Shader" (bevel + specular + edge) */}
           {/* INSANYCK HOTFIX G-05.3.2 — Wordmark PNG (imagem /brand/insanyck.png) */}
+          {/* INSANYCK HOTFIX G-05.4 — Logo Stage (occlusion + halo, sem placa retangular) */}
           <h2
             id="hero-home"
             className="text-center select-none"
           >
-            <span className="relative inline-block mx-auto w-[min(820px,92vw)] sm:w-[min(900px,90vw)]">
+            <div className="hero-logo-stage inline-block mx-auto w-[min(820px,92vw)] sm:w-[min(900px,90vw)]">
               <Image
                 src="/brand/insanyck.png"
                 alt=""
@@ -60,9 +62,12 @@ export default function HeroHome() {
                 height={300}
                 priority={true}
                 sizes="(max-width: 640px) 92vw, 900px"
-                className="drop-shadow-[0_18px_40px_rgba(0,0,0,0.60)] w-full h-auto"
+                className="w-full h-auto relative z-10"
+                style={{
+                  filter: 'drop-shadow(0 12px 24px rgba(0, 0, 0, 0.70)) drop-shadow(0 30px 60px rgba(0, 0, 0, 0.55))'
+                }}
               />
-            </span>
+            </div>
             <span className="sr-only">INSANYCK</span>
           </h2>
 

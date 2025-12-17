@@ -92,16 +92,17 @@ export default function SearchBox() {
 
   return (
     <div className="relative">
+      {/* INSANYCK HOTFIX G-05.4 — Titanium hairline (.nav-pill-ti) */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center justify-center gap-1.5 h-11 w-11 sm:w-auto sm:px-3 text-ds-accentSoft hover:text-ds-accent transition-all duration-150 rounded-lg border border-ds-borderSubtle hover:border-ds-borderStrong hover:bg-ds-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]"
+        className="nav-pill-ti h-11 w-11 sm:w-auto sm:px-3"
         aria-expanded={open}
         aria-controls="search-dropdown"
         aria-label={t("search:open", "Buscar")}
       >
         <Search size={18} strokeWidth={1.5} aria-hidden="true" />
         <span className="hidden sm:inline">{t("search:open", "Buscar")}</span>
-        <span className="hidden sm:inline text-ds-accentSoft/40 text-xs">/</span>
+        <span className="hidden sm:inline text-[rgba(255,255,255,0.4)] text-xs">/</span>
       </button>
 
       {open && (
@@ -115,13 +116,14 @@ export default function SearchBox() {
           <label id="insanyck-search-label" className="sr-only">
             {t("search:label", "Buscar produtos")}
           </label>
+          {/* INSANYCK HOTFIX G-05.3.5 — Input com Cold Fusion Focus (CSS global assume) */}
           <input
             ref={inputRef}
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={onKeyDown}
             placeholder={t("search:placeholder", "Busque por produtos")}
-            className="w-full bg-transparent border border-white/15 rounded-lg px-3 py-2 outline-none text-white placeholder:text-white/40 focus:border-white/40 focus:ring-2 focus:ring-white/20 transition-all duration-150"
+            className="w-full bg-transparent border border-[rgba(255,255,255,0.08)] rounded-lg px-3 py-2 text-white placeholder:text-white/40 transition-all duration-150"
             autoComplete="off"
             aria-describedby="search-results"
           />
@@ -137,8 +139,8 @@ export default function SearchBox() {
                   href={`/produto/${s.slug}`}
                   role="option"
                   aria-selected={i === idx}
-                  className={`flex items-center gap-3 rounded-xl border border-white/10 p-2 hover:bg-white/8 hover:border-white/20 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-1 ${
-                    i === idx ? "ring-2 ring-white/30 bg-white/5" : ""
+                  className={`flex items-center gap-3 rounded-xl border border-white/8 p-2 hover:bg-white/6 hover:border-white/14 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)] focus-visible:ring-offset-1 ${
+                    i === idx ? "ring-2 ring-[color:var(--cold-ray-ring-soft)] bg-white/5" : ""
                   }`}
                   onClick={() => {
                     track("search", { q });

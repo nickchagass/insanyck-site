@@ -146,6 +146,7 @@ export default function Navbar() {
         {/* INSANYCK HOTFIX G-05.1.2 — Gap responsivo: gap-2 mobile, gap-4 sm, gap-6 md+ */}
         <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
           {/* Switcher idioma */}
+          {/* INSANYCK TITANIUM SHADOW UX — Navbar Pill Titanium Hairline 0.08 (quiet luxury) */}
           <div
             className="hidden sm:flex items-center gap-2 text-ds-accentSoft text-[12px] leading-none select-none"
             aria-label={t("nav:aria.language", "Idioma")}
@@ -153,8 +154,10 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => switchLocale("pt")}
-              className={`px-2 py-1 rounded-[6px] border border-ds-borderSubtle hover:border-ds-borderStrong hover:text-ds-accent hover:bg-ds-surface transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-1 ${
-                String(currentLocale).startsWith("pt") ? "text-ds-accent border-ds-borderStrong bg-ds-surface" : ""
+              className={`nav-pill-titanium px-2 py-1 rounded-[6px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-1 ${
+                String(currentLocale).startsWith("pt")
+                  ? "text-ds-accent"
+                  : "text-ds-accentSoft hover:text-ds-accent"
               }`}
               aria-pressed={String(currentLocale).startsWith("pt")}
             >
@@ -164,8 +167,10 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => switchLocale("en")}
-              className={`px-2 py-1 rounded-[6px] border border-ds-borderSubtle hover:border-ds-borderStrong hover:text-ds-accent hover:bg-ds-surface transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-1 ${
-                String(currentLocale).startsWith("en") ? "text-ds-accent border-ds-borderStrong bg-ds-surface" : ""
+              className={`nav-pill-titanium px-2 py-1 rounded-[6px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-1 ${
+                String(currentLocale).startsWith("en")
+                  ? "text-ds-accent"
+                  : "text-ds-accentSoft hover:text-ds-accent"
               }`}
               aria-pressed={String(currentLocale).startsWith("en")}
             >
@@ -236,6 +241,7 @@ export default function Navbar() {
 /* ======================= INSANYCK FASE G-04.2 — UserMenu com tokens DS ======================= */
 /* INSANYCK HOTFIX G-05.1.2 — UserMenu responsivo: ícone mobile, ícone+texto sm+ */
 /* INSANYCK HOTFIX G-05.1.4 — Keyboard-safe dropdown (focus-within) */
+/* INSANYCK TITANIUM SHADOW UX — Navbar Pill Titanium Hairline 0.08 (quiet luxury) */
 function UserMenu() {
   const { data: session, status } = useSession();
 
@@ -244,7 +250,7 @@ function UserMenu() {
       <Link
         href="/conta/login"
         prefetch={true}
-        className="flex items-center gap-1.5 text-ds-accentSoft hover:text-ds-accent transition-all duration-150 px-2 py-1 rounded-lg border border-ds-borderSubtle hover:border-ds-borderStrong hover:bg-ds-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]"
+        className="nav-pill-titanium flex items-center gap-1.5 text-ds-accentSoft hover:text-ds-accent px-2 py-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]"
         aria-label="Entrar"
       >
         <User size={18} strokeWidth={1.5} aria-hidden="true" />
@@ -257,7 +263,7 @@ function UserMenu() {
 
   return (
     <div className="relative group">
-      <button className="flex items-center gap-1.5 text-ds-accentSoft hover:text-ds-accent transition-all duration-150 px-2 py-1 rounded-lg border border-ds-borderSubtle hover:border-ds-borderStrong hover:bg-ds-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]">
+      <button className="nav-pill-titanium flex items-center gap-1.5 text-ds-accentSoft hover:text-ds-accent px-2 py-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]">
         <User size={18} strokeWidth={1.5} aria-hidden="true" />
         <span className="hidden sm:inline">{String(name).split(" ")[0]}</span>
       </button>

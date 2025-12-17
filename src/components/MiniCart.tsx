@@ -66,15 +66,16 @@ export default function MiniCart() {
     return null;
   }
 
+  // INSANYCK STEP G-05.4-B — Sacola "Cofre" (premium glassmorphism drawer)
   return (
     <Portal>
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Overlay */}
+            {/* Overlay — STEP G-05.4-B: dark backdrop + high blur */}
             <motion.div
               key="overlay"
-              className="fixed inset-0 bg-[color:var(--ds-surface-soft)] backdrop-blur-[2px] z-50"
+              className="minicart-overlay-cofre fixed inset-0 z-50"
               role="presentation"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -82,33 +83,34 @@ export default function MiniCart() {
               onClick={() => toggle(false)}
             />
 
-            {/* Drawer */}
+            {/* Drawer — STEP G-05.4-B: premium dark glass + titanium hairline */}
             <motion.div
               key="panel"
               ref={refPanel}
               role="dialog"
               aria-modal="true"
               aria-labelledby="minicart-title"
-              className="fixed top-0 right-0 h-full w-[380px] max-w-[calc(100vw-48px)] bg-ds-elevated border-l border-ds-borderSubtle shadow-ds-2 backdrop-blur-md z-50 text-ds-accent"
+              className="minicart-panel-cofre fixed top-0 right-0 h-full w-[380px] max-w-[calc(100vw-48px)] z-50"
               initial={{ x: 420 }}
               animate={{ x: 0 }}
               exit={{ x: 420 }}
               transition={{ type: "tween", duration: 0.25 }}
             >
-            {/* Cabeçalho + halo sutil */}
+            {/* Cabeçalho — STEP G-05.4-B: cold spotlight + hairline separator */}
             <div className="relative">
               <div
                 aria-hidden
                 className="pointer-events-none absolute inset-x-0 -top-6 h-16"
                 style={{
                   background:
-                    "radial-gradient(60% 100% at 50% 0%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.0) 70%)",
+                    "radial-gradient(60% 100% at 50% 0%, rgba(210,220,235,0.12) 0%, rgba(210,220,235,0.04) 30%, rgba(210,220,235,0.0) 70%)",
                 }}
               />
-              <div className="flex items-center justify-between px-5 py-4 border-b border-ds-borderSubtle">
+              <div className="flex items-center justify-between px-5 py-4 border-b minicart-hairline">
                 <h2
                   id="minicart-title"
-                  className="text-ds-accent text-lg font-semibold"
+                  className="text-lg font-semibold"
+                  style={{ color: "rgba(235, 242, 250, 0.92)" }}
                   tabIndex={-1}
                   data-autofocus
                 >
@@ -117,22 +119,29 @@ export default function MiniCart() {
                 <button
                   onClick={() => toggle(false)}
                   aria-label={t("cart:close", "Fechar")}
-                  className="rounded-md px-2 py-1 hover:bg-ds-surface"
+                  className="rounded-md px-2 py-1 transition-colors hover:bg-white/5"
+                  style={{ color: "rgba(255, 255, 255, 0.75)" }}
                 >
                   ✕
                 </button>
               </div>
             </div>
 
-            {/* Lista */}
+            {/* Lista — STEP G-05.4-B: items with premium contrast */}
             <div className="h-[calc(100%-188px)] overflow-auto px-5 py-3 space-y-3">
               {items.length === 0 ? (
-                <p className="text-ds-accentSoft py-10">{t("bag:empty", "Sua sacola está vazia.")}</p>
+                <p className="py-10" style={{ color: "rgba(255, 255, 255, 0.65)" }}>
+                  {t("bag:empty", "Sua sacola está vazia.")}
+                </p>
               ) : (
                 items.map((it) => (
                   <div
                     key={it.id}
-                    className="flex gap-3 items-center border border-ds-borderSubtle rounded-xl p-3 bg-ds-surface"
+                    className="flex gap-3 items-center rounded-xl p-3"
+                    style={{
+                      border: "1px solid rgba(255, 255, 255, 0.10)",
+                      background: "rgba(255, 255, 255, 0.04)",
+                    }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -143,11 +152,15 @@ export default function MiniCart() {
                       decoding="async"
                     />
                     <div className="flex-1 min-w-0">
-                      <div className="text-ds-accent font-medium truncate">{it.title}</div>
+                      <div className="font-medium truncate" style={{ color: "rgba(255, 255, 255, 0.92)" }}>
+                        {it.title}
+                      </div>
                       {it.options?.variant ? (
-                        <div className="text-ds-accentSoft text-xs mt-0.5">{it.options.variant}</div>
+                        <div className="text-xs mt-0.5" style={{ color: "rgba(255, 255, 255, 0.65)" }}>
+                          {it.options.variant}
+                        </div>
                       ) : null}
-                      <div className="text-ds-accentSoft text-sm mt-1">
+                      <div className="text-sm mt-1" style={{ color: "rgba(255, 255, 255, 0.75)" }}>
                         {formatPrice(it.priceCents, locale as any)}
                       </div>
                     </div>
@@ -155,15 +168,25 @@ export default function MiniCart() {
                       <button
                         aria-label={t("cart:qty", "Qtd") + " -"}
                         onClick={() => dec(it.id)}
-                        className="w-7 h-7 rounded-md border border-ds-borderSubtle hover:bg-ds-surface"
+                        className="w-7 h-7 rounded-md transition-colors"
+                        style={{
+                          border: "1px solid rgba(255, 255, 255, 0.10)",
+                          color: "rgba(255, 255, 255, 0.75)",
+                        }}
                       >
                         −
                       </button>
-                      <span className="w-6 text-center">{it.qty}</span>
+                      <span className="w-6 text-center" style={{ color: "rgba(255, 255, 255, 0.92)" }}>
+                        {it.qty}
+                      </span>
                       <button
                         aria-label={t("cart:qty", "Qtd") + " +"}
                         onClick={() => inc(it.id)}
-                        className="w-7 h-7 rounded-md border border-ds-borderSubtle hover:bg-ds-surface"
+                        className="w-7 h-7 rounded-md transition-colors"
+                        style={{
+                          border: "1px solid rgba(255, 255, 255, 0.10)",
+                          color: "rgba(255, 255, 255, 0.75)",
+                        }}
                       >
                         +
                       </button>
@@ -171,7 +194,8 @@ export default function MiniCart() {
                     <button
                       aria-label={t("cart:remove", "Remover")}
                       onClick={() => removeItem(it.id)}
-                      className="ml-2 text-ds-accentSoft hover:text-ds-accent"
+                      className="ml-2 transition-colors"
+                      style={{ color: "rgba(255, 255, 255, 0.65)" }}
                       title={t("cart:remove", "Remover")}
                     >
                       ✕
@@ -181,24 +205,37 @@ export default function MiniCart() {
               )}
             </div>
 
-            {/* Footer */}
-            <div className="absolute bottom-0 left-0 right-0 border-t border-ds-borderSubtle p-5 bg-ds-surface">
-              <div className="flex items-center justify-between text-ds-accentSoft">
-                <span>{t("bag:subtotal", "Subtotal")}</span>
-                <strong className="text-ds-accent">{formatPrice(subtotalCents, locale as any)}</strong>
+            {/* Footer — STEP G-05.4-B: hairline + jewel CTA */}
+            <div
+              className="absolute bottom-0 left-0 right-0 border-t minicart-hairline p-5"
+              style={{
+                background: "linear-gradient(180deg, rgba(20, 22, 26, 0.95) 0%, rgba(12, 14, 18, 0.98) 100%)",
+              }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <span style={{ color: "rgba(255, 255, 255, 0.65)" }}>{t("bag:subtotal", "Subtotal")}</span>
+                <strong style={{ color: "rgba(235, 242, 250, 0.92)" }}>
+                  {formatPrice(subtotalCents, locale as any)}
+                </strong>
               </div>
-              <div className="mt-4 flex gap-3">
-                {/* CTA — fecha o drawer usando o MESMO store */}
+              <div className="flex gap-3">
+                {/* STEP G-05.4-B: Jewel button (checkout CTA) */}
                 <Link
                   href="/checkout"
-                  className="flex-1 text-center rounded-xl px-4 py-3 font-semibold border border-ds-borderSubtle text-ds-accent hover:bg-ds-elevated"
+                  className="btn-jewel flex-1 text-center"
                   onClick={() => toggle(false)}
                 >
                   {t("bag:checkoutCta", "Ir para checkout")}
                 </Link>
+                {/* STEP G-05.4-B: Ghost button (view bag) */}
                 <Link
                   href="/sacola"
-                  className="rounded-xl px-4 py-3 font-semibold bg-ds-accent text-black hover:brightness-95"
+                  className="rounded-xl px-4 py-3 font-semibold transition-all"
+                  style={{
+                    border: "1px solid rgba(255, 255, 255, 0.10)",
+                    background: "rgba(255, 255, 255, 0.04)",
+                    color: "rgba(235, 242, 250, 0.82)",
+                  }}
                   onClick={() => toggle(false)}
                 >
                   {t("bag:viewBag", "Ver sacola")}
