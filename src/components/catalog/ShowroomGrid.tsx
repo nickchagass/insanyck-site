@@ -67,8 +67,8 @@ export default function ShowroomGrid({
   };
 
   const getGridClass = () => {
-    // INSANYCK STEP G-05.X — Vertical Luxury mobile: more breathing room (gap-4 mobile, gap-6 desktop)
-    return "grid gap-4 md:gap-6 auto-rows-fr " +
+    // INSANYCK STEP G-11 HYBRID — Museum breathing gallery: generous gaps for vitrines + reflections
+    return "grid gap-6 md:gap-8 lg:gap-10 auto-rows-fr " +
            "grid-cols-2 " + // Mobile: 2 cols (Vertical Luxury)
            "md:grid-cols-3 " + // Tablet: 3 cols
            "xl:grid-cols-4"; // Desktop: 4 cols (Showroom Enterprise)
