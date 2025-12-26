@@ -1411,19 +1411,18 @@ body::after {
   box-shadow: 0 18px 55px rgba(0, 0, 0, 0.55);
 }
 
-/* PRIMARY — Titanium Lightframe (cinema/enterprise) */
+/* INSANYCK STEP G-10 — PRIMARY Platinum Clean (sem scanlines/azul) */
 .hero-cta-primary {
   color: var(--hero-cta-text);
   border: 1px solid rgba(255, 255, 255, 0.10);  /* hairline base */
 
-  /* Base material: radial highlight frio + bevel gradient + brushed texture + graphite */
+  /* STEP G-10: Base neutra stealth (sem scanlines, sem azul) */
   background:
-    radial-gradient(130% 150% at 30% 15%, rgba(230, 238, 245, 0.12) 0%, rgba(255, 255, 255, 0.00) 58%),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.018) 0 1px, rgba(0, 0, 0, 0) 1px 4px),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.04) 40%, rgba(0, 0, 0, 0.28) 100%),
-    linear-gradient(180deg, rgba(30, 35, 45, 0.72) 0%, rgba(18, 20, 26, 0.92) 100%);
+    radial-gradient(130% 150% at 30% 15%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.00) 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.03) 40%, rgba(0, 0, 0, 0.20) 100%),
+    rgba(255, 255, 255, 0.02);
 
-  /* Lightframe: bevel interno + edge glow externo duplo (curto + longo) */
+  /* STEP G-10: Shadows neutras (branco puro, sem azul) */
   box-shadow:
     /* Inset top highlight (bevel) */
     0 1px 0 rgba(255, 255, 255, 0.22) inset,
@@ -1431,10 +1430,8 @@ body::after {
     0 0 0 1px rgba(255, 255, 255, 0.05) inset,
     /* Inset bottom shadow (profundidade) */
     inset 0 -18px 28px rgba(0, 0, 0, 0.42),
-    /* Edge glow curto (light frame) */
-    0 0 4px rgba(210, 220, 235, 0.08),
-    /* Edge glow longo (aura) */
-    0 0 16px rgba(210, 220, 235, 0.06),
+    /* Edge glow neutro (branco puro) */
+    0 0 8px rgba(255, 255, 255, 0.04),
     /* Depth shadow */
     0 24px 72px rgba(0, 0, 0, 0.62);
 
@@ -1473,12 +1470,12 @@ body::after {
     border-color: rgba(255, 255, 255, 0.14);
     transform: translateY(-1px);
 
+    /* STEP G-10: Edge glow neutro (branco puro, sem azul) */
     box-shadow:
       0 1px 0 rgba(255, 255, 255, 0.26) inset,
       0 0 0 1px rgba(255, 255, 255, 0.06) inset,
       inset 0 -20px 30px rgba(0, 0, 0, 0.44),
-      0 0 6px rgba(210, 220, 235, 0.12),
-      0 0 20px rgba(210, 220, 235, 0.08),
+      0 0 10px rgba(255, 255, 255, 0.05),
       0 28px 80px rgba(0, 0, 0, 0.64);
   }
 
@@ -1489,12 +1486,12 @@ body::after {
 
 .hero-cta-primary:active {
   transform: translateY(1px);
+  /* STEP G-10: Active neutro (branco puro) */
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.20) inset,
     0 0 0 1px rgba(255, 255, 255, 0.04) inset,
     inset 0 -20px 36px rgba(0, 0, 0, 0.58),
-    0 0 3px rgba(210, 220, 235, 0.06),
-    0 0 12px rgba(210, 220, 235, 0.04),
+    0 0 6px rgba(255, 255, 255, 0.03),
     0 16px 50px rgba(0, 0, 0, 0.60);
 }
 
@@ -1555,28 +1552,26 @@ body::after {
 }
 
 /* =========================================================
-   INSANYCK HOTFIX G-05.3.4 — DsButton "Titanium Plate"
-   Joia premium: camadas de metal + borda glow + inner highlight
-   (sem neon, frio, peso cinematográfico)
+   INSANYCK STEP G-10 — DsButton "Platinum Clean"
+   Joia premium LIMPA: sem scanlines, sem azul, base neutra
    ========================================================= */
 .ds-btn--titanium {
-  /* Graphite liquid metal base + cold highlight + micro texture */
+  /* STEP G-10: Base neutra stealth (sem scanlines, sem azul) */
   background:
-    radial-gradient(120% 140% at 28% 12%, rgba(230, 238, 245, 0.14) 0%, rgba(255, 255, 255, 0.00) 58%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.04) 42%, rgba(0, 0, 0, 0.18) 100%),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.020) 0 1px, rgba(0, 0, 0, 0) 1px 5px),
-    linear-gradient(180deg, rgba(35, 40, 50, 0.68) 0%, rgba(20, 25, 32, 0.88) 100%);
+    radial-gradient(120% 140% at 28% 12%, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.00) 58%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.03) 42%, rgba(0, 0, 0, 0.18) 100%),
+    rgba(255, 255, 255, 0.02);
 
-  /* Hairline platinum (alpha baixo, como na referência) */
+  /* Hairline platinum */
   border: 1px solid rgba(255, 255, 255, 0.11) !important;
 
-  /* Triple shadow: (1) inset highlight (2) edge glow frio (3) depth/weight */
+  /* STEP G-10: Shadows neutras (branco puro, sem azul) */
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.18) inset,
     0 0 0 1px rgba(255, 255, 255, 0.045) inset,
     inset 0 -14px 24px rgba(0, 0, 0, 0.38),
     0 20px 65px rgba(0, 0, 0, 0.58),
-    0 0 16px rgba(210, 220, 235, 0.08) !important;
+    0 0 12px rgba(255, 255, 255, 0.04) !important;
 
   /* Text: cold silver (não branco puro) */
   color: rgba(235, 242, 250, 0.94) !important;
@@ -1591,7 +1586,7 @@ body::after {
   backdrop-filter: blur(12px);
 }
 
-/* Hover: micro highlight increase + borda mais nítida */
+/* STEP G-10: Hover neutro (sem scanlines/azul) */
 @media (hover: hover) {
   .ds-btn--titanium:hover:not(:disabled) {
     border-color: rgba(255, 255, 255, 0.16) !important;
@@ -1600,23 +1595,22 @@ body::after {
       0 0 0 1px rgba(255, 255, 255, 0.06) inset,
       inset 0 -16px 26px rgba(0, 0, 0, 0.40),
       0 24px 75px rgba(0, 0, 0, 0.60),
-      0 0 20px rgba(210, 220, 235, 0.12) !important;
+      0 0 14px rgba(255, 255, 255, 0.05) !important;
     background:
-      radial-gradient(120% 140% at 28% 12%, rgba(235, 245, 255, 0.18) 0%, rgba(255, 255, 255, 0.00) 58%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.05) 42%, rgba(0, 0, 0, 0.20) 100%),
-      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.024) 0 1px, rgba(0, 0, 0, 0) 1px 5px),
-      linear-gradient(180deg, rgba(38, 43, 53, 0.70) 0%, rgba(22, 27, 34, 0.90) 100%);
+      radial-gradient(120% 140% at 28% 12%, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.00) 58%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 42%, rgba(0, 0, 0, 0.20) 100%),
+      rgba(255, 255, 255, 0.03);
   }
 }
 
-/* Active: settle (sem bounce, peso) */
+/* STEP G-10: Active neutro (sem azul) */
 .ds-btn--titanium:active:not(:disabled) {
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.18) inset,
     0 0 0 1px rgba(255, 255, 255, 0.045) inset,
     inset 0 -16px 30px rgba(0, 0, 0, 0.50),
     0 12px 40px rgba(0, 0, 0, 0.55),
-    0 0 14px rgba(210, 220, 235, 0.08) !important;
+    0 0 10px rgba(255, 255, 255, 0.04) !important;
 }
 
 /* Prefers-reduced-motion: neutralizar transições */

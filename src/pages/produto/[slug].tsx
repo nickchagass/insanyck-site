@@ -83,8 +83,8 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
         <title>{product.title} • INSANYCK</title>
       </Head>
 
-      {/* INSANYCK STEP G-08 — Breathing room + spacing premium (pt-32 garantido) */}
-      <main className="insanyck-section mx-auto max-w-[1360px] px-4 lg:px-6 pt-32 lg:pt-36">
+      {/* INSANYCK STEP G-10 — Desktop breathing room absoluto (160px) */}
+      <main className="insanyck-section mx-auto max-w-[1360px] px-4 lg:px-6 pt-32 lg:pt-40">
         <div className="grid grid-cols-12 gap-6">
           {/* Stage */}
           <section className="col-span-12 lg:col-span-7">
@@ -96,9 +96,9 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
           </section>
 
           {/* Painel */}
-          {/* INSANYCK STEP G-08 — Platinum Glass + Sticky safe offset (top-32) */}
+          {/* INSANYCK STEP G-10 — Platinum Glass + Desktop sticky top-40 (160px safe) */}
           <aside className="col-span-12 lg:col-span-5">
-            <DsGlass tone="dense" padding="p-6 lg:p-8" className="sticky top-32 space-y-5">
+            <DsGlass tone="dense" padding="p-6 lg:p-8" className="sticky top-32 lg:top-40 space-y-5">
               <h1 className="text-display-xl">{product.title}</h1>
 
               {product.description && (
