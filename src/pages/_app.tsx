@@ -24,6 +24,9 @@ const MiniCart = dynamic(() => import("@/components/MiniCart"), { ssr: false });
 // INSANYCK FASE G-03.1 UX-10 — Toast Provider de Luxo
 import { InsanyckToastProvider } from "@/components/InsanyckToastProvider";
 
+// INSANYCK ANALYTICS — Google Analytics 4
+import { GoogleAnalytics } from '@next/third-parties/google';
+
 // INSANYCK STEP 4 · Lote 4 — LayoutShell with PWA update functionality
 // INSANYCK TITANIUM SHADOW UX — App Background Global (exceto /checkout e /conta/pagamento)
 function LayoutShell({ children }: { children: React.ReactNode }) {
@@ -66,11 +69,14 @@ function MyApp({
   }
 
   return (
-    <SessionProvider session={session}>
-      <LayoutShell>
-        <Component {...pageProps} />
-      </LayoutShell>
-    </SessionProvider>
+    <>
+      <GoogleAnalytics gaId="G-8K0XCE43BY" />
+      <SessionProvider session={session}>
+        <LayoutShell>
+          <Component {...pageProps} />
+        </LayoutShell>
+      </SessionProvider>
+    </>
   );
 }
 

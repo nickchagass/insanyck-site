@@ -44,7 +44,8 @@ export default function HomePage() {
       >
         Pular para conteúdo
       </a>
-      <main id="conteudo" className="pt-24">
+      {/* INSANYCK STEP G-05.HERO_PUREBLACK — pt-0 na Home (Hero pixel 0, sem aba preta) */}
+      <main id="conteudo" className="pt-0">
         {/* INSANYCK STEP 4 · Lote 3 — H1 sr-only para hierarquia A11y */}
         <h1 className="sr-only">{t('hero.title', 'INSANYCK — Essential luxury in motion')}</h1>
         <HeroHome />

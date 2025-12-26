@@ -68,6 +68,48 @@
     "logo": "Logo INSANYCK",
     "menu": "Menu principal",
     "cart": "Carrinho de compras"
+  },
+  "manifestoPage": {
+    "seoTitle": "Manifesto — INSANYCK",
+    "title": "MANIFESTO",
+    "subtitle": "Engenharia de Identidade. Luxo Negro. Zero concessões.",
+    "intro": {
+      "p1": "INSANYCK é luxo negro em estado sólido — presença construída como peça de engenharia.",
+      "p2": "Matéria-prima de alto calibre. Arquitetura de caimento. Acabamento implacável. Nada aqui é improviso.",
+      "p3": "Operamos no limite: poucas unidades, rastreabilidade obsessiva e extinção programada. Sem retorno."
+    },
+    "moment": {
+      "kicker": "MOMENTO",
+      "quote": "NÃO É MODA. É ARQUITETURA.",
+      "subquote": "Luxo não é barulho. É controle."
+    },
+    "pillars": [
+      {
+        "title": "Matéria-prima de alto calibre",
+        "desc": "Seleção por toque, densidade e resposta. O material não acompanha — ele estrutura."
+      },
+      {
+        "title": "Arquitetura de caimento",
+        "desc": "Proporções calculadas para domínio. Presença sem esforço, postura sem ruído."
+      },
+      {
+        "title": "Acabamento implacável",
+        "desc": "Costuras, bordas e superfície tratados como joia. O detalhe não pede desculpa."
+      },
+      {
+        "title": "Rastreabilidade obsessiva",
+        "desc": "Processo auditável. Origem clara, padrão claro. Sem ruído, sem promessa vazia."
+      },
+      {
+        "title": "Extinção programada",
+        "desc": "Drops com limite real. Sem reposição pública. Quando some, é definitivo."
+      }
+    ],
+    "cta": {
+      "title": "Você não compra roupa. Você assume uma posição.",
+      "ctaPrimary": "Entrar na loja",
+      "ctaSecondary": "Voltar para o início"
+    }
   }
 }
   

@@ -100,13 +100,14 @@ export default function ProductCard({
   };
 
   // Reduced motion override
-  const cardStyle = typeof window !== 'undefined' && 
+  const cardStyle = typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
     ? { transform: 'none', transition: 'none' }
     : tiltStyle;
 
+  // INSANYCK STEP G-05.X — Vertical Luxury: mobile tall (4/5), desktop standard (3/4)
   const aspectRatio = variant === "wide" ? "2/1" : "3/4";
-  
+
   return (
     <article
       ref={cardRef}
@@ -119,9 +120,13 @@ export default function ProductCard({
     >
       {/* Micro-elevation shadow on hover */}
       <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--ds-surface-soft)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none" />
-      
-      {/* Image container */}
-      <div className={`relative overflow-hidden rounded-t-[18px] ${variant === "wide" ? "aspect-[2/1]" : "aspect-[3/4]"}`}>
+
+      {/* Image container — INSANYCK STEP G-05.X: mobile tall (4/5), desktop standard (3/4) */}
+      <div className={`relative overflow-hidden rounded-t-[18px] ${
+        variant === "wide"
+          ? "aspect-[2/1]"
+          : "aspect-[4/5] md:aspect-[3/4]"
+      }`}>
         <Link
           href={`/produto/${product.slug}`}
           className="block h-full group/link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-t-[18px]"
@@ -161,14 +166,14 @@ export default function ProductCard({
 
       </div>
 
-      {/* Content section */}
-      <div className="p-4 flex flex-col h-full">
-        <div className="flex-1">
-          <h3 className="font-semibold text-ds-accent mb-1 line-clamp-2">
+      {/* Content section — INSANYCK STEP G-05.X: better mobile spacing for Vertical Luxury */}
+      <div className="p-4 md:p-5 flex flex-col h-full">
+        <div className="flex-1 space-y-2">
+          <h3 className="font-semibold text-ds-accent line-clamp-2 leading-snug">
             {product.title}
           </h3>
 
-          <div className="text-ds-accentSoft font-medium">
+          <div className="text-ds-accentSoft font-medium text-sm md:text-base">
             {product.price}
           </div>
         </div>

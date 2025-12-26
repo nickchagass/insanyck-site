@@ -3,6 +3,7 @@ import "../src/styles/globals.css"; // 🔹 aplica Tailwind v4 + tokens no App R
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { GoogleAnalytics } from '@next/third-parties/google';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
       </body>
+      <GoogleAnalytics gaId="G-8K0XCE43BY" />
     </html>
   );
 }

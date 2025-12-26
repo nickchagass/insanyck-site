@@ -67,11 +67,11 @@ export default function ShowroomGrid({
   };
 
   const getGridClass = () => {
-    // STEP G-05.4-B: Premium spacing with consistent gaps
-    return "grid gap-6 auto-rows-fr " +
-           "grid-cols-2 " + // Mobile: 2 cols
+    // INSANYCK STEP G-05.X — Vertical Luxury mobile: more breathing room (gap-4 mobile, gap-6 desktop)
+    return "grid gap-4 md:gap-6 auto-rows-fr " +
+           "grid-cols-2 " + // Mobile: 2 cols (Vertical Luxury)
            "md:grid-cols-3 " + // Tablet: 3 cols
-           "xl:grid-cols-4"; // Desktop: 4 cols
+           "xl:grid-cols-4"; // Desktop: 4 cols (Showroom Enterprise)
   };
 
   if (!products.length && !loading) {

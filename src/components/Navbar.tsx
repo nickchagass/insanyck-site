@@ -1,6 +1,7 @@
 // INSANYCK STEP 9 — Navbar com favoritos + hideCart (FIX hooks)
 // INSANYCK STEP G-04.2.1 — Navbar Imaculada (sem cores literais)
 // INSANYCK HOTFIX G-05.1.4 — Touch comfort (44px hit areas) + Keyboard-safe UserMenu
+// INSANYCK STEP G-05.HERO_MINIMAL — Navbar transparente na Home (glass apenas com scroll)
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -33,6 +34,32 @@ export default function Navbar() {
   const { pathname } = useRouter();
   const hideCart =
     pathname.startsWith("/checkout") || pathname.startsWith("/conta/pagamento");
+
+  // INSANYCK TITANIUM SHADOW FIX — Detectar Home + scroll para glass/blur progressivo
+  const isHome = pathname === "/";
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    if (!isHome) return;
+
+    // Force scroll to top and prevent scroll restoration
+    if (typeof window !== 'undefined') {
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+      });
+    }
+
+    const handleScroll = () => {
+      const y = window.scrollY;
+      setHasScrolled(y > 8 && y > 1);
+    };
+
+    // Chama imediatamente para definir estado inicial
+    handleScroll();
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isHome]);
 
   // Idioma
   function switchLocale(nextLocale: "pt" | "en") {
@@ -82,24 +109,36 @@ export default function Navbar() {
   const wishlistCount = mounted ? wishlistLen : 0;
   // -----------------------------------------
 
-  // INSANYCK STEP G-05.1 — Floating Island Pill Navbar
-  // INSANYCK HOTFIX G-05.1.2 — Mobile 360px fit: paddings responsivos
+  // INSANYCK TITANIUM SHADOW FIX — Navbar glass/blur progressivo com scroll
+  // INSANYCK STEP G-05.FINAL — Navbar TOTALMENTE transparente (zero barra preta) na Home scroll=0
   return (
     <header
-      className="fixed inset-x-0 top-4 z-50 flex justify-center px-3 sm:px-6"
+      className={`fixed inset-x-0 ${isHome ? 'top-0' : 'top-4'} z-50 flex justify-center px-3 sm:px-6`}
       role="navigation"
       aria-label={t("nav:aria.mainNav", "Principal")}
+      style={{ ["--ins-nav-h" as any]: "88px" }}
     >
-      <nav className="
-        max-w-[1180px] w-full
-        backdrop-blur-[16px]
-        bg-[color:var(--ds-surface)]
-        border border-[color:var(--ds-border-subtle)]
-        rounded-[20px]
-        shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_8px_30px_rgba(0,0,0,0.4)]
-        px-3 sm:px-6 py-3
+      <nav
+        className={`
+        max-w-[1180px] w-full h-[88px]
+        px-3 sm:px-6
         flex items-center justify-between
-      ">
+        transition-[background-color,border-color,box-shadow,backdrop-filter] duration-300 ease-out
+        ${isHome && !hasScrolled
+          ? 'bg-transparent !border-0 !shadow-none'
+          : isHome && hasScrolled
+          ? 'backdrop-blur-[14px] bg-black/8 border-white/8 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_8px_24px_rgba(0,0,0,0.32)] border rounded-[20px]'
+          : 'backdrop-blur-[14px] bg-[color:var(--ds-surface)] border-[color:var(--ds-border-subtle)] shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,0_8px_30px_rgba(0,0,0,0.4)] border rounded-[20px]'
+        }
+      `}
+        style={isHome && !hasScrolled ? {
+          background: 'transparent !important',
+          backdropFilter: 'none !important',
+          WebkitBackdropFilter: 'none !important',
+          border: 'none !important',
+          boxShadow: 'none !important'
+        } : undefined}
+      >
         {/* Logo */}
         <Link
           href="/"
@@ -108,19 +147,23 @@ export default function Navbar() {
         >
           <span
             className="text-[20px] font-medium text-ds-accent tracking-[0.15em] select-none"
-            style={{ textTransform: "uppercase" }}
+            style={isHome
+              ? { textTransform: "uppercase", textShadow: '0 2px 8px rgba(0,0,0,0.80), 0 4px 16px rgba(0,0,0,0.60)' }
+              : { textTransform: "uppercase" }
+            }
           >
             INSANYCK
           </span>
         </Link>
 
-        {/* INSANYCK STEP G-05.1 — Links centrais com underline hairline sutil no hover */}
+        {/* INSANYCK VISUAL FIDELITY FIX — Links com text-shadow na Home (legibilidade sem pill) */}
         <div className="hidden md:flex items-center gap-10 text-[15px] text-[color:var(--ds-accent-soft)]">
           <Link
             href="/novidades"
             prefetch={true}
             className="relative hover:text-[color:var(--ds-accent)] hover:opacity-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-md px-2 py-1.5
               after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[1px] after:bg-[color:var(--ds-border-subtle)] after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-150"
+            style={isHome ? { textShadow: '0 2px 8px rgba(0,0,0,0.80), 0 4px 16px rgba(0,0,0,0.60)' } : undefined}
           >
             {t("nav:links.novidades", "Novidades")}
           </Link>
@@ -129,6 +172,7 @@ export default function Navbar() {
             prefetch={true}
             className="relative hover:text-[color:var(--ds-accent)] hover:opacity-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-md px-2 py-1.5
               after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[1px] after:bg-[color:var(--ds-border-subtle)] after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-150"
+            style={isHome ? { textShadow: '0 2px 8px rgba(0,0,0,0.80), 0 4px 16px rgba(0,0,0,0.60)' } : undefined}
           >
             {t("nav:links.loja", "Loja")}
           </Link>
@@ -137,6 +181,7 @@ export default function Navbar() {
             prefetch={true}
             className="relative hover:text-[color:var(--ds-accent)] hover:opacity-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-md px-2 py-1.5
               after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[1px] after:bg-[color:var(--ds-border-subtle)] after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-150"
+            style={isHome ? { textShadow: '0 2px 8px rgba(0,0,0,0.80), 0 4px 16px rgba(0,0,0,0.60)' } : undefined}
           >
             {t("nav:links.colecao", "Coleção")}
           </Link>
@@ -146,10 +191,11 @@ export default function Navbar() {
         {/* INSANYCK HOTFIX G-05.1.2 — Gap responsivo: gap-2 mobile, gap-4 sm, gap-6 md+ */}
         <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
           {/* Switcher idioma */}
-          {/* INSANYCK TITANIUM SHADOW UX — Navbar Pill Titanium Hairline 0.08 (quiet luxury) */}
+          {/* INSANYCK VISUAL FIDELITY FIX — Drop-shadow na Home */}
           <div
             className="hidden sm:flex items-center gap-2 text-ds-accentSoft text-[12px] leading-none select-none"
             aria-label={t("nav:aria.language", "Idioma")}
+            style={isHome ? { filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.75))' } : undefined}
           >
             <button
               type="button"
@@ -179,19 +225,22 @@ export default function Navbar() {
           </div>
 
           {/* Mantidos do seu projeto */}
-          <SearchBox />
-          <UserMenu />
+          <div style={isHome ? { filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.75))' } : undefined}>
+            <SearchBox />
+          </div>
+          <UserMenu isHome={isHome} />
 
           {/* INSANYCK HOTFIX G-05.1.2 — Removido link /buscar redundante (SearchBox já fornece busca) */}
 
           {/* Favoritos (com contador) — oculta em checkout/pagamento */}
-          {/* INSANYCK HOTFIX G-05.1.4 — Hit area 44px (Apple comfort) */}
+          {/* INSANYCK VISUAL FIDELITY FIX — Drop-shadow nos ícones na Home (legibilidade) */}
           {!hideCart && (
             <Link
               href="/favoritos"
               prefetch={true}
               aria-label="Favoritos"
               className="relative flex items-center justify-center h-11 w-11 text-ds-accentSoft hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-xl"
+              style={isHome ? { filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.75))' } : undefined}
             >
               <span className="sr-only">Favoritos</span>
               <Heart size={20} strokeWidth={1.5} aria-hidden="true" focusable="false" />
@@ -210,6 +259,7 @@ export default function Navbar() {
               onClick={() => toggleCart(true)}
               aria-label={t("nav:aria.cart", "Carrinho")}
               className="relative flex items-center justify-center h-11 w-11 text-ds-accentSoft hover:text-ds-accent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-xl"
+              style={isHome ? { filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.75))' } : undefined}
               // INSANYCK FASE G-03.1 — Micro-animação ao adicionar item
               animate={animateCart ? {
                 scale: [1, 1.15, 1],
@@ -241,8 +291,8 @@ export default function Navbar() {
 /* ======================= INSANYCK FASE G-04.2 — UserMenu com tokens DS ======================= */
 /* INSANYCK HOTFIX G-05.1.2 — UserMenu responsivo: ícone mobile, ícone+texto sm+ */
 /* INSANYCK HOTFIX G-05.1.4 — Keyboard-safe dropdown (focus-within) */
-/* INSANYCK TITANIUM SHADOW UX — Navbar Pill Titanium Hairline 0.08 (quiet luxury) */
-function UserMenu() {
+/* INSANYCK VISUAL FIDELITY FIX — Drop-shadow na Home */
+function UserMenu({ isHome }: { isHome: boolean }) {
   const { data: session, status } = useSession();
 
   if (status !== "authenticated") {
@@ -252,6 +302,7 @@ function UserMenu() {
         prefetch={true}
         className="nav-pill-titanium flex items-center gap-1.5 text-ds-accentSoft hover:text-ds-accent px-2 py-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]"
         aria-label="Entrar"
+        style={isHome ? { filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.75))' } : undefined}
       >
         <User size={18} strokeWidth={1.5} aria-hidden="true" />
         <span className="hidden sm:inline">Entrar</span>
@@ -262,7 +313,7 @@ function UserMenu() {
   const name = session?.user?.name ?? session?.user?.email ?? "Conta";
 
   return (
-    <div className="relative group">
+    <div className="relative group" style={isHome ? { filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.75))' } : undefined}>
       <button className="nav-pill-titanium flex items-center gap-1.5 text-ds-accentSoft hover:text-ds-accent px-2 py-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]">
         <User size={18} strokeWidth={1.5} aria-hidden="true" />
         <span className="hidden sm:inline">{String(name).split(" ")[0]}</span>

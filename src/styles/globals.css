@@ -1241,6 +1241,16 @@ body::after {
   mix-blend-mode: overlay;
 }
 
+/* INSANYCK STEP G-05.Y2 — HERO HYBRID MODE: desativar atmosfera antiga quando imagem real presente */
+.hero-titanium.hero-hybrid::before {
+  opacity: 0 !important;
+  content: none;
+}
+
+.hero-titanium.hero-hybrid::after {
+  opacity: 0.03 !important; /* grain mínimo, só textura */
+}
+
 /* =========================================================
    INSANYCK STEP G-05.3 — Wordmark "Titanium Metal Shader"
    Multi-layer gradients + specular + edge + brushed texture
@@ -1303,6 +1313,14 @@ body::after {
     inset 0 -18px 40px rgba(0, 0, 0, 0.35),
     0 30px 90px rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(18px);
+}
+
+/* INSANYCK STEP G-05.Y2 — HERO HYBRID MODE: neutralizar glass card gigante */
+.hero-hybrid .hero-card-titanium {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
 }
 
 /* =========================================================
@@ -1765,10 +1783,84 @@ body::after {
   backdrop-filter: blur(12px);
 }
 
+/* INSANYCK STEP G-05.Y2 — HERO HYBRID MODE: desativar placa de fundo gigante */
+.hero-hybrid .hero-stage-titanium::before {
+  opacity: 0 !important;
+  content: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-stage-titanium::before {
     opacity: 0.5;
   }
+}
+
+/* =========================================================
+   INSANYCK STEP G-05.Y — HERO HYBRID: Wordmark Reflection (piso molhado)
+   Reflexo com scaleY(-1) + gradient mask + reduced-motion safe
+   ========================================================= */
+.hero-wordmark-reflection {
+  /* Defaults já estão inline no componente, só controla reduced-motion aqui */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-wordmark-reflection {
+    opacity: 0 !important;
+    display: none;
+  }
+}
+
+/* =========================================================
+   INSANYCK STEP G-05.Y6 — HERO "Titanium Vault" FULL BLEED (REWRITE TOTAL)
+   Zero barra preta + Navbar overlay + chrome bright + wet floor + sheen visível
+   ========================================================= */
+
+/* Cinematic Overlay LIGHT: spotlights + floor haze LEVE (chão/fumaça MUITO visível, SEM blackout) */
+.hero-vault-overlay-light {
+  background-image:
+    /* Top spotlight center (frio, luz principal suave) */
+    radial-gradient(ellipse 60% 40% at 50% 18%, rgba(210, 220, 235, 0.10) 0%, rgba(0,0,0,0) 70%),
+    /* Top spotlights laterais (cones teatro suaves) */
+    radial-gradient(ellipse 35% 45% at 25% 10%, rgba(210, 220, 235, 0.05) 0%, rgba(0,0,0,0) 60%),
+    radial-gradient(ellipse 35% 45% at 75% 10%, rgba(210, 220, 235, 0.05) 0%, rgba(0,0,0,0) 60%),
+    /* Side spotlights (teatro lateral mínimo) */
+    radial-gradient(ellipse 40% 68% at 5% 45%, rgba(255, 255, 255, 0.03) 0%, rgba(0,0,0,0) 62%),
+    radial-gradient(ellipse 40% 68% at 95% 45%, rgba(255, 255, 255, 0.03) 0%, rgba(0,0,0,0) 62%),
+    /* Floor haze (fumaça rodapé, chão molhado BEM visível) */
+    radial-gradient(ellipse 88% 40% at 50% 100%, rgba(255, 255, 255, 0.04) 0%, rgba(0,0,0,0) 68%),
+    /* Vignette MÍNIMA (bordas escuras, centro 100% preservado) */
+    radial-gradient(ellipse 90% 82% at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.16) 70%, rgba(0,0,0,0.22) 100%),
+    /* Bottom fog MUITO LEVE (gradient atmosférico mínimo) */
+    linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.08) 70%, rgba(0,0,0,0.18) 100%);
+}
+
+/* Legacy overlay (mantido para retrocompat, mas não usado no Y6) */
+.hero-vault-overlay {
+  background-image:
+    radial-gradient(ellipse 58% 38% at 50% 16%, rgba(210, 220, 235, 0.14) 0%, rgba(0,0,0,0) 68%),
+    radial-gradient(ellipse 32% 42% at 28% 8%, rgba(210, 220, 235, 0.07) 0%, rgba(0,0,0,0) 58%),
+    radial-gradient(ellipse 32% 42% at 72% 8%, rgba(210, 220, 235, 0.07) 0%, rgba(0,0,0,0) 58%),
+    radial-gradient(ellipse 38% 65% at 8% 42%, rgba(255, 255, 255, 0.05) 0%, rgba(0,0,0,0) 60%),
+    radial-gradient(ellipse 38% 65% at 92% 42%, rgba(255, 255, 255, 0.05) 0%, rgba(0,0,0,0) 60%),
+    radial-gradient(ellipse 85% 38% at 50% 100%, rgba(255, 255, 255, 0.06) 0%, rgba(0,0,0,0) 65%),
+    radial-gradient(ellipse 88% 78% at 50% 48%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.22) 65%, rgba(0,0,0,0.28) 100%),
+    linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.12) 65%, rgba(0,0,0,0.22) 100%);
+}
+
+/* INSANYCK VISUAL FIDELITY FIX — Wordmark Chrome: apenas glow sem sombra de baixo */
+.hero-wordmark-chrome {
+  filter:
+    drop-shadow(0 0 45px rgba(220, 230, 240, 0.50))
+    drop-shadow(0 0 70px rgba(210, 230, 255, 0.35))
+    brightness(1.42)
+    contrast(1.38);
+}
+
+/* INSANYCK VISUAL FIDELITY FIX — Sheen REMOVIDO (referência CEO exige metal cromado estático) */
+/* Mantido para não quebrar classes antigas, mas zerado */
+.hero-wordmark-sheen {
+  opacity: 0 !important;
+  animation: none !important;
 }
 
 /* =========================================================

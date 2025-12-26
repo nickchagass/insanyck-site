@@ -68,6 +68,48 @@
     "logo": "INSANYCK Logo",
     "menu": "Main menu",
     "cart": "Shopping cart"
+  },
+  "manifestoPage": {
+    "seoTitle": "Manifesto — INSANYCK",
+    "title": "MANIFESTO",
+    "subtitle": "Identity engineering. Noir luxury. Zero concessions.",
+    "intro": {
+      "p1": "INSANYCK is black luxury in solid form — presence built like an engineered object.",
+      "p2": "High-caliber materials. Calibrated silhouette architecture. Relentless finishing. Nothing here is accidental.",
+      "p3": "Finite run. Obsessive traceability. Programmed extinction. When it's gone, it becomes archive."
+    },
+    "moment": {
+      "kicker": "MOMENT",
+      "quote": "THIS ISN'T FASHION. IT'S ARCHITECTURE.",
+      "subquote": "Luxury isn't noise. It's control."
+    },
+    "pillars": [
+      {
+        "title": "High-caliber materials",
+        "desc": "Chosen for feel, density, and response. The material doesn't follow — it structures."
+      },
+      {
+        "title": "Silhouette architecture",
+        "desc": "Proportions calibrated for control. Presence without noise."
+      },
+      {
+        "title": "Relentless finishing",
+        "desc": "Seams, edges, and surface treated like jewelry. Detail is a standard."
+      },
+      {
+        "title": "Obsessive traceability",
+        "desc": "Auditable process. Clear origin. Clear standard. No empty claims."
+      },
+      {
+        "title": "Programmed extinction",
+        "desc": "Finite drops. No public restock. When it's gone, it's final."
+      }
+    ],
+    "cta": {
+      "title": "You don't buy clothing. You claim a position.",
+      "ctaPrimary": "Enter the store",
+      "ctaSecondary": "Back to home"
+    }
   }
 }
   

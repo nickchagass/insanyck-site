@@ -1,6 +1,7 @@
 // INSANYCK STEP 10 — PLP lendo DB com filtros reais
 // INSANYCK STEP 5 + STEP 9 (bloom sutil) + DB integration
 // INSANYCK STEP G-04.2.1 — Guard console.error no frontend
+// INSANYCK STEP G-05.X — Showroom Enterprise (Desktop) + Vertical Luxury (Mobile)
 
 import Head from "next/head";
 import { seoPLP } from "@/lib/seo";
@@ -10,7 +11,9 @@ import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
 import { useState, useEffect, useCallback } from "react";
 import ShowroomGrid from "@/components/catalog/ShowroomGrid";
-import FiltersDock from "@/components/catalog/FiltersDock";
+import ShowroomSidebar from "@/components/catalog/ShowroomSidebar";
+import MobileFiltersSheet from "@/components/catalog/MobileFiltersSheet";
+import { SlidersHorizontal, ChevronDown } from "lucide-react";
 
 interface Product {
   id: string;
@@ -54,6 +57,7 @@ export default function Loja({
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(totalProducts > initialProducts.length);
   const [page, setPage] = useState(1);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const { category, size, color, inStock, sort = "newest" } = router.query;
   // Normalize category param for SEO
@@ -187,6 +191,28 @@ export default function Loja({
   // INSANYCK STEP 10 — Converter produtos para formato do ProductGrid existente
   const gridProducts = products.map(toCard);
 
+  // INSANYCK STEP G-05.X — Helper functions for topbar
+  const updateFilter = (key: string, value: string | null) => {
+    const newQuery = { ...router.query };
+    if (value) {
+      newQuery[key] = value;
+    } else {
+      delete newQuery[key];
+    }
+    router.push({ pathname: router.pathname, query: newQuery }, undefined, { shallow: true });
+  };
+
+  const activeFiltersCount = [category, size, inStock].filter(Boolean).length;
+
+  const sortOptions = [
+    { value: "newest", label: t("catalog:sort.newest", "Mais Recentes") },
+    { value: "name", label: t("catalog:sort.name", "Nome") },
+    { value: "price_asc", label: t("catalog:sort.price_asc", "Menor Preço") },
+    { value: "price_desc", label: t("catalog:sort.price_desc", "Maior Preço") },
+  ];
+
+  const [sortPopoverOpen, setSortPopoverOpen] = useState(false);
+
   return (
     <>
       <Head>
@@ -211,40 +237,178 @@ export default function Loja({
         })()}
       </Head>
 
-      {/* INSANYCK Showroom Catalog — Cinematic Hero + Premium Grid */}
-      <main className="min-h-screen insanyck-bloom insanyck-bloom--soft">
-        {/* Optional Hero Section */}
-        <section className="relative py-16 px-6">
+      {/* INSANYCK STEP G-05.X — Showroom Enterprise (Desktop) + Vertical Luxury (Mobile) */}
+      {/* INSANYCK HOTFIX G-05.X — pt-24/32 para evitar colisão com navbar */}
+      <main className="min-h-screen pt-24 lg:pt-32">
+
+        {/* MOBILE: Compact Atmospheric Header (NO figurative image) */}
+        <section className="lg:hidden relative py-12 px-6 border-b border-white/10">
           <div className="max-w-[1200px] mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white/95 tracking-tight mb-4">
+            <h1 className="text-3xl font-bold text-white/95 tracking-tight mb-2">
               {t("plp:title", "Showroom INSANYCK")}
             </h1>
-            <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto">
-              {t("plp:subtitle", "Coleção premium • Design exclusivo • Qualidade superior")}
+            <p className="text-sm text-white/70">
+              {t("plp:subtitle", "Coleção premium • Design exclusivo")}
             </p>
           </div>
         </section>
 
-        {/* Filters Dock */}
-        <FiltersDock categories={categories} totalProducts={totalProducts} />
+        {/* DESKTOP: Showroom Layout (Sidebar + Main) */}
+        {/* INSANYCK HOTFIX G-05.X — Centralização elegante em monitores grandes */}
+        <div className="hidden lg:block">
+          <div className="max-w-[1400px] xl:max-w-[1520px] mx-auto px-6 py-8">
+            <div className="flex gap-8">
+              {/* DESKTOP SIDEBAR — Filters */}
+              <ShowroomSidebar categories={categories} />
 
-        {/* Showroom Grid */}
-        <section className="px-6 py-8">
-          <div className="max-w-[1400px] mx-auto">
-            {loading && products.length === 0 ? (
-              <div className="flex justify-center py-20">
-                <div className="animate-spin h-12 w-12 border-2 border-white/20 border-t-white rounded-full"></div>
+              {/* DESKTOP MAIN AREA */}
+              <div className="flex-1 min-w-0">
+                {/* INSANYCK HOTFIX G-05.X — Glass Stage: palco premium para catálogo */}
+                <div className="rounded-3xl border border-white/[0.08] bg-white/[0.02] p-6 lg:p-8 backdrop-blur-sm">
+                  {/* Compact Header */}
+                  <div className="mb-8">
+                    <h1 className="text-4xl font-bold text-white/95 tracking-tight mb-2">
+                      {t("plp:title", "Showroom INSANYCK")}
+                    </h1>
+                    <p className="text-lg text-white/70">
+                      {t("plp:subtitle", "Coleção premium • Design exclusivo • Qualidade superior")}
+                    </p>
+                  </div>
+
+                  {/* Topbar: Product count + Sort */}
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+                  <span className="text-sm text-white/60">
+                    {totalProducts} {t("plp:products_count", "produtos")}
+                  </span>
+
+                  {/* Sort dropdown */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setSortPopoverOpen(!sortPopoverOpen)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+                    >
+                      <span>{sortOptions.find(opt => opt.value === sort)?.label}</span>
+                      <ChevronDown className="w-4 h-4" aria-hidden="true" />
+                    </button>
+
+                    {sortPopoverOpen && (
+                      <div className="absolute top-full right-0 mt-2 w-48 bg-black/90 backdrop-blur-xl border border-white/15 rounded-xl shadow-xl z-50">
+                        <div className="p-2">
+                          {sortOptions.map((option) => (
+                            <button
+                              key={option.value}
+                              onClick={() => {
+                                updateFilter("sort", option.value);
+                                setSortPopoverOpen(false);
+                              }}
+                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] ${
+                                sort === option.value
+                                  ? "bg-white/15 text-white"
+                                  : "text-white/80 hover:bg-white/10"
+                              }`}
+                            >
+                              {option.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                  {/* Desktop Grid */}
+                  {loading && products.length === 0 ? (
+                    <div className="flex justify-center py-20">
+                      <div className="animate-spin h-12 w-12 border-2 border-white/20 border-t-white rounded-full"></div>
+                    </div>
+                  ) : (
+                    <ShowroomGrid
+                      initialProducts={gridProducts}
+                      onLoadMore={loadMoreProducts}
+                      hasMore={hasMore}
+                      loading={loading}
+                    />
+                  )}
+                </div>
+                {/* End Glass Stage */}
               </div>
-            ) : (
-              <ShowroomGrid 
-                initialProducts={gridProducts}
-                onLoadMore={loadMoreProducts}
-                hasMore={hasMore}
-                loading={loading}
-              />
-            )}
+            </div>
           </div>
-        </section>
+        </div>
+
+        {/* MOBILE: Content (Filters pill + Grid) */}
+        <div className="lg:hidden px-6 py-6">
+          {/* Mobile: Floating Filters Pill + Sort */}
+          <div className="flex gap-3 mb-6 sticky top-24 z-40 bg-black/40 backdrop-blur-md -mx-6 px-6 py-3 border-b border-white/10">
+            <button
+              onClick={() => setMobileFiltersOpen(true)}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+            >
+              <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
+              <span>{t("catalog:filters.label", "Filtros")}</span>
+              {activeFiltersCount > 0 && (
+                <span className="bg-white/20 text-xs px-1.5 py-0.5 rounded-full">
+                  {activeFiltersCount}
+                </span>
+              )}
+            </button>
+
+            {/* Sort pill */}
+            <div className="relative flex-1">
+              <button
+                onClick={() => setSortPopoverOpen(!sortPopoverOpen)}
+                className="w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+              >
+                <span className="truncate">{sortOptions.find(opt => opt.value === sort)?.label}</span>
+                <ChevronDown className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+              </button>
+
+              {sortPopoverOpen && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-black/90 backdrop-blur-xl border border-white/15 rounded-xl shadow-xl z-50">
+                  <div className="p-2">
+                    {sortOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => {
+                          updateFilter("sort", option.value);
+                          setSortPopoverOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] ${
+                          sort === option.value
+                            ? "bg-white/15 text-white"
+                            : "text-white/80 hover:bg-white/10"
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile Grid */}
+          {loading && products.length === 0 ? (
+            <div className="flex justify-center py-20">
+              <div className="animate-spin h-12 w-12 border-2 border-white/20 border-t-white rounded-full"></div>
+            </div>
+          ) : (
+            <ShowroomGrid
+              initialProducts={gridProducts}
+              onLoadMore={loadMoreProducts}
+              hasMore={hasMore}
+              loading={loading}
+            />
+          )}
+        </div>
+
+        {/* Mobile Filters Sheet */}
+        <MobileFiltersSheet
+          categories={categories}
+          isOpen={mobileFiltersOpen}
+          onClose={() => setMobileFiltersOpen(false)}
+        />
       </main>
     </>
   );
