@@ -1,10 +1,13 @@
-// INSANYCK STEP G-05.HERO_PUREBLACK — Preto premium + container invisível (sem card)
+// INSANYCK STEP G-05D — Hero com Ghost Titanium sutil (unificação visual)
 "use client";
 
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslation } from "next-i18next";
+
+// INSANYCK STEP G-05D — Ghost Titanium
+import DsGlass from "@/components/ds/DsGlass";
 
 export default function HeroHome() {
   const { t } = useTranslation("home");
@@ -46,11 +49,14 @@ export default function HeroHome() {
       aria-labelledby="hero-home"
       style={{ margin: 0, padding: 0 }}
     >
-      {/* INSANYCK G-05.MANIFESTO_MAISON_POLISH — Content (PURE BLACK: sem halo, sem sheen, sem card) */}
+      {/* INSANYCK G-05D — Content com Ghost Titanium Soft (unificação visual sutil) */}
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 sm:px-6">
-        {/* Wrapper invisível (apenas flex layout, sem visual de card) */}
-        <div className="w-full max-w-[900px] text-center flex flex-col items-center gap-3 sm:gap-4">
-
+        {/* INSANYCK G-05D — Ghost Titanium Soft (presença material quase invisível) */}
+        <DsGlass
+          tone="ghostSoft"
+          padding="p-8 sm:p-10"
+          className="w-full max-w-[900px] text-center flex flex-col items-center gap-3 sm:gap-4"
+        >
           {/* Logo INSANYCK (metal puro, tamanho premium) */}
           <h2 id="hero-home" className="select-none w-full">
             <div className="relative inline-block mx-auto w-full max-w-[min(900px,92vw)]">
@@ -97,7 +103,7 @@ export default function HeroHome() {
               {t("cta.manifesto", "Manifesto")}
             </Link>
           </div>
-        </div>
+        </DsGlass>
       </div>
 
       {/* Media Queries para max-height do logo em telas muito baixas */}
