@@ -266,8 +266,8 @@ export default function Loja({
 
               {/* DESKTOP MAIN AREA */}
               <div className="flex-1 min-w-0">
-                {/* INSANYCK STEP G-05B — Titanium Glass V3: palco premium para catálogo */}
-                <DsGlass padding="p-6 lg:p-8">
+                {/* INSANYCK STEP G-11 — Museum Ambient Container (blur pesado) */}
+                <DsGlass tone="ambient" padding="p-6 lg:p-8">
                   {/* Compact Header */}
                   <div className="mb-8">
                     <h1 className="text-4xl font-bold text-white/95 tracking-tight mb-2">
@@ -390,19 +390,22 @@ export default function Loja({
             </div>
           </div>
 
-          {/* Mobile Grid */}
-          {loading && products.length === 0 ? (
-            <div className="flex justify-center py-20">
-              <div className="animate-spin h-12 w-12 border-2 border-white/20 border-t-white rounded-full"></div>
-            </div>
-          ) : (
-            <ShowroomGrid
-              initialProducts={gridProducts}
-              onLoadMore={loadMoreProducts}
-              hasMore={hasMore}
-              loading={loading}
-            />
-          )}
+          {/* INSANYCK STEP G-11 — Museum Ambient Container (Mobile) */}
+          <DsGlass tone="ambient" padding="p-4">
+            {/* Mobile Grid */}
+            {loading && products.length === 0 ? (
+              <div className="flex justify-center py-20">
+                <div className="animate-spin h-12 w-12 border-2 border-white/20 border-t-white rounded-full"></div>
+              </div>
+            ) : (
+              <ShowroomGrid
+                initialProducts={gridProducts}
+                onLoadMore={loadMoreProducts}
+                hasMore={hasMore}
+                loading={loading}
+              />
+            )}
+          </DsGlass>
         </div>
 
         {/* Mobile Filters Sheet */}

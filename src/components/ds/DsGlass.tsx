@@ -1,4 +1,4 @@
-// INSANYCK STEP G-09 — DsGlass: PLATINUM GLASS (vibrant + visible + specular gradient)
+// INSANYCK STEP G-11: Museum Edition — DsGlass com variants vitrine + ambient
 import React, { ReactNode, CSSProperties } from "react";
 
 export interface DsGlassProps {
@@ -10,13 +10,20 @@ export interface DsGlassProps {
    */
   noise?: boolean;
   /**
-   * Tone: perfil do Platinum Glass
+   * INSANYCK STEP G-11: Museum variants
    * - "ghost" (default): platinum stealth padrão (base 0.02 + blur 20px + saturate 180%)
    * - "ghostDense": mais presença visual (base 0.03 + blur 20px + saturate 180%)
    * - "ghostSoft": quase invisível (base 0.015 + blur 18px + saturate 175%)
+   * - "vitrine": vitrine de museu 3D (usa .ins-vitrine CSS class)
+   * - "ambient": container com blur pesado (usa .ins-ambient CSS class)
    * - "default", "dense": retrocompatibilidade (mapeiam para ghost/ghostDense)
    */
-  tone?: "ghost" | "ghostDense" | "ghostSoft" | "default" | "dense";
+  tone?: "ghost" | "ghostDense" | "ghostSoft" | "vitrine" | "ambient" | "default" | "dense";
+  /**
+   * INSANYCK STEP G-11: Ativar spotlight (luz de museu)
+   * Só faz efeito quando combinado com tone="vitrine"
+   */
+  spotlight?: boolean;
   /**
    * Padding interno customizado (substitui default p-8 lg:p-12)
    */
@@ -40,38 +47,76 @@ export interface DsGlassProps {
 }
 
 /**
- * DsGlass — PLATINUM GLASS (INSANYCK STEP G-09)
+ * DsGlass — PLATINUM GLASS + MUSEUM EDITION (INSANYCK STEP G-11)
  *
- * Sistema de superfície premium VIBRANT para INSANYCK:
- * - Platinum Glass: cristal vivo (saturate 180%), bordas visíveis
+ * Sistema de superfície premium VIBRANT + VITRINES DE MUSEU:
+ * - Platinum Glass (G-09): cristal vivo (saturate 180%), bordas visíveis
  * - Linear Triad: Highlight/Shadow/Illumination (física de luz)
  * - Specular Gradient: fade-out nas pontas (joia lapidada)
- * - Noise cinematográfico opcional (opacity 0.06)
- * - Resultado: vidro perceptível mas elegante
+ * - Museum Edition (G-11): vitrines 3D com spotlight, ambient containers
  *
  * @example
+ * // Platinum glass padrão
  * <DsGlass>Conteúdo platinum padrão</DsGlass>
- * <DsGlass tone="ghostDense" noise>Destaque com textura</DsGlass>
- * <DsGlass tone="ghostSoft">Camada quase invisível</DsGlass>
+ *
+ * // Vitrine de museu com spotlight
+ * <DsGlass tone="vitrine" spotlight>
+ *   <img src="produto.jpg" alt="Produto" />
+ * </DsGlass>
+ *
+ * // Container ambiente (blur pesado)
+ * <DsGlass tone="ambient">
+ *   <ProductGrid />
+ * </DsGlass>
  */
 export default function DsGlass({
   children,
   className = "",
   noise = false,
   tone = "ghost",
+  spotlight = false,
   padding = "p-8 lg:p-12",
   rounded = "rounded-3xl",
   as: Component = "div",
   style,
   ...dataProps
 }: DsGlassProps) {
-  // INSANYCK STEP G-09 — Mapeamento Platinum Glass (retrocompatibilidade)
+  // INSANYCK STEP G-11 — Mapeamento com novas variants museum
   const normalizedTone =
     tone === "default" ? "ghost" :
     tone === "dense" ? "ghostDense" :
     tone;
 
-  // INSANYCK STEP G-09 — Platinum Glass (vibrant + visible)
+  // INSANYCK STEP G-11 — Museum variants usam classes CSS puras
+  if (normalizedTone === "vitrine") {
+    const vitrineClasses = `
+      ins-vitrine
+      ${spotlight ? "ins-spotlight" : ""}
+      ${className}
+    `.trim().replace(/\s+/g, " ");
+
+    return (
+      <Component className={vitrineClasses} style={style} {...dataProps}>
+        {children}
+      </Component>
+    );
+  }
+
+  if (normalizedTone === "ambient") {
+    const ambientClasses = `
+      ins-ambient
+      ${padding}
+      ${className}
+    `.trim().replace(/\s+/g, " ");
+
+    return (
+      <Component className={ambientClasses} style={style} {...dataProps}>
+        {children}
+      </Component>
+    );
+  }
+
+  // INSANYCK STEP G-09/G-10 — Platinum Glass original (ghost/ghostDense/ghostSoft)
   const toneClasses = {
     ghost: "bg-white/[0.02] backdrop-blur-[20px] saturate-[180%]",
     ghostDense: "bg-white/[0.03] backdrop-blur-[20px] saturate-[180%]",

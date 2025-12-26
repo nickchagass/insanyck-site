@@ -187,6 +187,56 @@ body {
   --ins-glass-occlusion: rgba(0, 0, 0, 0.45);           /* inner shadow for thickness */
   --ins-glass-illumination: rgba(255,255,255,0.06);     /* ambient glow minimal */
   --ins-glass-noise-opacity: 0.06;                      /* micro grain (low) */
+
+  /* ══════════════════════════════════════════════════════════════
+     INSANYCK STEP G-11: MUSEUM SHOWCASE TOKENS
+     Sistema completo para vitrines de museu/joalheria.
+     ══════════════════════════════════════════════════════════════ */
+
+  /* === SPOTLIGHT (luz de museu descendente) === */
+  --ins-spot-color: 255, 255, 255;        /* branco puro */
+  --ins-spot-alpha: 0.28;                  /* intensidade desktop */
+  --ins-spot-alpha-mobile: 0.18;           /* mais sutil no mobile */
+  --ins-spot-blur: 24px;                   /* difusão da luz */
+  --ins-spot-size: 70%;                    /* tamanho do cone de luz */
+  --ins-spot-position: 50% 5%;             /* CRÍTICO: vem de CIMA (5%) */
+
+  /* === VITRINE (caixa de vidro 3D) === */
+  --ins-vitrine-bg: rgba(255, 255, 255, 0.02);      /* quase invisível */
+  --ins-vitrine-border-width: 1px;                   /* borda externa */
+  --ins-vitrine-border-color: rgba(255, 255, 255, 0.08);
+  --ins-vitrine-inner-border: rgba(255, 255, 255, 0.04); /* borda interna (profundidade) */
+  --ins-vitrine-radius: 16px;                        /* cantos arredondados */
+  --ins-vitrine-radius-inner: 14px;                  /* cantos internos */
+
+  /* === SPECULAR WIRE (fio de luz no topo) === */
+  --ins-wire-alpha: 0.5;                   /* visível mas não gritante */
+  --ins-wire-alpha-hover: 0.7;             /* intensifica no hover */
+  --ins-wire-width: 60%;                   /* não vai de ponta a ponta */
+
+  /* === CORNER GLOW (brilho nos cantos - refração) === */
+  --ins-corner-size: 80px;                 /* tamanho do glow */
+  --ins-corner-alpha: 0.12;                /* bem sutil */
+  --ins-corner-blur: 20px;                 /* difuso, não hard edge */
+
+  /* === REFLECTION (reflexo no piso) === */
+  --ins-reflect-alpha: 0.18;               /* bem fantasmagórico */
+  --ins-reflect-height: 35%;               /* altura do reflexo */
+  --ins-reflect-blur: 2px;                 /* leve blur pra parecer piso */
+
+  /* === PEDESTAL (placa de identificação) === */
+  --ins-pedestal-bg: rgba(255, 255, 255, 0.03);
+  --ins-pedestal-border: rgba(255, 255, 255, 0.06);
+  --ins-pedestal-gap: 12px;                /* espaço entre vitrine e pedestal */
+
+  /* === AMBIENTE (container da galeria) === */
+  --ins-ambient-blur: 40px;                /* blur forte só no container pai */
+  --ins-ambient-saturate: 180%;
+  --ins-ambient-bg: rgba(20, 20, 22, 0.85);
+
+  /* === TRANSITIONS === */
+  --ins-transition-fast: 180ms ease-out;
+  --ins-transition-normal: 280ms ease-out;
 }
 
 /* =========================================================
@@ -796,6 +846,293 @@ body::after {
 .ins-card:focus-within .insanyck-bloom::before {
   opacity: .12;     /* leve acréscimo, ainda neutro */
   filter: blur(10px) saturate(1.0);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   INSANYCK STEP G-11: MUSEUM SHOWCASE SYSTEM
+   Classes para vitrines de museu/joalheria física.
+   Performance-first: blur APENAS no container pai.
+   ══════════════════════════════════════════════════════════════ */
+
+/* === .ins-spotlight — Museum Ceiling Light ===
+   Aplica LUZ VINDO DE CIMA, como holofote de galeria.
+   Usar como wrapper do conteúdo que será iluminado. */
+.ins-spotlight {
+  position: relative;
+  isolation: isolate;
+}
+
+.ins-spotlight::before {
+  content: "";
+  position: absolute;
+  /* Expandir além do container para luz mais natural */
+  inset: -15% -10% -5% -10%;
+  z-index: 0;
+  pointer-events: none;
+
+  /* CRÍTICO: Luz vem de CIMA (position 50% 5%) */
+  background: radial-gradient(
+    ellipse var(--ins-spot-size) var(--ins-spot-size) at var(--ins-spot-position),
+    rgba(var(--ins-spot-color), var(--ins-spot-alpha)) 0%,
+    rgba(var(--ins-spot-color), calc(var(--ins-spot-alpha) * 0.4)) 35%,
+    rgba(var(--ins-spot-color), 0) 70%
+  );
+
+  filter: blur(var(--ins-spot-blur));
+  opacity: 0.9;
+  transition: opacity var(--ins-transition-fast);
+}
+
+/* Conteúdo fica acima da luz */
+.ins-spotlight > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hover: luz "acende" mais */
+.ins-spotlight:hover::before {
+  opacity: 1;
+}
+
+/* Mobile: luz mais sutil */
+@media (max-width: 768px) {
+  .ins-spotlight::before {
+    --ins-spot-alpha: var(--ins-spot-alpha-mobile);
+    inset: -10% -5% -5% -5%;
+  }
+}
+
+/* Respeitar preferência do usuário */
+@media (prefers-reduced-motion: reduce) {
+  .ins-spotlight::before {
+    transition: none;
+  }
+}
+
+/* === .ins-vitrine — 3D Glass Display Case ===
+   Simula uma caixa de acrílico/vidro com espessura física.
+   Inclui: borda externa, borda interna (profundidade), wire no topo, glow nos cantos.
+   NÃO USA BLUR (performance) — usa layers de gradients. */
+.ins-vitrine {
+  position: relative;
+  background: var(--ins-vitrine-bg);
+  border-radius: var(--ins-vitrine-radius);
+
+  /* Borda externa principal */
+  border: var(--ins-vitrine-border-width) solid var(--ins-vitrine-border-color);
+
+  /* Sombra externa: caixa projeta sombra no ambiente */
+  box-shadow:
+    /* Sombra difusa grande (ambiente) */
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    /* Sombra próxima (contato com superfície) */
+    0 8px 20px -8px rgba(0, 0, 0, 0.4),
+    /* Inner glow sutil no topo (luz batendo na aresta) */
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    /* Inner shadow embaixo (profundidade interna) */
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+
+  overflow: hidden;
+  transition:
+    box-shadow var(--ins-transition-normal),
+    border-color var(--ins-transition-fast);
+}
+
+/* === SPECULAR WIRE (fio de luz no topo) === */
+.ins-vitrine::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--ins-wire-width);
+  height: 1px;
+  z-index: 10;
+  pointer-events: none;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, calc(var(--ins-wire-alpha) * 0.3)) 15%,
+    rgba(255, 255, 255, var(--ins-wire-alpha)) 50%,
+    rgba(255, 255, 255, calc(var(--ins-wire-alpha) * 0.3)) 85%,
+    transparent 100%
+  );
+
+  opacity: 1;
+  transition: opacity var(--ins-transition-fast);
+}
+
+/* === CORNER GLOWS (refração nos 4 cantos) === */
+.ins-vitrine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+
+  /* 4 radial gradients, um em cada canto */
+  background:
+    /* Top-left */
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(255, 255, 255, var(--ins-corner-alpha)) 0%,
+      transparent var(--ins-corner-size)
+    ),
+    /* Top-right */
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(255, 255, 255, var(--ins-corner-alpha)) 0%,
+      transparent var(--ins-corner-size)
+    ),
+    /* Bottom-left */
+    radial-gradient(
+      circle at 0% 100%,
+      rgba(255, 255, 255, calc(var(--ins-corner-alpha) * 0.5)) 0%,
+      transparent var(--ins-corner-size)
+    ),
+    /* Bottom-right */
+    radial-gradient(
+      circle at 100% 100%,
+      rgba(255, 255, 255, calc(var(--ins-corner-alpha) * 0.5)) 0%,
+      transparent var(--ins-corner-size)
+    );
+
+  filter: blur(var(--ins-corner-blur));
+  opacity: 0.8;
+}
+
+/* === HOVER STATE === */
+.ins-vitrine:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 30px 60px -15px rgba(0, 0, 0, 0.55),
+    0 10px 25px -10px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.ins-vitrine:hover::before {
+  opacity: 1;
+  --ins-wire-alpha: var(--ins-wire-alpha-hover);
+}
+
+/* === REDUCED MOTION === */
+@media (prefers-reduced-motion: reduce) {
+  .ins-vitrine,
+  .ins-vitrine::before {
+    transition: none;
+  }
+}
+
+/* === .ins-simple-reflection — Polished Floor Reflection (CSS-only) ===
+   Cria reflexo fantasmagórico abaixo do elemento sem duplicar DOM.
+   Performance-first: usa apenas gradiente. */
+.ins-simple-reflection {
+  position: relative;
+  /* Espaço para o reflexo */
+  padding-bottom: calc(var(--ins-reflect-height) + 8px);
+}
+
+.ins-simple-reflection::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  right: 5%;
+  height: var(--ins-reflect-height);
+  pointer-events: none;
+  z-index: 0;
+
+  /* Simula reflexo com gradiente vertical */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, calc(var(--ins-reflect-alpha) * 0.8)) 0%,
+    rgba(255, 255, 255, calc(var(--ins-reflect-alpha) * 0.4)) 30%,
+    transparent 100%
+  );
+
+  filter: blur(var(--ins-reflect-blur));
+  opacity: 0.7;
+}
+
+/* === .ins-pedestal — Museum Label Plate ===
+   Placa de identificação abaixo da vitrine (nome + preço).
+   Tratamento discreto, editorial, como etiqueta de galeria. */
+.ins-pedestal {
+  position: relative;
+  background: var(--ins-pedestal-bg);
+  border: 1px solid var(--ins-pedestal-border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-top: var(--ins-pedestal-gap);
+
+  /* Wire sutil no topo */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 4px 12px -4px rgba(0, 0, 0, 0.3);
+
+  transition:
+    background var(--ins-transition-fast),
+    border-color var(--ins-transition-fast);
+}
+
+.ins-pedestal:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Tipografia do pedestal */
+.ins-pedestal__name {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.3;
+  margin-bottom: 6px;
+
+  /* Truncar se muito longo */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ins-pedestal__price {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ins-pedestal {
+    transition: none;
+  }
+}
+
+/* === .ins-ambient — Gallery Container with Heavy Blur ===
+   Este é o ÚNICO elemento com backdrop-filter blur pesado.
+   Cria o "ambiente" da galeria. Cards NÃO usam blur próprio. */
+.ins-ambient {
+  background: var(--ins-ambient-bg);
+  backdrop-filter: blur(var(--ins-ambient-blur)) saturate(var(--ins-ambient-saturate));
+  -webkit-backdrop-filter: blur(var(--ins-ambient-blur)) saturate(var(--ins-ambient-saturate));
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+
+  /* Sombra do container */
+  box-shadow:
+    0 40px 80px -20px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Versão para sidebar (menor) */
+.ins-ambient--sidebar {
+  backdrop-filter: blur(30px) saturate(160%);
+  -webkit-backdrop-filter: blur(30px) saturate(160%);
+  border-radius: 20px;
 }
 
 /* Se alguma imagem tiver overlay dourado próprio, neutralizar */

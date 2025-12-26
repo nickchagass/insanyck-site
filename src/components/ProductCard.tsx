@@ -1,8 +1,7 @@
-// INSANYCK STEP 11 — ProductCard with Real Prisma Types
+// INSANYCK STEP G-11 — Museum Showcase Edition: ProductCard as jewelry vitrine
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ProductCardData } from "@/types/product";
 import { useTranslation } from "next-i18next";
 // INSANYCK STEP 4 · Lote 3 — Import OptimizedImage for zero CLS
@@ -12,7 +11,7 @@ import OptimizedImage from "@/components/ui/OptimizedImage";
 import AddToCartButton from "@/components/AddToCartButton";
 
 // INSANYCK STEP 8 — botão de favoritos
-import WishlistButton from "@/components/WishlistButton"; // INSANYCK STEP 8
+import WishlistButton from "@/components/WishlistButton";
 
 type Props = { product: ProductCardData };
 
@@ -39,56 +38,53 @@ export default function ProductCard({ product }: Props) {
         })();
 
   return (
-    <motion.article
-      whileHover={{ y: -3, borderColor: "rgba(255,255,255,0.15)" }}
-      transition={{ duration: 0.15, ease: [0.2, 0, 0, 1] }}
-      className="card-insanyck focus-within:ring-2 focus-within:ring-white/40 focus-within:ring-offset-2 focus-within:ring-offset-black"
-    >
-      {/* Área clicável (imagem + título) */}
+    <article className="ins-simple-reflection group">
+      {/* INSANYCK G-11 — Vitrine de museu com spotlight descendente */}
       <Link
         href={`/produto/${product.slug}`}
         prefetch
-        className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-2xl"
+        className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-2xl"
         aria-label={`Ver detalhes de ${product.title}`}
       >
-        {/* INSANYCK STEP 4 · Lote 3 — OptimizedImage para zero CLS */}
-        <OptimizedImage
-          src={img}
-          alt={`${product.title} — ${t("common:aria.productImage", "Imagem do produto")}`}
-          aspectRatio="3/4"
-          fallbackSrc="/products/placeholder/front.webp"
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          className="transition-transform duration-300 group-hover:scale-[1.02]"
-          loading="lazy"
-        />
-      </Link>
-
-      {/* Conteúdo textual + ações */}
-      <div className="p-4">
-        <div className="flex items-start justify-between">
-          <h3 className="text-white/90 text-lg font-semibold insanyck-reset-text">
-            {product.title}
-          </h3>
-          {product.status === "new" ? (
-            <span className="ml-3 text-xs rounded-full px-2 py-1 bg-white/10 text-white/80">
+        <div className="ins-vitrine ins-spotlight">
+          {/* Status badge (floating top-right) */}
+          {product.status === "new" && (
+            <span className="absolute top-3 right-3 z-10 text-xs rounded-full px-3 py-1 bg-white/10 text-white/80 backdrop-blur-sm">
               {t("plp:badge.new", "Novo")}
             </span>
-          ) : null}
-          {product.status === "soldout" ? (
-            <span className="ml-3 ins-chip">
+          )}
+          {product.status === "soldout" && (
+            <span className="absolute top-3 right-3 z-10 ins-chip">
               {t("plp:badge.soldout", "Esgotado")}
             </span>
-          ) : null}
+          )}
+
+          {/* INSANYCK G-11 — Imagem do produto (aspect 3/4 com padding) */}
+          <div className="relative aspect-[3/4] overflow-hidden">
+            <OptimizedImage
+              src={img}
+              alt={`${product.title} — ${t("common:aria.productImage", "Imagem do produto")}`}
+              aspectRatio="3/4"
+              fallbackSrc="/products/placeholder/front.webp"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="object-contain p-6 transition-transform duration-300 group-hover:scale-[1.02]"
+              loading="lazy"
+            />
+          </div>
         </div>
+      </Link>
 
-        <div className="mt-2 text-white/70">{product.price}</div>
+      {/* INSANYCK G-11 — Pedestal (nome + preço + ações) */}
+      <div className="ins-pedestal">
+        <h3 className="ins-pedestal__name">{product.title}</h3>
+        <p className="ins-pedestal__price">{product.price}</p>
 
-        {/* Ações – mantém visual; adiciona carrinho sem alterar layout */}
-        <div className="mt-4 flex gap-3 items-center">
+        {/* Ações (Ver detalhes + Carrinho + Wishlist) */}
+        <div className="mt-4 flex gap-2 items-center">
           <Link
             href={`/produto/${product.slug}`}
             prefetch
-            className="rounded-xl px-4 py-2 text-sm font-semibold border border-white/15 text-white hover:bg-white/8 hover:border-white/25 active:bg-white/12 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="flex-1 rounded-lg px-3 py-2 text-sm font-semibold border border-white/15 text-white hover:bg-white/8 hover:border-white/25 active:bg-white/12 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black text-center"
           >
             {t("plp:viewDetails", "Ver detalhes")}
           </Link>
@@ -99,14 +95,29 @@ export default function ProductCard({ product }: Props) {
               slug: product.slug,
               title: product.title,
               image: img,
-              price: product.price, // componente converte se for string
+              price: product.price,
             }}
-            className="rounded-xl px-4 py-2 text-sm font-semibold border border-white/15 text-white hover:bg-white/8 hover:border-white/25 active:bg-white/12 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="rounded-lg px-3 py-2 text-sm font-semibold border border-white/15 text-white hover:bg-white/8 hover:border-white/25 active:bg-white/12 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            aria-label={t("cart:addToCart", "Adicionar ao carrinho")}
           >
-            {t("cart:addToCart", "Adicionar ao carrinho")}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+              />
+            </svg>
           </AddToCartButton>
 
-          {/* INSANYCK STEP 8 — Wishlist inline (ao lado dos CTAs) */}
+          {/* INSANYCK STEP 8 — Wishlist inline */}
           <WishlistButton
             slug={product.slug}
             title={product.title}
@@ -115,6 +126,6 @@ export default function ProductCard({ product }: Props) {
           />
         </div>
       </div>
-    </motion.article>
+    </article>
   );
 }
