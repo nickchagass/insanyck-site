@@ -1,4 +1,4 @@
-// INSANYCK STEP G-08 — Hero PLATINUM: logo flutuando no preto infinito (sem wrapper glass)
+// INSANYCK STEP G-09 — Hero PLATINUM: centralização matemática + alinhamento perfeito
 "use client";
 
 import { useEffect } from "react";
@@ -46,11 +46,11 @@ export default function HeroHome() {
       aria-labelledby="hero-home"
       style={{ margin: 0, padding: 0 }}
     >
-      {/* INSANYCK G-08 — Content flutuando no preto infinito (SEM DsGlass wrapper) */}
+      {/* INSANYCK G-09 — Content flutuando no preto infinito (centralização matemática) */}
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 sm:px-6 gap-6">
-        {/* Logo INSANYCK (metal puro, tamanho premium) */}
-        <h2 id="hero-home" className="select-none w-full">
-          <div className="relative inline-block mx-auto w-full max-w-[min(900px,92vw)]">
+        {/* INSANYCK G-09 — Logo INSANYCK (centralização perfeita) */}
+        <h2 id="hero-home" className="select-none w-full text-center">
+          <div className="flex justify-center items-center w-full">
             <Image
               src="/brand/insanyck.png"
               alt="INSANYCK"
@@ -58,7 +58,7 @@ export default function HeroHome() {
               height={300}
               priority={true}
               sizes="(max-width: 640px) 92vw, 900px"
-              className="relative z-10 w-full h-auto max-h-[220px] object-contain"
+              className="w-full h-auto max-w-[min(900px,92vw)] max-h-[220px] object-contain"
               style={{
                 filter: 'none',
               }}
@@ -68,7 +68,7 @@ export default function HeroHome() {
         </h2>
 
         {/* Tagline + Subline (ARQUITETURA DE PRESENÇA) */}
-        <div className="flex flex-col gap-2 items-center">
+        <div className="flex flex-col gap-2 items-center text-center">
           <p className="select-none text-[14px] sm:text-[15px] md:text-[16px] leading-tight font-medium tracking-[0.14em] uppercase text-white/85 max-w-[85%]">
             {t("manifesto.tagline", "ARQUITETURA DE PRESENÇA.")}
           </p>
@@ -77,7 +77,7 @@ export default function HeroHome() {
           </p>
         </div>
 
-        {/* CTAs (Titanium Jewel Buttons já definidos em globals.css) */}
+        {/* CTAs (Titanium Jewel Buttons com Specular Gradient) */}
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-3 w-full sm:w-auto max-w-[90%]">
           <Link
             href="/loja"

@@ -1,4 +1,4 @@
-// INSANYCK STEP G-08 — DsGlass: PLATINUM GLASS (stealth + Linear Triad)
+// INSANYCK STEP G-09 — DsGlass: PLATINUM GLASS (vibrant + visible + specular gradient)
 import React, { ReactNode, CSSProperties } from "react";
 
 export interface DsGlassProps {
@@ -11,9 +11,9 @@ export interface DsGlassProps {
   noise?: boolean;
   /**
    * Tone: perfil do Platinum Glass
-   * - "ghost" (default): platinum stealth padrão (base 0.02 + blur 20px + saturate 165%)
-   * - "ghostDense": mais presença visual (base 0.03 + blur 20px + saturate 165%)
-   * - "ghostSoft": quase invisível (base 0.015 + blur 18px + saturate 160%)
+   * - "ghost" (default): platinum stealth padrão (base 0.02 + blur 20px + saturate 180%)
+   * - "ghostDense": mais presença visual (base 0.03 + blur 20px + saturate 180%)
+   * - "ghostSoft": quase invisível (base 0.015 + blur 18px + saturate 175%)
    * - "default", "dense": retrocompatibilidade (mapeiam para ghost/ghostDense)
    */
   tone?: "ghost" | "ghostDense" | "ghostSoft" | "default" | "dense";
@@ -40,14 +40,14 @@ export interface DsGlassProps {
 }
 
 /**
- * DsGlass — PLATINUM GLASS (INSANYCK STEP G-08)
+ * DsGlass — PLATINUM GLASS (INSANYCK STEP G-09)
  *
- * Sistema de superfície premium STEALTH para INSANYCK:
- * - Platinum Glass: stealth tint (quase zero), vida pelo blur+saturate
- * - Linear Triad: Highlight/Shadow/Illumination (física de luz, não bloco)
- * - Hairline borders (luz, não traço)
+ * Sistema de superfície premium VIBRANT para INSANYCK:
+ * - Platinum Glass: cristal vivo (saturate 180%), bordas visíveis
+ * - Linear Triad: Highlight/Shadow/Illumination (física de luz)
+ * - Specular Gradient: fade-out nas pontas (joia lapidada)
  * - Noise cinematográfico opcional (opacity 0.06)
- * - SEM aspecto "milky" ou "bloco cinza"
+ * - Resultado: vidro perceptível mas elegante
  *
  * @example
  * <DsGlass>Conteúdo platinum padrão</DsGlass>
@@ -65,23 +65,23 @@ export default function DsGlass({
   style,
   ...dataProps
 }: DsGlassProps) {
-  // INSANYCK STEP G-08 — Mapeamento Platinum Glass (retrocompatibilidade)
+  // INSANYCK STEP G-09 — Mapeamento Platinum Glass (retrocompatibilidade)
   const normalizedTone =
     tone === "default" ? "ghost" :
     tone === "dense" ? "ghostDense" :
     tone;
 
-  // INSANYCK STEP G-08 — Platinum Glass (stealth tint + blur+saturate real)
+  // INSANYCK STEP G-09 — Platinum Glass (vibrant + visible)
   const toneClasses = {
-    ghost: "bg-white/[0.02] backdrop-blur-[20px] saturate-[165%]",
-    ghostDense: "bg-white/[0.03] backdrop-blur-[20px] saturate-[165%]",
-    ghostSoft: "bg-white/[0.015] backdrop-blur-[18px] saturate-[160%]",
+    ghost: "bg-white/[0.02] backdrop-blur-[20px] saturate-[180%]",
+    ghostDense: "bg-white/[0.03] backdrop-blur-[20px] saturate-[180%]",
+    ghostSoft: "bg-white/[0.015] backdrop-blur-[18px] saturate-[175%]",
   };
 
   const baseClasses = `
     relative ${rounded} ${toneClasses[normalizedTone as keyof typeof toneClasses]}
-    border border-white/[0.06]
-    shadow-[inset_0_1px_0_rgba(255,255,255,0.10)]
+    border border-white/[0.12]
+    shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]
     shadow-[inset_0_-12px_24px_rgba(0,0,0,0.45)]
     overflow-hidden ${padding}
   `.trim().replace(/\s+/g, " ");
@@ -92,16 +92,19 @@ export default function DsGlass({
       style={style}
       {...dataProps}
     >
-      {/* INSANYCK G-08 — Hairline top interno (definição hairline) */}
+      {/* INSANYCK G-09 — Specular Gradient top (fade-out nas pontas) */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/[0.10]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px"
+        style={{
+          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.50) 50%, transparent 100%)',
+        }}
       />
 
       {/* Linear Triad: HIGHLIGHT — Specular top (lâmina de luz) */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.15] via-white/[0.06] to-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.25] via-white/[0.08] to-transparent"
       />
 
       {/* Linear Triad: ILLUMINATION — Ambient glow (radial central minimal) */}

@@ -176,14 +176,14 @@ body {
   --glass-v3-noise-opacity: 0.08;      /* Textura cinematográfica reduzida */
   --glass-v3-noise-url: url('/textures/noise.svg');
 
-  /* ===== INSANYCK STEP G-08 — PLATINUM GLASS (stealth + Linear Triad) ===== */
-  /* Material upgrade: stealth tint (quase zero), vida pelo blur+saturate, borda-luz (não traço) */
+  /* ===== INSANYCK STEP G-09 — PLATINUM GLASS (vibrant + visible) ===== */
+  /* Material upgrade: cristal vivo, borda-luz perceptível, specular gradient */
   --ins-glass-base: rgba(255, 255, 255, 0.02);          /* stealth tint (quase invisível) */
-  --ins-glass-border: rgba(255, 255, 255, 0.06);        /* hairline sutil */
+  --ins-glass-border: rgba(255, 255, 255, 0.12);        /* hairline visível (dobrado) */
   --ins-glass-blur: 20px;                               /* base blur dial */
-  --ins-glass-saturate: 165%;                           /* Apple vibrance dial (tuneable 160-180%) */
+  --ins-glass-saturate: 180%;                           /* cristal vivo (vibrance alto) */
   --ins-glass-brightness: 1;                            /* opcional dial, default neutro */
-  --ins-glass-highlight: rgba(255, 255, 255, 0.15);     /* Linear specular top */
+  --ins-glass-highlight: rgba(255, 255, 255, 0.25);     /* Linear specular top (mais luz) */
   --ins-glass-occlusion: rgba(0, 0, 0, 0.45);           /* inner shadow for thickness */
   --ins-glass-illumination: rgba(255,255,255,0.06);     /* ambient glow minimal */
   --ins-glass-noise-opacity: 0.06;                      /* micro grain (low) */
@@ -1441,13 +1441,15 @@ body::after {
   backdrop-filter: blur(14px);
 }
 
-/* Light sweep estático (não anima, só reforça no hover) */
+/* INSANYCK STEP G-09 — Specular Gradient (joia lapidada: fade-out nas pontas) */
 .hero-cta-primary::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(115deg, transparent 25%, rgba(255, 255, 255, 0.10) 50%, transparent 75%);
-  opacity: 0.12;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.60) 50%, transparent 100%);
   pointer-events: none;
 }
 
@@ -1480,10 +1482,6 @@ body::after {
       0 28px 80px rgba(0, 0, 0, 0.64);
   }
 
-  .hero-cta-primary:hover::before {
-    opacity: 0.18;
-  }
-
   .hero-cta-primary:hover::after {
     opacity: 0.8;
   }
@@ -1514,14 +1512,15 @@ body::after {
   backdrop-filter: blur(14px);
 }
 
-/* Sheen sutil (pseudo-element premium) */
+/* INSANYCK STEP G-09 — Specular Gradient (joia ghost: mais sutil) */
 .hero-cta-secondary::before {
   content: "";
   position: absolute;
-  inset: 0;
-  background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.06) 50%, transparent 70%);
-  opacity: 0;
-  transition: opacity 480ms var(--ease-expo);
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.40) 50%, transparent 100%);
   pointer-events: none;
 }
 
@@ -1531,10 +1530,6 @@ body::after {
     border-color: rgba(255, 255, 255, 0.12);
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.060) 0%, rgba(255, 255, 255, 0.030) 55%, rgba(0, 0, 0, 0.16) 100%);
-  }
-
-  .hero-cta-secondary:hover::before {
-    opacity: 1;
   }
 }
 
