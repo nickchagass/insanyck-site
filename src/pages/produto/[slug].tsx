@@ -11,6 +11,9 @@ import ProductStage from "@/components/pdp/ProductStage";
 // INSANYCK FASE G-04.1 — Design System
 import DsButton from "@/components/ds/DsButton";
 
+// INSANYCK STEP G-05B — Titanium Glass V3
+import DsGlass from "@/components/ds/DsGlass";
+
 type Variant = {
   id: string;
   sku?: string;
@@ -92,8 +95,9 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
           </section>
 
           {/* Painel */}
+          {/* INSANYCK STEP G-05B — Titanium Glass V3 (tone="dense" para destaque premium) */}
           <aside className="col-span-12 lg:col-span-5">
-            <div className="glass-card sticky top-8 rounded-3xl p-6 lg:p-8 space-y-5">
+            <DsGlass tone="dense" padding="p-6 lg:p-8" className="sticky top-8 space-y-5">
               <h1 className="text-display-xl">{product.title}</h1>
 
               {product.description && (
@@ -136,7 +140,7 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
                 <li>Troca em até 30 dias</li>
                 <li>Autenticidade garantida</li>
               </ul>
-            </div>
+            </DsGlass>
           </aside>
         </div>
       </main>

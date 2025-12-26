@@ -15,6 +15,9 @@ import ShowroomSidebar from "@/components/catalog/ShowroomSidebar";
 import MobileFiltersSheet from "@/components/catalog/MobileFiltersSheet";
 import { SlidersHorizontal, ChevronDown } from "lucide-react";
 
+// INSANYCK STEP G-05B — Titanium Glass V3
+import DsGlass from "@/components/ds/DsGlass";
+
 interface Product {
   id: string;
   title: string;
@@ -263,8 +266,8 @@ export default function Loja({
 
               {/* DESKTOP MAIN AREA */}
               <div className="flex-1 min-w-0">
-                {/* INSANYCK HOTFIX G-05.X — Glass Stage: palco premium para catálogo */}
-                <div className="rounded-3xl border border-white/[0.08] bg-white/[0.02] p-6 lg:p-8 backdrop-blur-sm">
+                {/* INSANYCK STEP G-05B — Titanium Glass V3: palco premium para catálogo */}
+                <DsGlass padding="p-6 lg:p-8">
                   {/* Compact Header */}
                   <div className="mb-8">
                     <h1 className="text-4xl font-bold text-white/95 tracking-tight mb-2">
@@ -329,8 +332,7 @@ export default function Loja({
                       loading={loading}
                     />
                   )}
-                </div>
-                {/* End Glass Stage */}
+                </DsGlass>
               </div>
             </div>
           </div>
