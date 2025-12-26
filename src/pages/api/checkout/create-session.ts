@@ -205,7 +205,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       };
     });
 
-    const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
     const success_url = (successUrl || `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`);
     const cancel_url = `${baseUrl}/checkout/cancel`;
 
