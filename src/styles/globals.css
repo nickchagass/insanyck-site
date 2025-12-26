@@ -149,6 +149,30 @@ body {
   --ins-focus-fusion: rgba(225, 235, 245, 0.85);      /* borda ativa (mais intensa) */
   --ins-focus-fusion-glow: rgba(225, 235, 245, 0.20); /* glow externo premium */
   --ins-focus-fusion-inner: rgba(225, 235, 245, 0.10); /* highlight interno */
+
+  /* ===== INSANYCK STEP G-05A — TITANIUM GLASS V3 (Sistema Global de Superfície) ===== */
+  /* Base colors (fumê grafite azulado) */
+  --glass-v3-base: #1E1E30;            /* RGB(30, 30, 48) - Fumê premium */
+  --glass-v3-base-alpha: 0.85;         /* 85% opacidade padrão */
+  --glass-v3-dense: #202036;           /* RGB(32, 32, 54) - Variante mais densa */
+  --glass-v3-dense-alpha: 0.88;        /* 88% opacidade para destaque */
+
+  /* Borders (hairline dupla) */
+  --glass-v3-border: rgba(255, 255, 255, 0.16);  /* Borda principal */
+  --glass-v3-ring: rgba(255, 255, 255, 0.06);    /* Ring externo sutil */
+
+  /* Specular (lâmina de luz) */
+  --glass-v3-specular-top: rgba(255, 255, 255, 0.22);  /* Top highlight */
+  --glass-v3-specular-mid: rgba(255, 255, 255, 0.10);  /* Via middle */
+
+  /* Profundidade */
+  --glass-v3-shadow-inner: inset 0 2px 8px rgba(0, 0, 0, 0.60);  /* Depth interno */
+  --glass-v3-shadow-outer: 0 18px 60px rgba(0, 0, 0, 0.55);      /* Elevação premium */
+  --glass-v3-vignette: linear-gradient(to bottom, transparent 0%, transparent 50%, rgba(0, 0, 0, 0.30) 100%);
+
+  /* Noise texture */
+  --glass-v3-noise-opacity: 0.12;      /* Textura cinematográfica */
+  --glass-v3-noise-url: url('/textures/noise.svg');
 }
 
 /* =========================================================
