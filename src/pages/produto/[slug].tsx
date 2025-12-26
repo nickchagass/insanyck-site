@@ -1,6 +1,6 @@
-// INSANYCK HOTFIX CART-02 + FASE G-01 + FASE G-02 — PDP com helpers centralizados + SSR
+// INSANYCK HOTFIX CART-02 + FASE G-01 + FASE G-02 + ISR PERF-01 — PDP com helpers centralizados + ISR (Cache)
 import Head from "next/head";
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetStaticProps, GetStaticPaths, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
 import { useCartStore } from "@/store/cart";
 import { formatBRL, safeSerialize } from "@/lib/price";
@@ -144,7 +144,35 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+// INSANYCK ISR PERF-01 — getStaticPaths: Pre-build top 20 produtos mais populares
+export const getStaticPaths: GetStaticPaths = async () => {
+  let paths: { params: { slug: string } }[] = [];
+
+  try {
+    const { prisma } = await import("@/lib/prisma");
+    const products = await prisma.product.findMany({
+      select: { slug: true },
+      take: 20,
+      orderBy: { createdAt: 'desc' }, // ou orderBy: { viewCount: 'desc' } se tiver tracking
+    });
+    paths = products.map(p => ({ params: { slug: p.slug } }));
+  } catch (err) {
+    console.error("[INSANYCK][getStaticPaths] DB offline, usando fallback:", err);
+    // Se DB offline, usa mock dos top produtos
+    const { mockProducts } = await import("@/mock/products");
+    paths = (mockProducts as unknown as any[])
+      .slice(0, 20)
+      .map(p => ({ params: { slug: p.slug } }));
+  }
+
+  return {
+    paths,
+    fallback: 'blocking', // SEO-friendly: gera sob demanda se não estiver em cache
+  };
+};
+
+// INSANYCK ISR PERF-01 — getStaticProps: Cache com revalidação a cada 60s
+export const getStaticProps: GetStaticProps = async (ctx) => {
   const { slug } = ctx.params as Params;
 
   async function loadFromDb() {
@@ -203,7 +231,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
-  return { props: { product: safeSerialize(product) } };
+  return {
+    props: { product: safeSerialize(product) },
+    revalidate: 60, // ISR: Revalida cache a cada 60 segundos
+  };
 };
 
 export default PDP;

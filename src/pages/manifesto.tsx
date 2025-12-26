@@ -22,11 +22,11 @@ export default function Manifesto({}: InferGetStaticPropsType<typeof getStaticPr
         />
       </Head>
 
-      {/* INSANYCK G-05.MANIFESTO_TITANIUM_GLASS_V2 — Layout premium (fundo preto puro + vidro fumê grafite) */}
+      {/* INSANYCK G-05.MANIFESTO_GLASS_V3 — Presença Física Real (breathing + contraste perceptível) */}
       <main
         id="conteudo"
-        className="min-h-screen pt-24 pb-16 px-6"
-        style={{ backgroundColor: "#000000" }}
+        className="min-h-screen pt-32 lg:pt-36 pb-16 px-6"
+        style={{ backgroundColor: "#080808" }}
       >
         <div className="max-w-5xl mx-auto">
 
@@ -40,14 +40,11 @@ export default function Manifesto({}: InferGetStaticPropsType<typeof getStaticPr
             </p>
           </header>
 
-          {/* Introduction — INSANYCK G-05.MANIFESTO_TITANIUM_GLASS_V2 — Fumê Grafite Azulado (Presença Física) */}
+          {/* Introduction — INSANYCK G-05.MANIFESTO_GLASS_V3 — Presença Física Real */}
           <section className="mb-16 lg:mb-20" data-ins-reveal="intro">
-            <div className="relative rounded-3xl bg-[#12121A]/75 backdrop-blur-xl border-2 border-white/[0.12] shadow-2xl shadow-[inset_0_2px_8px_rgba(0,0,0,0.6)] overflow-hidden p-8 lg:p-12">
-              {/* Rim-light (linha interna lapidada) */}
-              <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/[0.16]" />
-
+            <div className="relative rounded-3xl bg-[#1E1E30]/85 border border-white/[0.16] ring-1 ring-white/[0.06] shadow-[0_18px_60px_rgba(0,0,0,0.55)] shadow-[inset_0_2px_8px_rgba(0,0,0,0.60)] overflow-hidden p-8 lg:p-12">
               {/* Specular highlight (lâmina de luz premium) */}
-              <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white/[0.18] via-white/[0.08] to-transparent" />
+              <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.22] via-white/[0.10] to-transparent" />
 
               {/* Vinheta cinematográfica (profundidade bottom) */}
               <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-b from-black/0 via-black/0 to-black/30" />
@@ -67,14 +64,11 @@ export default function Manifesto({}: InferGetStaticPropsType<typeof getStaticPr
             </div>
           </section>
 
-          {/* INSANYCK G-05.MANIFESTO_TITANIUM_GLASS_V2 — Momento Manifesto (Fumê + Noise Cinematográfico) */}
+          {/* INSANYCK G-05.MANIFESTO_GLASS_V3 — Momento Manifesto (Presença Real + Noise Cinematográfico) */}
           <section className="mb-16 lg:mb-24 -mx-6 px-6 py-20 lg:py-28" data-ins-reveal="moment">
-            <div className="relative rounded-3xl bg-[#12121A]/75 backdrop-blur-xl border-2 border-white/[0.12] shadow-2xl shadow-[inset_0_2px_8px_rgba(0,0,0,0.6)] overflow-hidden px-6 py-16 lg:px-12 lg:py-20">
-              {/* Rim-light (linha interna lapidada) */}
-              <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/[0.16]" />
-
+            <div className="relative rounded-3xl bg-[#1E1E30]/85 border border-white/[0.16] ring-1 ring-white/[0.06] shadow-[0_18px_60px_rgba(0,0,0,0.55)] shadow-[inset_0_2px_8px_rgba(0,0,0,0.60)] overflow-hidden px-6 py-16 lg:px-12 lg:py-20">
               {/* Specular highlight (lâmina de luz premium) */}
-              <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white/[0.18] via-white/[0.08] to-transparent" />
+              <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.22] via-white/[0.10] to-transparent" />
 
               {/* Vinheta cinematográfica (profundidade bottom) */}
               <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-b from-black/0 via-black/0 to-black/30" />
@@ -102,19 +96,16 @@ export default function Manifesto({}: InferGetStaticPropsType<typeof getStaticPr
             </div>
           </section>
 
-          {/* INSANYCK G-05.MANIFESTO_TITANIUM_GLASS_V2 — Pillars (Fumê Grafite Premium) */}
+          {/* INSANYCK G-05.MANIFESTO_GLASS_V3 — Pillars (Presença Física Real) */}
           <section className="mb-16 lg:mb-20" data-ins-reveal="pillars">
             <div className="grid gap-6 lg:gap-8 md:grid-cols-2">
               {pillars.map((index) => (
                 <article
                   key={index}
-                  className="relative rounded-2xl bg-[#12121A]/75 backdrop-blur-xl border-2 border-white/[0.12] shadow-2xl shadow-[inset_0_2px_8px_rgba(0,0,0,0.6)] overflow-hidden p-6 lg:p-8 transition-all duration-500 hover:border-white/[0.16]"
+                  className="relative rounded-2xl bg-[#1E1E30]/85 border border-white/[0.16] ring-1 ring-white/[0.06] shadow-[0_18px_60px_rgba(0,0,0,0.55)] shadow-[inset_0_2px_8px_rgba(0,0,0,0.60)] overflow-hidden p-6 lg:p-8 transition-all duration-500 hover:border-white/[0.20] hover:ring-white/[0.08]"
                 >
-                  {/* Rim-light (linha interna lapidada) */}
-                  <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/[0.16]" />
-
                   {/* Specular highlight (lâmina de luz premium) */}
-                  <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white/[0.18] via-white/[0.08] to-transparent" />
+                  <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.22] via-white/[0.10] to-transparent" />
 
                   {/* Vinheta cinematográfica (profundidade bottom) */}
                   <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-b from-black/0 via-black/0 to-black/30" />
