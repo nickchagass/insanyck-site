@@ -1,10 +1,13 @@
-// INSANYCK STEP G-05.MANIFESTO_SOUL — Copy visceral + Textura cinematográfica + Hooks micro-motion
+// INSANYCK STEP G-05C — Manifesto com Ghost Titanium global
 
 import Head from "next/head";
 import Link from "next/link";
 import { GetStaticProps, InferGetStaticPropsType } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
+
+// INSANYCK STEP G-05C — Ghost Titanium
+import DsGlass from "@/components/ds/DsGlass";
 
 export default function Manifesto({}: InferGetStaticPropsType<typeof getStaticProps>) {
   const { t } = useTranslation("common");
@@ -22,7 +25,7 @@ export default function Manifesto({}: InferGetStaticPropsType<typeof getStaticPr
         />
       </Head>
 
-      {/* INSANYCK G-05.MANIFESTO_GLASS_V3 — Presença Física Real (breathing + contraste perceptível) */}
+      {/* INSANYCK G-05C — Ghost Titanium + Breathing Room Premium */}
       <main
         id="conteudo"
         className="min-h-screen pt-32 lg:pt-36 pb-16 px-6"
@@ -40,44 +43,25 @@ export default function Manifesto({}: InferGetStaticPropsType<typeof getStaticPr
             </p>
           </header>
 
-          {/* Introduction — INSANYCK G-05.MANIFESTO_GLASS_V3 — Presença Física Real */}
+          {/* Introduction — INSANYCK G-05C — Ghost Titanium */}
           <section className="mb-16 lg:mb-20" data-ins-reveal="intro">
-            <div className="relative rounded-3xl bg-[#1E1E30]/85 border border-white/[0.16] ring-1 ring-white/[0.06] shadow-[0_18px_60px_rgba(0,0,0,0.55)] shadow-[inset_0_2px_8px_rgba(0,0,0,0.60)] overflow-hidden p-8 lg:p-12">
-              {/* Specular highlight (lâmina de luz premium) */}
-              <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.22] via-white/[0.10] to-transparent" />
-
-              {/* Vinheta cinematográfica (profundidade bottom) */}
-              <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-b from-black/0 via-black/0 to-black/30" />
-
-              {/* Content */}
-              <div className="relative z-10">
-                <p className="text-base sm:text-lg text-white/80 leading-relaxed mb-6">
-                  {t("manifestoPage.intro.p1", "A INSANYCK não nasce de tendência. Nasce de projeto: geometria, peso, caimento e silêncio.")}
-                </p>
-                <p className="text-base sm:text-lg text-white/80 leading-relaxed mb-6">
-                  {t("manifestoPage.intro.p2", "Cada peça é construída como um sistema — Matéria-Prima de Alto Calibre, Arquitetura de Domínio e Acabamento Implacável.")}
-                </p>
-                <p className="text-base sm:text-lg text-white/80 leading-relaxed">
-                  {t("manifestoPage.intro.p3", "Operamos no limite: poucas unidades, rastreabilidade obsessiva e extinção programada. Sem retorno.")}
-                </p>
-              </div>
-            </div>
+            <DsGlass>
+              <p className="text-base sm:text-lg text-white/80 leading-relaxed mb-6">
+                {t("manifestoPage.intro.p1", "A INSANYCK não nasce de tendência. Nasce de projeto: geometria, peso, caimento e silêncio.")}
+              </p>
+              <p className="text-base sm:text-lg text-white/80 leading-relaxed mb-6">
+                {t("manifestoPage.intro.p2", "Cada peça é construída como um sistema — Matéria-Prima de Alto Calibre, Arquitetura de Domínio e Acabamento Implacável.")}
+              </p>
+              <p className="text-base sm:text-lg text-white/80 leading-relaxed">
+                {t("manifestoPage.intro.p3", "Operamos no limite: poucas unidades, rastreabilidade obsessiva e extinção programada. Sem retorno.")}
+              </p>
+            </DsGlass>
           </section>
 
-          {/* INSANYCK G-05.MANIFESTO_GLASS_V3 — Momento Manifesto (Presença Real + Noise Cinematográfico) */}
+          {/* INSANYCK G-05C — Momento Manifesto (Ghost Titanium + Noise) */}
           <section className="mb-16 lg:mb-24 -mx-6 px-6 py-20 lg:py-28" data-ins-reveal="moment">
-            <div className="relative rounded-3xl bg-[#1E1E30]/85 border border-white/[0.16] ring-1 ring-white/[0.06] shadow-[0_18px_60px_rgba(0,0,0,0.55)] shadow-[inset_0_2px_8px_rgba(0,0,0,0.60)] overflow-hidden px-6 py-16 lg:px-12 lg:py-20">
-              {/* Specular highlight (lâmina de luz premium) */}
-              <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.22] via-white/[0.10] to-transparent" />
-
-              {/* Vinheta cinematográfica (profundidade bottom) */}
-              <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-b from-black/0 via-black/0 to-black/30" />
-
-              {/* Noise texture (ONLY here — cinematográfico perceptível) */}
-              <div aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.12] mix-blend-overlay" style={{ backgroundImage: "url('/textures/noise.svg')" }} />
-
-              {/* Content */}
-              <div className="relative z-10 max-w-4xl mx-auto">
+            <DsGlass tone="ghostDense" noise padding="px-6 py-16 lg:px-12 lg:py-20">
+              <div className="max-w-4xl mx-auto">
                 {/* Kicker */}
                 <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-white/40 font-medium mb-8 text-center">
                   {t("manifestoPage.moment.kicker", "MOMENTO")}
@@ -93,33 +77,27 @@ export default function Manifesto({}: InferGetStaticPropsType<typeof getStaticPr
                   {t("manifestoPage.moment.subquote", "Luxo não é barulho. É controle.")}
                 </p>
               </div>
-            </div>
+            </DsGlass>
           </section>
 
-          {/* INSANYCK G-05.MANIFESTO_GLASS_V3 — Pillars (Presença Física Real) */}
+          {/* INSANYCK G-05C — Pillars (Ghost Titanium) */}
           <section className="mb-16 lg:mb-20" data-ins-reveal="pillars">
             <div className="grid gap-6 lg:gap-8 md:grid-cols-2">
               {pillars.map((index) => (
-                <article
+                <DsGlass
                   key={index}
-                  className="relative rounded-2xl bg-[#1E1E30]/85 border border-white/[0.16] ring-1 ring-white/[0.06] shadow-[0_18px_60px_rgba(0,0,0,0.55)] shadow-[inset_0_2px_8px_rgba(0,0,0,0.60)] overflow-hidden p-6 lg:p-8 transition-all duration-500 hover:border-white/[0.20] hover:ring-white/[0.08]"
+                  as="article"
+                  padding="p-6 lg:p-8"
+                  rounded="rounded-2xl"
+                  className="transition-all duration-500 hover:border-white/[0.08]"
                 >
-                  {/* Specular highlight (lâmina de luz premium) */}
-                  <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.22] via-white/[0.10] to-transparent" />
-
-                  {/* Vinheta cinematográfica (profundidade bottom) */}
-                  <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-b from-black/0 via-black/0 to-black/30" />
-
-                  {/* Content */}
-                  <div className="relative z-10">
-                    <h3 className="text-sm sm:text-base font-bold text-white/95 mb-3 tracking-tight uppercase">
-                      {t(`manifestoPage.pillars.${index}.title`, "")}
-                    </h3>
-                    <p className="text-sm sm:text-base text-white/70 leading-relaxed">
-                      {t(`manifestoPage.pillars.${index}.desc`, "")}
-                    </p>
-                  </div>
-                </article>
+                  <h3 className="text-sm sm:text-base font-bold text-white/95 mb-3 tracking-tight uppercase">
+                    {t(`manifestoPage.pillars.${index}.title`, "")}
+                  </h3>
+                  <p className="text-sm sm:text-base text-white/70 leading-relaxed">
+                    {t(`manifestoPage.pillars.${index}.desc`, "")}
+                  </p>
+                </DsGlass>
               ))}
             </div>
           </section>
