@@ -1,4 +1,4 @@
-// INSANYCK STEP G-05C — DsGlass: GHOST TITANIUM (vidro fantasma etéreo)
+// INSANYCK STEP G-08 — DsGlass: PLATINUM GLASS (stealth + Linear Triad)
 import React, { ReactNode, CSSProperties } from "react";
 
 export interface DsGlassProps {
@@ -10,10 +10,10 @@ export interface DsGlassProps {
    */
   noise?: boolean;
   /**
-   * Tone: perfil do Ghost Glass
-   * - "ghost" (default): vidro fantasma padrão (bg-white/[0.04] + blur-2xl)
-   * - "ghostDense": mais presença visual (bg-white/[0.06] + blur-2xl)
-   * - "ghostSoft": quase invisível (bg-white/[0.02] + blur-xl)
+   * Tone: perfil do Platinum Glass
+   * - "ghost" (default): platinum stealth padrão (base 0.02 + blur 20px + saturate 165%)
+   * - "ghostDense": mais presença visual (base 0.03 + blur 20px + saturate 165%)
+   * - "ghostSoft": quase invisível (base 0.015 + blur 18px + saturate 160%)
    * - "default", "dense": retrocompatibilidade (mapeiam para ghost/ghostDense)
    */
   tone?: "ghost" | "ghostDense" | "ghostSoft" | "default" | "dense";
@@ -40,17 +40,17 @@ export interface DsGlassProps {
 }
 
 /**
- * DsGlass — GHOST TITANIUM
+ * DsGlass — PLATINUM GLASS (INSANYCK STEP G-08)
  *
- * Sistema de superfície premium etérea para INSANYCK (Static Luxury):
- * - Vidro fantasma (leve, alto blur, borda quase invisível)
- * - Specular highlight sutil (lâmina de luz h-24 from-white/[0.16])
- * - Profundidade interna (inset shadow + hairline top)
- * - Noise cinematográfico opcional (opacity 0.08)
- * - SEM sombras externas pesadas (zero "bloco")
+ * Sistema de superfície premium STEALTH para INSANYCK:
+ * - Platinum Glass: stealth tint (quase zero), vida pelo blur+saturate
+ * - Linear Triad: Highlight/Shadow/Illumination (física de luz, não bloco)
+ * - Hairline borders (luz, não traço)
+ * - Noise cinematográfico opcional (opacity 0.06)
+ * - SEM aspecto "milky" ou "bloco cinza"
  *
  * @example
- * <DsGlass>Conteúdo ghost padrão</DsGlass>
+ * <DsGlass>Conteúdo platinum padrão</DsGlass>
  * <DsGlass tone="ghostDense" noise>Destaque com textura</DsGlass>
  * <DsGlass tone="ghostSoft">Camada quase invisível</DsGlass>
  */
@@ -65,24 +65,24 @@ export default function DsGlass({
   style,
   ...dataProps
 }: DsGlassProps) {
-  // INSANYCK STEP G-05C — Mapeamento Ghost Titanium (retrocompatibilidade)
+  // INSANYCK STEP G-08 — Mapeamento Platinum Glass (retrocompatibilidade)
   const normalizedTone =
     tone === "default" ? "ghost" :
     tone === "dense" ? "ghostDense" :
     tone;
 
-  // INSANYCK STEP G-05C — Ghost Titanium (blur real + tint mínimo)
+  // INSANYCK STEP G-08 — Platinum Glass (stealth tint + blur+saturate real)
   const toneClasses = {
-    ghost: "bg-white/[0.04] backdrop-blur-2xl",
-    ghostDense: "bg-white/[0.06] backdrop-blur-2xl",
-    ghostSoft: "bg-white/[0.02] backdrop-blur-xl",
+    ghost: "bg-white/[0.02] backdrop-blur-[20px] saturate-[165%]",
+    ghostDense: "bg-white/[0.03] backdrop-blur-[20px] saturate-[165%]",
+    ghostSoft: "bg-white/[0.015] backdrop-blur-[18px] saturate-[160%]",
   };
 
   const baseClasses = `
     relative ${rounded} ${toneClasses[normalizedTone as keyof typeof toneClasses]}
-    border border-white/[0.05]
-    shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]
-    shadow-[inset_0_-12px_24px_rgba(0,0,0,0.35)]
+    border border-white/[0.06]
+    shadow-[inset_0_1px_0_rgba(255,255,255,0.10)]
+    shadow-[inset_0_-12px_24px_rgba(0,0,0,0.45)]
     overflow-hidden ${padding}
   `.trim().replace(/\s+/g, " ");
 
@@ -92,19 +92,28 @@ export default function DsGlass({
       style={style}
       {...dataProps}
     >
-      {/* INSANYCK G-05C — Hairline top interno (definição sem borda grossa) */}
+      {/* INSANYCK G-08 — Hairline top interno (definição hairline) */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/[0.08]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/[0.10]"
       />
 
-      {/* Specular highlight (lâmina de luz sutil) */}
+      {/* Linear Triad: HIGHLIGHT — Specular top (lâmina de luz) */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.16] via-white/[0.06] to-transparent"
+        className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/[0.15] via-white/[0.06] to-transparent"
       />
 
-      {/* Vinheta cinematográfica (profundidade bottom) */}
+      {/* Linear Triad: ILLUMINATION — Ambient glow (radial central minimal) */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-[inherit]"
+        style={{
+          background: 'radial-gradient(ellipse 80% 60% at 50% 30%, rgba(255,255,255,0.06) 0%, transparent 60%)',
+        }}
+      />
+
+      {/* Linear Triad: SHADOW/OCCLUSION — Vinheta cinematográfica (profundidade bottom) */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 rounded-[inherit] bg-gradient-to-b from-black/0 via-black/0 to-black/30"
@@ -114,7 +123,7 @@ export default function DsGlass({
       {noise && (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-overlay"
+          className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-overlay"
           style={{ backgroundImage: "url('/textures/noise.svg')" }}
         />
       )}

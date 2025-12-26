@@ -175,6 +175,18 @@ body {
   /* Noise texture (muito sutil) */
   --glass-v3-noise-opacity: 0.08;      /* Textura cinematográfica reduzida */
   --glass-v3-noise-url: url('/textures/noise.svg');
+
+  /* ===== INSANYCK STEP G-08 — PLATINUM GLASS (stealth + Linear Triad) ===== */
+  /* Material upgrade: stealth tint (quase zero), vida pelo blur+saturate, borda-luz (não traço) */
+  --ins-glass-base: rgba(255, 255, 255, 0.02);          /* stealth tint (quase invisível) */
+  --ins-glass-border: rgba(255, 255, 255, 0.06);        /* hairline sutil */
+  --ins-glass-blur: 20px;                               /* base blur dial */
+  --ins-glass-saturate: 165%;                           /* Apple vibrance dial (tuneable 160-180%) */
+  --ins-glass-brightness: 1;                            /* opcional dial, default neutro */
+  --ins-glass-highlight: rgba(255, 255, 255, 0.15);     /* Linear specular top */
+  --ins-glass-occlusion: rgba(0, 0, 0, 0.45);           /* inner shadow for thickness */
+  --ins-glass-illumination: rgba(255,255,255,0.06);     /* ambient glow minimal */
+  --ins-glass-noise-opacity: 0.06;                      /* micro grain (low) */
 }
 
 /* =========================================================
