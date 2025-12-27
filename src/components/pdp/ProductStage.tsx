@@ -80,7 +80,7 @@ export default function ProductStage({ imageUrl, alt = "", hint }: Props) {
   }, [reduceMotion]);
 
   return (
-    <div ref={frameRef} className="pdp-stage relative isolate overflow-hidden rounded-3xl border border-white/10 bg-black/30">
+    <div ref={frameRef} className="ins-stage pdp-stage relative isolate overflow-hidden rounded-3xl border border-white/10 bg-black/30">
       {/* halo cinematográfico */}
       <div aria-hidden className="pdp-stage__halo" />
       {/* imagem (nunca distorce) */}

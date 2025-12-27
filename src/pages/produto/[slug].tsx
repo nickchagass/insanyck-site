@@ -1,4 +1,4 @@
-// INSANYCK HOTFIX CART-02 + FASE G-01 + FASE G-02 + ISR PERF-01 — PDP com helpers centralizados + ISR (Cache)
+// INSANYCK HOTFIX CART-02 + FASE G-01 + FASE G-02 + ISR PERF-01 + STEP G-12 — PDP Museum Edition
 import Head from "next/head";
 import type { GetStaticProps, GetStaticPaths, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
@@ -7,12 +7,6 @@ import { formatBRL, safeSerialize } from "@/lib/price";
 
 // INSANYCK FASE G-02 PERF-04 — ProductStage com SSR para melhorar LCP da PDP
 import ProductStage from "@/components/pdp/ProductStage";
-
-// INSANYCK FASE G-04.1 — Design System
-import DsButton from "@/components/ds/DsButton";
-
-// INSANYCK STEP G-05B — Titanium Glass V3
-import DsGlass from "@/components/ds/DsGlass";
 
 type Variant = {
   id: string;
@@ -83,10 +77,10 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
         <title>{product.title} • INSANYCK</title>
       </Head>
 
-      {/* INSANYCK STEP G-10 — Desktop breathing room absoluto (160px) */}
-      <main className="insanyck-section mx-auto max-w-[1360px] px-4 lg:px-6 pt-32 lg:pt-40">
-        <div className="grid grid-cols-12 gap-6">
-          {/* Stage */}
+      {/* INSANYCK STEP G-12 — Museum Private Viewing Room: European breathing (160px) */}
+      <main className="ins-pdp-container insanyck-section mx-auto max-w-[1360px] px-4 lg:px-6">
+        <div className="grid grid-cols-12 gap-6 lg:gap-10">
+          {/* INSANYCK G-12 — Museum Stage (spotlight from top + floor reflection) */}
           <section className="col-span-12 lg:col-span-7">
             <ProductStage
               imageUrl={image}
@@ -95,53 +89,67 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
             />
           </section>
 
-          {/* Painel */}
-          {/* INSANYCK STEP G-10 — Platinum Glass + Desktop sticky top-40 (160px safe) */}
+          {/* INSANYCK G-12 — Museum Glass Pedestal (NO backdrop-filter, gradient-only) */}
           <aside className="col-span-12 lg:col-span-5">
-            <DsGlass tone="dense" padding="p-6 lg:p-8" className="sticky top-32 lg:top-40 space-y-5">
-              <h1 className="text-display-xl">{product.title}</h1>
+            <div className="ins-panel ins-panel--sticky">
+              <h1 className="ins-panel__title">{product.title}</h1>
 
               {product.description && (
-                <p className="text-white/80">{product.description}</p>
+                <p className="ins-panel__description">{product.description}</p>
               )}
 
-              <div className="text-2xl font-semibold">{price}</div>
+              <div className="ins-panel__price">{price}</div>
 
-              {/* Se tiver apenas 1 variante, o seletor fica neutro/desabilitado */}
-              <button
-                type="button"
-                disabled={!product.variants || product.variants.length <= 1}
-                className="btn-insanyck--ghost w-full"
-              >
-                Selecione as opções
-              </button>
-
-              {/* INSANYCK FASE G-04.1 — Migração para DsButton */}
-              <div className="flex gap-3">
-                <DsButton
-                  onClick={handleBuyNow}
-                  variant="primary"
-                  size="lg"
-                  className="flex-1"
+              {/* INSANYCK G-12 — Variant selector as premium instrument */}
+              <div className="ins-panel__section">
+                <label className="ins-panel__label">Opções</label>
+                <button
+                  type="button"
+                  disabled={!product.variants || product.variants.length <= 1}
+                  className="ins-selector ins-selector__btn w-full"
                 >
-                  Comprar agora
-                </DsButton>
-                <DsButton
-                  onClick={handleAdd}
-                  variant="ghost"
-                  size="lg"
-                  className="px-4"
-                >
-                  Adicionar ao carrinho
-                </DsButton>
+                  Selecione as opções
+                </button>
               </div>
 
-              <ul className="mt-2 space-y-2 text-white/75">
+              {/* INSANYCK G-12 — Premium museum buttons */}
+              <div className="flex gap-3">
+                <button
+                  onClick={handleBuyNow}
+                  className="ins-panel__btn-primary flex-1"
+                >
+                  Comprar agora
+                </button>
+                <button
+                  onClick={handleAdd}
+                  className="ins-panel__btn-secondary px-6"
+                  aria-label="Adicionar ao carrinho"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              {/* INSANYCK G-12 — Trust badges (museum style) */}
+              <ul className="ins-panel__trust-list">
                 <li>Pagamento seguro</li>
                 <li>Troca em até 30 dias</li>
                 <li>Autenticidade garantida</li>
               </ul>
-            </DsGlass>
+            </div>
           </aside>
         </div>
       </main>

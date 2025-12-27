@@ -239,6 +239,35 @@ body {
   --ins-sidebar-wire-alpha: 0.55;
   --ins-sidebar-corner-alpha: 0.14;
   --ins-sidebar-radius: 20px;
+
+  /* ══════════════════════════════════════════════════════════════
+     INSANYCK STEP G-12: PDP PRIVATE VIEWING ROOM
+     Tokens específicos para a experiência íntima da PDP.
+     ══════════════════════════════════════════════════════════════ */
+
+  /* === STAGE (imagem principal) === */
+  --ins-stage-spot-alpha: 0.45;
+  --ins-stage-spot-size: 70% 50%;
+  --ins-stage-spot-position: 50% 5%;
+  --ins-stage-reflect-alpha: 0.18;
+  --ins-stage-reflect-height: 28%;
+
+  /* === PANEL (pedestal de compra) === */
+  --ins-panel-bg: rgba(255, 255, 255, 0.025);
+  --ins-panel-border: rgba(255, 255, 255, 0.10);
+  --ins-panel-radius: 20px;
+  --ins-panel-corner-alpha: 0.12;
+  --ins-panel-corner-alpha-bottom: 0.06;
+  --ins-panel-corner-size: 80px;
+  --ins-panel-wire-width: 50%;
+
+  /* === A11Y === */
+  --ins-focus-ring-color: rgba(255, 255, 255, 0.4);
+  --ins-focus-ring-offset: 2px;
+
+  /* === BREATHING === */
+  --ins-pdp-top-padding: 160px;
+  --ins-panel-sticky-top: 120px;
 }
 
 /* =========================================================
@@ -1330,6 +1359,340 @@ body::after {
   backdrop-filter: blur(30px) saturate(160%);
   -webkit-backdrop-filter: blur(30px) saturate(160%);
   border-radius: 20px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   INSANYCK STEP G-12 — PDP PRIVATE VIEWING ROOM
+   Museum Stage + Panel (glass pedestal) sem backdrop-filter.
+   ══════════════════════════════════════════════════════════════ */
+
+/* === .ins-stage — Museum Stage (imagem principal) === */
+.ins-stage {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Spotlight (atrás do produto, vindo de cima) */
+.ins-stage::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  left: -5%;
+  right: -5%;
+  bottom: 10%;
+  z-index: 0;
+  pointer-events: none;
+
+  background: radial-gradient(
+    ellipse var(--ins-stage-spot-size) at var(--ins-stage-spot-position),
+    rgba(255, 255, 255, var(--ins-stage-spot-alpha)) 0%,
+    rgba(255, 255, 255, calc(var(--ins-stage-spot-alpha) * 0.4)) 30%,
+    rgba(255, 255, 255, calc(var(--ins-stage-spot-alpha) * 0.1)) 60%,
+    transparent 80%
+  );
+}
+
+/* Floor Reflection (piso com fade) */
+.ins-stage::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 10%;
+  right: 10%;
+  height: var(--ins-stage-reflect-height);
+  z-index: 0;
+  pointer-events: none;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, var(--ins-stage-reflect-alpha)) 0%,
+    rgba(255, 255, 255, calc(var(--ins-stage-reflect-alpha) * 0.35)) 40%,
+    transparent 100%
+  );
+
+  mask-image: linear-gradient(to bottom, black, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent);
+}
+
+/* Conteúdo acima dos pseudo-elementos */
+.ins-stage > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ins-stage::before,
+  .ins-stage::after {
+    transition: none;
+  }
+}
+
+/* === .ins-panel — Pedestal Panel (SEM backdrop-filter) === */
+.ins-panel {
+  position: relative;
+  background: var(--ins-panel-bg);
+  border: 1px solid var(--ins-panel-border);
+  border-radius: var(--ins-panel-radius);
+  padding: 32px;
+  overflow: visible;
+
+  /* Glass effect via shadows (SEM blur filter) */
+  box-shadow:
+    0 20px 40px -10px rgba(0, 0, 0, 0.5),
+    0 8px 20px -8px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+
+  transition: border-color 200ms ease;
+}
+
+.ins-panel:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* Specular Wire (1px no topo) */
+.ins-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--ins-panel-wire-width);
+  height: 1px;
+  z-index: 10;
+  pointer-events: none;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, calc(var(--ins-wire-alpha, 0.6) * 0.3)) 15%,
+    rgba(255, 255, 255, var(--ins-wire-alpha, 0.6)) 50%,
+    rgba(255, 255, 255, calc(var(--ins-wire-alpha, 0.6) * 0.3)) 85%,
+    transparent 100%
+  );
+
+  box-shadow: 0 0 6px 1px rgba(255, 255, 255, 0.12);
+}
+
+/* Corner Prism (4 CANTOS — topo mais forte) */
+.ins-panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(255, 255, 255, var(--ins-panel-corner-alpha)) 0%,
+      transparent var(--ins-panel-corner-size)
+    ),
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(255, 255, 255, var(--ins-panel-corner-alpha)) 0%,
+      transparent var(--ins-panel-corner-size)
+    ),
+    radial-gradient(
+      circle at 0% 100%,
+      rgba(255, 255, 255, var(--ins-panel-corner-alpha-bottom)) 0%,
+      transparent var(--ins-panel-corner-size)
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      rgba(255, 255, 255, var(--ins-panel-corner-alpha-bottom)) 0%,
+      transparent var(--ins-panel-corner-size)
+    );
+}
+
+/* CRÍTICO: Conteúdo ACIMA dos pseudo-elementos */
+.ins-panel > * {
+  position: relative;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ins-panel {
+    transition: none;
+  }
+}
+
+/* === Tipografia Editorial === */
+.ins-panel__title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.ins-panel__price {
+  font-size: 1.125rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.55);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  margin-top: 8px;
+}
+
+.ins-panel__description {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.50);
+  line-height: 1.6;
+  margin-top: 16px;
+}
+
+.ins-panel__section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ins-panel__label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 10px;
+}
+
+/* === Selectors === */
+.ins-panel__selector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ins-panel__selector-btn {
+  min-width: 48px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.70);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.ins-panel__selector-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.ins-panel__selector-btn--active {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.30);
+  color: rgba(255, 255, 255, 1);
+}
+
+/* === Buttons === */
+.ins-panel__btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 14px 28px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.10);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.ins-panel__btn-primary:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.4);
+}
+
+.ins-panel__btn-primary:active {
+  transform: translateY(0);
+}
+
+.ins-panel__btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 14px 28px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: transparent;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.ins-panel__btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* A11y Focus (premium, silencioso) */
+.ins-panel__selector-btn:focus-visible,
+.ins-panel__btn-primary:focus-visible,
+.ins-panel__btn-secondary:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 var(--ins-focus-ring-offset) rgba(0, 0, 0, 1),
+    0 0 0 calc(var(--ins-focus-ring-offset) + 2px) var(--ins-focus-ring-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ins-panel__selector-btn,
+  .ins-panel__btn-primary,
+  .ins-panel__btn-secondary {
+    transition: none;
+  }
+
+  .ins-panel__btn-primary:hover {
+    transform: none;
+  }
+}
+
+/* === Trust Badges === */
+.ins-panel__trust-list {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ins-panel__trust-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.825rem;
+  color: rgba(255, 255, 255, 0.50);
+}
+
+/* === Layout === */
+.ins-pdp-container {
+  padding-top: var(--ins-pdp-top-padding);
+}
+
+.ins-panel--sticky {
+  position: sticky;
+  top: var(--ins-panel-sticky-top);
+  align-self: flex-start;
 }
 
 /* Se alguma imagem tiver overlay dourado próprio, neutralizar */
