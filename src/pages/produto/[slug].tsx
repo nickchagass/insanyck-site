@@ -60,8 +60,25 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
   const price = formatBRL(displayVariant?.price?.cents ?? 0);
   const image = product.images?.[0]?.url || "/products/placeholder/front.webp";
 
+  // INSANYCK HOTFIX PDP-01 — Blindar variantes com estrutura inválida (build-safe)
+  const hasSelectableVariants = useMemo(() => {
+    if (!Array.isArray(product.variants) || product.variants.length === 0) {
+      return false;
+    }
+    // Só renderiza seletor se pelo menos 1 variante tem options válidas
+    return product.variants.some(v => {
+      if (!Array.isArray(v.options) || v.options.length === 0) {
+        return false;
+      }
+      // Guard defensivo: verifica estrutura completa antes de passar ao VariantSelector
+      return v.options.some(opt =>
+        opt?.optionValue?.option?.slug && opt?.optionValue?.value
+      );
+    });
+  }, [product.variants]);
+
   // INSANYCK HOTFIX G-12.2 — Verificar se precisa de seleção
-  const needsSelection = (product.variants?.length ?? 0) > 1;
+  const needsSelection = (product.variants?.length ?? 0) > 1 && hasSelectableVariants;
   const hasValidSelection = !needsSelection || selectedVariant !== null;
 
   // INSANYCK HOTFIX G-12.2 — Handler de seleção de variante
