@@ -1,55 +1,78 @@
+// src/mock/products.ts
+// INSANYCK MUSEUM EDITION - DATABASE MOCK (2 Produtos Premium)
+
 export const mockProducts = [
+  // --- PRODUTO 1: CAMISETA (Já existia) ---
   {
     id: 'm1',
     slug: 'tee-oversized-preta',
     title: 'Oversized Tee Preta',
-    description: 'Corte amplo premium.',
+    description: 'Corte amplo premium. Algodão pesado com caimento estruturado e toque macio.',
     status: 'active',
-    images: [{ url: '/products/placeholder/front.webp', alt: 'Oversized Tee Preta' }],
-    category: null,
+    images: [
+      { 
+        url: '/products/tee-oversized-preta/front.png', 
+        alt: 'Oversized Tee Preta' 
+      }
+    ],
+    category: { id: 'c1', name: 'Camisetas', slug: 'camisetas' },
     variants: [
       {
         id: 'mv1',
         status: 'active',
-        sku: 'TEE-OV-BLK-M1',
+        sku: 'TEE-OV-BLK-001',
         title: 'Padrão',
-        price: { cents: 12990, currency: 'BRL' },
+        price: { cents: 15900, currency: 'BRL' }, // R$ 159,00
         inventory: { quantity: 25, reserved: 0 },
-        options: [], // importante existir (mesmo vazio)
+        options: [], 
       },
     ],
     isFeatured: true,
     updatedAt: new Date()
   },
+
+  // --- PRODUTO 2: JAQUETA (NOVO!) ---
   {
-    id: 'm2',
-    slug: 'regata-essential-preta',
-    title: 'Regata Essential Preta',
-    description: 'Leve e respirável.',
+    id: 'm3', // ID novo
+    slug: 'jaqueta-bomber-tonal', // URL amigável
+    title: 'Jaqueta Bomber Tonal', // Nome no site
+    description: 'Jaqueta estruturada com logo tonal discreto. Tecido técnico premium resistente, corte de alfaiataria moderna.',
     status: 'active',
-    images: [{ url: '/products/placeholder/front.webp', alt: 'Regata Essential Preta' }],
-    category: null,
+    images: [
+      { 
+        // APONTANDO PARA A PASTA NOVA QUE VOCÊ CRIOU
+        url: '/products/jaqueta-bomber-tonal/front.png', 
+        alt: 'Jaqueta Bomber Tonal INSANYCK' 
+      }
+    ],
+    // Nova categoria para peças pesadas
+    category: { id: 'c4', name: 'Outerwear', slug: 'outerwear' }, 
     variants: [
       {
-        id: 'mv2',
+        id: 'mv3',
         status: 'active',
-        sku: 'REG-ESS-BLK-M2',
+        sku: 'JAC-BOM-BLK-001',
         title: 'Padrão',
-        price: { cents: 9990, currency: 'BRL' },
-        inventory: { quantity: 18, reserved: 0 },
+        // Preço mais alto para peça mais pesada (R$ 499,00)
+        price: { cents: 49900, currency: 'BRL' }, 
+        inventory: { quantity: 10, reserved: 0 },
         options: [],
       },
     ],
-    isFeatured: false,
+    isFeatured: true, // Vai aparecer em destaque se houver seção para isso
     updatedAt: new Date()
   },
 ] as const;
 
+// --- CATEGORIAS ATUALIZADAS ---
+export const mockCategories = [
+  { id: 'c1', name: 'Camisetas', slug: 'camisetas' },
+  { id: 'c2', name: 'Regatas', slug: 'regatas' },
+  { id: 'c3', name: 'Acessórios', slug: 'acessorios' },
+  { id: 'c4', name: 'Outerwear', slug: 'outerwear' } // Nova categoria adicionada
+] as const;
+
+// Helper para encontrar produto pelo slug (URL)
 export function findBySlug(slug: string) {
   return (mockProducts as readonly any[]).find(p => p.slug === slug);
 }
-
-export const mockCategories = [
-  { id: 'c1', name: 'Camisetas', slug: 'camisetas' },
-  { id: 'c2', name: 'Regatas', slug: 'regatas' }
-] as const;
