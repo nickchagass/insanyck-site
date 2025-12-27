@@ -6,6 +6,12 @@
     "back": "Verso",
     "detail": "Detalhes",
     "instruction": "Arraste para girar — passe o mouse",
-    "backToStore": "Voltar à loja"
+    "backToStore": "Voltar à loja",
+    "selectOptions": "Escolha tamanho e cor",
+    "trust": {
+      "secure": "Pagamento seguro",
+      "exchange": "Troca em até 30 dias",
+      "authentic": "Autenticidade garantida"
+    }
   }
   

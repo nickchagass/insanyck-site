@@ -891,9 +891,11 @@ body::after {
    SEM filter: blur() (performance).
    ══════════════════════════════════════════════════════════════ */
 
+/* INSANYCK HOTFIX G-11.2 — Z-Index fix: spotlight acima do wire */
 .ins-spotlight {
   position: relative;
   isolation: isolate;
+  z-index: 15; /* Garante que todo conteúdo fica acima do wire (z: 10) */
 }
 
 .ins-spotlight::before {
@@ -925,9 +927,10 @@ body::after {
   --ins-spot-alpha: var(--ins-spot-alpha-hover);
 }
 
+/* INSANYCK HOTFIX G-11.2 — Conteúdo sempre visível */
 .ins-spotlight > * {
   position: relative;
-  z-index: 1;
+  z-index: 2; /* Acima do spotlight::before (z: 0) */
 }
 
 @media (max-width: 768px) {
@@ -1099,6 +1102,70 @@ body::after {
 .ins-simple-reflection:hover::after,
 .group:hover .ins-simple-reflection::after {
   opacity: 1;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   INSANYCK HOTFIX G-11.2 — FALLBACK PREMIUM (Image Loading States)
+   Garante que cards nunca ficam vazios/cinza durante lazy load
+   ══════════════════════════════════════════════════════════════ */
+
+/* Min-height fallback para aspect ratio wrappers */
+.ins-vitrine [class*="aspect-"] {
+  min-height: 280px; /* Fallback se aspect-ratio falhar no browser */
+}
+
+.ins-vitrine .aspect-\[2\/1\] {
+  min-height: 140px;
+}
+
+/* Premium background gradient enquanto imagem carrega */
+.ins-vitrine [class*="aspect-"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* Shimmer sutil enquanto carrega */
+.ins-vitrine [class*="aspect-"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.02) 50%,
+    transparent 100%
+  );
+  animation: ins-shimmer 2s infinite;
+  opacity: 0.5;
+}
+
+@keyframes ins-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Desabilitar shimmer quando imagem carregou */
+.ins-vitrine [class*="aspect-"]:has(img[loading="eager"])::after,
+.ins-vitrine [class*="aspect-"]:has(img[fetchpriority="high"])::after {
+  animation: none;
+  opacity: 0;
+}
+
+/* Respeitar prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .ins-vitrine [class*="aspect-"]::after {
+    animation: none;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1528,20 +1595,34 @@ body::after {
   margin: 0;
 }
 
+/* INSANYCK G-12.1 — Price as jewelry tag (editorial refinement) */
 .ins-panel__price {
   font-size: 1.125rem;
   font-weight: 400;
   color: rgba(255, 255, 255, 0.55);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
-  margin-top: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
 }
 
+/* Hairline separator before price (jewelry tag aesthetic) */
+.ins-panel__price::before {
+  content: "";
+  display: block;
+  width: 24px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
+  margin-bottom: 12px;
+}
+
+/* INSANYCK G-12.1 — Description editorial (max-width for breathing) */
 .ins-panel__description {
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.50);
   line-height: 1.6;
   margin-top: 16px;
+  max-width: 90%; /* Não estica até a borda, mais editorial */
 }
 
 .ins-panel__section {
@@ -1669,11 +1750,14 @@ body::after {
 }
 
 /* === Trust Badges === */
+/* INSANYCK G-12.1 — Trust badges (editorial refinement: border-top separation) */
 .ins-panel__trust-list {
   margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .ins-panel__trust-item {

@@ -1,6 +1,12 @@
 // src/mock/products.ts
 // INSANYCK MUSEUM EDITION - DATABASE MOCK (2 Produtos Premium)
 
+// INSANYCK HOTFIX IMG-01 — Image override para assets locais (reversível)
+const IMAGE_OVERRIDES: Record<string, string> = {
+  'tee-oversized-preta': '/products/Oversized Tee Preta/tee-oversized-black.png.png',
+  'jaqueta-bomber-tonal': '/products/jaqueta-bomber-tonal/jacket-insanyck-black.png.png',
+};
+
 export const mockProducts = [
   // --- PRODUTO 1: CAMISETA (Já existia) ---
   {
@@ -10,9 +16,10 @@ export const mockProducts = [
     description: 'Corte amplo premium. Algodão pesado com caimento estruturado e toque macio.',
     status: 'active',
     images: [
-      { 
-        url: '/products/tee-oversized-preta/front.png', 
-        alt: 'Oversized Tee Preta' 
+      {
+        // INSANYCK HOTFIX IMG-01 — Override para asset local
+        url: IMAGE_OVERRIDES['tee-oversized-preta'] || '/products/tee-oversized-preta/front.png',
+        alt: 'Oversized Tee Preta'
       }
     ],
     category: { id: 'c1', name: 'Camisetas', slug: 'camisetas' },
@@ -39,10 +46,10 @@ export const mockProducts = [
     description: 'Jaqueta estruturada com logo tonal discreto. Tecido técnico premium resistente, corte de alfaiataria moderna.',
     status: 'active',
     images: [
-      { 
-        // APONTANDO PARA A PASTA NOVA QUE VOCÊ CRIOU
-        url: '/products/jaqueta-bomber-tonal/front.png', 
-        alt: 'Jaqueta Bomber Tonal INSANYCK' 
+      {
+        // INSANYCK HOTFIX IMG-01 — Override para asset local
+        url: IMAGE_OVERRIDES['jaqueta-bomber-tonal'] || '/products/jaqueta-bomber-tonal/front.png',
+        alt: 'Jaqueta Bomber Tonal INSANYCK'
       }
     ],
     // Nova categoria para peças pesadas

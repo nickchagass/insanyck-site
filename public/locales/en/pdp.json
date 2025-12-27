@@ -6,6 +6,12 @@
     "back": "Back",
     "detail": "Details",
     "instruction": "Drag to rotate — move the mouse",
-    "backToStore": "Back to store"
+    "backToStore": "Back to store",
+    "selectOptions": "Select size and color",
+    "trust": {
+      "secure": "Secure payment",
+      "exchange": "Returns within 30 days",
+      "authentic": "Authenticity guaranteed"
+    }
   }
   
