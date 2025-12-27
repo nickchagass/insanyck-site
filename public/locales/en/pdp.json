@@ -1,6 +1,7 @@
 {
     "subtitle": "Drop-shoulder • 100% premium cotton",
     "ctaBuy": "Buy now",
+    "addToCart": "Add to cart",
     "ctaDetails": "View details",
     "front": "Front",
     "back": "Back",
@@ -8,9 +9,17 @@
     "instruction": "Drag to rotate — move the mouse",
     "backToStore": "Back to store",
     "selectOptions": "Select size and color",
+    "selectSize": "Choose your size",
+    "selectColor": "Choose your color",
+    "selectRequired": "Select the options above to continue",
+    "oneSize": "One size",
+    "label": {
+      "size": "SIZE",
+      "color": "COLOR"
+    },
     "trust": {
       "secure": "Secure payment",
-      "exchange": "Returns within 30 days",
+      "exchange": "30-day returns",
       "authentic": "Authenticity guaranteed"
     }
   }

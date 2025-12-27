@@ -1,6 +1,7 @@
 {
     "subtitle": "Drop-shoulder • 100% algodão premium",
     "ctaBuy": "Comprar agora",
+    "addToCart": "Adicionar ao carrinho",
     "ctaDetails": "Ver detalhes",
     "front": "Frente",
     "back": "Verso",
@@ -8,6 +9,14 @@
     "instruction": "Arraste para girar — passe o mouse",
     "backToStore": "Voltar à loja",
     "selectOptions": "Escolha tamanho e cor",
+    "selectSize": "Escolha seu tamanho",
+    "selectColor": "Escolha sua cor",
+    "selectRequired": "Selecione as opções acima para continuar",
+    "oneSize": "Tamanho único",
+    "label": {
+      "size": "TAMANHO",
+      "color": "COR"
+    },
     "trust": {
       "secure": "Pagamento seguro",
       "exchange": "Troca em até 30 dias",

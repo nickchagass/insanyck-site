@@ -1,14 +1,16 @@
-// INSANYCK HOTFIX CART-02 + FASE G-01 + FASE G-02 + ISR PERF-01 + STEP G-12 + G-12.1 — PDP Museum Edition
+// INSANYCK HOTFIX CART-02 + FASE G-01 + FASE G-02 + ISR PERF-01 + STEP G-12 + G-12.1 + G-12.2 — PDP Museum Edition
 import Head from "next/head";
 import type { GetStaticProps, GetStaticPaths, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
+import { useState, useMemo, useCallback } from "react"; // INSANYCK G-12.2 — estado de variante
 import { useCartStore } from "@/store/cart";
 import { formatBRL, safeSerialize } from "@/lib/price";
-import { useTranslation } from "next-i18next"; // INSANYCK G-12.1 — i18n
-import { serverSideTranslations } from "next-i18next/serverSideTranslations"; // INSANYCK G-12.1 — i18n
+import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
 // INSANYCK FASE G-02 PERF-04 — ProductStage com SSR para melhorar LCP da PDP
 import ProductStage from "@/components/pdp/ProductStage";
+import VariantSelector from "@/components/pdp/VariantSelector"; // INSANYCK G-12.2 — seletor real
 
 type Variant = {
   id: string;
@@ -38,43 +40,71 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
   const addItem = useCartStore((s) => s.addItem);
   const toggle = useCartStore((s) => s.toggle);
 
-  const v0 = product.variants?.[0];
-  const price = formatBRL(v0?.price?.cents ?? 0); // INSANYCK FASE G-01 — helper centralizado
+  // INSANYCK HOTFIX G-12.2 — Estado de variante selecionada
+  const [selectedVariantId, setSelectedVariantId] = useState<string | null>(() => {
+    // Se só tem 1 variante, seleciona automaticamente
+    if (product.variants?.length === 1) {
+      return product.variants[0].id;
+    }
+    return null;
+  });
+
+  // INSANYCK HOTFIX G-12.2 — Derivar variante selecionada
+  const selectedVariant = useMemo(() => {
+    if (!selectedVariantId) return null;
+    return product.variants?.find((v) => v.id === selectedVariantId) ?? null;
+  }, [selectedVariantId, product.variants]);
+
+  // INSANYCK HOTFIX G-12.2 — Preço da variante selecionada (ou primeira)
+  const displayVariant = selectedVariant ?? product.variants?.[0];
+  const price = formatBRL(displayVariant?.price?.cents ?? 0);
   const image = product.images?.[0]?.url || "/products/placeholder/front.webp";
 
-  // INSANYCK HOTFIX CART-02 — delega para a store oficial
-  const handleAdd = () => {
-    addItem({
-      slug: product.slug,
-      title: product.title,
-      priceCents: v0?.price?.cents ?? 0,
-      currency: (v0?.price?.currency as "BRL") ?? "BRL",
-      qty: 1,
-      image,
-      variantId: v0?.id,
-      sku: v0?.sku,
-    });
-    // abre o drawer automaticamente (já é chamado dentro de addItem, mas deixo explícito)
-    toggle(true);
-  };
+  // INSANYCK HOTFIX G-12.2 — Verificar se precisa de seleção
+  const needsSelection = (product.variants?.length ?? 0) > 1;
+  const hasValidSelection = !needsSelection || selectedVariant !== null;
 
-  // INSANYCK HOTFIX CART-02 — buyNow adiciona e redireciona
-  const handleBuyNow = () => {
+  // INSANYCK HOTFIX G-12.2 — Handler de seleção de variante
+  const handleVariantSelect = useCallback((variant: Variant) => {
+    setSelectedVariantId(variant.id);
+  }, []);
+
+  // INSANYCK HOTFIX G-12.2 — Adicionar ao carrinho (usa variante selecionada)
+  const handleAdd = useCallback(() => {
+    if (!hasValidSelection || !displayVariant) return;
+
     addItem({
       slug: product.slug,
       title: product.title,
-      priceCents: v0?.price?.cents ?? 0,
-      currency: (v0?.price?.currency as "BRL") ?? "BRL",
+      priceCents: displayVariant.price?.cents ?? 0,
+      currency: (displayVariant.price?.currency as "BRL") ?? "BRL",
       qty: 1,
       image,
-      variantId: v0?.id,
-      sku: v0?.sku,
+      variantId: displayVariant.id,
+      sku: displayVariant.sku,
     });
-    // redireciona direto para checkout (sem abrir o drawer)
+    toggle(true);
+  }, [hasValidSelection, displayVariant, product.slug, product.title, image, addItem, toggle]);
+
+  // INSANYCK HOTFIX G-12.2 — Comprar agora (usa variante selecionada)
+  const handleBuyNow = useCallback(() => {
+    if (!hasValidSelection || !displayVariant) return;
+
+    addItem({
+      slug: product.slug,
+      title: product.title,
+      priceCents: displayVariant.price?.cents ?? 0,
+      currency: (displayVariant.price?.currency as "BRL") ?? "BRL",
+      qty: 1,
+      image,
+      variantId: displayVariant.id,
+      sku: displayVariant.sku,
+    });
+
     if (typeof window !== "undefined") {
       window.location.href = "/checkout";
     }
-  };
+  }, [hasValidSelection, displayVariant, product.slug, product.title, image, addItem]);
 
   return (
     <>
@@ -105,29 +135,44 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
 
               <div className="ins-panel__price">{price}</div>
 
-              {/* INSANYCK G-12.1 — Variant selector (editorial refinement: removed redundant label) */}
-              <div className="ins-panel__section">
-                <button
-                  type="button"
-                  disabled={!product.variants || product.variants.length <= 1}
-                  className="ins-selector ins-selector__btn w-full"
-                >
-                  {t('selectOptions', 'Escolha tamanho e cor')}
-                </button>
-              </div>
+              {/* INSANYCK HOTFIX G-12.2 — Seletores REAIS (só se tiver 2+ variantes) */}
+              {needsSelection && (
+                <VariantSelector
+                  variants={product.variants}
+                  selectedVariantId={selectedVariantId}
+                  onSelect={handleVariantSelect}
+                />
+              )}
+
+              {/* INSANYCK HOTFIX G-12.2 — Tamanho único (1 variante, sem seletor) */}
+              {!needsSelection && product.variants?.length === 1 && (
+                <div className="ins-panel__section">
+                  <span className="text-sm text-white/40">
+                    {t("oneSize", "Tamanho único")}
+                  </span>
+                </div>
+              )}
 
               {/* INSANYCK G-12 — Premium museum buttons */}
-              <div className="flex gap-3">
+              <div className="flex gap-3 mt-6">
                 <button
                   onClick={handleBuyNow}
-                  className="ins-panel__btn-primary flex-1"
+                  disabled={!hasValidSelection}
+                  className={`
+                    ins-panel__btn-primary flex-1
+                    ${!hasValidSelection ? "opacity-50 cursor-not-allowed" : ""}
+                  `}
                 >
                   {t('ctaBuy', 'Comprar agora')}
                 </button>
                 <button
                   onClick={handleAdd}
-                  className="ins-panel__btn-secondary px-6"
-                  aria-label="Adicionar ao carrinho"
+                  disabled={!hasValidSelection}
+                  className={`
+                    ins-panel__btn-secondary px-6
+                    ${!hasValidSelection ? "opacity-50 cursor-not-allowed" : ""}
+                  `}
+                  aria-label={t("addToCart", "Adicionar ao carrinho")}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
