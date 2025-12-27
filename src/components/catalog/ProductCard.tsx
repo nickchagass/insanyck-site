@@ -62,7 +62,7 @@ export default function ProductCard({
           )}
 
           {/* INSANYCK G-11 HYBRID — Imagem do produto (aspect 3/4 com padding) */}
-          <div className={`relative overflow-hidden ${
+          <div className={`relative overflow-hidden z-10 ${
             variant === "wide" ? "aspect-[2/1]" : "aspect-[3/4]"
           }`}>
             <OptimizedImage

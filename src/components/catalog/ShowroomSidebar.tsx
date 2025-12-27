@@ -1,4 +1,4 @@
-// INSANYCK STEP G-05.X — Showroom Sidebar (Desktop Enterprise)
+// INSANYCK G-11.1 — Showroom Sidebar Museum Edition
 "use client";
 
 import { useRouter } from "next/router";
@@ -56,18 +56,18 @@ export default function ShowroomSidebar({ categories }: ShowroomSidebarProps) {
       className="w-64 flex-shrink-0 sticky top-28 h-fit"
       aria-label={t("catalog:filters.label", "Filtros")}
     >
-      {/* INSANYCK STEP G-05.X — Showroom Sidebar: glass dark + hairline titanium */}
-      <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-md p-6 space-y-6">
+      {/* INSANYCK G-11.1 — Museum sidebar: specular wire + corner prism */}
+      <div className="ins-sidebar">
 
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-white/95 uppercase tracking-wider">
+        <div className="ins-sidebar__header flex items-center justify-between">
+          <h2>
             {t("catalog:filters.label", "Filtros")}
           </h2>
           {activeFiltersCount > 0 && (
             <button
               onClick={clearAllFilters}
-              className="text-xs text-white/60 hover:text-white/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+              className="text-xs text-white/60 hover:text-white/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
               aria-label={t("catalog:filters.clear_all", "Limpar filtros")}
             >
               {t("catalog:filters.clear_all", "Limpar")}
@@ -76,17 +76,15 @@ export default function ShowroomSidebar({ categories }: ShowroomSidebarProps) {
         </div>
 
         {/* Categories */}
-        <div className="space-y-3">
-          <h3 className="text-xs font-medium text-white/70 uppercase tracking-wide">
+        <div className="ins-sidebar__section">
+          <h3 className="ins-sidebar__title">
             {t("catalog:filters.categories", "Categorias")}
           </h3>
           <div className="space-y-1">
             <button
               onClick={() => updateFilter("category", null)}
-              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] ${
-                !category
-                  ? "bg-white/10 text-white/95 font-medium border border-white/15"
-                  : "text-white/75 hover:bg-white/5 hover:text-white/90"
+              className={`ins-sidebar__option ${
+                !category ? "ins-sidebar__option--active" : ""
               }`}
             >
               {t("catalog:filters.all_categories", "Todas")}
@@ -95,10 +93,8 @@ export default function ShowroomSidebar({ categories }: ShowroomSidebarProps) {
               <button
                 key={cat.id}
                 onClick={() => updateFilter("category", cat.slug)}
-                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] ${
-                  category === cat.slug
-                    ? "bg-white/10 text-white/95 font-medium border border-white/15"
-                    : "text-white/75 hover:bg-white/5 hover:text-white/90"
+                className={`ins-sidebar__option ${
+                  category === cat.slug ? "ins-sidebar__option--active" : ""
                 }`}
               >
                 {cat.name}
@@ -107,25 +103,20 @@ export default function ShowroomSidebar({ categories }: ShowroomSidebarProps) {
           </div>
         </div>
 
-        {/* Hairline separator */}
-        <div className="border-t border-white/10" />
-
         {/* Sizes */}
-        <div className="space-y-3">
-          <h3 className="text-xs font-medium text-white/70 uppercase tracking-wide">
+        <div className="ins-sidebar__section">
+          <h3 className="ins-sidebar__title">
             {t("catalog:filters.size", "Tamanho")}
           </h3>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="ins-sidebar__sizes">
             {sizes.map((sizeOption) => (
               <button
                 key={sizeOption}
                 onClick={() =>
                   updateFilter("size", isFilterActive("size", sizeOption) ? null : sizeOption)
                 }
-                className={`px-3 py-2 rounded-lg border transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] ${
-                  isFilterActive("size", sizeOption)
-                    ? "bg-white/10 text-white/95 border-white/20"
-                    : "border-white/10 text-white/75 hover:bg-white/5 hover:border-white/15 hover:text-white/90"
+                className={`ins-sidebar__size-btn ${
+                  isFilterActive("size", sizeOption) ? "ins-sidebar__size-btn--active" : ""
                 }`}
               >
                 {sizeOption}
@@ -134,22 +125,17 @@ export default function ShowroomSidebar({ categories }: ShowroomSidebarProps) {
           </div>
         </div>
 
-        {/* Hairline separator */}
-        <div className="border-t border-white/10" />
-
         {/* Availability */}
-        <div className="space-y-3">
-          <h3 className="text-xs font-medium text-white/70 uppercase tracking-wide">
+        <div className="ins-sidebar__section">
+          <h3 className="ins-sidebar__title">
             {t("catalog:filters.availability", "Disponibilidade")}
           </h3>
           <button
             onClick={() =>
               updateFilter("inStock", isFilterActive("inStock", "true") ? null : "true")
             }
-            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] ${
-              isFilterActive("inStock", "true")
-                ? "bg-white/10 text-white/95 font-medium border border-white/15"
-                : "text-white/75 hover:bg-white/5 hover:text-white/90"
+            className={`ins-sidebar__option ${
+              isFilterActive("inStock", "true") ? "ins-sidebar__option--active" : ""
             }`}
           >
             {t("catalog:filters.in_stock", "Em Estoque")}
@@ -158,16 +144,15 @@ export default function ShowroomSidebar({ categories }: ShowroomSidebarProps) {
 
         {/* Reset button (when filters active) */}
         {activeFiltersCount > 0 && (
-          <>
-            <div className="border-t border-white/10" />
+          <div className="ins-sidebar__section">
             <button
               onClick={clearAllFilters}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-white/10 bg-white/5 text-white/75 hover:bg-white/10 hover:border-white/15 hover:text-white/95 transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-white/10 bg-white/5 text-white/75 hover:bg-white/10 hover:border-white/15 hover:text-white/95 transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
             >
               <X className="w-4 h-4" />
               {t("catalog:filters.clear_all", "Limpar filtros")}
             </button>
-          </>
+          </div>
         )}
       </div>
     </aside>
