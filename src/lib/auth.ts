@@ -13,30 +13,34 @@ import { env, isGoogleConfigured } from "@/lib/env.server";
  */
 const providers: NextAuthOptions["providers"] = [
   // Email Magic Link Provider (always enabled)
+  // INSANYCK AUTH-03-RESEND-LUXURY — Luxury magic link email
   EmailProvider({
     async sendVerificationRequest({ identifier, url }) {
-      // INSANYCK AUTH-01: Locale detection
-      // TODO: In future, detect from Accept-Language header or user preferences
-      // For now, default to Portuguese (primary market)
-      const locale = "pt" as const;
+      // INSANYCK AUTH-03: Locale inference from URL (automatic)
+      // Path /en or query ?lng=en → 'en', otherwise → 'pt'
+      // Locale is inferred inside sendSignInEmail
 
       try {
-        await sendSignInEmail({ to: identifier, url, locale });
-      } catch (error) {
-        // INSANYCK AUTH-01: Log detailed error for debugging (server-side only)
-        console.error("[INSANYCK AUTH] Failed to send verification email:", {
+        await sendSignInEmail({
           to: identifier,
-          error: error instanceof Error ? error.message : "Unknown error",
-          timestamp: new Date().toISOString(),
+          url,
+          // locale is auto-inferred from URL in email.ts
         });
+      } catch (error) {
+        // INSANYCK AUTH-03: Fail-open pattern — log but don't crash
+        // Structured logging (NO sensitive data)
+        console.error(JSON.stringify({
+          event: 'auth:verification_email_error',
+          error: error instanceof Error ? error.message : 'Unknown',
+          timestamp: new Date().toISOString(),
+        }));
 
-        // Re-throw with user-friendly message (NextAuth will show to user)
-        throw new Error(
-          "Unable to send verification email. Please try again."
-        );
+        // Don't re-throw — fail gracefully
+        // User will see generic "check your email" message
+        // This prevents auth flow from breaking if email service is down
       }
     },
-    maxAge: 10 * 60, // 10 minutes (security best practice)
+    maxAge: 10 * 60, // 10 minutes (must match email copy)
   }),
 ];
 
