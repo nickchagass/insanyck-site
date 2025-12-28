@@ -95,8 +95,8 @@ const contentVariants = {
 };
 
 export default function AccountLayout({ children, title, subtitle }: AccountLayoutProps) {
-  // INSANYCK i18n FIX: Carregar namespace "account" explicitamente
-  const { t } = useTranslation(['account', 'common']);
+  // INSANYCK HOTFIX: Carregar namespaces 'account', 'nav' e 'common'
+  const { t } = useTranslation(['account', 'nav', 'common']);
   const router = useRouter();
   const currentPath = router.pathname;
 
@@ -181,7 +181,7 @@ export default function AccountLayout({ children, title, subtitle }: AccountLayo
                             ${active ? 'text-white' : 'text-white/50 group-hover:text-white/80'}
                           `}
                         />
-                        <span className="text-sm font-medium">
+                        <span className="text-sm font-light tracking-wide">
                           {t(item.labelKey)}
                         </span>
                         {active && (
