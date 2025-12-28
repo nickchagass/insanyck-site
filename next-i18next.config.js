@@ -12,7 +12,7 @@ const config = {
   // Parte lida pelo i18next/next-i18next
   // Namespaces e opções de fallback
   defaultNS: 'common',
-  ns: ['common', 'nav', 'home', 'product', 'account'],
+  ns: ['common', 'nav', 'home', 'product', 'account', 'legal'],
   fallbackLng: 'pt', // HOTFIX: PT é o fallback (marca brasileira)
   reloadOnPrerender: process.env.NODE_ENV === 'development',
   localePath: path.resolve('./public/locales'),
