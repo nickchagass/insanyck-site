@@ -13,6 +13,9 @@ class MyDocument extends Document {
     const pagePath = (this.props as any).__NEXT_DATA__?.page || "/";
     const ogLocale = currentLocale === "pt" ? "pt_BR" : "en_US";
 
+    // HOTFIX: HTML lang usa pt-BR (ISO completo) para melhor detecção do Chrome
+    const htmlLang = currentLocale === "pt" ? "pt-BR" : "en";
+
     // Base URL para hreflang absolutos
     const baseUrl = process.env.NEXT_PUBLIC_URL || "https://insanyck.com";
     
@@ -21,7 +24,7 @@ class MyDocument extends Document {
     const hrefEn = `${baseUrl}${pagePath === "/" ? "/en" : `/en${pagePath}`}`;
 
     return (
-      <Html lang={currentLocale}>
+      <Html lang={htmlLang}>
         <Head>
           {/* DNS prefetch control */}
           <meta httpEquiv="x-dns-prefetch-control" content="on" />
@@ -39,7 +42,8 @@ class MyDocument extends Document {
           {/* OG locale por idioma */}
           <meta property="og:locale" content={ogLocale} />
 
-          {/* Alternates hreflang */}
+          {/* Alternates hreflang (SEO internacional) */}
+          <link rel="alternate" hrefLang="pt-BR" href={hrefPt} />
           <link rel="alternate" hrefLang="pt" href={hrefPt} />
           <link rel="alternate" hrefLang="en" href={hrefEn} />
           <link rel="alternate" hrefLang="x-default" href={hrefPt} />
