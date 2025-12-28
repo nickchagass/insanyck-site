@@ -6,6 +6,24 @@
     "cart": "Carrinho",
     "language": "Idioma",
     "pt": "PT",
-    "en": "EN"
+    "en": "EN",
+    "aria": {
+      "login": "Entrar",
+      "mainNav": "Principal",
+      "goHome": "Ir para a Home",
+      "language": "Idioma",
+      "cart": "Carrinho"
+    },
+    "links": {
+      "novidades": "Novidades",
+      "loja": "Loja",
+      "colecao": "Coleção"
+    },
+    "userMenu": {
+      "account": "Minha conta",
+      "orders": "Pedidos",
+      "favorites": "Favoritos",
+      "signOut": "Sair"
+    }
   }
   

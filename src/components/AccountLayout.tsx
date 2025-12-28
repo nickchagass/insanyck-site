@@ -1,5 +1,6 @@
 // INSANYCK FASE G-04.2 — Account Layout com tokens DS (white-label ready)
 // INSANYCK STEP G-EXEC-P1-D — Museum Edition Upgrade
+// INSANYCK MUSEUM-UNIFICATION — Museum Atmosphere Background
 "use client";
 
 import Link from "next/link";
@@ -24,8 +25,8 @@ export default function AccountLayout({ titleKey, children }: Props) {
   ];
 
   return (
-    <section className="pt-[100px] pb-16">
-      <div className="mx-auto max-w-[1200px] px-6">
+    <section className="museum-atmosphere pt-[100px] pb-16">
+      <div className="mx-auto max-w-[1200px] px-6 relative z-10">
         {/* INSANYCK STEP G-EXEC-P1-D — Tipografia editorial */}
         <h1 className="text-3xl font-light tracking-tight text-white/95 mb-1">{t(titleKey as any)}</h1>
         <div className="h-px w-16 bg-gradient-to-r from-white/30 to-transparent mb-8" aria-hidden="true" />

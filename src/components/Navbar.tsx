@@ -2,15 +2,17 @@
 // INSANYCK STEP G-04.2.1 — Navbar Imaculada (sem cores literais)
 // INSANYCK HOTFIX G-05.1.4 — Touch comfort (44px hit areas) + Keyboard-safe UserMenu
 // INSANYCK STEP G-05.HERO_MINIMAL — Navbar transparente na Home (glass apenas com scroll)
+// INSANYCK MUSEUM-UNIFICATION — UserMenu Premium with Glassmorphism
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ShoppingBag, Heart, User } from "lucide-react";
 import { useTranslation } from "next-i18next";
 // INSANYCK FASE G-03.1 — Micro-animação do carrinho
-import { motion } from "framer-motion";
+// INSANYCK MUSEUM-UNIFICATION — AnimatePresence para UserMenu premium
+import { motion, AnimatePresence } from "framer-motion";
 
 import dynamic from "next/dynamic";
 import { useCartCount, useCartStore } from "@/store/cart";
@@ -286,53 +288,157 @@ export default function Navbar() {
   );
 }
 
-/* ======================= INSANYCK FASE G-04.2 — UserMenu com tokens DS ======================= */
-/* INSANYCK HOTFIX G-05.1.2 — UserMenu responsivo: ícone mobile, ícone+texto sm+ */
-/* INSANYCK HOTFIX G-05.1.4 — Keyboard-safe dropdown (focus-within) */
-/* INSANYCK VISUAL FIDELITY FIX — Drop-shadow na Home */
+/* ======================= INSANYCK MUSEUM-UNIFICATION — UserMenu Premium ======================= */
+/* Glassmorphism + Framer Motion + Premium Animations */
 function UserMenu({ isHome }: { isHome: boolean }) {
   const { data: session, status } = useSession();
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation(['nav', 'common']);
+
+  // Close on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Close on Escape
+  useEffect(() => {
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') setIsOpen(false);
+    }
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, []);
 
   if (status !== "authenticated") {
     return (
       <Link
         href="/conta/login"
         prefetch={true}
-        className="nav-pill-titanium flex items-center gap-1.5 text-ds-accentSoft hover:text-ds-accent px-2 py-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]"
-        aria-label="Entrar"
+        className="nav-pill-titanium flex items-center gap-1.5 text-ds-accentSoft hover:text-ds-accent px-3 py-2 rounded-xl transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus"
+        aria-label={t('nav:aria.login', 'Entrar')}
         style={isHome ? { filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.75))' } : undefined}
       >
         <User size={18} strokeWidth={1.5} aria-hidden="true" />
-        <span className="hidden sm:inline">Entrar</span>
+        <span className="hidden sm:inline">{t('common:auth.login.cta', 'Entrar')}</span>
       </Link>
     );
   }
 
   const name = session?.user?.name ?? session?.user?.email ?? "Conta";
+  const firstName = String(name).split(" ")[0];
 
   return (
-    <div className="relative group" style={isHome ? { filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.75))' } : undefined}>
-      <button className="nav-pill-titanium flex items-center gap-1.5 text-ds-accentSoft hover:text-ds-accent px-2 py-1 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)]">
+    <div
+      ref={menuRef}
+      className="relative"
+      style={isHome ? { filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.75))' } : undefined}
+    >
+      {/* Trigger Button */}
+      <motion.button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 text-ds-accentSoft hover:text-ds-accent px-3 py-2 rounded-xl transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus"
+        whileTap={{ scale: 0.97 }}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
+      >
         <User size={18} strokeWidth={1.5} aria-hidden="true" />
-        <span className="hidden sm:inline">{String(name).split(" ")[0]}</span>
-      </button>
-      {/* INSANYCK MICRO-LUXO — Z-index ajustado para z-100 (sticky level, garantia acima de elementos comuns) */}
-      <div className="absolute right-0 mt-2 hidden group-hover:block group-focus-within:block rounded-2xl border border-ds-borderSubtle bg-ds-elevated backdrop-blur-md shadow-ds-2 p-2 w-[220px] z-[100]">
-        <Link className="block px-3 py-2 text-ds-accentSoft hover:text-ds-accent hover:bg-ds-surface rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-1" href="/conta" prefetch={true}>
-          Minha conta
-        </Link>
-        <Link className="block px-3 py-2 text-ds-accentSoft hover:text-ds-accent hover:bg-ds-surface rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-1" href="/conta/pedidos" prefetch={true}>
-          Pedidos
-        </Link>
-        <Link className="block px-3 py-2 text-ds-accentSoft hover:text-ds-accent hover:bg-ds-surface rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-1" href="/favoritos" prefetch={true}>
-          Favoritos
-        </Link>
-        <form method="post" action="/api/auth/signout" className="mt-1">
-          <button className="w-full text-left px-3 py-2 text-ds-accentSoft hover:text-ds-accent hover:bg-ds-surface rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-1">
-            Sair
-          </button>
-        </form>
-      </div>
+        <span className="hidden sm:inline text-sm">{firstName}</span>
+        {/* Chevron */}
+        <motion.svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          className="hidden sm:block opacity-50"
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <path
+            d="M3 4.5L6 7.5L9 4.5"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+        </motion.svg>
+      </motion.button>
+
+      {/* Dropdown Menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.96 }}
+            transition={{
+              type: "spring",
+              stiffness: 400,
+              damping: 30,
+            }}
+            className="glass-dropdown absolute right-0 mt-3 w-[220px] p-2 z-[100]"
+            role="menu"
+            aria-orientation="vertical"
+          >
+            {/* User Info Header */}
+            <div className="px-3 py-2 mb-1 border-b border-white/[0.06]">
+              <p className="text-sm font-medium text-white/90 truncate">{name}</p>
+              <p className="text-xs text-white/40 truncate">{session?.user?.email}</p>
+            </div>
+
+            {/* Menu Items */}
+            <Link
+              href="/conta"
+              prefetch={true}
+              className="dropdown-item-museum"
+              role="menuitem"
+              onClick={() => setIsOpen(false)}
+            >
+              {t('nav:userMenu.account', 'Minha conta')}
+            </Link>
+
+            <Link
+              href="/conta/pedidos"
+              prefetch={true}
+              className="dropdown-item-museum"
+              role="menuitem"
+              onClick={() => setIsOpen(false)}
+            >
+              {t('nav:userMenu.orders', 'Pedidos')}
+            </Link>
+
+            <Link
+              href="/favoritos"
+              prefetch={true}
+              className="dropdown-item-museum"
+              role="menuitem"
+              onClick={() => setIsOpen(false)}
+            >
+              {t('nav:userMenu.favorites', 'Favoritos')}
+            </Link>
+
+            {/* Divider */}
+            <div className="my-2 h-px bg-white/[0.06]" />
+
+            {/* Sign Out */}
+            <form method="post" action="/api/auth/signout">
+              <button
+                type="submit"
+                className="dropdown-item-museum w-full text-left text-white/50 hover:text-white/70"
+                role="menuitem"
+              >
+                {t('nav:userMenu.signOut', 'Sair')}
+              </button>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

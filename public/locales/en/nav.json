@@ -6,6 +6,24 @@
     "cart": "Cart",
     "language": "Language",
     "pt": "PT",
-    "en": "EN"
+    "en": "EN",
+    "aria": {
+      "login": "Sign in",
+      "mainNav": "Main",
+      "goHome": "Go to Home",
+      "language": "Language",
+      "cart": "Cart"
+    },
+    "links": {
+      "novidades": "New",
+      "loja": "Store",
+      "colecao": "Collection"
+    },
+    "userMenu": {
+      "account": "My account",
+      "orders": "Orders",
+      "favorites": "Favorites",
+      "signOut": "Sign out"
+    }
   }
   

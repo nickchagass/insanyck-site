@@ -3454,3 +3454,111 @@ body::after {
     0 0 40px rgba(255, 255, 255, 0.05);
 }
 
+/* ============================================ */
+/* INSANYCK MUSEUM UNIFICATION — Design Tokens  */
+/* Premium Atmosphere + Glass Components       */
+/* ============================================ */
+
+/* === ATMOSPHERE === */
+.museum-atmosphere {
+  position: relative;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(30, 35, 50, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 50% 120%, rgba(20, 25, 35, 0.3) 0%, transparent 50%),
+    linear-gradient(180deg, #0a0a0c 0%, #050507 50%, #000000 100%);
+}
+
+.museum-atmosphere::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* === GLASS CARD === */
+.glass-card-museum {
+  position: relative;
+  background: rgba(255, 255, 255, 0.015);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 1px 0 0 rgba(255, 255, 255, 0.04) inset,
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+.glass-card-museum::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  border-radius: 20px 20px 0 0;
+}
+
+/* === GLASS DROPDOWN === */
+.glass-dropdown {
+  background: rgba(15, 15, 18, 0.85);
+  backdrop-filter: blur(24px) saturate(1.3);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+    0 8px 16px rgba(0, 0, 0, 0.4),
+    0 24px 48px rgba(0, 0, 0, 0.5);
+}
+
+.glass-dropdown::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+}
+
+/* === DROPDOWN ITEM === */
+.dropdown-item-museum {
+  display: block;
+  padding: 12px 16px;
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  transition: all 0.15s ease-out;
+}
+
+.dropdown-item-museum:hover {
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.dropdown-item-museum:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(180, 200, 230, 0.4);
+}
+
+/* === SECTION TITLE === */
+.section-title-museum {
+  font-size: 1.75rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.section-subtitle-museum {
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 0.5rem;
+}
+
