@@ -19,6 +19,10 @@ const serverEnvSchema = z.object({
   NEXTAUTH_URL: z.string().url('NEXTAUTH_URL must be a valid URL'),
   NEXTAUTH_SECRET: z.string().min(1, 'NEXTAUTH_SECRET is required'),
 
+  // INSANYCK AUTH-01 — Google OAuth (optional in dev, required in prod)
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+
   // Database (required for Prisma)
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
 
@@ -79,3 +83,8 @@ export const isServerEnvReady = () => {
     return false;
   }
 };
+
+// INSANYCK AUTH-01 — Helper to verify if Google OAuth is configured
+export function isGoogleConfigured(): boolean {
+  return Boolean(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET);
+}
