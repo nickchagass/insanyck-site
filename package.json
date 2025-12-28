@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "dev:webpack": "next dev",
-    "build": "next build",
+    "build": "node scripts/deploy-with-retry.js && next build",
     "start": "next start -p 3000",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
