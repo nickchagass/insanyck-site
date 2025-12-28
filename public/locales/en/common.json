@@ -45,6 +45,7 @@
   "auth": {
     "login": {
       "title": "Sign in",
+      "tagline": "Welcome to the club",
       "description": "Access your INSANYCK account",
       "emailPlaceholder": "Your email",
       "ctaEmail": "Sign in with email",

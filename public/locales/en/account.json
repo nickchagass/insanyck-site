@@ -29,6 +29,10 @@
       "error": "Error loading orders. Please try again.",
       "viewOrder": "View details",
       "tableCaption": "List of placed orders",
+      "count_one": "{{count}} order",
+      "count_other": "{{count}} orders",
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} items",
       "table": {
         "order": "Order",
         "date": "Date",

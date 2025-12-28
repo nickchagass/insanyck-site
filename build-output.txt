@@ -1,0 +1,169 @@
+
+> insanyck-luxury@0.1.0 build
+> next build
+
+[baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
+   ▲ Next.js 15.5.9
+   - Environments: .env.local, .env
+
+   Linting and checking validity of types ...
+
+./src/components/pdp/Gallery.tsx
+122:6  Warning: React Hook useEffect has missing dependencies: 'closeLightbox' and 'navigateImage'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/components/pdp/VariantPicker.tsx
+33:21  Warning: 'variant' is defined but never used. Allowed unused args must match /^_/u.  no-unused-vars
+
+./src/components/pdp/VariantSelector.tsx
+30:14  Warning: 'variant' is defined but never used. Allowed unused args must match /^_/u.  no-unused-vars
+
+./src/lib/auth.ts
+127:9  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+177:9  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+192:9  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+198:9  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+
+./src/lib/db/prismaGuard.ts
+14:38  Warning: 'prisma' is defined but never used. Allowed unused args must match /^_/u.  no-unused-vars
+
+./src/lib/edge/logger.ts
+47:7  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+61:9  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+
+./src/lib/email.ts
+55:7  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+81:7  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+89:3  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+
+./src/middleware.ts
+29:5  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+
+./src/pages/checkout.tsx
+110:9  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+111:9  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+112:9  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+113:9  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+114:9  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+115:9  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+116:9  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+148:9  Warning: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+
+./src/pages/conta/pedidos/[id].tsx
+108:14  Warning: 'err' is defined but never used.  no-unused-vars
+
+./src/pages/dev/email-preview.tsx
+10:11  Warning: 't' is assigned a value but never used. Allowed unused vars must match /^_/u.  no-unused-vars
+
+./src/pages/loja.tsx
+141:6  Warning: React Hook useCallback has a missing dependency: 'toCard'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/types/next-auth.d.ts
+3:10  Warning: 'JWT' is defined but never used. Allowed unused vars must match /^_/u.  no-unused-vars
+12:13  Warning: 'Session' is defined but never used. Allowed unused vars must match /^_/u.  no-unused-vars
+23:13  Warning: 'User' is defined but never used. Allowed unused vars must match /^_/u.  no-unused-vars
+35:13  Warning: 'JWT' is defined but never used. Allowed unused vars must match /^_/u.  no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+   Creating an optimized production build ...
+ ✓ (pwa) Compiling for server...
+ ✓ (pwa) Compiling for server...
+ ✓ (pwa) Compiling for client (static)...
+ ○ (pwa) Service worker: C:\dev\insanyck-site\public\sw.js
+ ○ (pwa)   URL: /sw.js
+ ○ (pwa)   Scope: /
+ ○ (pwa) Custom runtimeCaching array found, using it instead of the default one.
+ ✓ Compiled successfully in 4.0s
+   Collecting page data ...
+   Generating static pages (0/20) ...
+   Generating static pages (5/20) 
+   Generating static pages (10/20) 
+   Generating static pages (15/20) 
+ ✓ Generating static pages (20/20)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (pages)                                        Size  First Load JS  Revalidate  Expire
+┌ ● /                                             3.28 kB         199 kB
+├   /_app                                             0 B         191 kB
+├ ƒ /_health                                        408 B         191 kB
+├ ○ /404                                          2.37 kB         218 kB
+├ ƒ /admin                                        2.51 kB         193 kB
+├ ƒ /admin/orders                                 3.84 kB         195 kB
+├ ƒ /admin/products                               3.73 kB         194 kB
+├ ƒ /api/account/addresses                            0 B         191 kB
+├ ƒ /api/account/addresses/[id]                       0 B         191 kB
+├ ƒ /api/account/me                                   0 B         191 kB
+├ ƒ /api/account/orders                               0 B         191 kB
+├ ƒ /api/account/orders/[id]                          0 B         191 kB
+├ ƒ /api/account/wishlist                             0 B         191 kB
+├ ƒ /api/account/wishlist/[id]                        0 B         191 kB
+├ ƒ /api/admin/categories                             0 B         191 kB
+├ ƒ /api/admin/options                                0 B         191 kB
+├ ƒ /api/admin/orders                                 0 B         191 kB
+├ ƒ /api/admin/orders/[id]                            0 B         191 kB
+├ ƒ /api/admin/orders/mark-shipped                    0 B         191 kB
+├ ƒ /api/admin/products                               0 B         191 kB
+├ ƒ /api/admin/products/[id]                          0 B         191 kB
+├ ƒ /api/admin/variants                               0 B         191 kB
+├ ƒ /api/auth/[...nextauth]                           0 B         191 kB
+├ ƒ /api/cart                                         0 B         191 kB
+├ ƒ /api/cart-sync                                    0 B         191 kB
+├ ƒ /api/checkout                                     0 B         191 kB
+├ ƒ /api/checkout/create-session                      0 B         191 kB
+├ ƒ /api/checkout/order-status                        0 B         191 kB
+├ ƒ /api/create-payment-intent                        0 B         191 kB
+├ ƒ /api/emails/preview                               0 B         191 kB
+├ ƒ /api/health                                       0 B         191 kB
+├ ƒ /api/mp/create-preference                         0 B         191 kB
+├ ƒ /api/mp/webhook                                   0 B         191 kB
+├ ƒ /api/og/[...route]                                0 B         191 kB
+├ ƒ /api/products                                     0 B         191 kB
+├ ƒ /api/products/[slug]                              0 B         191 kB
+├ ƒ /api/search                                       0 B         191 kB
+├ ƒ /api/sitemap.xml                                  0 B         191 kB
+├ ƒ /api/stripe/checkout                              0 B         191 kB
+├ ƒ /api/stripe/webhook                               0 B         191 kB
+├ ƒ /api/testemongo                                   0 B         191 kB
+├ ƒ /api/webhook                                      0 B         191 kB
+├ ƒ /buscar                                       2.71 kB         203 kB
+├ ƒ /checkout                                     14.4 kB         210 kB
+├ ƒ /checkout/cancel                              2.56 kB         193 kB
+├ ƒ /checkout/success                             3.43 kB         194 kB
+├ ƒ /colecao                                        484 B         205 kB
+├ ƒ /conta                                        5.16 kB         196 kB
+├ ƒ /conta/cadastro                               3.69 kB         194 kB
+├ ƒ /conta/enderecos                              3.64 kB         194 kB
+├ ● /conta/login                                  3.17 kB         194 kB
+├ ƒ /conta/pedidos                                4.58 kB         204 kB
+├ ƒ /conta/pedidos/[id]                           2.39 kB         202 kB
+├ ● /conta/verify                                 2.13 kB         193 kB
+├ ● /dev/email-preview                            1.49 kB         192 kB
+├ ● /favoritos                                    4.63 kB         205 kB
+├ ƒ /login                                        1.31 kB         192 kB
+├ ƒ /loja                                         6.93 kB         207 kB
+├ ● /manifesto                                    3.46 kB         194 kB
+├ ƒ /novidades                                    1.65 kB         226 kB
+├ ● /pedido/[id]                                  2.18 kB         193 kB
+├ ● /produto/[slug] (5703 ms)                     5.22 kB         196 kB          1m      1y
+├   ├ /pt/produto/oversized-classic (1007 ms)
+├   ├ /pt/produto/street-premium (996 ms)
+├   ├ /pt/produto/tee-classic-branca (966 ms)
+├   ├ /pt/produto/oversized-classic-off (936 ms)
+├   ├ /pt/produto/essential-fit (933 ms)
+├   └ /pt/produto/tee-oversized-preta (865 ms)
+├ ƒ /robots.txt                                     247 B         191 kB
+├ ƒ /sacola                                          6 kB         202 kB
+└ ƒ /sitemap.xml                                    249 B         191 kB
++ First Load JS shared by all                      219 kB
+  ├ chunks/framework-400dfadea522b072.js          59.6 kB
+  ├ chunks/main-ae0f304b79679e05.js               38.1 kB
+  ├ chunks/pages/_app-03b04f56610c5ae0.js         91.1 kB
+  ├ css/5e41ff2952450ef0.css                      28.6 kB
+  └ other shared chunks (total)                   1.87 kB
+
+ƒ Middleware                                      55.1 kB
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses getStaticProps)
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,11 +1,12 @@
 // INSANYCK FASE G-04.2.1.B — Página de pedidos com DsTable e DsEmptyState
+// INSANYCK STEP G-FIX-I18N-LUXURY — Premium Skeletons + i18n Completo
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Package, Truck, CheckCircle, Clock, Eye, ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -15,6 +16,7 @@ import DsTable from "@/components/ds/DsTable";
 import DsEmptyState from "@/components/ds/DsEmptyState";
 import DsButton from "@/components/ds/DsButton";
 import { Button } from "@/components/ui/Button";
+import { OrderSkeleton, OrderSkeletonTable } from "@/components/ui/OrderSkeleton";
 import useSWR from "swr";
 import { formatPrice } from "@/lib/price";
 import { formatDate } from "@/lib/date";
@@ -183,20 +185,42 @@ export default function OrdersPage() {
             </p>
             {!isLoading && data && (
               <span className="text-sm text-ds-accentSoft opacity-60">
-                {total} {total === 1 ? 'pedido' : 'pedidos'}
+                {/* INSANYCK STEP G-FIX-I18N-LUXURY — Pluralização com i18n count */}
+                {t('account:orders.count', { count: total })}
               </span>
             )}
           </div>
 
-          {/* Loading State */}
-          {isLoading && (
-            <div className="flex items-center justify-center py-8">
-              <div className="animate-spin h-6 w-6 border-2 border-ds-borderSubtle border-t-ds-accent rounded-full" />
-            </div>
-          )}
+          {/* INSANYCK STEP G-FIX-I18N-LUXURY — Premium Skeleton Loading States */}
+          <AnimatePresence mode="wait">
+            {isLoading && (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {/* Desktop: Table Skeleton */}
+                <div className="hidden md:block">
+                  <OrderSkeletonTable rows={5} />
+                </div>
+
+                {/* Mobile: Cards Skeleton */}
+                <div className="md:hidden">
+                  <OrderSkeleton count={3} />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {!isLoading && orders.length > 0 && (
-            <>
+            <motion.div
+              key="orders-loaded"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
               {/* INSANYCK FASE G-04.2.1.B — Desktop: DsTable */}
               <div className="hidden md:block">
                 <DsTable density="default" ariaLabel={t('account:orders.tableCaption', 'Lista de pedidos')}>
@@ -220,7 +244,8 @@ export default function OrdersPage() {
                                 #{order.id.slice(0, 8).toUpperCase()}
                               </div>
                               <div className="text-sm text-ds-accentSoft">
-                                {order.items.length} {order.items.length === 1 ? 'item' : 'itens'}
+                                {/* INSANYCK STEP G-FIX-I18N-LUXURY — Pluralização de itens */}
+                                {t('account:orders.itemCount', { count: order.items.length })}
                               </div>
                             </div>
                           </DsTable.Cell>
@@ -286,7 +311,8 @@ export default function OrdersPage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="text-[0.75rem] text-white/50 uppercase tracking-wide mb-1">
-                            {order.items.length} {order.items.length === 1 ? 'item' : 'itens'}
+                            {/* INSANYCK STEP G-FIX-I18N-LUXURY — Pluralização de itens mobile */}
+                            {t('account:orders.itemCount', { count: order.items.length })}
                           </p>
                           <p className="font-light text-[1.125rem] text-white/95 tabular-nums">
                             {formatPrice(order.amountTotal, locale, order.currency as "BRL" | "USD")}
@@ -335,7 +361,7 @@ export default function OrdersPage() {
                   </Button>
                 </div>
               )}
-            </>
+            </motion.div>
           )}
         </div>
       </AccountLayout>

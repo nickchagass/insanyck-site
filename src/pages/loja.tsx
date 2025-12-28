@@ -142,6 +142,47 @@ export default function Loja({
 
   // Note: Filter functions moved to FiltersDock component
 
+  // INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Seleção Preditiva de Variante
+  // Seleciona a variante com MELHOR disponibilidade (maior estoque)
+  const selectBestVariant = (variants: any[]): {
+    variantId?: string;
+    sku?: string;
+    hasValidVariant: boolean;
+  } => {
+    if (!variants || variants.length === 0) {
+      return { hasValidVariant: false };
+    }
+
+    // Filtrar variantes ativas
+    const activeVariants = variants.filter((v: any) => v && v.status === 'active');
+
+    if (activeVariants.length === 0) {
+      return { hasValidVariant: false };
+    }
+
+    // Calcular disponibilidade: quantity - reserved
+    const withAvailability = activeVariants.map((v: any) => ({
+      id: v.id,
+      sku: v.sku,
+      available: (v.inventory?.quantity ?? 0) - (v.inventory?.reserved ?? 0),
+    }));
+
+    // Ordenar por disponibilidade (maior primeiro)
+    const sorted = withAvailability.sort((a, b) => b.available - a.available);
+
+    // Pegar a melhor variante
+    const best = sorted[0];
+
+    // Se a melhor tem estoque > 0, é válida
+    const hasValidVariant = best.available > 0;
+
+    return {
+      variantId: best.id,
+      sku: best.sku,
+      hasValidVariant,
+    };
+  };
+
   // INSANYCK FIX — Safe mapping para suportar legacy + variants schemas
   const toCard = (product: any) => {
     // Obter minCents por ordem de preferência
@@ -156,7 +197,7 @@ export default function Loja({
     }
 
     // Montar priceDisplay
-    const priceDisplay = minCents > 0 
+    const priceDisplay = minCents > 0
       ? (minCents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
       : "Consulte";
 
@@ -165,16 +206,19 @@ export default function Loja({
     if (product.availability?.inStock !== undefined) {
       inStock = product.availability.inStock;
     } else if (product.variants?.length > 0) {
-      inStock = product.variants.some((v: any) => 
-        v.status === 'active' && 
+      inStock = product.variants.some((v: any) =>
+        v.status === 'active' &&
         ((v.inventory?.quantity ?? 0) > (v.inventory?.reserved ?? 0))
       );
     }
 
     // imageFront por ordem de preferência
-    const imageFront = product.image || 
-                      product.images?.[0]?.url || 
+    const imageFront = product.image ||
+                      product.images?.[0]?.url ||
                       "/products/placeholder/front.webp";
+
+    // INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Selecionar melhor variante
+    const bestVariant = selectBestVariant(product.variants || []);
 
     return {
       id: product.id,
@@ -188,6 +232,8 @@ export default function Loja({
       thumbs: {
         front: imageFront,
       },
+      // INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Injetar variante selecionada
+      ...bestVariant,
     };
   };
 

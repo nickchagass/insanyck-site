@@ -30,6 +30,11 @@ export type ProductCardData = {
     front?: string;
   };
   status?: "new" | "soldout" | string;
+
+  // INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Campos da variante pré-selecionada para PLP
+  variantId?: string;      // ID da variante pré-selecionada (melhor disponibilidade)
+  sku?: string;            // SKU da variante
+  hasValidVariant?: boolean; // Flag para degradação elegante (Ghost button se false)
 };
 
 // Product for API responses

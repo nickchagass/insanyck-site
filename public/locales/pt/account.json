@@ -29,6 +29,10 @@
       "error": "Erro ao carregar pedidos. Tente novamente.",
       "viewOrder": "Ver detalhes",
       "tableCaption": "Lista de pedidos realizados",
+      "count_one": "{{count}} pedido",
+      "count_other": "{{count}} pedidos",
+      "itemCount_one": "{{count}} item",
+      "itemCount_other": "{{count}} itens",
       "table": {
         "order": "Pedido",
         "date": "Data",
