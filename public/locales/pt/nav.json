@@ -1,29 +1,33 @@
 {
-    "news": "Novidades",
-    "store": "Loja",
-    "collection": "Coleção",
-    "search": "Pesquisar",
-    "cart": "Carrinho",
+  "overview": "Visão geral",
+  "addresses": "Endereços",
+  "orders": "Pedidos",
+  "wishlist": "Favoritos",
+  "signout": "Sair",
+  "news": "Novidades",
+  "store": "Loja",
+  "collection": "Coleção",
+  "search": "Pesquisar",
+  "cart": "Carrinho",
+  "language": "Idioma",
+  "pt": "PT",
+  "en": "EN",
+  "aria": {
+    "login": "Entrar",
+    "mainNav": "Principal",
+    "goHome": "Ir para a Home",
     "language": "Idioma",
-    "pt": "PT",
-    "en": "EN",
-    "aria": {
-      "login": "Entrar",
-      "mainNav": "Principal",
-      "goHome": "Ir para a Home",
-      "language": "Idioma",
-      "cart": "Carrinho"
-    },
-    "links": {
-      "novidades": "Novidades",
-      "loja": "Loja",
-      "colecao": "Coleção"
-    },
-    "userMenu": {
-      "account": "Minha conta",
-      "orders": "Pedidos",
-      "favorites": "Favoritos",
-      "signOut": "Sair"
-    }
+    "cart": "Carrinho"
+  },
+  "links": {
+    "novidades": "Novidades",
+    "loja": "Loja",
+    "colecao": "Coleção"
+  },
+  "userMenu": {
+    "account": "Minha conta",
+    "orders": "Pedidos",
+    "favorites": "Favoritos",
+    "signOut": "Sair"
   }
-  
+}

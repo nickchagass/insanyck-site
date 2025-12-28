@@ -1,29 +1,33 @@
 {
-    "news": "News",
-    "store": "Store",
-    "collection": "Collection",
-    "search": "Search",
-    "cart": "Cart",
+  "overview": "Overview",
+  "addresses": "Addresses",
+  "orders": "Orders",
+  "wishlist": "Favorites",
+  "signout": "Sign out",
+  "news": "News",
+  "store": "Store",
+  "collection": "Collection",
+  "search": "Search",
+  "cart": "Cart",
+  "language": "Language",
+  "pt": "PT",
+  "en": "EN",
+  "aria": {
+    "login": "Sign in",
+    "mainNav": "Main",
+    "goHome": "Go to Home",
     "language": "Language",
-    "pt": "PT",
-    "en": "EN",
-    "aria": {
-      "login": "Sign in",
-      "mainNav": "Main",
-      "goHome": "Go to Home",
-      "language": "Language",
-      "cart": "Cart"
-    },
-    "links": {
-      "novidades": "New",
-      "loja": "Store",
-      "colecao": "Collection"
-    },
-    "userMenu": {
-      "account": "My account",
-      "orders": "Orders",
-      "favorites": "Favorites",
-      "signOut": "Sign out"
-    }
+    "cart": "Cart"
+  },
+  "links": {
+    "novidades": "New",
+    "loja": "Store",
+    "colecao": "Collection"
+  },
+  "userMenu": {
+    "account": "My account",
+    "orders": "Orders",
+    "favorites": "Favorites",
+    "signOut": "Sign out"
   }
-  
+}
