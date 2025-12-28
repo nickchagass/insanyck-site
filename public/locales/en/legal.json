@@ -1,0 +1,135 @@
+{
+  "common": {
+    "backToHome": "Back to home",
+    "viewTerms": "View Terms of Service",
+    "viewPrivacy": "View Privacy Policy",
+    "allRights": "All rights reserved."
+  },
+  "privacy": {
+    "meta": {
+      "title": "Privacy Policy",
+      "description": "Learn how INSANYCK collects, uses, and protects your personal data. Transparency and security are our pillars."
+    },
+    "title": "Privacy Policy",
+    "subtitle": "Your right to privacy is sacred to us.",
+    "lastUpdated": "Last updated",
+    "intro": "INSANYCK values and respects your privacy. This policy describes how we collect, use, and protect your personal information when you use our website and services. By accessing our platform, you agree to the practices described in this document.",
+    "sections": {
+      "collection": {
+        "title": "Data We Collect",
+        "intro": "We collect information necessary to provide our services:",
+        "item1": "Identification information (name, email) provided during registration",
+        "item2": "Delivery address for order processing",
+        "item3": "Browsing data and preferences to improve your experience",
+        "item4": "Payment information processed by secure partners (Stripe, MercadoPago)"
+      },
+      "usage": {
+        "title": "How We Use Your Data",
+        "intro": "Your information is used exclusively to:",
+        "item1": "Process and deliver your orders",
+        "item2": "Send updates about purchase status",
+        "item3": "Personalize your shopping experience",
+        "item4": "Communicate news and offers (with your consent)",
+        "item5": "Comply with legal and regulatory obligations"
+      },
+      "protection": {
+        "title": "Data Protection",
+        "p1": "We implement technical and organizational measures to protect your information:",
+        "item1": "SSL/TLS encryption on all transmissions",
+        "item2": "Secure authentication via Magic Link (no passwords stored)",
+        "item3": "Payments processed by PCI-DSS certified gateways",
+        "item4": "Restricted data access only for essential operations"
+      },
+      "rights": {
+        "title": "Your Rights",
+        "intro": "In compliance with LGPD and GDPR, you have the right to:",
+        "item1": "Access your stored personal data",
+        "item2": "Request correction of incorrect information",
+        "item3": "Request deletion of your data",
+        "item4": "Revoke consent for communications",
+        "item5": "Data portability",
+        "contact": "To exercise these rights, contact us via the email below."
+      },
+      "thirdParties": {
+        "title": "Third Parties and Partners",
+        "p1": "We work with trusted partners to process payments and deliver products:",
+        "stripe": "International payment processing",
+        "mp": "Payment processing in Brazil",
+        "shipping": "Product delivery",
+        "p2": "These partners have their own privacy policies and are certified to ensure the security of your data."
+      },
+      "contact": {
+        "title": "Contact",
+        "intro": "For privacy questions or to exercise your rights:"
+      }
+    }
+  },
+  "terms": {
+    "meta": {
+      "title": "Terms of Service",
+      "description": "Read INSANYCK's terms and conditions. Transparency in purchase, delivery, and return policies."
+    },
+    "title": "Terms of Service",
+    "subtitle": "Clear rules for an exceptional shopping experience.",
+    "lastUpdated": "Last updated",
+    "intro": "Welcome to INSANYCK. By accessing and using our website, you agree to these terms and conditions. Please read them carefully before making any purchase. If you do not agree with any term, we recommend not using our services.",
+    "sections": {
+      "about": {
+        "title": "About INSANYCK",
+        "p1": "INSANYCK is a luxury fashion brand focused on exclusive pieces and contemporary design. We operate as an e-commerce platform, connecting creators to consumers seeking excellence in clothing.",
+        "p2": "Our commitment is to offer high-quality products, premium service, and a differentiated shopping experience."
+      },
+      "products": {
+        "title": "Products and Prices",
+        "item1": "All prices are displayed in Brazilian Reais (BRL) and include applicable taxes",
+        "item2": "Images are illustrative; slight color variations may occur",
+        "item3": "Size availability is subject to stock",
+        "item4": "We reserve the right to correct pricing errors before order confirmation"
+      },
+      "payments": {
+        "title": "Payments",
+        "intro": "We accept the following payment methods:",
+        "item1": "Credit cards (Visa, Mastercard, Amex, Elo)",
+        "item2": "PIX (instant payment)",
+        "item3": "Bank slip (clearing time up to 3 business days)",
+        "security": "All payments are processed by certified gateways (Stripe and MercadoPago), ensuring PCI-DSS security."
+      },
+      "shipping": {
+        "title": "Shipping",
+        "item1": "Deliveries throughout Brazil via Correios and partner carriers",
+        "item2": "Deadlines calculated at checkout according to your ZIP code",
+        "item3": "Tracking code sent by email after dispatch",
+        "item4": "We are not responsible for delays caused by strikes or force majeure"
+      },
+      "returns": {
+        "title": "Exchanges and Returns",
+        "intro": "In compliance with the Consumer Defense Code:",
+        "item1": "7 calendar days for withdrawal (from receipt)",
+        "item2": "Product must be in original condition, with tags",
+        "item3": "First exchange free; others subject to shipping",
+        "item4": "Refund processed within 10 business days after receiving the product",
+        "contact": "To request an exchange or return, contact us via the email below."
+      },
+      "ip": {
+        "title": "Intellectual Property",
+        "p1": "All site content — including texts, images, logos, designs, and code — is property of INSANYCK and protected by copyright laws.",
+        "p2": "Reproduction, distribution, or commercial use without express written authorization is prohibited."
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "p1": "INSANYCK is not responsible for:",
+        "item1": "Indirect damages arising from site use",
+        "item2": "Temporary interruptions for maintenance",
+        "item3": "Third-party actions or force majeure"
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "p1": "We reserve the right to modify these terms at any time. Significant changes will be communicated via email or site notice. Continued use after changes implies acceptance."
+      },
+      "contact": {
+        "title": "Contact",
+        "intro": "For questions about these terms or any related matter:"
+      }
+    }
+  }
+}

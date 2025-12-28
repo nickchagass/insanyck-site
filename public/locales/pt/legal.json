@@ -1,0 +1,135 @@
+{
+  "common": {
+    "backToHome": "Voltar ao início",
+    "viewTerms": "Ver Termos de Uso",
+    "viewPrivacy": "Ver Política de Privacidade",
+    "allRights": "Todos os direitos reservados."
+  },
+  "privacy": {
+    "meta": {
+      "title": "Política de Privacidade",
+      "description": "Saiba como a INSANYCK coleta, usa e protege seus dados pessoais. Transparência e segurança são nossos pilares."
+    },
+    "title": "Política de Privacidade",
+    "subtitle": "Seu direito à privacidade é sagrado para nós.",
+    "lastUpdated": "Última atualização",
+    "intro": "A INSANYCK valoriza e respeita sua privacidade. Esta política descreve como coletamos, usamos e protegemos suas informações pessoais quando você utiliza nosso site e serviços. Ao acessar nossa plataforma, você concorda com as práticas descritas neste documento.",
+    "sections": {
+      "collection": {
+        "title": "Dados que Coletamos",
+        "intro": "Coletamos informações necessárias para fornecer nossos serviços:",
+        "item1": "Informações de identificação (nome, e-mail) fornecidas no cadastro",
+        "item2": "Endereço de entrega para processamento de pedidos",
+        "item3": "Dados de navegação e preferências para melhorar sua experiência",
+        "item4": "Informações de pagamento processadas por parceiros seguros (Stripe, MercadoPago)"
+      },
+      "usage": {
+        "title": "Como Usamos seus Dados",
+        "intro": "Suas informações são utilizadas exclusivamente para:",
+        "item1": "Processar e entregar seus pedidos",
+        "item2": "Enviar atualizações sobre status de compras",
+        "item3": "Personalizar sua experiência de compra",
+        "item4": "Comunicar novidades e ofertas (com seu consentimento)",
+        "item5": "Cumprir obrigações legais e regulatórias"
+      },
+      "protection": {
+        "title": "Proteção dos Dados",
+        "p1": "Implementamos medidas técnicas e organizacionais para proteger suas informações:",
+        "item1": "Criptografia SSL/TLS em todas as transmissões",
+        "item2": "Autenticação segura via Magic Link (sem senhas armazenadas)",
+        "item3": "Pagamentos processados por gateways certificados PCI-DSS",
+        "item4": "Acesso restrito a dados apenas para operações essenciais"
+      },
+      "rights": {
+        "title": "Seus Direitos",
+        "intro": "Em conformidade com a LGPD e GDPR, você tem direito a:",
+        "item1": "Acessar seus dados pessoais armazenados",
+        "item2": "Solicitar correção de informações incorretas",
+        "item3": "Solicitar exclusão de seus dados",
+        "item4": "Revogar consentimento para comunicações",
+        "item5": "Portabilidade de dados",
+        "contact": "Para exercer esses direitos, entre em contato através do e-mail abaixo."
+      },
+      "thirdParties": {
+        "title": "Terceiros e Parceiros",
+        "p1": "Trabalhamos com parceiros de confiança para processar pagamentos e entregar produtos:",
+        "stripe": "Processamento de pagamentos internacionais",
+        "mp": "Processamento de pagamentos no Brasil",
+        "shipping": "Entrega de produtos",
+        "p2": "Esses parceiros têm suas próprias políticas de privacidade e são certificados para garantir a segurança dos seus dados."
+      },
+      "contact": {
+        "title": "Contato",
+        "intro": "Para dúvidas sobre privacidade ou para exercer seus direitos:"
+      }
+    }
+  },
+  "terms": {
+    "meta": {
+      "title": "Termos de Uso",
+      "description": "Leia os termos e condições de uso da INSANYCK. Transparência nas regras de compra, entrega e devolução."
+    },
+    "title": "Termos de Uso",
+    "subtitle": "Regras claras para uma experiência de compra excepcional.",
+    "lastUpdated": "Última atualização",
+    "intro": "Bem-vindo à INSANYCK. Ao acessar e utilizar nosso site, você concorda com estes termos e condições. Por favor, leia-os atentamente antes de realizar qualquer compra. Se não concordar com algum termo, recomendamos não utilizar nossos serviços.",
+    "sections": {
+      "about": {
+        "title": "Sobre a INSANYCK",
+        "p1": "A INSANYCK é uma marca de moda de luxo focada em peças exclusivas e design contemporâneo. Operamos como plataforma de e-commerce, conectando criadores a consumidores que buscam excelência em vestuário.",
+        "p2": "Nosso compromisso é oferecer produtos de alta qualidade, atendimento premium e uma experiência de compra diferenciada."
+      },
+      "products": {
+        "title": "Produtos e Preços",
+        "item1": "Todos os preços são exibidos em Reais (BRL) e incluem impostos aplicáveis",
+        "item2": "As imagens são ilustrativas; pequenas variações de cor podem ocorrer",
+        "item3": "Disponibilidade de tamanhos está sujeita ao estoque",
+        "item4": "Reservamo-nos o direito de corrigir erros de preço antes da confirmação do pedido"
+      },
+      "payments": {
+        "title": "Pagamentos",
+        "intro": "Aceitamos os seguintes métodos de pagamento:",
+        "item1": "Cartões de crédito (Visa, Mastercard, Amex, Elo)",
+        "item2": "PIX (pagamento instantâneo)",
+        "item3": "Boleto bancário (prazo de compensação de até 3 dias úteis)",
+        "security": "Todos os pagamentos são processados por gateways certificados (Stripe e MercadoPago), garantindo segurança PCI-DSS."
+      },
+      "shipping": {
+        "title": "Entrega",
+        "item1": "Entregas para todo o Brasil via Correios e transportadoras parceiras",
+        "item2": "Prazos calculados no checkout conforme seu CEP",
+        "item3": "Código de rastreamento enviado por e-mail após despacho",
+        "item4": "Não nos responsabilizamos por atrasos causados por greves ou força maior"
+      },
+      "returns": {
+        "title": "Trocas e Devoluções",
+        "intro": "Em conformidade com o Código de Defesa do Consumidor:",
+        "item1": "Prazo de 7 dias corridos para arrependimento (a partir do recebimento)",
+        "item2": "Produto deve estar em condições originais, com etiquetas",
+        "item3": "Primeira troca gratuita; demais sujeitas a frete",
+        "item4": "Reembolso processado em até 10 dias úteis após recebimento do produto",
+        "contact": "Para solicitar troca ou devolução, entre em contato pelo e-mail abaixo."
+      },
+      "ip": {
+        "title": "Propriedade Intelectual",
+        "p1": "Todo o conteúdo do site — incluindo textos, imagens, logotipos, designs e código — é propriedade da INSANYCK e protegido por leis de direitos autorais.",
+        "p2": "É proibida a reprodução, distribuição ou uso comercial sem autorização expressa por escrito."
+      },
+      "liability": {
+        "title": "Limitação de Responsabilidade",
+        "p1": "A INSANYCK não se responsabiliza por:",
+        "item1": "Danos indiretos decorrentes do uso do site",
+        "item2": "Interrupções temporárias por manutenção",
+        "item3": "Ações de terceiros ou força maior"
+      },
+      "changes": {
+        "title": "Alterações nos Termos",
+        "p1": "Reservamo-nos o direito de modificar estes termos a qualquer momento. Alterações significativas serão comunicadas por e-mail ou aviso no site. O uso continuado após alterações implica aceitação."
+      },
+      "contact": {
+        "title": "Contato",
+        "intro": "Para dúvidas sobre estes termos ou qualquer assunto relacionado:"
+      }
+    }
+  }
+}

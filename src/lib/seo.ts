@@ -393,7 +393,7 @@ export const seoWishlist = (locale: string = 'pt-BR') => {
 };
 
 export const seoSearch = (locale: string = 'pt-BR', query?: string) => {
-  const title = query 
+  const title = query
     ? (locale === 'en' ? `Search results for "${query}"` : `Resultados para "${query}"`)
     : (locale === 'en' ? 'Search' : 'Buscar');
   const description = locale === 'en'
@@ -407,6 +407,44 @@ export const seoSearch = (locale: string = 'pt-BR', query?: string) => {
       canonical: query ? `/buscar?q=${encodeURIComponent(query)}` : '/buscar',
       locale,
       noIndex: true
+    }),
+    jsonLd: []
+  };
+};
+
+// INSANYCK LEGAL-COMPLIANCE-MUSEUM — SEO for Legal Pages
+
+export const seoPrivacy = (locale: string = 'pt-BR') => {
+  const title = locale === 'en' ? 'Privacy Policy' : 'Política de Privacidade';
+  const description = locale === 'en'
+    ? 'Learn how INSANYCK collects, uses, and protects your personal data. Transparency and security are our pillars.'
+    : 'Saiba como a INSANYCK coleta, usa e protege seus dados pessoais. Transparência e segurança são nossos pilares.';
+
+  return {
+    ...metaTags({
+      title: buildTitle(title),
+      description,
+      canonical: '/privacidade',
+      locale,
+      noIndex: false
+    }),
+    jsonLd: []
+  };
+};
+
+export const seoTerms = (locale: string = 'pt-BR') => {
+  const title = locale === 'en' ? 'Terms of Service' : 'Termos de Uso';
+  const description = locale === 'en'
+    ? 'Read INSANYCK terms and conditions. Transparency in purchase, delivery, and return policies.'
+    : 'Leia os termos e condições da INSANYCK. Transparência nas regras de compra, entrega e devolução.';
+
+  return {
+    ...metaTags({
+      title: buildTitle(title),
+      description,
+      canonical: '/termos',
+      locale,
+      noIndex: false
     }),
     jsonLd: []
   };
