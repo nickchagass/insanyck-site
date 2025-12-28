@@ -1,4 +1,5 @@
 // INSANYCK STEP G-09 — Hero PLATINUM: centralização matemática + alinhamento perfeito
+// INSANYCK MOBILE SCROLL HOTFIX — Removido scroll lock permanente (permitir scroll natural)
 "use client";
 
 import { useEffect } from "react";
@@ -9,35 +10,11 @@ import { useTranslation } from "next-i18next";
 export default function HeroHome() {
   const { t } = useTranslation("home");
 
-  // INSANYCK G-05.HERO_PUREBLACK — Scroll Lock (garantia absoluta sem scroll)
+  // INSANYCK MOBILE SCROLL HOTFIX — Apenas scroll to top no mount (SEM overflow lock)
   useEffect(() => {
     if (typeof window === 'undefined') return;
-
-    // Salvar estilos originais
-    const htmlOriginalOverflow = document.documentElement.style.overflow;
-    const htmlOriginalHeight = document.documentElement.style.height;
-    const bodyOriginalOverflow = document.body.style.overflow;
-    const bodyOriginalHeight = document.body.style.height;
-
-    // Aplicar scroll lock
-    document.documentElement.style.height = '100%';
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.height = '100%';
-    document.body.style.overflow = 'hidden';
-    if ('overscrollBehavior' in document.body.style) {
-      (document.body.style as any).overscrollBehavior = 'none';
-    }
-
-    // Forçar scroll para topo
-    window.scrollTo(0, 0);
-
-    // Cleanup: restaurar estilos originais
-    return () => {
-      document.documentElement.style.overflow = htmlOriginalOverflow;
-      document.documentElement.style.height = htmlOriginalHeight;
-      document.body.style.overflow = bodyOriginalOverflow;
-      document.body.style.height = bodyOriginalHeight;
-    };
+    // Scroll suave para topo apenas no mount inicial
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
   return (

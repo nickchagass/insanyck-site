@@ -312,17 +312,31 @@ body {
 /* =========================================================
    BASE
    ========================================================= */
+/* INSANYCK MOBILE SCROLL HOTFIX — Momentum scrolling nativo garantido */
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  /* Mobile scroll: permitir scroll vertical livre, sem overscroll */
+  touch-action: pan-y pinch-zoom;
+  -webkit-overflow-scrolling: touch; /* iOS momentum scrolling (legacy support) */
+  overscroll-behavior-y: none; /* Previne pull-to-refresh bounce (mantém fluidez interna) */
 }
 
 /* INSANYCK HOTFIX G-05.1.4 — min-height garante background coverage em páginas longas */
-html, body, #__next { min-height: 100%; }
+/* INSANYCK MOBILE SCROLL HOTFIX — garantir que wrappers não travem scroll */
+html, body, #__next {
+  min-height: 100%;
+}
+
+/* Wrapper Next.js: permitir scroll livre (sem height fixa) */
+#__next {
+  overflow: visible; /* Garantir que conteúdo possa fluir além da viewport */
+}
 
 /* INSANYCK STEP G-05.1 — Background Platinum Stealth com 3 camadas controladas */
+/* INSANYCK MOBILE SCROLL HOTFIX — overflow-y: auto explícito para garantir scroll */
 body {
   font-family: var(--font-body);
   color: var(--text-primary);
@@ -331,8 +345,12 @@ body {
   background-attachment: fixed;
   line-height: 1.6;
   overflow-x: hidden;
+  overflow-y: auto; /* Garantir scroll vertical livre */
   position: relative;
   isolation: isolate;
+  /* Mobile scroll: momentum nativo */
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y pinch-zoom;
 }
 
 /* Vinheta + grain */
