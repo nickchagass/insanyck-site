@@ -28,6 +28,9 @@ export default function AddressesPage() {
   const [items, setItems] = useState<Address[]>([]);
   const [busy, setBusy] = useState(false);
 
+  // INSANYCK i18n FIX: Traduzir título aqui
+  const pageTitle = t("addresses.title", "Endereços");
+
   async function load() {
     const res = await fetch("/api/account/addresses");
     if (res.ok) {
@@ -82,9 +85,9 @@ export default function AddressesPage() {
   return (
     <>
       <Head>
-        <title>{t("account:addresses.title", "Endereços")} — INSANYCK</title>
+        <title>{pageTitle} — INSANYCK</title>
       </Head>
-      <AccountLayout titleKey="account:addresses.title">
+      <AccountLayout title={pageTitle}>
         <div className="flex items-center justify-between">
           <p className="text-white/70">{t("account:addresses.subtitle", "Gerencie seus endereços de entrega.")}</p>
           <button

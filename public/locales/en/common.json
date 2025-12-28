@@ -60,7 +60,9 @@
       "message": "We sent a secure login link to your email.",
       "instructions": "Click the link we sent to access your account. The link expires in 10 minutes.",
       "backToLogin": "Back to login",
-      "footer": "Didn't receive the email? Check your spam folder"
+      "footer": "Didn't receive the email? Check your spam folder",
+      "spamTitle": "Can't find the email?",
+      "spamMessage": "Check your Spam or Junk folder. Emails from new senders may be automatically filtered."
     }
   },
   "aria": {

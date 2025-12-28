@@ -44,7 +44,10 @@ interface OrderDetailProps {
 export default function OrderDetailPage({ orderId }: OrderDetailProps) {
   const { t, i18n } = useTranslation(["account", "common"]);
   const [copied, setCopied] = useState(false);
-  
+
+  // INSANYCK i18n FIX: Traduzir título aqui
+  const pageTitle = t('orders.detail.title', 'Detalhes do Pedido');
+
   const { data: order, error, isLoading } = useSWR<Order>(
     `/api/account/orders/${orderId}`,
     fetcher,
@@ -114,9 +117,9 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
     return (
       <>
         <Head>
-          <title>{t('account:orders.detail.title')} — INSANYCK</title>
+          <title>{pageTitle} — INSANYCK</title>
         </Head>
-        <AccountLayout titleKey="account:orders.detail.title">
+        <AccountLayout title={pageTitle}>
           <div className="text-center py-8">
             <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 max-w-md mx-auto">
               <p className="text-red-400 text-sm">
@@ -139,9 +142,9 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
     return (
       <>
         <Head>
-          <title>{t('account:orders.detail.title')} — INSANYCK</title>
+          <title>{pageTitle} — INSANYCK</title>
         </Head>
-        <AccountLayout titleKey="account:orders.detail.title">
+        <AccountLayout title={pageTitle}>
           <div className="flex items-center justify-center py-8">
             <div className="animate-spin h-6 w-6 border-2 border-white/20 border-t-white rounded-full" />
           </div>
@@ -154,9 +157,9 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
     return (
       <>
         <Head>
-          <title>{t('account:orders.detail.title')} — INSANYCK</title>
+          <title>{pageTitle} — INSANYCK</title>
         </Head>
-        <AccountLayout titleKey="account:orders.detail.title">
+        <AccountLayout title={pageTitle}>
           <div className="text-center py-8">
             <p className="text-white/60 mb-4">
               {t('account:orders.detail.notFound')}
@@ -179,11 +182,11 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
     <>
       <Head>
         <title>
-          {t('account:orders.detail.title')} #{order.id.slice(0, 8).toUpperCase()} — INSANYCK
+          {pageTitle} #{order.id.slice(0, 8).toUpperCase()} — INSANYCK
         </title>
       </Head>
-      
-      <AccountLayout titleKey="account:orders.detail.title">
+
+      <AccountLayout title={pageTitle}>
         <div className="space-y-6">
           {/* INSANYCK STEP G-EXEC-P1-D — Header com back button */}
           <div className="flex items-center gap-4">

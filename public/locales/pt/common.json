@@ -60,7 +60,9 @@
       "message": "Enviamos um link de login seguro para seu e-mail.",
       "instructions": "Clique no link que enviamos para acessar sua conta. O link expira em 10 minutos.",
       "backToLogin": "Voltar ao login",
-      "footer": "Não recebeu o e-mail? Verifique sua caixa de spam"
+      "footer": "Não recebeu o e-mail? Verifique sua caixa de spam",
+      "spamTitle": "Não encontrou o e-mail?",
+      "spamMessage": "Verifique sua caixa de Spam ou Lixo Eletrônico. E-mails de novos remetentes podem ser filtrados automaticamente."
     }
   },
   "aria": {

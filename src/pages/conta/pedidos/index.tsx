@@ -54,6 +54,9 @@ export default function OrdersPage() {
   const [offset, setOffset] = useState(0);
   const limit = 20;
 
+  // INSANYCK i18n FIX: Traduzir título aqui
+  const pageTitle = t('orders.title', 'Meus Pedidos');
+
   const { data, error, isLoading } = useSWR<OrdersResponse>(
     `/api/account/orders?offset=${offset}&limit=${limit}`,
     fetcher,
@@ -124,9 +127,9 @@ export default function OrdersPage() {
     return (
       <>
         <Head>
-          <title>{t('account:orders.title')} — INSANYCK</title>
+          <title>{pageTitle} — INSANYCK</title>
         </Head>
-        <AccountLayout titleKey="account:orders.title">
+        <AccountLayout title={pageTitle}>
           <div className="text-center py-8">
             <div className="bg-[color:var(--ds-danger-soft)] border border-[color:var(--ds-danger)] rounded-2xl p-4 max-w-md mx-auto">
               <p className="text-[color:var(--ds-danger)] text-sm">
@@ -144,9 +147,9 @@ export default function OrdersPage() {
     return (
       <>
         <Head>
-          <title>{t('account:orders.title')} — INSANYCK</title>
+          <title>{pageTitle} — INSANYCK</title>
         </Head>
-        <AccountLayout titleKey="account:orders.title">
+        <AccountLayout title={pageTitle}>
           <DsEmptyState
             icon={<Package className="w-16 h-16" />}
             title={t('account:orders.emptyTitle', 'Nenhum pedido ainda')}
@@ -173,10 +176,10 @@ export default function OrdersPage() {
   return (
     <>
       <Head>
-        <title>{t('account:orders.title')} — INSANYCK</title>
+        <title>{pageTitle} — INSANYCK</title>
       </Head>
 
-      <AccountLayout titleKey="account:orders.title">
+      <AccountLayout title={pageTitle}>
         <div className="space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">

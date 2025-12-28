@@ -1,9 +1,38 @@
-// INSANYCK FASE D — Página de Verificação de E-mail (PT/EN)
+// src/pages/conta/verify.tsx
+// INSANYCK ACCOUNT-MUSEUM-REVOLUTION — Email Verification Page
+// Com aviso elegante sobre pasta de spam
+
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { Mail, AlertCircle, ArrowLeft } from 'lucide-react';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring" as const,
+      stiffness: 100,
+      damping: 15,
+    },
+  },
+};
 
 export default function VerifyPage() {
   const { t } = useTranslation('common');
@@ -11,47 +40,112 @@ export default function VerifyPage() {
   return (
     <>
       <Head>
-        <title>{t('auth.verify.title')} — INSANYCK</title>
-        <meta name="description" content={t('auth.verify.description')} />
+        <title>{t('auth.verify.title', 'Verifique seu e-mail')} — INSANYCK</title>
+        <meta name="description" content={t('auth.verify.description', 'Enviamos um link de acesso para seu e-mail')} />
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <main className="min-h-screen grid place-items-center p-6 bg-zinc-950">
-        <div className="w-full max-w-md text-center">
-          {/* Glass container */}
-          <div className="glass rounded-2xl p-8 border border-white/10 backdrop-blur-md bg-white/[0.02]">
+      {/* === ATMOSPHERIC BACKGROUND (mesmo do login) === */}
+      <main className="login-atmosphere min-h-screen flex items-center justify-center p-6">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="w-full max-w-[420px]"
+        >
+          {/* === LOGO === */}
+          <motion.div
+            variants={itemVariants}
+            className="text-center mb-8"
+          >
+            <h2 className="logo-museum text-2xl font-medium tracking-[0.2em] text-white/90">
+              INSANYCK
+            </h2>
+          </motion.div>
+
+          {/* === FLOATING CARD === */}
+          <motion.div
+            variants={itemVariants}
+            className="login-card-museum p-8 sm:p-10"
+          >
             {/* Icon */}
-            <div className="mx-auto w-16 h-16 mb-6 rounded-full bg-white/10 flex items-center justify-center">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-            </div>
+            <motion.div
+              variants={itemVariants}
+              className="mx-auto w-20 h-20 mb-6 rounded-full bg-white/[0.05] border border-white/[0.08] flex items-center justify-center"
+            >
+              <Mail className="w-10 h-10 text-white/70" strokeWidth={1.5} />
+            </motion.div>
 
-            <h1 className="text-2xl font-semibold text-white text-center mb-4">
-              {t('auth.verify.title')}
-            </h1>
+            {/* Title */}
+            <motion.h1
+              variants={itemVariants}
+              className="text-2xl font-semibold text-white text-center mb-4"
+            >
+              {t('auth.verify.title', 'Verifique seu e-mail')}
+            </motion.h1>
 
-            <p className="text-white/80 text-center mb-6 leading-relaxed">
-              {t('auth.verify.message')}
-            </p>
+            {/* Message */}
+            <motion.p
+              variants={itemVariants}
+              className="text-white/70 text-center mb-4 leading-relaxed"
+            >
+              {t('auth.verify.message', 'Enviamos um link de login seguro para seu e-mail.')}
+            </motion.p>
 
-            <p className="text-white/60 text-sm text-center mb-8">
-              {t('auth.verify.instructions')}
-            </p>
+            {/* Instructions */}
+            <motion.p
+              variants={itemVariants}
+              className="text-white/50 text-sm text-center mb-6"
+            >
+              {t('auth.verify.instructions', 'Clique no link que enviamos para acessar sua conta. O link expira em 10 minutos.')}
+            </motion.p>
+
+            {/* === SPAM WARNING (ELEGANTE) === */}
+            <motion.div
+              variants={itemVariants}
+              className="bg-amber-500/[0.08] border border-amber-500/20 rounded-xl p-4 mb-6"
+            >
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-400/80 flex-shrink-0 mt-0.5" strokeWidth={1.5} />
+                <div>
+                  <p className="text-amber-200/90 text-sm font-medium mb-1">
+                    {t('auth.verify.spamTitle', 'Não encontrou o e-mail?')}
+                  </p>
+                  <p className="text-amber-200/60 text-xs leading-relaxed">
+                    {t('auth.verify.spamMessage', 'Verifique sua caixa de Spam ou Lixo Eletrônico. E-mails de novos remetentes podem ser filtrados automaticamente.')}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
 
             {/* Back to login */}
-            <Link 
-              href="/conta/login"
-              className="inline-block w-full bg-white/[0.05] border border-white/10 text-white font-semibold py-3 px-6 rounded-xl hover:bg-white/[0.08] focus:outline-none focus:ring-2 focus:ring-white/20 transition-all text-center"
-            >
-              {t('auth.verify.backToLogin')}
-            </Link>
+            <motion.div variants={itemVariants}>
+              <Link
+                href="/conta/login"
+                className="btn-jewel-secondary w-full flex items-center justify-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                {t('auth.verify.backToLogin', 'Voltar ao login')}
+              </Link>
+            </motion.div>
 
-            <p className="text-center text-white/40 text-xs mt-6">
-              {t('auth.verify.footer')}
-            </p>
-          </div>
-        </div>
+            {/* Footer */}
+            <motion.p
+              variants={itemVariants}
+              className="text-center text-white/30 text-xs mt-8"
+            >
+              {t('auth.verify.footer', 'Não recebeu o e-mail? Verifique sua caixa de spam')}
+            </motion.p>
+          </motion.div>
+
+          {/* === BOTTOM BRANDING === */}
+          <motion.p
+            variants={itemVariants}
+            className="text-center text-white/20 text-xs mt-8 tracking-widest"
+          >
+            LUXURY FASHION
+          </motion.p>
+        </motion.div>
       </main>
     </>
   );
