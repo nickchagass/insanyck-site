@@ -307,10 +307,11 @@ export default function Loja({
                   </span>
 
                   {/* Sort dropdown */}
+                  {/* INSANYCK STEP P0-SORT — cursor-pointer para UX clicável */}
                   <div ref={sortRootRefDesktop} className="relative">
                     <button
                       onClick={() => setSortPopoverOpen(!sortPopoverOpen)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+                      className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
                     >
                       <span>{sortOptions.find(opt => opt.value === sort)?.label}</span>
                       <ChevronDown className="w-4 h-4" aria-hidden="true" />
@@ -363,10 +364,11 @@ export default function Loja({
         {/* MOBILE: Content (Filters pill + Grid) */}
         <div className="lg:hidden px-6 py-6">
           {/* Mobile: Floating Filters Pill + Sort */}
+          {/* INSANYCK STEP P0-SORT — cursor-pointer para UX clicável */}
           <div className="flex gap-3 mb-6 sticky top-24 z-40 bg-black/40 backdrop-blur-md -mx-6 px-6 py-3 border-b border-white/10">
             <button
               onClick={() => setMobileFiltersOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
             >
               <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
               <span>{t("catalog:filters.label", "Filtros")}</span>
@@ -381,7 +383,7 @@ export default function Loja({
             <div ref={sortRootRefMobile} className="relative flex-1">
               <button
                 onClick={() => setSortPopoverOpen(!sortPopoverOpen)}
-                className="w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+                className="w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
               >
                 <span className="truncate">{sortOptions.find(opt => opt.value === sort)?.label}</span>
                 <ChevronDown className="w-4 h-4 flex-shrink-0" aria-hidden="true" />

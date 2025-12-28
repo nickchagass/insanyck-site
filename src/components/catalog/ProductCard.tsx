@@ -63,7 +63,8 @@ export default function ProductCard({
 
           {/* INSANYCK G-11 HYBRID — Imagem do produto (aspect 3/4 com padding) */}
           {/* INSANYCK HOTFIX G-11.2 — Removed z-10 (CSS controls z-index stack now) */}
-          <div className={`relative overflow-hidden ${
+          {/* INSANYCK STEP P0-CARDS — Bulletproof container: bg + rounded prevents "ghost" cards */}
+          <div className={`relative overflow-hidden rounded-2xl bg-white/[0.02] ${
             variant === "wide" ? "aspect-[2/1]" : "aspect-[3/4]"
           }`}>
             <OptimizedImage

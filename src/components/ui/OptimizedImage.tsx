@@ -38,9 +38,10 @@ export default function OptimizedImage({
     <div
       aria-label={alt}
       style={{ aspectRatio }}
-      className="relative w-full overflow-hidden rounded-2xl"
+      className="relative w-full overflow-hidden rounded-2xl bg-white/[0.02]"
     >
       {/* INSANYCK HOTFIX G-11.3 — Direct Image render (NO motion.div wrapper) */}
+      {/* INSANYCK STEP P0-CARDS — Improved opacity: fade-in on load, never fully invisible */}
       <Image
         {...rest}
         alt={alt}
@@ -62,6 +63,7 @@ export default function OptimizedImage({
       />
 
       {/* INSANYCK HOTFIX G-11.3 — Loading skeleton (visible until image loads) */}
+      {/* INSANYCK STEP P0-CARDS — Enhanced skeleton: always visible during loading state */}
       {!isLoaded && !hasError && (
         <div
           className="absolute inset-0 bg-gradient-to-b from-white/[0.03] to-white/[0.01] animate-pulse"
@@ -70,6 +72,7 @@ export default function OptimizedImage({
       )}
 
       {/* INSANYCK HOTFIX G-11.3 — Error state (premium placeholder) */}
+      {/* INSANYCK STEP P0-CARDS — Bulletproof error state: always shows fallback icon */}
       {hasError && (
         <div
           className="absolute inset-0 flex items-center justify-center bg-white/[0.02]"

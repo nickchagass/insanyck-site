@@ -112,12 +112,13 @@ body {
    * - Tailwind: z-[var(--z-dropdown)]
    * - CSS: z-index: var(--z-modal);
    */
+  /* INSANYCK STEP P0-CART — Z-index fix: overlay DEVE ficar ATRÁS de drawer/modal */
   --z-base: 0;           /* Conteúdo normal (padrão) */
   --z-dropdown: 50;      /* Dropdowns, popovers, menus suspensos */
   --z-sticky: 100;       /* Headers sticky, sidebars fixas, navegação */
+  --z-overlay: 150;      /* Backdrops escuros (sempre ATRÁS de drawer/modal) */
   --z-drawer: 200;       /* Cart drawer, filtros, painéis laterais */
   --z-modal: 300;        /* Modais, dialogs, lightboxes */
-  --z-overlay: 400;      /* Backdrops escuros (sempre ATRÁS de drawer/modal) */
   --z-toast: 500;        /* Toasts, notificações, banners de atualização */
   --z-tooltip: 600;      /* Tooltips (sempre no topo de tudo) */
   --z-debug: 9999;       /* Debug only (NUNCA em produção) */

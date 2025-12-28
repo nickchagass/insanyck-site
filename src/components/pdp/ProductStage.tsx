@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from "react";
 type Props = {
   imageUrl: string;
   alt?: string;
-  hint?: string; // ex.: "Arraste para girar — passe o mouse"
+  hint?: string; // ex.: "Arraste para girar — passe o mouse" (desktop)
+  hintMobile?: string; // ex.: "Toque para interagir" (mobile, default: "Toque para interagir")
 };
 
 function supportsHover() {
@@ -13,7 +14,7 @@ function supportsHover() {
   return window.matchMedia?.("(hover:hover)")?.matches ?? false;
 }
 
-export default function ProductStage({ imageUrl, alt = "", hint }: Props) {
+export default function ProductStage({ imageUrl, alt = "", hint, hintMobile }: Props) {
   const frameRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const [mounted, setMounted] = useState(false);
@@ -21,6 +22,13 @@ export default function ProductStage({ imageUrl, alt = "", hint }: Props) {
   const reduceMotion =
     typeof window !== "undefined" &&
     window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+
+  // INSANYCK STEP P1-STAGE — Hint dinâmico para desktop/mobile
+  const displayHint = mounted
+    ? supportsHover()
+      ? hint
+      : (hintMobile || "Toque para interagir")
+    : undefined;
 
   useEffect(() => setMounted(true), []);
 
@@ -96,9 +104,9 @@ export default function ProductStage({ imageUrl, alt = "", hint }: Props) {
       </div>
       {/* pedestal elíptico */}
       <div aria-hidden className="pdp-stage__pedestal" />
-      {/* dica de interação */}
-      {mounted && supportsHover() && !reduceMotion && hint && (
-        <div className="pdp-stage__hint">{hint}</div>
+      {/* dica de interação — INSANYCK STEP P1-STAGE */}
+      {!reduceMotion && displayHint && (
+        <div className="pdp-stage__hint">{displayHint}</div>
       )}
     </div>
   );

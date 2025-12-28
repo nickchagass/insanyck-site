@@ -3,6 +3,7 @@
   "open": "Buscar",
   "label": "Buscar produtos",
   "placeholder": "Busque por produtos",
+  "loading": "Buscando...",
   "empty": {
     "noQuery": {
       "title": "Comece sua busca",

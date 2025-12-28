@@ -4,6 +4,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "next-i18next";
 import { useCartStore, useCartHydrated } from "@/store/cart";
@@ -11,6 +12,7 @@ import { formatPrice } from "@/lib/price";
 import Portal from "@/components/Portal";
 
 export default function MiniCart() {
+  const router = useRouter();
   const isOpen = useCartStore((s) => s.isOpen);
   const toggle = useCartStore((s) => s.toggle);
   const items = useCartStore((s) => s.items);
@@ -60,6 +62,37 @@ export default function MiniCart() {
     root.addEventListener("keydown", onKeyDown as any);
     return () => root.removeEventListener("keydown", onKeyDown as any);
   }, [isOpen]);
+
+  // INSANYCK STEP P0-CART — Scroll lock: impede scroll do body quando drawer está aberto
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    const originalPaddingRight = document.body.style.paddingRight;
+
+    // Calcular largura da scrollbar para evitar layout shift
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = `${scrollbarWidth}px`;
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.paddingRight = originalPaddingRight;
+    };
+  }, [isOpen]);
+
+  // INSANYCK STEP P0-CART — Fechar drawer quando navegar para outra página
+  useEffect(() => {
+    const handleRouteChange = () => {
+      if (isOpen) toggle(false);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [isOpen, toggle, router.events]);
 
   // Não renderizar até hidratado (evita mismatch SSR)
   if (!hydrated) {
@@ -132,9 +165,19 @@ export default function MiniCart() {
             {/* Lista — STEP G-05.4-B: items with premium contrast */}
             <div className="h-[calc(100%-188px)] overflow-auto px-5 py-3 space-y-3">
               {items.length === 0 ? (
-                <p className="py-10" style={{ color: "rgba(255, 255, 255, 0.65)" }}>
-                  {t("bag:empty", "Sua sacola está vazia.")}
-                </p>
+                // INSANYCK STEP P0-CART — Empty state com CTA para explorar loja
+                <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+                  <p className="mb-6" style={{ color: "rgba(255, 255, 255, 0.65)" }}>
+                    {t("bag:empty", "Sua sacola está vazia.")}
+                  </p>
+                  <Link
+                    href="/loja"
+                    className="btn-jewel"
+                    onClick={() => toggle(false)}
+                  >
+                    {t("bag:goShop", "Ir para a loja")}
+                  </Link>
+                </div>
               ) : (
                 items.map((it) => (
                   <div

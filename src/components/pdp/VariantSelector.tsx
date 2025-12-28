@@ -187,7 +187,7 @@ export default function VariantSelector({
                 className={`
                   ins-panel__selector-btn px-4
                   ${currentColor === color.value ? "ins-panel__selector-btn--active" : ""}
-                  ${!color.available ? "opacity-40 cursor-not-allowed" : ""}
+                  ${!color.available ? "opacity-40 cursor-not-allowed line-through" : ""}
                 `}
               >
                 {color.value}

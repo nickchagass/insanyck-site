@@ -22,7 +22,7 @@ export default function SearchBox() {
   const [q, setQ] = useState("");
   const [idx, setIdx] = useState(0);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [_loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   // INSANYCK STEP G-EXEC-P0 — Click-outside detection ref
   const searchRootRef = useRef<HTMLDivElement>(null);
@@ -143,14 +143,23 @@ export default function SearchBox() {
             autoComplete="off"
             aria-describedby="search-results"
           />
+          {/* INSANYCK STEP P1-SEARCHBOX — Loading Feedback + Visual Separators */}
           <ul id="search-results" role="listbox" className="mt-3 max-h-[300px] overflow-auto flex flex-col gap-2">
-            {data.length === 0 && (
+            {loading && (
+              <li className="flex items-center gap-2 px-2 py-3 text-white/60 text-sm">
+                <div className="w-4 h-4 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
+                {t("search:loading", "Buscando...")}
+              </li>
+            )}
+
+            {!loading && data.length === 0 && q.trim() && (
               <li className="text-white/60 text-sm px-2 py-3">
                 {t("search:empty", "Nenhum resultado")}
               </li>
             )}
-            {data.map((s, i) => (
-              <li key={s.slug}>
+
+            {!loading && data.map((s, i) => (
+              <li key={s.slug} className={i > 0 ? "border-t border-white/5 pt-2" : ""}>
                 <Link
                   href={`/produto/${s.slug}`}
                   role="option"
