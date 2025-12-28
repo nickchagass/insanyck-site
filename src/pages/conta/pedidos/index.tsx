@@ -256,7 +256,7 @@ export default function OrdersPage() {
                 </DsTable>
               </div>
 
-              {/* Mobile Cards (mantido da versão original, mas com tokens DS) */}
+              {/* INSANYCK STEP G-EXEC-P1-D — Mobile Cards Museum Edition */}
               <div className="md:hidden space-y-4">
                 {orders.map((order, index) => {
                   const status = getStatusFromOrder(order);
@@ -266,14 +266,14 @@ export default function OrdersPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="bg-ds-surface border border-ds-borderSubtle rounded-2xl p-4 hover:bg-ds-elevated transition-colors"
+                      className="ins-panel p-4 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.15)_inset] transition-all duration-150"
                     >
-                      <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-start justify-between mb-3 pb-3 border-b border-white/[0.06]">
                         <div>
-                          <h3 className="font-medium text-ds-accent">
+                          <h3 className="font-mono text-[0.9375rem] text-white/90">
                             #{order.id.slice(0, 8).toUpperCase()}
                           </h3>
-                          <p className="text-sm text-ds-accentSoft">
+                          <p className="text-[0.8125rem] text-white/60 mt-0.5">
                             {formatDate(order.createdAt, dateLocale)}
                           </p>
                         </div>
@@ -285,18 +285,19 @@ export default function OrdersPage() {
 
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm text-ds-accentSoft">
+                          <p className="text-[0.75rem] text-white/50 uppercase tracking-wide mb-1">
                             {order.items.length} {order.items.length === 1 ? 'item' : 'itens'}
                           </p>
-                          <p className="font-medium text-ds-accent">
+                          <p className="font-light text-[1.125rem] text-white/95 tabular-nums">
                             {formatPrice(order.amountTotal, locale, order.currency as "BRL" | "USD")}
                           </p>
                         </div>
-                        <Link href={`/conta/pedidos/${order.id}`}>
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4 mr-2" />
-                            {t('account:orders.viewOrder')}
-                          </Button>
+                        <Link
+                          href={`/conta/pedidos/${order.id}`}
+                          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-white/[0.08] bg-white/[0.02] text-[0.8125rem] text-white/70 hover:text-white hover:bg-white/[0.05] hover:border-white/[0.12] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          {t('account:orders.viewOrder')}
                         </Link>
                       </div>
                     </motion.div>

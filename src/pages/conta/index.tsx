@@ -34,77 +34,82 @@ export default function AccountHome({ user, lastOrders }: Props) {
         ))}
       </Head>
       <AccountLayout titleKey="account:dashboard.title">
-        {/* INSANYCK STEP 9 — bloom sutil, sem alterar grid/tipografia */}
-        <div className="insanyck-bloom insanyck-bloom--edge">
-          <div className="space-y-6">
-            <p className="text-white/80">
-              {t("account:dashboard.hello", "Olá")},{" "}
-              <span className="text-white font-medium">
-                {user.name ?? user.email ?? ""}
-              </span>
-            </p>
+        {/* INSANYCK STEP G-EXEC-P1-D — Museum Edition cards */}
+        <div className="space-y-6">
+          <p className="text-white/70 text-[0.9375rem]">
+            {t("account:dashboard.hello", "Olá")},{" "}
+            <span className="text-white/95 font-light">
+              {user.name ?? user.email ?? ""}
+            </span>
+          </p>
 
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="rounded-xl border border-white/10 p-4">
-                <div className="text-white/70 text-sm">
-                  {t("account:dashboard.lastOrders", "Últimos pedidos")}
+          <div className="grid sm:grid-cols-2 gap-4 lg:gap-6">
+            {/* INSANYCK STEP G-EXEC-P1-D — Panel: Últimos pedidos */}
+            <div className="ins-panel p-5">
+              <h2 className="text-[0.7rem] font-semibold tracking-[0.12em] uppercase text-white/50 mb-4">
+                {t("account:dashboard.lastOrders", "Últimos pedidos")}
+              </h2>
+              {lastOrders.length === 0 ? (
+                <div className="text-white/60 text-sm">
+                  {t(
+                    "account:dashboard.noOrders",
+                    "Você ainda não tem pedidos."
+                  )}
                 </div>
-                {lastOrders.length === 0 ? (
-                  <div className="mt-2 text-white/60 text-sm">
-                    {t(
-                      "account:dashboard.noOrders",
-                      "Você ainda não tem pedidos."
-                    )}
-                  </div>
-                ) : (
-                  <ul className="mt-2 text-white/80 text-sm">
-                    {lastOrders.map((o) => (
-                      <li
-                        key={o.id}
-                        className="flex items-center justify-between py-1"
-                      >
-                        <span>#{o.id.slice(0, 8).toUpperCase()}</span>
-                        <span>
-                          {new Intl.NumberFormat("pt-BR", {
-                            style: "currency",
-                            currency: "BRL",
-                          }).format(o.amountTotal / 100)}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+              ) : (
+                <ul className="space-y-2">
+                  {lastOrders.map((o, index) => (
+                    <li
+                      key={o.id}
+                      className={`flex items-center justify-between py-2.5 ${
+                        index < lastOrders.length - 1 ? "border-b border-white/[0.06]" : ""
+                      }`}
+                    >
+                      <span className="text-[0.875rem] text-white/70 font-mono">
+                        #{o.id.slice(0, 8).toUpperCase()}
+                      </span>
+                      <span className="text-[0.9375rem] text-white/90 tabular-nums">
+                        {new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(o.amountTotal / 100)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Link
+                href="/conta/pedidos"
+                className="inline-flex items-center gap-2 mt-4 text-[0.875rem] text-white/70 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] rounded px-1 -ml-1"
+              >
+                {t("account:dashboard.viewAll", "Ver todos")}
+                <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+
+            {/* INSANYCK STEP G-EXEC-P1-D — Panel: Acessos rápidos */}
+            <div className="ins-panel p-5">
+              <h2 className="text-[0.7rem] font-semibold tracking-[0.12em] uppercase text-white/50 mb-4">
+                {t("account:dashboard.quick", "Acessos rápidos")}
+              </h2>
+              <div className="flex flex-col gap-2">
                 <Link
-                  href="/conta/pedidos"
-                  className="inline-block mt-3 text-white underline underline-offset-4"
+                  href="/conta/enderecos"
+                  className="px-4 py-2.5 rounded-lg border border-white/[0.08] bg-white/[0.02] text-[0.875rem] text-white/80 hover:text-white hover:bg-white/[0.05] hover:border-white/[0.12] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
                 >
-                  {t("account:dashboard.viewAll", "Ver todos")}
+                  {t("account:nav.addresses", "Endereços")}
                 </Link>
-              </div>
-
-              <div className="rounded-xl border border-white/10 p-4">
-                <div className="text-white/70 text-sm">
-                  {t("account:dashboard.quick", "Acessos rápidos")}
-                </div>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <Link
-                    href="/conta/enderecos"
-                    className="px-3 py-2 rounded-lg border border-white/15 text-white/80 hover:text-white hover:bg-white/5"
-                  >
-                    {t("account:nav.addresses", "Endereços")}
-                  </Link>
-                  <Link
-                    href="/favoritos"
-                    className="px-3 py-2 rounded-lg border border-white/15 text-white/80 hover:text-white hover:bg-white/5"
-                  >
-                    {t("account:nav.wishlist", "Favoritos")}
-                  </Link>
-                </div>
+                <Link
+                  href="/favoritos"
+                  className="px-4 py-2.5 rounded-lg border border-white/[0.08] bg-white/[0.02] text-[0.875rem] text-white/80 hover:text-white hover:bg-white/[0.05] hover:border-white/[0.12] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+                >
+                  {t("account:nav.wishlist", "Favoritos")}
+                </Link>
               </div>
             </div>
           </div>
         </div>
-        {/* FIM INSANYCK STEP 9 */}
+        {/* FIM INSANYCK STEP G-EXEC-P1-D */}
       </AccountLayout>
     </>
   );

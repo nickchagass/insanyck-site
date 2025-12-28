@@ -110,6 +110,23 @@
       "ctaPrimary": "Enter the store",
       "ctaSecondary": "Back to home"
     }
+  },
+  "footer": {
+    "navigation": "Navigation",
+    "shop": "Shop",
+    "collection": "Collection",
+    "news": "Latest",
+    "support": "Support",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "terms": "Terms of Use",
+    "privacy": "Privacy Policy",
+    "newsletter": "Newsletter",
+    "newsletterPlaceholder": "Your email",
+    "subscribe": "Subscribe",
+    "newsletterSoon": "Coming soon",
+    "copyright": "© 2025 INSANYCK. All rights reserved.",
+    "tagline": "Noir luxury. Zero concessions."
   }
 }
   

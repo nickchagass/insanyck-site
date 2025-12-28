@@ -1,12 +1,15 @@
 // INSANYCK HOTFIX CART-02 + FASE G-01 + FASE G-02 + ISR PERF-01 + STEP G-12 + G-12.1 + G-12.2 — PDP Museum Edition
+// INSANYCK MICRO-LUXO — Cart feedback premium (checkmark + bounce)
 import Head from "next/head";
 import type { GetStaticProps, GetStaticPaths, NextPage } from "next";
 import { ParsedUrlQuery } from "querystring";
-import { useState, useMemo, useCallback } from "react"; // INSANYCK G-12.2 — estado de variante
+import { useState, useMemo, useCallback, useEffect } from "react"; // INSANYCK G-12.2 — estado de variante
 import { useCartStore } from "@/store/cart";
 import { formatBRL, safeSerialize } from "@/lib/price";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { motion } from "framer-motion"; // INSANYCK MICRO-LUXO — bounce animation
+import { Check } from "lucide-react"; // INSANYCK MICRO-LUXO — checkmark icon
 
 // INSANYCK FASE G-02 PERF-04 — ProductStage com SSR para melhorar LCP da PDP
 import ProductStage from "@/components/pdp/ProductStage";
@@ -81,12 +84,42 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
   const needsSelection = (product.variants?.length ?? 0) > 1 && hasSelectableVariants;
   const hasValidSelection = !needsSelection || selectedVariant !== null;
 
+  // INSANYCK MICRO-LUXO — Estado do feedback visual (idle -> success -> idle)
+  const [ctaState, setCtaState] = useState<'idle' | 'success'>('idle');
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  // INSANYCK MICRO-LUXO — Detectar prefers-reduced-motion (a11y)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  // INSANYCK MICRO-LUXO — Cleanup do timeout ao desmontar (evita memory leak)
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    if (ctaState === 'success') {
+      timeoutId = setTimeout(() => {
+        setCtaState('idle');
+      }, 700); // 700ms celebration
+    }
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [ctaState]);
+
   // INSANYCK HOTFIX G-12.2 — Handler de seleção de variante
   const handleVariantSelect = useCallback((variant: Variant) => {
     setSelectedVariantId(variant.id);
   }, []);
 
-  // INSANYCK HOTFIX G-12.2 — Adicionar ao carrinho (usa variante selecionada)
+  // INSANYCK HOTFIX G-12.2 + MICRO-LUXO — Adicionar ao carrinho (usa variante selecionada) + feedback
   const handleAdd = useCallback(() => {
     if (!hasValidSelection || !displayVariant) return;
 
@@ -100,7 +133,14 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
       variantId: displayVariant.id,
       sku: displayVariant.sku,
     });
-    toggle(true);
+
+    // INSANYCK MICRO-LUXO — Trigger success feedback (check + bounce)
+    setCtaState('success');
+
+    // Abre drawer após delay sutil (UX: usuário vê o checkmark antes do drawer abrir)
+    setTimeout(() => {
+      toggle(true);
+    }, 100);
   }, [hasValidSelection, displayVariant, product.slug, product.title, image, addItem, toggle]);
 
   // INSANYCK HOTFIX G-12.2 — Comprar agora (usa variante selecionada)
@@ -182,31 +222,55 @@ const PDP: NextPage<{ product: Product }> = ({ product }) => {
                 >
                   {t('ctaBuy', 'Comprar agora')}
                 </button>
-                <button
+
+                {/* INSANYCK MICRO-LUXO — Cart button com feedback visual premium */}
+                <motion.button
                   onClick={handleAdd}
-                  disabled={!hasValidSelection}
+                  disabled={!hasValidSelection || ctaState === 'success'}
                   className={`
-                    ins-panel__btn-secondary px-6
+                    ins-panel__btn-secondary
+                    ${ctaState === 'success' ? 'px-4' : 'px-6'}
                     ${!hasValidSelection ? "opacity-50 cursor-not-allowed" : ""}
                   `}
-                  aria-label={t("addToCart", "Adicionar ao carrinho")}
+                  aria-label={
+                    ctaState === 'success'
+                      ? t("added", "Adicionado")
+                      : t("addToCart", "Adicionar ao carrinho")
+                  }
+                  // INSANYCK MICRO-LUXO — Bounce sutil no success (reduced-motion safe)
+                  animate={ctaState === 'success' && !prefersReducedMotion ? {
+                    scale: [1, 1.08, 1],
+                  } : {}}
+                  transition={{
+                    duration: 0.4,
+                    ease: [0.34, 1.56, 0.64, 1], // Easing premium (bouncy)
+                  }}
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                    />
-                  </svg>
-                </button>
+                  {ctaState === 'success' ? (
+                    // Success state: Check icon + "Adicionado!" label
+                    <div className="flex items-center gap-1.5">
+                      <Check size={18} strokeWidth={2.5} aria-hidden="true" />
+                      <span className="text-sm font-medium">{t("added", "Adicionado!")}</span>
+                    </div>
+                  ) : (
+                    // Idle state: Shopping bag icon
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                      />
+                    </svg>
+                  )}
+                </motion.button>
               </div>
 
               {/* INSANYCK G-12.1 — Trust badges (editorial refinement: icons + i18n) */}

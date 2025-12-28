@@ -9,7 +9,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 import { useRouter } from "next/router";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import ShowroomGrid from "@/components/catalog/ShowroomGrid";
 import ShowroomSidebar from "@/components/catalog/ShowroomSidebar";
 import MobileFiltersSheet from "@/components/catalog/MobileFiltersSheet";
@@ -216,6 +216,28 @@ export default function Loja({
 
   const [sortPopoverOpen, setSortPopoverOpen] = useState(false);
 
+  // INSANYCK STEP G-EXEC-P0 — Click-outside detection refs for sort popover
+  const sortRootRefDesktop = useRef<HTMLDivElement>(null);
+  const sortRootRefMobile = useRef<HTMLDivElement>(null);
+
+  // INSANYCK STEP G-EXEC-P0 — Click-outside handler for sort popover
+  useEffect(() => {
+    if (!sortPopoverOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      const clickedOutsideDesktop = sortRootRefDesktop.current && !sortRootRefDesktop.current.contains(target);
+      const clickedOutsideMobile = sortRootRefMobile.current && !sortRootRefMobile.current.contains(target);
+
+      if (clickedOutsideDesktop || clickedOutsideMobile) {
+        setSortPopoverOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [sortPopoverOpen]);
+
   return (
     <>
       <Head>
@@ -285,7 +307,7 @@ export default function Loja({
                   </span>
 
                   {/* Sort dropdown */}
-                  <div className="relative">
+                  <div ref={sortRootRefDesktop} className="relative">
                     <button
                       onClick={() => setSortPopoverOpen(!sortPopoverOpen)}
                       className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
@@ -356,7 +378,7 @@ export default function Loja({
             </button>
 
             {/* Sort pill */}
-            <div className="relative flex-1">
+            <div ref={sortRootRefMobile} className="relative flex-1">
               <button
                 onClick={() => setSortPopoverOpen(!sortPopoverOpen)}
                 className="w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"

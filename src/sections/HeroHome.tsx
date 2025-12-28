@@ -42,10 +42,11 @@ export default function HeroHome() {
 
   return (
     <section
-      className="relative w-full h-[100svh] overflow-hidden bg-[color:var(--ins-bg-base)]"
+      className="hero-home-atmospheric relative w-full h-[100svh] overflow-hidden bg-[color:var(--ins-bg-base)]"
       aria-labelledby="hero-home"
       style={{ margin: 0, padding: 0 }}
     >
+      {/* INSANYCK STEP P1-A — Atmospheric unification: grain + vignette sutis aplicados via CSS */}
       {/* INSANYCK G-09 — Content flutuando no preto infinito (centralização matemática) */}
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 sm:px-6 gap-6">
         {/* INSANYCK G-09 — Logo INSANYCK (centralização perfeita) */}

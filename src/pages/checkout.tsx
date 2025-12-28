@@ -1,5 +1,6 @@
 // INSANYCK HOTFIX CHECKOUT URGENTE — Fazer o dinheiro entrar HOJE
 // INSANYCK STEP G-04.2.1 — Checkout Tokenizado (sem cores literais)
+// INSANYCK STEP P1-C — Museum Edition Upgrade (DsGlass containers)
 // src/pages/checkout.tsx
 
 import React, { useState } from "react";
@@ -13,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { AddressFields } from "@/components/AddressForm";
 import { useCartStore, useCartSubtotal } from "@/store/cart";
 import DsButton from "@/components/ds/DsButton";
+import DsGlass from "@/components/ds/DsGlass";
 
 import dynamic from "next/dynamic";
 
@@ -180,95 +182,108 @@ export default function CheckoutPage() {
         {/* HOTFIX: Progress Indicator */}
         <CheckoutSteps current={1} />
 
-        <h1 className="text-display-xl mt-4">
+        {/* INSANYCK STEP P1-C — Museum Edition title */}
+        <h1 className="text-3xl font-light tracking-tight text-white/95 mt-4 mb-1">
           {t("checkout:title", "Checkout")}
         </h1>
+        <div className="h-px w-16 bg-gradient-to-r from-white/30 to-transparent mb-8" aria-hidden="true" />
 
         {items.length === 0 ? (
-          <div className="mt-10 rounded-2xl border border-[color:var(--ds-border-subtle)] bg-[color:var(--ds-surface)] p-8 text-[color:var(--text-secondary)]">
-            <p>{t("bag:empty", "Sua sacola está vazia.")}</p>
+          <DsGlass tone="ghost" padding="p-8" className="mt-10">
+            <p className="text-white/70">{t("bag:empty", "Sua sacola está vazia.")}</p>
             <Link
               href="/loja"
-              className="mt-4 inline-block underline underline-offset-4 hover:text-[color:var(--ds-accent)] transition-colors"
+              className="mt-4 inline-block text-white/70 hover:text-white underline underline-offset-4 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] rounded px-1 -ml-1"
             >
               {t("bag:goShop", "Ir para a loja")}
             </Link>
-          </div>
+          </DsGlass>
         ) : (
           <form onSubmit={handleSubmit(handlePay)}>
             <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* HOTFIX: Seções claras (One-Page) */}
+              {/* INSANYCK STEP P1-C — Seções Museum Edition */}
               <section className="lg:col-span-2 space-y-6">
                 {/* Seção 1: Dados */}
-                <div id="dados" className="glass-card rounded-2xl p-5">
-                  <h2 className="text-[color:var(--ds-accent)] font-medium mb-4">
-                    1. {t("checkout:sections.customer", "Seus dados")}
-                  </h2>
-                  <AddressForm register={register} errors={errors} />
-                </div>
+                <section id="dados">
+                  <DsGlass tone="ghost" padding="p-5 lg:p-6">
+                    <h2 className="text-[0.75rem] font-semibold tracking-[0.12em] uppercase text-white/50 mb-4 pb-3 border-b border-white/[0.06]">
+                      1. {t("checkout:sections.customer", "Seus dados")}
+                    </h2>
+                    <AddressForm register={register} errors={errors} />
+                  </DsGlass>
+                </section>
 
                 {/* Seção 2: Entrega */}
-                <div id="entrega" className="glass-card rounded-2xl p-5">
-                  <h2 className="text-[color:var(--ds-accent)] font-medium mb-4">
-                    2. {t("checkout:sections.shipping", "Entrega")}
-                  </h2>
-                  <ShippingSelector
-                    value={shipping}
-                    onChange={handleShippingChange}
-                    locale={locale as any}
-                  />
-                </div>
+                <section id="entrega">
+                  <DsGlass tone="ghost" padding="p-5 lg:p-6">
+                    <h2 className="text-[0.75rem] font-semibold tracking-[0.12em] uppercase text-white/50 mb-4 pb-3 border-b border-white/[0.06]">
+                      2. {t("checkout:sections.shipping", "Entrega")}
+                    </h2>
+                    <ShippingSelector
+                      value={shipping}
+                      onChange={handleShippingChange}
+                      locale={locale as any}
+                    />
+                  </DsGlass>
+                </section>
 
                 {/* Seção 3: Pagamento */}
-                <div id="pagamento" className="glass-card rounded-2xl p-5">
-                  <h2 className="text-[color:var(--ds-accent)] font-medium mb-4">
-                    3. {t("checkout:sections.payment", "Pagamento")}
-                  </h2>
-                  <p className="text-[color:var(--text-secondary)] text-sm mb-4">
-                    {t("checkout:payment.fake", "Pagamento seguro via parceiro financeiro (Stripe).")}
-                  </p>
-                  <DsButton
-                    type="submit"
-                    disabled={loading || !canPay}
-                    variant="primary"
-                    size="lg"
-                    className="w-full"
-                    state={loading ? "loading" : "default"}
-                  >
-                    {loading
-                      ? t("checkout:processing", "Processando...")
-                      : t("checkout:placeOrder", "Finalizar pedido")}
-                  </DsButton>
-                </div>
+                <section id="pagamento">
+                  <DsGlass tone="ghost" padding="p-5 lg:p-6">
+                    <h2 className="text-[0.75rem] font-semibold tracking-[0.12em] uppercase text-white/50 mb-4 pb-3 border-b border-white/[0.06]">
+                      3. {t("checkout:sections.payment", "Pagamento")}
+                    </h2>
+                    <p className="text-white/60 text-[0.875rem] mb-4">
+                      {t("checkout:payment.fake", "Pagamento seguro via parceiro financeiro (Stripe).")}
+                    </p>
+                    <DsButton
+                      type="submit"
+                      disabled={loading || !canPay}
+                      variant="primary"
+                      size="lg"
+                      className="w-full"
+                      state={loading ? "loading" : "default"}
+                    >
+                      {loading
+                        ? t("checkout:processing", "Processando...")
+                        : t("checkout:placeOrder", "Finalizar pedido")}
+                    </DsButton>
+                  </DsGlass>
+                </section>
               </section>
 
-              {/* HOTFIX: Resumo lateral com itens e totais */}
+              {/* INSANYCK STEP P1-C — Resumo lateral Museum Edition */}
               <aside className="lg:col-span-1 space-y-4">
                 {/* Card de Itens */}
-                <div className="glass-card rounded-2xl p-4">
-                  <h3 className="text-[color:var(--ds-accent-soft)] font-medium mb-3">
+                <DsGlass tone="ghost" padding="p-4 lg:p-5">
+                  <h3 className="text-[0.75rem] font-semibold tracking-[0.12em] uppercase text-white/50 mb-4">
                     {t("bag:items", "Itens")}
                   </h3>
                   <ul className="space-y-3">
-                    {items.map((it) => (
-                      <li key={it.id} className="flex items-center gap-3">
+                    {items.map((it, index) => (
+                      <li
+                        key={it.id}
+                        className={`flex items-center gap-3 pb-3 ${
+                          index < items.length - 1 ? "border-b border-white/[0.06]" : ""
+                        }`}
+                      >
                         <Image
                           src={it.image || "/products/placeholder/front.webp"}
                           alt={it.title}
                           width={56}
                           height={56}
                           sizes="56px"
-                          className="rounded-lg object-cover border border-[color:var(--ds-border-subtle)]"
+                          className="rounded-lg object-cover border border-white/[0.08]"
                           loading="lazy"
                         />
                         <div className="flex-1">
-                          <div className="text-[color:var(--ds-accent-soft)] text-sm">{it.title}</div>
+                          <div className="text-white/80 text-[0.875rem] font-light">{it.title}</div>
                           {it.options?.variant ? (
-                            <div className="text-[color:var(--text-muted)] text-xs">{it.options.variant}</div>
+                            <div className="text-white/50 text-[0.75rem] mt-0.5">{it.options.variant}</div>
                           ) : null}
-                          <div className="text-[color:var(--text-muted)] text-xs">Qtd: {it.qty}</div>
+                          <div className="text-white/50 text-[0.75rem]">Qtd: {it.qty}</div>
                         </div>
-                        <div className="text-[color:var(--text-secondary)] text-sm">
+                        <div className="text-white/90 text-[0.875rem] tabular-nums">
                           {new Intl.NumberFormat(locale === "en" ? "en-US" : "pt-BR", {
                             style: "currency",
                             currency: locale === "en" ? "USD" : "BRL",
@@ -277,7 +292,7 @@ export default function CheckoutPage() {
                       </li>
                     ))}
                   </ul>
-                </div>
+                </DsGlass>
 
                 {/* Card de Resumo */}
                 <OrderSummary

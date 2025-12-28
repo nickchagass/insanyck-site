@@ -72,10 +72,11 @@ export default function MiniCart() {
       <AnimatePresence>
         {isOpen && (
           <>
+            {/* INSANYCK STEP G-EXEC-P2-D — Overlay backdrop (z-overlay = 400) */}
             {/* Overlay — STEP G-05.4-B: dark backdrop + high blur */}
             <motion.div
               key="overlay"
-              className="minicart-overlay-cofre fixed inset-0 z-50"
+              className="minicart-overlay-cofre fixed inset-0 z-[var(--z-overlay)]"
               role="presentation"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -83,6 +84,7 @@ export default function MiniCart() {
               onClick={() => toggle(false)}
             />
 
+            {/* INSANYCK STEP G-EXEC-P2-D — Drawer panel (z-drawer = 200) */}
             {/* Drawer — STEP G-05.4-B: premium dark glass + titanium hairline */}
             <motion.div
               key="panel"
@@ -90,7 +92,7 @@ export default function MiniCart() {
               role="dialog"
               aria-modal="true"
               aria-labelledby="minicart-title"
-              className="minicart-panel-cofre fixed top-0 right-0 h-full w-[380px] max-w-[calc(100vw-48px)] z-50"
+              className="minicart-panel-cofre fixed top-0 right-0 h-full w-[380px] max-w-[calc(100vw-48px)] z-[var(--z-drawer)]"
               initial={{ x: 420 }}
               animate={{ x: 0 }}
               exit={{ x: 420 }}

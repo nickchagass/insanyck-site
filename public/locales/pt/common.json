@@ -110,6 +110,23 @@
       "ctaPrimary": "Entrar na loja",
       "ctaSecondary": "Voltar para o início"
     }
+  },
+  "footer": {
+    "navigation": "Navegação",
+    "shop": "Loja",
+    "collection": "Coleção",
+    "news": "Novidades",
+    "support": "Suporte",
+    "contact": "Contato",
+    "faq": "Perguntas Frequentes",
+    "terms": "Termos de Uso",
+    "privacy": "Política de Privacidade",
+    "newsletter": "Newsletter",
+    "newsletterPlaceholder": "Seu e-mail",
+    "subscribe": "Inscrever",
+    "newsletterSoon": "Em breve",
+    "copyright": "© 2025 INSANYCK. Todos os direitos reservados.",
+    "tagline": "Luxo Negro. Zero concessões."
   }
 }
   

@@ -24,6 +24,8 @@ export default function SearchBox() {
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [_loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  // INSANYCK STEP G-EXEC-P0 — Click-outside detection ref
+  const searchRootRef = useRef<HTMLDivElement>(null);
 
   // INSANYCK STEP 11 — Fetch suggestions from API
   useEffect(() => {
@@ -75,6 +77,20 @@ export default function SearchBox() {
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
+  // INSANYCK STEP G-EXEC-P0 — Click-outside handler
+  useEffect(() => {
+    if (!open) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRootRef.current && !searchRootRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (!open) return;
     if (e.key === "ArrowDown") {
@@ -91,7 +107,7 @@ export default function SearchBox() {
   };
 
   return (
-    <div className="relative">
+    <div ref={searchRootRef} className="relative">
       {/* INSANYCK HOTFIX G-05.4 — Titanium hairline (.nav-pill-ti) */}
       <button
         onClick={() => setOpen((v) => !v)}

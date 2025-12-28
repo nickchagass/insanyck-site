@@ -185,31 +185,33 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
       
       <AccountLayout titleKey="account:orders.detail.title">
         <div className="space-y-6">
-          {/* Header */}
+          {/* INSANYCK STEP G-EXEC-P1-D — Header com back button */}
           <div className="flex items-center gap-4">
-            <Link href="/conta/pedidos">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                {t('account:orders.detail.backToOrders')}
-              </Button>
+            <Link
+              href="/conta/pedidos"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-white/[0.08] bg-white/[0.02] text-[0.875rem] text-white/70 hover:text-white hover:bg-white/[0.05] hover:border-white/[0.12] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              {t('account:orders.detail.backToOrders')}
             </Link>
           </div>
 
-          {/* Order Summary */}
+          {/* INSANYCK STEP G-EXEC-P1-D — Order Summary Museum Panel */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-black/20 border border-white/10 rounded-2xl p-6"
+            className="ins-panel p-6 lg:p-8"
           >
-            <div className="flex items-start justify-between mb-4">
+            <div className="flex items-start justify-between mb-6 pb-6 border-b border-white/[0.06]">
               <div>
-                <h1 className="text-xl font-semibold text-white mb-2">
-                  {t('account:orders.detail.orderNumber')} #{order.id.slice(0, 8).toUpperCase()}
+                <h1 className="text-2xl font-light tracking-tight text-white/95 mb-2">
+                  {t('account:orders.detail.orderNumber')} <span className="font-mono">#{order.id.slice(0, 8).toUpperCase()}</span>
                 </h1>
-                <div className="flex items-center gap-2 text-sm text-white/60">
+                <div className="flex items-center gap-2 text-[0.8125rem] text-white/60">
+                  {/* INSANYCK A11Y — Touch target 44px (WCAG AAA) */}
                   <button
                     onClick={() => copyToClipboard(order.id)}
-                    className="flex items-center gap-2 hover:text-white transition-colors"
+                    className="flex items-center gap-2 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] rounded min-h-[44px] min-w-[44px] px-2 py-2 -ml-1"
                   >
                     <Copy className="h-3 w-3" />
                     {copied ? t('common:copied') : t('common:copyId')}
@@ -222,23 +224,24 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
               </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <p className="text-white/60 mb-1">{t('account:orders.detail.orderDate')}</p>
-                <p className="text-white">{formatDateTime(order.createdAt, dateLocale)}</p>
+                <p className="text-[0.7rem] uppercase tracking-wide text-white/50 mb-2">{t('account:orders.detail.orderDate')}</p>
+                <p className="text-[0.9375rem] text-white/90">{formatDateTime(order.createdAt, dateLocale)}</p>
               </div>
               <div>
-                <p className="text-white/60 mb-1">{t('account:orders.detail.total')}</p>
-                <p className="text-white font-medium">{formatPrice(order.amountTotal, locale, order.currency as "BRL" | "USD")}</p>
+                <p className="text-[0.7rem] uppercase tracking-wide text-white/50 mb-2">{t('account:orders.detail.total')}</p>
+                <p className="text-[1.125rem] font-light text-white/95 tabular-nums">{formatPrice(order.amountTotal, locale, order.currency as "BRL" | "USD")}</p>
               </div>
               {order.trackingCode && (
                 <div>
-                  <p className="text-white/60 mb-1">{t('account:orders.detail.tracking')}</p>
+                  <p className="text-[0.7rem] uppercase tracking-wide text-white/50 mb-2">{t('account:orders.detail.tracking')}</p>
+                  {/* INSANYCK A11Y — Touch target 44px (WCAG AAA) */}
                   <button
                     onClick={() => copyToClipboard(order.trackingCode!)}
-                    className="text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2"
+                    className="text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-2 text-[0.875rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] rounded min-h-[44px] min-w-[44px] px-2 py-2 -ml-1"
                   >
-                    {order.trackingCode}
+                    <span className="font-mono">{order.trackingCode}</span>
                     <Copy className="h-3 w-3" />
                   </button>
                 </div>
@@ -246,38 +249,43 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
             </div>
 
             {order.shippedAt && (
-              <div className="mt-4 pt-4 border-t border-white/10">
-                <p className="text-white/60 text-sm mb-1">{t('account:orders.detail.shippedDate')}</p>
-                <p className="text-white text-sm">{formatDateTime(order.shippedAt, dateLocale)}</p>
+              <div className="mt-6 pt-6 border-t border-white/[0.06]">
+                <p className="text-[0.7rem] uppercase tracking-wide text-white/50 mb-2">{t('account:orders.detail.shippedDate')}</p>
+                <p className="text-[0.9375rem] text-white/90">{formatDateTime(order.shippedAt, dateLocale)}</p>
               </div>
             )}
           </motion.div>
 
-          {/* Order Items */}
+          {/* INSANYCK STEP G-EXEC-P1-D — Order Items Museum Panel */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-black/20 border border-white/10 rounded-2xl p-6"
+            className="ins-panel p-6 lg:p-8"
           >
-            <h2 className="text-lg font-medium text-white mb-4">
+            <h2 className="text-[0.7rem] font-semibold tracking-[0.12em] uppercase text-white/50 mb-6">
               {t('account:orders.detail.items')}
             </h2>
 
-            <div className="space-y-4">
+            <div className="space-y-0">
               {order.items.map((item, index) => (
-                <div key={index} className="flex items-center justify-between py-3 border-b border-white/10 last:border-b-0 last:pb-0">
+                <div
+                  key={index}
+                  className={`flex items-center justify-between py-4 ${
+                    index < order.items.length - 1 ? "border-b border-white/[0.06]" : ""
+                  }`}
+                >
                   <div className="flex-1">
-                    <h3 className="font-medium text-white">{item.title}</h3>
-                    <p className="text-sm text-white/60">
-                      {t('account:orders.detail.quantity')}: {item.qty}
+                    <h3 className="text-[0.9375rem] font-light text-white/95">{item.title}</h3>
+                    <p className="text-[0.8125rem] text-white/50 mt-1">
+                      {t('account:orders.detail.quantity')}: <span className="tabular-nums">{item.qty}</span>
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-medium text-white">
+                    <p className="text-[1rem] font-light text-white/95 tabular-nums">
                       {formatPrice(item.priceCents * item.qty, locale, order.currency as "BRL" | "USD")}
                     </p>
-                    <p className="text-sm text-white/60">
+                    <p className="text-[0.75rem] text-white/50 mt-1 tabular-nums">
                       {formatPrice(item.priceCents, locale, order.currency as "BRL" | "USD")} {t('account:orders.detail.each')}
                     </p>
                   </div>
@@ -285,12 +293,12 @@ export default function OrderDetailPage({ orderId }: OrderDetailProps) {
               ))}
             </div>
 
-            <div className="mt-6 pt-4 border-t border-white/10">
+            <div className="mt-6 pt-6 border-t border-white/[0.08]">
               <div className="flex justify-between items-center">
-                <span className="text-lg font-medium text-white">
+                <span className="text-[0.875rem] uppercase tracking-wide text-white/60">
                   {t('account:orders.detail.total')}
                 </span>
-                <span className="text-lg font-semibold text-white">
+                <span className="text-2xl font-light text-white/95 tabular-nums">
                   {formatPrice(order.amountTotal, locale, order.currency as "BRL" | "USD")}
                 </span>
               </div>

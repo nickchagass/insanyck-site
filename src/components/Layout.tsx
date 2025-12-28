@@ -6,6 +6,8 @@ import { CartDrawerCore } from "@/core/Cart/CartDrawerCore";
 import { PropsWithChildren } from "react";
 // INSANYCK FASE G-03.2 — Mobile Navigation Dock (app nativo)
 import MobileNavDock from "./MobileNavDock";
+// INSANYCK STEP G-EXEC-P1-B — Footer Premium (Museum Glass)
+import Footer from "./Footer";
 
 /**
  * Layout principal da aplicação, incluindo Navbar e CartDrawer.
@@ -34,13 +36,15 @@ export default function Layout({ children }: PropsWithChildren) {
         id="conteudo"
         role="main"
         tabIndex={-1} // Ajuda na acessibilidade, o usuário pode pular direto para o conteúdo
-        className="pt-20 pb-10 lg:pb-10 pb-24 max-w-7xl mx-auto px-4"
+        className="pt-20 max-w-7xl mx-auto px-4"
       >
         {children}
       </main>
       <CartDrawerCore open={isCartOpen} onClose={() => toggle(false)} />
       {/* INSANYCK FASE G-03.2 — Mobile nav estilo app */}
       <MobileNavDock />
+      {/* INSANYCK STEP G-EXEC-P1-B — Footer Premium (Museum Glass) */}
+      <Footer />
     </div>
   );
 }

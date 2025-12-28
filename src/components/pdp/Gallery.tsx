@@ -240,7 +240,7 @@ export default function Gallery({ product, className = "" }: GalleryProps) {
         {isLightboxOpen && (
           <dialog
             ref={dialogRef}
-            className="fixed inset-0 z-50 w-full h-full bg-black/95 backdrop-blur-xl p-4 md:p-8"
+            className="fixed inset-0 z-[var(--z-modal)] w-full h-full bg-black/95 backdrop-blur-xl p-4 md:p-8"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 closeLightbox();
@@ -254,9 +254,9 @@ export default function Gallery({ product, className = "" }: GalleryProps) {
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.2 }}
             >
-              {/* Close button */}
+              {/* INSANYCK A11Y — Touch target 44px (WCAG AAA) */}
               <button
-                className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                className="absolute top-4 right-4 z-10 min-w-[44px] min-h-[44px] w-11 h-11 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
                 onClick={closeLightbox}
                 aria-label={t('common:close', 'Fechar')}
               >

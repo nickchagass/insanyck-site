@@ -157,12 +157,12 @@ export default function Navbar() {
         </Link>
 
         {/* INSANYCK VISUAL FIDELITY FIX — Links com text-shadow na Home (legibilidade sem pill) */}
+        {/* INSANYCK MICRO-LUXO — Hover reveal: underline width animation + lift sutil */}
         <div className="hidden md:flex items-center gap-10 text-[15px] text-[color:var(--ds-accent-soft)]">
           <Link
             href="/novidades"
             prefetch={true}
-            className="relative hover:text-[color:var(--ds-accent)] hover:opacity-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-md px-2 py-1.5
-              after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[1px] after:bg-[color:var(--ds-border-subtle)] after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-150"
+            className="nav-link-reveal relative hover:text-[color:var(--ds-accent)] hover:opacity-95 hover:-translate-y-[1px] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-md px-2 py-1.5"
             style={isHome ? { textShadow: '0 2px 8px rgba(0,0,0,0.80), 0 4px 16px rgba(0,0,0,0.60)' } : undefined}
           >
             {t("nav:links.novidades", "Novidades")}
@@ -170,8 +170,7 @@ export default function Navbar() {
           <Link
             href="/loja"
             prefetch={true}
-            className="relative hover:text-[color:var(--ds-accent)] hover:opacity-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-md px-2 py-1.5
-              after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[1px] after:bg-[color:var(--ds-border-subtle)] after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-150"
+            className="nav-link-reveal relative hover:text-[color:var(--ds-accent)] hover:opacity-95 hover:-translate-y-[1px] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-md px-2 py-1.5"
             style={isHome ? { textShadow: '0 2px 8px rgba(0,0,0,0.80), 0 4px 16px rgba(0,0,0,0.60)' } : undefined}
           >
             {t("nav:links.loja", "Loja")}
@@ -179,8 +178,7 @@ export default function Navbar() {
           <Link
             href="/colecao"
             prefetch={true}
-            className="relative hover:text-[color:var(--ds-accent)] hover:opacity-95 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-md px-2 py-1.5
-              after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[1px] after:bg-[color:var(--ds-border-subtle)] after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-150"
+            className="nav-link-reveal relative hover:text-[color:var(--ds-accent)] hover:opacity-95 hover:-translate-y-[1px] transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ds-surface)] rounded-md px-2 py-1.5"
             style={isHome ? { textShadow: '0 2px 8px rgba(0,0,0,0.80), 0 4px 16px rgba(0,0,0,0.60)' } : undefined}
           >
             {t("nav:links.colecao", "Coleção")}
@@ -318,7 +316,8 @@ function UserMenu({ isHome }: { isHome: boolean }) {
         <User size={18} strokeWidth={1.5} aria-hidden="true" />
         <span className="hidden sm:inline">{String(name).split(" ")[0]}</span>
       </button>
-      <div className="absolute right-0 mt-2 hidden group-hover:block group-focus-within:block rounded-2xl border border-ds-borderSubtle bg-ds-elevated backdrop-blur-md shadow-ds-2 p-2 w-[220px] z-[60]">
+      {/* INSANYCK MICRO-LUXO — Z-index ajustado para z-100 (sticky level, garantia acima de elementos comuns) */}
+      <div className="absolute right-0 mt-2 hidden group-hover:block group-focus-within:block rounded-2xl border border-ds-borderSubtle bg-ds-elevated backdrop-blur-md shadow-ds-2 p-2 w-[220px] z-[100]">
         <Link className="block px-3 py-2 text-ds-accentSoft hover:text-ds-accent hover:bg-ds-surface rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ds-focus focus-visible:ring-offset-1" href="/conta" prefetch={true}>
           Minha conta
         </Link>

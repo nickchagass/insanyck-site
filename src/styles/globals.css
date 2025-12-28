@@ -98,6 +98,30 @@ body {
   --ease-premium: cubic-bezier(.2,0,0,1);
   --spring: cubic-bezier(.34,1.56,.64,1);
 
+  /* ===== INSANYCK STEP G-EXEC-P2-D — Z-Index Scale (Museum Edition Stacking Context) ===== */
+  /*
+   * Hierarquia de profundidade consistente para todos os overlays/drawers/modais.
+   * REGRAS:
+   * 1. Backdrops SEMPRE abaixo do conteúdo que eles escurecem
+   * 2. Drawers SEMPRE abaixo de modais
+   * 3. Toasts SEMPRE visíveis (acima de tudo exceto tooltips)
+   * 4. NUNCA usar valores arbitrários fora desta escala
+   * 5. NUNCA usar z-9999 em produção (só debug)
+   *
+   * USO:
+   * - Tailwind: z-[var(--z-dropdown)]
+   * - CSS: z-index: var(--z-modal);
+   */
+  --z-base: 0;           /* Conteúdo normal (padrão) */
+  --z-dropdown: 50;      /* Dropdowns, popovers, menus suspensos */
+  --z-sticky: 100;       /* Headers sticky, sidebars fixas, navegação */
+  --z-drawer: 200;       /* Cart drawer, filtros, painéis laterais */
+  --z-modal: 300;        /* Modais, dialogs, lightboxes */
+  --z-overlay: 400;      /* Backdrops escuros (sempre ATRÁS de drawer/modal) */
+  --z-toast: 500;        /* Toasts, notificações, banners de atualização */
+  --z-tooltip: 600;      /* Tooltips (sempre no topo de tudo) */
+  --z-debug: 9999;       /* Debug only (NUNCA em produção) */
+
   /* ===== Aliases p/ retrocompatibilidade (seu CSS antigo) ===== */
   --text: var(--text-primary);
   --muted: var(--text-secondary);
@@ -355,6 +379,53 @@ body::after {
 
   body::before,
   body::after {
+    position: absolute;
+  }
+}
+
+/* INSANYCK STEP P1-A — Home Atmospheric Unification (Force-Visible grain + vignette) */
+/* Aplica atmosfera sutil na Home para remover ruptura visual com /loja */
+.hero-home-atmospheric {
+  position: relative;
+  isolation: isolate;
+}
+
+.hero-home-atmospheric::before,
+.hero-home-atmospheric::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Vignette reduzida (35% vs 80% global) — mantém Pure Black dominante */
+.hero-home-atmospheric::before {
+  background: var(--ins-vignette);
+  opacity: .35;
+}
+
+/* Grain reduzido (56% da intensidade global) — textura perceptível mas discreta */
+.hero-home-atmospheric::after {
+  mix-blend-mode: overlay;
+  opacity: .045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='table' tableValues='0 0 0 .035 .07 .035 0 0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  image-rendering: pixelated;
+}
+
+/* INSANYCK STEP P1-A — Touch/mobile: absolute positioning para evitar jank */
+@media (hover: none) and (pointer: coarse) {
+  .hero-home-atmospheric::before,
+  .hero-home-atmospheric::after {
+    position: absolute;
+  }
+}
+
+/* INSANYCK STEP P1-A — Prefers-reduced-motion: absolute positioning (native safe) */
+@media (prefers-reduced-motion: reduce) {
+  .hero-home-atmospheric::before,
+  .hero-home-atmospheric::after {
     position: absolute;
   }
 }
@@ -2703,6 +2774,43 @@ body::after {
 @media (prefers-reduced-motion: reduce) {
   .nav-pill-titanium {
     transition: none !important;
+  }
+}
+
+/* =========================================================
+   INSANYCK MICRO-LUXO — Navbar Link Reveal (underline width animation)
+   Premium hover: underline cresce da esquerda (0 → 100%) + lift sutil
+   ========================================================= */
+.nav-link-reveal::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--ds-border-subtle);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (hover: hover) {
+  .nav-link-reveal:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-link-reveal::after {
+    transition: none !important;
+    transform: none !important;
+    opacity: 0;
+  }
+  .nav-link-reveal:hover::after {
+    opacity: 1;
+  }
+  .nav-link-reveal:hover {
+    transform: none !important;
   }
 }
 
