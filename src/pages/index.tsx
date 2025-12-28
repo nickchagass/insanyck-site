@@ -1,9 +1,11 @@
 // INSANYCK STEP 4
 import Head from "next/head";
+import Link from "next/link";
 import type { GetStaticProps } from "next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useRouter } from "next/router";
 import { useTranslation } from "next-i18next";
+import { ShieldCheck } from "lucide-react";
 import HeroHome from "@/sections/HeroHome";
 import { seoHome } from "@/lib/seo";
 
@@ -49,6 +51,52 @@ export default function HomePage() {
         {/* INSANYCK STEP 4 · Lote 3 — H1 sr-only para hierarquia A11y */}
         <h1 className="sr-only">{t('hero.title', 'INSANYCK — Essential luxury in motion')}</h1>
         <HeroHome />
+
+        {/* INSANYCK LEGAL-COMPLIANCE — Premium transparency strip */}
+        <section className="relative bg-[color:var(--ins-bg-base)] border-t border-white/[0.06]">
+          {/* Specular hairline top */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 top-0 h-px"
+            style={{
+              background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%)',
+            }}
+          />
+
+          <div className="max-w-7xl mx-auto px-6 py-8 sm:py-10">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 text-center">
+              {/* Icon */}
+              <div className="flex items-center gap-2 text-white/50">
+                <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.5} aria-hidden="true" />
+                <span className="text-[0.6875rem] sm:text-xs font-medium tracking-wider uppercase">
+                  {locale === 'en' ? 'Transparency' : 'Transparência'}
+                </span>
+              </div>
+
+              {/* Separator */}
+              <span className="hidden sm:block text-white/20" aria-hidden="true">•</span>
+
+              {/* Links */}
+              <p className="text-[0.75rem] sm:text-[0.8125rem] text-white/40 leading-relaxed">
+                {locale === 'en' ? 'Read our' : 'Conheça nossos'}{' '}
+                <Link
+                  href="/termos"
+                  className="text-white/60 hover:text-white/90 underline underline-offset-2 decoration-white/30 hover:decoration-white/60 transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 rounded-sm"
+                >
+                  {locale === 'en' ? 'Terms of Service' : 'Termos de Uso'}
+                </Link>
+                {' '}{locale === 'en' ? 'and' : 'e'}{' '}
+                <Link
+                  href="/privacidade"
+                  className="text-white/60 hover:text-white/90 underline underline-offset-2 decoration-white/30 hover:decoration-white/60 transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 rounded-sm"
+                >
+                  {locale === 'en' ? 'Privacy Policy' : 'Política de Privacidade'}
+                </Link>
+                .
+              </p>
+            </div>
+          </div>
+        </section>
       </main>
     </>
   );
