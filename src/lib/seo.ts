@@ -449,3 +449,26 @@ export const seoTerms = (locale: string = 'pt-BR') => {
     jsonLd: []
   };
 };
+
+export const seoNews = (locale: string = 'pt-BR') => {
+  const title = locale === 'en' ? 'News & Updates' : 'Novidades';
+  const description = locale === 'en'
+    ? 'Latest INSANYCK updates, new collections, and editorial content. Premium luxury fashion news.'
+    : 'Últimas atualizações INSANYCK, novas coleções e conteúdo editorial. Novidades de moda luxury premium.';
+
+  return {
+    ...metaTags({
+      title: buildTitle(title),
+      description,
+      canonical: '/novidades',
+      locale,
+      noIndex: false
+    }),
+    jsonLd: [
+      generateBreadcrumbSchema([
+        { name: 'Home', url: '/' },
+        { name: title, url: '/novidades' }
+      ])
+    ]
+  };
+};

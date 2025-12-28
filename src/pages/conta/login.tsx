@@ -8,6 +8,7 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetStaticProps } from 'next';
 import Head from 'next/head';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 
 // Animation variants
@@ -200,6 +201,28 @@ export default function LoginPage() {
               className="text-center text-white/40 text-xs mt-8 leading-relaxed"
             >
               {t('auth.login.privacy', 'Seus dados estão seguros conosco')}
+            </motion.p>
+
+            {/* Legal links — Premium microcopy */}
+            <motion.p
+              variants={itemVariants}
+              className="text-center text-white/30 text-[0.6875rem] mt-4 leading-relaxed"
+            >
+              Ao continuar, você concorda com nossos{' '}
+              <Link
+                href="/termos"
+                className="text-white/50 hover:text-white/80 underline underline-offset-2 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 rounded-sm"
+              >
+                Termos de Uso
+              </Link>
+              {' '}e{' '}
+              <Link
+                href="/privacidade"
+                className="text-white/50 hover:text-white/80 underline underline-offset-2 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40 rounded-sm"
+              >
+                Política de Privacidade
+              </Link>
+              .
             </motion.p>
           </motion.div>
 
