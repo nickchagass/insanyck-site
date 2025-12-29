@@ -129,7 +129,18 @@ export default function CheckoutPage() {
         throw new Error('Provider inválido');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('error', 'Não foi possível iniciar o pagamento.'));
+      // INSANYCK CHECKOUT-RESURRECTION — Better error messages
+      let errorMessage = t('error', 'Não foi possível iniciar o pagamento.');
+
+      if (err instanceof Error) {
+        if (err.message.includes('Variant not found')) {
+          errorMessage = t('variantNotFound', 'Alguns itens no carrinho não estão mais disponíveis. Por favor, remova-os e tente novamente.');
+        } else {
+          errorMessage = err.message;
+        }
+      }
+
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -168,7 +179,18 @@ export default function CheckoutPage() {
         throw new Error('No checkout URL');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('error', 'Não foi possível iniciar o pagamento.'));
+      // INSANYCK CHECKOUT-RESURRECTION — Better error messages
+      let errorMessage = t('error', 'Não foi possível iniciar o pagamento.');
+
+      if (err instanceof Error) {
+        if (err.message.includes('Variant not found')) {
+          errorMessage = t('variantNotFound', 'Alguns itens no carrinho não estão mais disponíveis. Por favor, remova-os e tente novamente.');
+        } else {
+          errorMessage = err.message;
+        }
+      }
+
+      setError(errorMessage);
       setIsLoading(false);
     }
   };
@@ -222,7 +244,18 @@ export default function CheckoutPage() {
         throw new Error('Invalid card payment response');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('error', 'Não foi possível iniciar o pagamento.'));
+      // INSANYCK CHECKOUT-RESURRECTION — Better error messages
+      let errorMessage = t('error', 'Não foi possível iniciar o pagamento.');
+
+      if (err instanceof Error) {
+        if (err.message.includes('Variant not found')) {
+          errorMessage = t('variantNotFound', 'Alguns itens no carrinho não estão mais disponíveis. Por favor, remova-os e tente novamente.');
+        } else {
+          errorMessage = err.message;
+        }
+      }
+
+      setError(errorMessage);
       setIsLoading(false);
       setRedirecting(false);
     }

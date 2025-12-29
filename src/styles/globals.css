@@ -3704,6 +3704,30 @@ body::after {
   opacity: 1;
 }
 
+/* INSANYCK CHECKOUT-RESURRECTION — Floor reflection (vitrine on polished floor) */
+.plp-scope .plp-gallery-card::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 8%;
+  right: 8%;
+  height: 50%;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.02) 30%,
+    transparent 100%
+  );
+  opacity: 0.4;
+  pointer-events: none;
+  transition: opacity var(--ins-transition-normal, 300ms cubic-bezier(0.16, 1, 0.3, 1));
+  z-index: 0;
+}
+
+.plp-scope .plp-gallery-card:hover::after {
+  opacity: 0.6;
+}
+
 /* === IMAGE AREA === */
 .plp-scope .plp-image-stage {
   position: relative;
@@ -3713,21 +3737,28 @@ body::after {
   overflow: hidden;
 }
 
-/* Subtle top spotlight on image */
+/* INSANYCK CHECKOUT-RESURRECTION — Enhanced spotlight (descendant light from above) */
 .plp-scope .plp-image-stage::after {
   content: "";
   position: absolute;
   top: -20%;
-  left: 10%;
-  right: 10%;
-  height: 50%;
+  left: 5%;
+  right: 5%;
+  height: 60%;
   background: radial-gradient(
-    ellipse 100% 100% at 50% 0%,
-    rgba(255, 255, 255, 0.08) 0%,
-    transparent 70%
+    ellipse 95% 110% at 50% 0%,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 75%
   );
   pointer-events: none;
   z-index: 1;
+  opacity: 0.8;
+  transition: opacity var(--ins-transition-fast, 180ms cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.plp-scope .plp-image-stage:hover::after {
+  opacity: 1;
 }
 
 /* === CONTENT PEDESTAL === */

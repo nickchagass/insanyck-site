@@ -103,6 +103,7 @@
   "placeOrder": "Finalizar pedido",
   "processing": "Processando...",
   "error": "Não foi possível iniciar o pagamento.",
+  "variantNotFound": "Alguns itens no carrinho não estão mais disponíveis. Por favor, remova-os e tente novamente.",
   "success": {
     "title": "Pedido Confirmado!",
     "description": "Seu pedido foi processado com sucesso",

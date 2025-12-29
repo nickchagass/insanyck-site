@@ -143,22 +143,32 @@ export const useCartStore = create<CartState>()(
       ),
       partialize: (state) => ({ items: state.items }),
       onRehydrateStorage: () => (state) => {
-        // Migração leve: converte itens legados {variant?: string} -> options.variant
+        // INSANYCK CHECKOUT-RESURRECTION — Validation + migration
         if (state) {
           state.hydrated = true;
           if (Array.isArray(state.items)) {
-            state.items = state.items.map((it: any) => {
-              if (it && typeof it === "object") {
-                // garantir currency
-                if (!it.currency) it.currency = "BRL";
-                // se vier de um shape antigo com `variant` (string), movemos para options
-                if (it.variant && !it.options) {
-                  it.options = { variant: it.variant };
-                  delete it.variant;
+            state.items = state.items
+              .map((it: any) => {
+                if (it && typeof it === "object") {
+                  // garantir currency
+                  if (!it.currency) it.currency = "BRL";
+                  // se vier de um shape antigo com `variant` (string), movemos para options
+                  if (it.variant && !it.options) {
+                    it.options = { variant: it.variant };
+                    delete it.variant;
+                  }
                 }
-              }
-              return it as CartItem;
-            });
+                return it as CartItem;
+              })
+              // INSANYCK CHECKOUT-RESURRECTION — Filter out invalid items
+              // Remove items without variantId or sku (would cause "Variant not found" error)
+              .filter((it: CartItem) => {
+                const hasValidIdentifier = !!(it.variantId || it.sku);
+                if (!hasValidIdentifier && process.env.NODE_ENV === 'development') {
+                  console.warn('[Cart] Removed invalid item from cart (missing variantId/sku):', it);
+                }
+                return hasValidIdentifier;
+              });
           }
         }
       },

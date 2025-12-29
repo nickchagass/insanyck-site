@@ -103,6 +103,7 @@
   "placeOrder": "Place order",
   "processing": "Processing...",
   "error": "Could not start payment.",
+  "variantNotFound": "Some items in your cart are no longer available. Please remove them and try again.",
   "success": {
     "title": "Order Confirmed!",
     "description": "Your order has been processed successfully",
