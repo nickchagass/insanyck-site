@@ -1,157 +1,168 @@
-// INSANYCK STEP 10 — Admin Dashboard
-// src/pages/admin/index.tsx
-import { GetServerSideProps } from 'next';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import AdminLayout from '@/components/AdminLayout';
-import { prisma } from '@/lib/prisma';
-import Link from 'next/link';
-import { Package, Users, ShoppingCart, TrendingUp } from 'lucide-react';
+// INSANYCK STEP H0 — Admin Console Home Page
+// The Black Box — CEO-only dashboard with server-side auth guard
 
-interface DashboardStats {
-  totalProducts: number;
-  totalCategories: number;
-  totalOrders: number;
-  totalVariants: number;
+import { GetServerSideProps } from "next";
+import Head from "next/head";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { isCEO, ADMIN_CONSOLE_META } from "@/lib/admin/constants";
+import AdminShell from "@/components/admin/AdminShell";
+import DsButton from "@/components/ds/DsButton";
+
+interface AdminHomeProps {
+  userEmail: string;
 }
 
-interface AdminDashboardProps {
-  stats: DashboardStats;
-}
-
-export default function AdminDashboard({ stats }: AdminDashboardProps) {
-  const statCards = [
-    {
-      title: 'Produtos',
-      value: stats.totalProducts,
-      icon: Package,
-      color: 'text-blue-400',
-    },
-    {
-      title: 'Categorias',
-      value: stats.totalCategories,
-      icon: Users,
-      color: 'text-green-400',
-    },
-    {
-      title: 'Pedidos',
-      value: stats.totalOrders,
-      icon: ShoppingCart,
-      color: 'text-purple-400',
-    },
-    {
-      title: 'Variantes',
-      value: stats.totalVariants,
-      icon: TrendingUp,
-      color: 'text-orange-400',
-    },
-  ];
-
+export default function AdminHome({ userEmail }: AdminHomeProps) {
   return (
-    <AdminLayout>
-      <div className="p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-semibold text-white">Dashboard</h1>
-          <p className="text-white/60 mt-2">Visão geral do sistema INSANYCK</p>
-        </div>
+    <>
+      <Head>
+        <title>{ADMIN_CONSOLE_META.name} · INSANYCK</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
 
-        {/* Stats grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {statCards.map((stat) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={stat.title}
-                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6 hover:bg-white/10 transition-colors"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-white/60">{stat.title}</p>
-                    <p className="text-2xl font-semibold text-white mt-1">
-                      {stat.value.toLocaleString()}
-                    </p>
-                  </div>
-                  <Icon className={`h-8 w-8 ${stat.color}`} />
-                </div>
+      <AdminShell>
+        {/* Welcome Section */}
+        <div className="space-y-6">
+          {/* Greeting */}
+          <div className="border-b border-[color:var(--ds-border-subtle)] pb-6">
+            <h2 className="text-3xl font-bold text-white mb-2">
+              Welcome, CEO
+            </h2>
+            <p className="text-[color:var(--ds-accent-soft)]">
+              {userEmail}
+            </p>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="p-4 border border-[color:var(--ds-border-subtle)] rounded-[var(--ds-radius-lg)]">
+              <div className="text-sm text-[color:var(--ds-accent-soft)] mb-1">
+                Console Version
               </div>
-            );
-          })}
-        </div>
+              <div className="text-xl font-bold text-white">
+                {ADMIN_CONSOLE_META.version}
+              </div>
+            </div>
 
-        {/* Quick actions */}
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-white mb-4">Ações Rápidas</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a
-              href="/admin/products/new"
-              className="flex items-center justify-center px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 transition-colors"
-            >
-              <Package className="h-5 w-5 mr-2" />
-              Novo Produto
-            </a>
-            <a
-              href="/admin/categories"
-              className="flex items-center justify-center px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 transition-colors"
-            >
-              <Users className="h-5 w-5 mr-2" />
-              Gerenciar Categorias
-            </a>
-            <Link
-              href="/admin/orders"
-              className="flex items-center justify-center px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 transition-colors"
-            >
-              <ShoppingCart className="h-5 w-5 mr-2" />
-              Ver Pedidos
-            </Link>
+            <div className="p-4 border border-[color:var(--ds-border-subtle)] rounded-[var(--ds-radius-lg)]">
+              <div className="text-sm text-[color:var(--ds-accent-soft)] mb-1">
+                Access Level
+              </div>
+              <div className="text-xl font-bold text-emerald-400">
+                CEO-Only
+              </div>
+            </div>
+          </div>
+
+          {/* Placeholder Content */}
+          <div className="pt-6 space-y-4">
+            <h3 className="text-lg font-semibold text-white">
+              Quick Actions
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {/* Placeholder buttons for future features */}
+              <DsButton variant="secondary" size="md" disabled>
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
+                </svg>
+                Pedidos
+              </DsButton>
+
+              <DsButton variant="secondary" size="md" disabled>
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                  />
+                </svg>
+                Produtos
+              </DsButton>
+
+              <DsButton variant="secondary" size="md" disabled>
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                  />
+                </svg>
+                Clientes
+              </DsButton>
+            </div>
+
+            <div className="pt-4 text-sm text-[color:var(--ds-accent-soft)] italic">
+              Museum Edition · Foundation release (H0)
+              <br />
+              Advanced features coming soon...
+            </div>
           </div>
         </div>
-      </div>
-    </AdminLayout>
+      </AdminShell>
+    </>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+/**
+ * INSANYCK STEP H0 — Server-side auth guard (defense-in-depth)
+ * Layer 2 security: reforça a proteção do middleware
+ */
+export const getServerSideProps: GetServerSideProps<AdminHomeProps> = async (
+  context
+) => {
+  // Get session
   const session = await getServerSession(context.req, context.res, authOptions);
 
-  // INSANYCK STEP 10 — Verificar se é admin
-  if (!session?.user || (session.user as any)?.role !== 'admin') {
+  // Gate 1: Not logged in
+  if (!session || !session.user?.email) {
     return {
       redirect: {
-        destination: '/login',
+        destination: `/conta/login?callbackUrl=${encodeURIComponent(
+          context.resolvedUrl
+        )}`,
         permanent: false,
       },
     };
   }
 
-  try {
-    const [totalProducts, totalCategories, totalOrders, totalVariants] = await Promise.all([
-      prisma.product.count(),
-      prisma.category.count(),
-      prisma.order.count(),
-      prisma.variant.count(),
-    ]);
-
+  // Gate 2: Not CEO
+  if (!isCEO(session.user.email)) {
     return {
-      props: {
-        stats: {
-          totalProducts,
-          totalCategories,
-          totalOrders,
-          totalVariants,
-        },
-      },
-    };
-  } catch (error) {
-    console.error('Error fetching admin stats:', error);
-    return {
-      props: {
-        stats: {
-          totalProducts: 0,
-          totalCategories: 0,
-          totalOrders: 0,
-          totalVariants: 0,
-        },
+      redirect: {
+        destination: "/",
+        permanent: false,
       },
     };
   }
+
+  // Authorized
+  return {
+    props: {
+      userEmail: session.user.email,
+    },
+  };
 };

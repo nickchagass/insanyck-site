@@ -4007,3 +4007,30 @@ body::after {
     0 0 0 4px var(--cold-ray-ring);
 }
 
+/* ============================================================
+   INSANYCK STEP H0 — ADMIN CONSOLE PRIVACY MODE
+   The Black Box — Privacy blur for sensitive data
+   ============================================================ */
+
+/**
+ * Privacy Mode Toggle
+ * When .ins-privacy-mode is added to documentElement,
+ * all elements with .ins-money class will be blurred
+ */
+.ins-privacy-mode .ins-money {
+  filter: blur(10px);
+  opacity: 0.55;
+  transition: filter 0.2s ease-out, opacity 0.2s ease-out;
+  user-select: none;
+  pointer-events: none;
+}
+
+/**
+ * Respect reduced motion preference
+ */
+@media (prefers-reduced-motion: reduce) {
+  .ins-privacy-mode .ins-money {
+    transition: none;
+  }
+}
+

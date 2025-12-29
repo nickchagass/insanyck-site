@@ -2,10 +2,12 @@
 // INSANYCK HOTFIX-001 — Middleware Simplificado (Emergência)
 // Este arquivo substitui o middleware anterior que crashava
 // Sem dependências externas para garantir funcionamento
+// INSANYCK STEP H0 — Added CEO-only protection for /admin
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { isCEO } from "@/lib/admin/constants";
 
 // ===== CONFIGURAÇÃO =====
 const PUBLIC_AUTH_ROUTES = new Set([
@@ -53,7 +55,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // ===== PROTEÇÃO: /admin/* =====
+    // ===== PROTEÇÃO: /admin/* (INSANYCK STEP H0 — CEO-only) =====
     if (pathname.startsWith("/admin")) {
       if (!token) {
         const loginUrl = new URL("/conta/login", request.url);
@@ -61,7 +63,9 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(loginUrl);
       }
 
-      if (token.role !== "admin") {
+      // INSANYCK STEP H0 — Check CEO allowlist instead of role
+      const email = token.email as string | undefined;
+      if (!isCEO(email)) {
         return NextResponse.redirect(new URL("/", request.url));
       }
     }
