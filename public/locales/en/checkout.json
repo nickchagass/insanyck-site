@@ -6,6 +6,11 @@
     "shipping": "Shipping",
     "payment": "Payment"
   },
+  "steps": {
+    "identity": "Details",
+    "shipping": "Shipping",
+    "payment": "Payment"
+  },
   "fields": {
     "fullName": "Full name",
     "email": "E-mail",
@@ -25,6 +30,42 @@
     "eta5": "5 business days",
     "eta2": "2 business days"
   },
+  "identity": {
+    "title": "Your details",
+    "loggedInAs": "You are logged in as",
+    "loggedOut": "Enter your email to continue",
+    "helper": "We'll use this email to send your order confirmation"
+  },
+  "address": {
+    "title": "Shipping address",
+    "helper": "Fill in the details to calculate shipping and deliver your order",
+    "nameLabel": "Full name",
+    "namePlaceholder": "Your full name",
+    "phoneLabel": "Phone",
+    "phonePlaceholder": "+1 (555) 123-4567",
+    "cepLabel": "ZIP code",
+    "cepPlaceholder": "12345",
+    "streetLabel": "Street",
+    "streetPlaceholder": "Street name",
+    "numberLabel": "Number",
+    "numberPlaceholder": "123",
+    "complementLabel": "Complement (optional)",
+    "complementPlaceholder": "Apt, Suite, etc.",
+    "cityLabel": "City",
+    "cityPlaceholder": "New York",
+    "stateLabel": "State",
+    "statePlaceholder": "NY",
+    "validation": {
+      "nameRequired": "Name is required",
+      "phoneRequired": "Phone is required",
+      "cepRequired": "ZIP code is required",
+      "cepInvalid": "Invalid ZIP code",
+      "streetRequired": "Street is required",
+      "numberRequired": "Number is required",
+      "cityRequired": "City is required",
+      "stateRequired": "State is required"
+    }
+  },
   "payment": {
     "fake": "Demo mode: payment is simulated.",
     "title": "Payment",
@@ -36,16 +77,7 @@
     "international": "International"
   },
   "pix": {
-    "title": "Pay with PIX",
-    "scanQr": "Scan the QR Code with your bank app",
-    "orCopy": "or copy the code below",
-    "copyCode": "Copy PIX code",
-    "copied": "Copied!",
-    "expires": "Expires in",
-    "waiting": "Waiting for payment...",
-    "approved": "Payment approved!",
-    "expired": "Code expired",
-    "generateNew": "Generate new code"
+    "title": "Pay with PIX"
   },
   "card": {
     "title": "Pay with card",
@@ -55,10 +87,18 @@
     "continueButton": "Continue to payment",
     "secureNote": "100% secure payment via Mercado Pago"
   },
+  "stripe": {
+    "title": "International payment",
+    "subtitle": "Payment securely processed via Stripe"
+  },
   "emailInput": {
     "label": "Your email to receive the receipt",
     "placeholder": "email@example.com",
     "required": "Email is required to continue"
+  },
+  "loading": {
+    "title": "Preparing checkout",
+    "message": "Please wait a moment..."
   },
   "placeOrder": "Place order",
   "processing": "Processing...",

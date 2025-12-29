@@ -1,10 +1,11 @@
-// INSANYCK FASE G-04.2 — Progress Indicator do Checkout (com animações premium)
+// INSANYCK FASE G-04.2 + F-MP.POLISH — Progress Indicator do Checkout (Museum Edition + i18n)
 // Componente de indicador de progresso com 3 etapas (Dados, Entrega, Pagamento)
-// 100% token-based, glassmorphism, premium UX
+// 100% token-based, glassmorphism, premium UX, 100% i18n
 
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "next-i18next";
 
 interface CheckoutStepsProps {
   /** Etapa atual (1, 2 ou 3) */
@@ -25,6 +26,9 @@ interface CheckoutStepsProps {
  * - Respeita prefers-reduced-motion
  */
 export default function CheckoutSteps({ current }: CheckoutStepsProps) {
+  // INSANYCK F-MP.POLISH — i18n support
+  const { t } = useTranslation('checkout');
+
   // INSANYCK FASE G-04.2 — Detecta prefers-reduced-motion
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
@@ -38,10 +42,12 @@ export default function CheckoutSteps({ current }: CheckoutStepsProps) {
       return () => mediaQuery.removeEventListener('change', handleChange);
     }
   }, []);
+
+  // INSANYCK F-MP.POLISH — i18n labels
   const steps = [
-    { id: 1, label: "Dados" },
-    { id: 2, label: "Entrega" },
-    { id: 3, label: "Pagamento" },
+    { id: 1, label: t('steps.identity') },
+    { id: 2, label: t('steps.shipping') },
+    { id: 3, label: t('steps.payment') },
   ] as const;
 
   return (

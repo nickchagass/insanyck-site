@@ -1,5 +1,5 @@
+// INSANYCK STEP MUSEUM-VAULT — ShowroomGrid Gallery Edition
 // INSANYCK STEP G-04.2.1 — Guard console.error no frontend
-// INSANYCK STEP G-05.4-B — Removed SpotlightCard (showroom consistency)
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -14,11 +14,11 @@ interface ShowroomGridProps {
   loading?: boolean;
 }
 
-export default function ShowroomGrid({ 
-  initialProducts, 
+export default function ShowroomGrid({
+  initialProducts,
   onLoadMore,
   hasMore = false,
-  loading = false 
+  loading = false
 }: ShowroomGridProps) {
   const { t } = useTranslation(["plp", "common"]);
   const [products, setProducts] = useState(initialProducts);
@@ -55,51 +55,49 @@ export default function ShowroomGrid({
     return () => observer.disconnect();
   }, [handleIntersection, hasMore]);
 
-  // INSANYCK STEP G-05.4-B — Showroom Grid: consistent spacing, no giant spotlight
-  // Layout responsivo controlado APENAS via Tailwind breakpoints:
-  // - Mobile (< 768px): grid-cols-2, todos os cards 1x1
-  // - Tablet (768-1279px): grid-cols-3, todos os cards 1x1
-  // - Desktop (≥1280px): grid-cols-4, todos os cards 1x1
-  // CHANGE: Removed spotlight 2x2 giant card, now all cards are uniform for showroom consistency
-  const getGridItemClass = () => {
-    // STEP G-05.4-B: All cards are now uniform 1x1 (no more giant spotlight)
-    return "col-span-1 row-span-1";
-  };
-
-  const getGridClass = () => {
-    // INSANYCK STEP G-11 HYBRID — Museum breathing gallery: generous gaps for vitrines + reflections
-    return "grid gap-6 md:gap-8 lg:gap-10 auto-rows-fr " +
-           "grid-cols-2 " + // Mobile: 2 cols (Vertical Luxury)
-           "md:grid-cols-3 " + // Tablet: 3 cols
-           "xl:grid-cols-4"; // Desktop: 4 cols (Showroom Enterprise)
-  };
-
+  // INSANYCK STEP MUSEUM-VAULT — Empty state with personality
   if (!products.length && !loading) {
     return (
-      <div className="text-center py-12">
-        <p className="text-ds-accentSoft">
-          {t("plp:no_products", "Nenhum produto encontrado")}
+      <div className="plp-empty">
+        {/* Icon SVG */}
+        <svg
+          className="plp-empty__icon"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+          />
+        </svg>
+        <h2 className="plp-empty__title">
+          {t("plp:empty.title", "Nenhuma peça encontrada")}
+        </h2>
+        <p className="plp-empty__text">
+          {t("plp:empty.subtitle", "Tente ajustar os filtros ou explore nossa coleção completa")}
         </p>
       </div>
     );
   }
 
-  // STEP G-05.4-B — Showroom Grid: consistent card layout, no giant spotlight
+  // INSANYCK STEP MUSEUM-VAULT — Gallery Grid with uniform cards
   return (
     <div className="space-y-8">
-      {/* Showroom Grid — STEP G-05.4-B: uniform cards, premium spacing */}
+      {/* Museum Grid */}
       <div
-        className={getGridClass()}
+        className="plp-grid"
         role="list"
         aria-label={t("plp:products_grid", "Grade de produtos")}
       >
         {products.map((product, index) => (
           <div
             key={product.id || product.slug}
-            className={getGridItemClass()}
             role="listitem"
           >
-            {/* STEP G-05.4-B: All cards use ProductCard (standard variant), no more SpotlightCard giant */}
             <ProductCard
               product={product}
               variant="standard"
@@ -108,14 +106,16 @@ export default function ShowroomGrid({
           </div>
         ))}
 
-        {/* Loading skeletons during fetch */}
+        {/* INSANYCK STEP MUSEUM-VAULT — Loading skeletons */}
         {isLoading && Array.from({ length: 12 }).map((_, i) => (
-          <div key={`skeleton-${i}`} className="col-span-1 row-span-1">
-            <div className="card-insanyck p-4 animate-pulse">
-              <div className="aspect-[3/4] bg-ds-elevated rounded-lg"></div>
-              <div className="mt-3 space-y-2">
-                <div className="h-4 bg-ds-elevated rounded w-4/5"></div>
-                <div className="h-3 bg-ds-elevated rounded w-2/5"></div>
+          <div key={`skeleton-${i}`}>
+            <div className="plp-gallery-card">
+              <div className="plp-image-stage">
+                <div className="plp-skeleton plp-skeleton--image" />
+              </div>
+              <div className="plp-content-pedestal">
+                <div className="plp-skeleton plp-skeleton--title" />
+                <div className="plp-skeleton plp-skeleton--price" />
               </div>
             </div>
           </div>
@@ -128,14 +128,14 @@ export default function ShowroomGrid({
           ref={sentinelRef}
           className="h-20 flex items-center justify-center"
         >
-          <div className="animate-spin h-8 w-8 border-2 border-ds-borderSubtle border-t-ds-accent rounded-full"></div>
+          <div className="animate-spin h-8 w-8 border-2 border-white/15 border-t-white/90 rounded-full"></div>
         </div>
       )}
 
       {/* End indicator */}
       {!hasMore && products.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-ds-accentSoft text-sm opacity-60">
+          <p className="text-white/40 text-sm">
             {t("plp:end_of_results", "Fim dos resultados")}
           </p>
         </div>

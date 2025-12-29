@@ -1,4 +1,5 @@
-// INSANYCK STEP F-MP — Tabs de método de pagamento (Museum Edition)
+// INSANYCK STEP F-MP — Payment Method Tabs (Museum Edition, Pure Tailwind)
+// INSANYCK CHECKOUT-FIX-NOW-01 — Verified i18n + no variant errors
 'use client';
 
 import { motion } from 'framer-motion';
@@ -18,11 +19,11 @@ export default function PaymentTabs({ active, onChange, availableMethods }: Paym
   const getLabel = (method: PaymentMethod): string => {
     switch (method) {
       case 'pix':
-        return t('tabs.pix');
+        return t('tabs.pix', 'PIX');
       case 'card':
-        return t('tabs.card');
+        return t('tabs.card', 'Cartão');
       case 'stripe':
-        return t('tabs.international');
+        return t('tabs.international', 'Internacional');
       default:
         return method;
     }
@@ -31,7 +32,7 @@ export default function PaymentTabs({ active, onChange, availableMethods }: Paym
   return (
     <div
       role="tablist"
-      aria-label={t('payment.selectMethod')}
+      aria-label={t('payment.selectMethod', 'Escolha como pagar')}
       className="flex gap-1 p-1 rounded-xl bg-[rgba(255,255,255,0.02)] border border-[rgba(255,255,255,0.06)]"
     >
       {availableMethods.map((method) => {
@@ -46,6 +47,7 @@ export default function PaymentTabs({ active, onChange, availableMethods }: Paym
             className={`
               relative flex-1 px-4 py-3 text-sm font-medium rounded-lg
               transition-colors duration-200
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)]
               ${
                 isActive
                   ? 'text-[rgba(255,255,255,0.95)]'

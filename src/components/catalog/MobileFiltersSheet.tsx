@@ -126,7 +126,7 @@ export default function MobileFiltersSheet({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+            className="p-2 rounded-lg hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)]"
             aria-label={t("common:close", "Fechar")}
           >
             <X className="w-5 h-5 text-white/80" aria-hidden="true" />
@@ -157,7 +157,7 @@ export default function MobileFiltersSheet({
               <div className="space-y-1 pl-1">
                 <button
                   onClick={() => updateFilter("category", null)}
-                  className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] ${
+                  className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)] ${
                     !category
                       ? "bg-white/10 text-white/95 font-medium border border-white/15"
                       : "text-white/75 hover:bg-white/5 hover:text-white/90"
@@ -169,7 +169,7 @@ export default function MobileFiltersSheet({
                   <button
                     key={cat.id}
                     onClick={() => updateFilter("category", cat.slug)}
-                    className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] ${
+                    className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)] ${
                       category === cat.slug
                         ? "bg-white/10 text-white/95 font-medium border border-white/15"
                         : "text-white/75 hover:bg-white/5 hover:text-white/90"
@@ -197,7 +197,7 @@ export default function MobileFiltersSheet({
                   onClick={() =>
                     updateFilter("size", isFilterActive("size", sizeOption) ? null : sizeOption)
                   }
-                  className={`px-3 py-2.5 rounded-lg border transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] ${
+                  className={`px-3 py-2.5 rounded-lg border transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)] ${
                     isFilterActive("size", sizeOption)
                       ? "bg-white/10 text-white/95 border-white/20"
                       : "border-white/10 text-white/75 hover:bg-white/5 hover:border-white/15 hover:text-white/90"
@@ -221,7 +221,7 @@ export default function MobileFiltersSheet({
               onClick={() =>
                 updateFilter("inStock", isFilterActive("inStock", "true") ? null : "true")
               }
-              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] ${
+              className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)] ${
                 isFilterActive("inStock", "true")
                   ? "bg-white/10 text-white/95 font-medium border border-white/15"
                   : "text-white/75 hover:bg-white/5 hover:text-white/90"
@@ -257,7 +257,7 @@ export default function MobileFiltersSheet({
                   <button
                     key={option.value}
                     onClick={() => updateFilter("sort", option.value)}
-                    className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] ${
+                    className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)] ${
                       sort === option.value
                         ? "bg-white/10 text-white/95 font-medium border border-white/15"
                         : "text-white/75 hover:bg-white/5 hover:text-white/90"
@@ -276,14 +276,14 @@ export default function MobileFiltersSheet({
           {activeFiltersCount > 0 && (
             <button
               onClick={clearAllFilters}
-              className="flex-1 px-4 py-3 rounded-lg border border-white/10 bg-white/5 text-white/75 hover:bg-white/10 hover:border-white/15 hover:text-white/95 transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+              className="flex-1 px-4 py-3 rounded-lg border border-white/10 bg-white/5 text-white/75 hover:bg-white/10 hover:border-white/15 hover:text-white/95 transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)]"
             >
               {t("catalog:filters.clear_all", "Limpar")}
             </button>
           )}
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-3 rounded-lg border border-white/15 bg-white/10 text-white/95 hover:bg-white/15 hover:border-white/20 transition-colors text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+            className="flex-1 px-4 py-3 rounded-lg border border-white/15 bg-white/10 text-white/95 hover:bg-white/15 hover:border-white/20 transition-colors text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)]"
           >
             {t("common:apply", "Aplicar")}
           </button>

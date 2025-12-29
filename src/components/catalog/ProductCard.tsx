@@ -1,4 +1,4 @@
-// INSANYCK STEP G-11 HYBRID — Museum Showcase Edition: ProductCard SSR-safe
+// INSANYCK STEP MUSEUM-VAULT — ProductCard Gallery Edition
 // INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Micro-interações + Seleção Preditiva
 "use client";
 
@@ -43,31 +43,29 @@ export default function ProductCard({
   const aspectRatio = variant === "wide" ? "2/1" : "3/4";
 
   return (
-    <article className="ins-museum-card ins-simple-reflection group">
-      {/* INSANYCK G-11 HYBRID — Vitrine de museu com spotlight descendente */}
+    <article className="plp-gallery-card group">
+      {/* INSANYCK MUSEUM-VAULT — Gallery vitrine with spotlight */}
       <Link
         href={`/produto/${product.slug}`}
         prefetch
-        className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-2xl"
-        aria-label={`Ver detalhes de ${product.title}`}
+        className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ins-bg-base)] rounded-[var(--plp-card-radius)]"
+        aria-label={`${t("common:view_details", "Ver detalhes de")} ${product.title}`}
       >
-        <div className="ins-vitrine ins-spotlight">
+        <div className="plp-image-stage">
           {/* Status badges (floating top-right) */}
           {product.status === "new" && (
-            <span className="absolute top-3 right-3 z-10 text-xs rounded-full px-3 py-1 bg-white/10 text-white/80 backdrop-blur-sm">
+            <span className="plp-badge absolute top-3 right-3 z-10">
               {t("plp:badge.new", "Novo")}
             </span>
           )}
           {product.status === "soldout" && (
-            <span className="absolute top-3 right-3 z-10 text-xs rounded-full px-3 py-1 bg-red-500/15 text-red-400 border border-red-500/30 backdrop-blur-sm">
+            <span className="plp-badge plp-badge--soldout absolute top-3 right-3 z-10">
               {t("plp:badge.soldout", "Esgotado")}
             </span>
           )}
 
-          {/* INSANYCK G-11 HYBRID — Imagem do produto (aspect 3/4 com padding) */}
-          {/* INSANYCK HOTFIX G-11.2 — Removed z-10 (CSS controls z-index stack now) */}
-          {/* INSANYCK STEP P0-CARDS — Bulletproof container: bg + rounded prevents "ghost" cards */}
-          <div className={`relative overflow-hidden rounded-2xl bg-white/[0.02] ${
+          {/* INSANYCK MUSEUM-VAULT — Product image */}
+          <div className={`relative overflow-hidden rounded-[var(--plp-image-radius)] bg-[color:var(--plp-image-bg)] ${
             variant === "wide" ? "aspect-[2/1]" : "aspect-[3/4]"
           }`}>
             <OptimizedImage
@@ -87,12 +85,12 @@ export default function ProductCard({
         </div>
       </Link>
 
-      {/* INSANYCK G-11 HYBRID — Pedestal (nome + preço + ações) */}
-      <div className="ins-pedestal">
-        <h3 className="ins-pedestal__name">{product.title}</h3>
-        <p className="ins-pedestal__price">{product.price}</p>
+      {/* INSANYCK MUSEUM-VAULT — Content pedestal (editorial typography) */}
+      <div className="plp-content-pedestal">
+        <h3 className="plp-content-pedestal__title">{product.title}</h3>
+        <p className="plp-content-pedestal__price">{product.price}</p>
 
-        {/* INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Ações com Micro-interações */}
+        {/* INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Actions with micro-interactions */}
         <ProductCardActions
           product={product}
           img={img}
@@ -103,7 +101,7 @@ export default function ProductCard({
   );
 }
 
-// INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Componente de Ações (separado para clarity)
+// INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Actions component (separated for clarity)
 function ProductCardActions({
   product,
   img,
@@ -117,7 +115,7 @@ function ProductCardActions({
   const addItem = useCartStore((s) => s.addItem);
   const [buttonState, setButtonState] = useState<'idle' | 'loading' | 'success'>('idle');
 
-  // INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Handler com feedback visual
+  // INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Handler with visual feedback
   const handleAddToCart = async () => {
     if (!product.hasValidVariant || !product.variantId || buttonState !== 'idle') return;
 
@@ -137,7 +135,7 @@ function ProductCardActions({
 
       setButtonState('success');
 
-      // Reset após animação
+      // Reset after animation
       setTimeout(() => setButtonState('idle'), 1500);
     } catch (error) {
       setButtonState('idle');
@@ -146,22 +144,21 @@ function ProductCardActions({
   };
 
   return (
-    <div className="mt-4 flex gap-2 items-center">
-      {/* INSANYCK STEP G-FIX-CHECKOUT-LUXURY — CTA Condicional */}
+    <div className="plp-cta-row">
+      {/* INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Conditional CTA */}
       {product.hasValidVariant && product.variantId ? (
-        // ===== CTA ATIVO: Adicionar ao Carrinho com Micro-interações =====
+        // ===== ACTIVE CTA: Add to Cart with Micro-interactions =====
         <motion.button
           onClick={handleAddToCart}
           disabled={buttonState !== 'idle'}
           className={`
-            group relative flex-1 py-2.5 px-3 rounded-lg font-semibold text-sm
-            transition-all duration-200 ease-out
+            plp-cta-primary
             ${buttonState === 'success'
               ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-              : 'bg-white text-black hover:bg-white/90 border border-transparent'
+              : ''
             }
             disabled:opacity-60 disabled:cursor-wait
-            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ins-bg-base)]
           `}
           whileHover={buttonState === 'idle' ? { scale: 1.02 } : {}}
           whileTap={buttonState === 'idle' ? { scale: 0.98 } : {}}
@@ -211,17 +208,17 @@ function ProductCardActions({
           </AnimatePresence>
         </motion.button>
       ) : (
-        // ===== CTA DEGRADADO: Ver Detalhes (Ghost Button) =====
+        // ===== DEGRADED CTA: View Details (Ghost Button) =====
         <Link
           href={`/produto/${product.slug}`}
           prefetch
-          className={`
-            group relative flex-1 text-center py-2.5 px-3 rounded-lg font-semibold text-sm
-            bg-white/[0.04] border border-white/[0.12]
-            text-white/80 hover:text-white hover:bg-white/[0.08] hover:border-white/[0.20]
+          className="
+            plp-cta-primary
+            bg-[color:var(--plp-cta-ghost-bg)] border border-[color:var(--plp-cta-ghost-border)]
+            text-[color:var(--plp-cta-ghost-text)] hover:text-white hover:bg-white/[0.08] hover:border-white/[0.20]
             transition-all duration-200 ease-out
-            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black
-          `}
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ins-bg-base)]
+          "
         >
           <span className="flex items-center justify-center gap-1.5">
             <EyeIcon />
@@ -236,13 +233,13 @@ function ProductCardActions({
         title={product.title}
         priceCents={priceCents}
         image={img}
-        className="p-2.5 rounded-lg border border-white/15 text-white hover:bg-white/8 hover:border-white/25 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+        className="plp-cta-ghost focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--ins-bg-base)]"
       />
     </div>
   );
 }
 
-// INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Micro-componentes de ícones
+// INSANYCK STEP G-FIX-CHECKOUT-LUXURY — Micro-components for icons
 function ShoppingBagIcon() {
   return (
     <svg

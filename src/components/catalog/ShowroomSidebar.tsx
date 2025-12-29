@@ -67,7 +67,7 @@ export default function ShowroomSidebar({ categories }: ShowroomSidebarProps) {
           {activeFiltersCount > 0 && (
             <button
               onClick={clearAllFilters}
-              className="text-xs text-white/60 hover:text-white/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              className="text-xs text-white/60 hover:text-white/90 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)]"
               aria-label={t("catalog:filters.clear_all", "Limpar filtros")}
             >
               {t("catalog:filters.clear_all", "Limpar")}
@@ -147,7 +147,7 @@ export default function ShowroomSidebar({ categories }: ShowroomSidebarProps) {
           <div className="ins-sidebar__section">
             <button
               onClick={clearAllFilters}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-white/10 bg-white/5 text-white/75 hover:bg-white/10 hover:border-white/15 hover:text-white/95 transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-white/10 bg-white/5 text-white/75 hover:bg-white/10 hover:border-white/15 hover:text-white/95 transition-colors text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)]"
             >
               <X className="w-4 h-4" />
               {t("catalog:filters.clear_all", "Limpar filtros")}

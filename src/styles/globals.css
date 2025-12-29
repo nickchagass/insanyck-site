@@ -3580,3 +3580,399 @@ body::after {
   margin-top: 0.5rem;
 }
 
+/* ══════════════════════════════════════════════════════════════
+   INSANYCK STEP MUSEUM-VAULT — PLP Gallery Tokens (SCOPED)
+   All tokens scoped to .plp-scope to prevent global pollution
+   ══════════════════════════════════════════════════════════════ */
+
+.plp-scope {
+  /* === GALLERY CARD (vitrine refinada) === */
+  --plp-card-bg: rgba(255, 255, 255, 0.012);
+  --plp-card-bg-hover: rgba(255, 255, 255, 0.024);
+  --plp-card-border: rgba(255, 255, 255, 0.06);
+  --plp-card-border-hover: rgba(255, 255, 255, 0.12);
+  --plp-card-radius: 20px;
+
+  /* Specular wire (top edge catch light) */
+  --plp-wire-gradient: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 20%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 255, 255, 0.08) 80%,
+    transparent 100%
+  );
+
+  /* Shadow system (floating depth) */
+  --plp-shadow-rest:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 4px 12px -4px rgba(0, 0, 0, 0.25),
+    0 12px 32px -8px rgba(0, 0, 0, 0.35);
+  --plp-shadow-hover:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 8px 20px -4px rgba(0, 0, 0, 0.30),
+    0 20px 48px -12px rgba(0, 0, 0, 0.40);
+
+  /* === TYPOGRAPHY HIERARCHY === */
+  --plp-title-size: 0.9375rem;
+  --plp-title-weight: 450;
+  --plp-title-tracking: -0.01em;
+  --plp-title-leading: 1.35;
+  --plp-title-color: rgba(255, 255, 255, 0.92);
+
+  --plp-price-size: 0.8125rem;
+  --plp-price-weight: 400;
+  --plp-price-color: rgba(255, 255, 255, 0.55);
+  --plp-price-tracking: 0.02em;
+
+  --plp-meta-size: 0.75rem;
+  --plp-meta-color: rgba(255, 255, 255, 0.38);
+
+  /* === GRID RHYTHM === */
+  --plp-gap-mobile: 16px;
+  --plp-gap-tablet: 20px;
+  --plp-gap-desktop: 24px;
+  --plp-gap-xl: 28px;
+
+  /* === IMAGE PRESENTATION === */
+  --plp-image-bg: rgba(255, 255, 255, 0.015);
+  --plp-image-radius: 16px;
+  --plp-image-padding: 24px;
+
+  /* === CTA BUTTONS === */
+  --plp-cta-height: 40px;
+  --plp-cta-radius: 10px;
+  --plp-cta-primary-bg: rgba(255, 255, 255, 0.92);
+  --plp-cta-primary-text: #0a0a0b;
+  --plp-cta-ghost-bg: rgba(255, 255, 255, 0.04);
+  --plp-cta-ghost-border: rgba(255, 255, 255, 0.10);
+  --plp-cta-ghost-text: rgba(255, 255, 255, 0.75);
+
+  /* === BADGE/CHIP === */
+  --plp-badge-bg: rgba(255, 255, 255, 0.06);
+  --plp-badge-border: rgba(255, 255, 255, 0.08);
+  --plp-badge-text: rgba(255, 255, 255, 0.65);
+  --plp-badge-radius: 6px;
+
+  /* === SKELETON === */
+  --plp-skeleton-base: rgba(255, 255, 255, 0.03);
+  --plp-skeleton-shimmer: rgba(255, 255, 255, 0.06);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   INSANYCK MUSEUM-VAULT — PLP Component Classes
+   These classes work within .plp-scope context
+   ══════════════════════════════════════════════════════════════ */
+
+/* === GALLERY CARD === */
+.plp-scope .plp-gallery-card {
+  position: relative;
+  background: var(--plp-card-bg);
+  border: 1px solid var(--plp-card-border);
+  border-radius: var(--plp-card-radius);
+  box-shadow: var(--plp-shadow-rest);
+  overflow: hidden;
+  transition:
+    background var(--ins-transition-fast, 180ms cubic-bezier(0.16, 1, 0.3, 1)),
+    border-color var(--ins-transition-fast, 180ms cubic-bezier(0.16, 1, 0.3, 1)),
+    box-shadow var(--ins-transition-normal, 300ms cubic-bezier(0.16, 1, 0.3, 1)),
+    transform var(--ins-transition-normal, 300ms cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+/* Specular wire (top edge) */
+.plp-scope .plp-gallery-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: var(--plp-wire-gradient);
+  opacity: 0.6;
+  transition: opacity var(--ins-transition-fast, 180ms cubic-bezier(0.16, 1, 0.3, 1));
+  z-index: 10;
+}
+
+.plp-scope .plp-gallery-card:hover {
+  background: var(--plp-card-bg-hover);
+  border-color: var(--plp-card-border-hover);
+  box-shadow: var(--plp-shadow-hover);
+  transform: translateY(-3px);
+}
+
+.plp-scope .plp-gallery-card:hover::before {
+  opacity: 1;
+}
+
+/* === IMAGE AREA === */
+.plp-scope .plp-image-stage {
+  position: relative;
+  background: var(--plp-image-bg);
+  border-radius: var(--plp-image-radius);
+  margin: 12px;
+  overflow: hidden;
+}
+
+/* Subtle top spotlight on image */
+.plp-scope .plp-image-stage::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: 10%;
+  right: 10%;
+  height: 50%;
+  background: radial-gradient(
+    ellipse 100% 100% at 50% 0%,
+    rgba(255, 255, 255, 0.08) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* === CONTENT PEDESTAL === */
+.plp-scope .plp-content-pedestal {
+  padding: 16px 16px 20px;
+}
+
+.plp-scope .plp-content-pedestal__title {
+  font-size: var(--plp-title-size);
+  font-weight: var(--plp-title-weight);
+  letter-spacing: var(--plp-title-tracking);
+  line-height: var(--plp-title-leading);
+  color: var(--plp-title-color);
+  margin: 0 0 8px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.plp-scope .plp-content-pedestal__price {
+  font-size: var(--plp-price-size);
+  font-weight: var(--plp-price-weight);
+  letter-spacing: var(--plp-price-tracking);
+  color: var(--plp-price-color);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+
+/* Hairline separator before price */
+.plp-scope .plp-content-pedestal__price::before {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin-bottom: 8px;
+}
+
+/* === CTA ROW === */
+.plp-scope .plp-cta-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.plp-scope .plp-cta-primary {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--plp-cta-height);
+  padding: 0 14px;
+  background: var(--plp-cta-primary-bg);
+  color: var(--plp-cta-primary-text);
+  border: none;
+  border-radius: var(--plp-cta-radius);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background var(--ins-transition-fast, 180ms cubic-bezier(0.16, 1, 0.3, 1)),
+    transform var(--ins-transition-fast, 180ms cubic-bezier(0.16, 1, 0.3, 1)),
+    box-shadow var(--ins-transition-fast, 180ms cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.plp-scope .plp-cta-primary:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+
+.plp-scope .plp-cta-primary:active {
+  transform: translateY(0);
+}
+
+.plp-scope .plp-cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--plp-cta-height);
+  height: var(--plp-cta-height);
+  background: var(--plp-cta-ghost-bg);
+  border: 1px solid var(--plp-cta-ghost-border);
+  border-radius: var(--plp-cta-radius);
+  color: var(--plp-cta-ghost-text);
+  cursor: pointer;
+  transition:
+    background var(--ins-transition-fast, 180ms cubic-bezier(0.16, 1, 0.3, 1)),
+    border-color var(--ins-transition-fast, 180ms cubic-bezier(0.16, 1, 0.3, 1)),
+    color var(--ins-transition-fast, 180ms cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.plp-scope .plp-cta-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* === BADGE === */
+.plp-scope .plp-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  background: var(--plp-badge-bg);
+  border: 1px solid var(--plp-badge-border);
+  border-radius: var(--plp-badge-radius);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--plp-badge-text);
+}
+
+.plp-scope .plp-badge--soldout {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.20);
+  color: rgba(239, 68, 68, 0.80);
+}
+
+/* === SKELETON === */
+.plp-scope .plp-skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--plp-skeleton-base) 0%,
+    var(--plp-skeleton-shimmer) 50%,
+    var(--plp-skeleton-base) 100%
+  );
+  background-size: 200% 100%;
+  animation: plp-shimmer 1.8s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes plp-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.plp-scope .plp-skeleton--image {
+  aspect-ratio: 3/4;
+  border-radius: var(--plp-image-radius);
+}
+
+.plp-scope .plp-skeleton--title {
+  height: 18px;
+  width: 75%;
+  margin-bottom: 12px;
+}
+
+.plp-scope .plp-skeleton--price {
+  height: 14px;
+  width: 40%;
+}
+
+/* === GRID === */
+.plp-scope .plp-grid {
+  display: grid;
+  gap: var(--plp-gap-mobile);
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 768px) {
+  .plp-scope .plp-grid {
+    gap: var(--plp-gap-tablet);
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .plp-scope .plp-grid {
+    gap: var(--plp-gap-desktop);
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1536px) {
+  .plp-scope .plp-grid {
+    gap: var(--plp-gap-xl);
+  }
+}
+
+/* === EMPTY STATE === */
+.plp-scope .plp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.plp-scope .plp-empty__icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 24px;
+  opacity: 0.25;
+}
+
+.plp-scope .plp-empty__title {
+  font-size: 1.125rem;
+  font-weight: 450;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0 0 8px 0;
+}
+
+.plp-scope .plp-empty__text {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.45);
+  max-width: 280px;
+}
+
+/* === REDUCED MOTION === */
+@media (prefers-reduced-motion: reduce) {
+  .plp-scope .plp-gallery-card,
+  .plp-scope .plp-cta-primary,
+  .plp-scope .plp-cta-ghost {
+    transition: none;
+  }
+
+  .plp-scope .plp-gallery-card:hover {
+    transform: none;
+  }
+
+  .plp-scope .plp-skeleton {
+    animation: none;
+    background: var(--plp-skeleton-base);
+  }
+}
+
+/* === FOCUS STATES === */
+.plp-scope .plp-gallery-card:focus-within {
+  outline: none;
+  box-shadow:
+    var(--plp-shadow-rest),
+    0 0 0 2px var(--cold-ray-ring),
+    0 0 0 4px var(--cold-ray-glow);
+}
+
+.plp-scope .plp-cta-primary:focus-visible,
+.plp-scope .plp-cta-ghost:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--ins-bg-base),
+    0 0 0 4px var(--cold-ray-ring);
+}
+

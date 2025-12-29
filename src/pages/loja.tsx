@@ -310,7 +310,8 @@ export default function Loja({
 
       {/* INSANYCK STEP G-05.X — Showroom Enterprise (Desktop) + Vertical Luxury (Mobile) */}
       {/* INSANYCK HOTFIX G-05.X — pt-24/32 para evitar colisão com navbar */}
-      <main className="min-h-screen pt-24 lg:pt-32">
+      {/* INSANYCK STEP MUSEUM-VAULT — plp-scope enables all scoped PLP tokens/classes */}
+      <main className="plp-scope min-h-screen pt-24 lg:pt-32">
 
         {/* MOBILE: Compact Atmospheric Header (NO figurative image) */}
         <section className="lg:hidden relative py-12 px-6 border-b border-white/10">
@@ -357,7 +358,7 @@ export default function Loja({
                   <div ref={sortRootRefDesktop} className="relative">
                     <button
                       onClick={() => setSortPopoverOpen(!sortPopoverOpen)}
-                      className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+                      className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)]"
                     >
                       <span>{sortOptions.find(opt => opt.value === sort)?.label}</span>
                       <ChevronDown className="w-4 h-4" aria-hidden="true" />
@@ -373,7 +374,7 @@ export default function Loja({
                                 updateFilter("sort", option.value);
                                 setSortPopoverOpen(false);
                               }}
-                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] ${
+                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)] ${
                                 sort === option.value
                                   ? "bg-white/15 text-white"
                                   : "text-white/80 hover:bg-white/10"
@@ -414,7 +415,7 @@ export default function Loja({
           <div className="flex gap-3 mb-6 sticky top-24 z-40 bg-black/40 backdrop-blur-md -mx-6 px-6 py-3 border-b border-white/10">
             <button
               onClick={() => setMobileFiltersOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-sm font-medium cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)]"
             >
               <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
               <span>{t("catalog:filters.label", "Filtros")}</span>
@@ -429,7 +430,7 @@ export default function Loja({
             <div ref={sortRootRefMobile} className="relative flex-1">
               <button
                 onClick={() => setSortPopoverOpen(!sortPopoverOpen)}
-                className="w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)]"
+                className="w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-full border border-white/15 bg-white/5 hover:bg-white/10 transition-colors text-sm cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)]"
               >
                 <span className="truncate">{sortOptions.find(opt => opt.value === sort)?.label}</span>
                 <ChevronDown className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
@@ -445,7 +446,7 @@ export default function Loja({
                           updateFilter("sort", option.value);
                           setSortPopoverOpen(false);
                         }}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--ds-focus)] ${
+                        className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cold-ray-ring)] ${
                           sort === option.value
                             ? "bg-white/15 text-white"
                             : "text-white/80 hover:bg-white/10"
