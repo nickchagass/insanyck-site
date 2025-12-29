@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
 import { useSession } from 'next-auth/react';
-import { useCartStore } from '@/store/cart';
+import { useCartStore, useCartHydrated } from '@/store/cart';
 import GlassCard from '@/components/ui/GlassCard';
 import CheckoutSteps from '@/components/checkout/CheckoutSteps';
 import PaymentTabs, { PaymentMethod } from '@/components/checkout/PaymentTabs';
@@ -17,6 +17,8 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const items = useCartStore((s) => s.items);
+  // INSANYCK STEP F-MP.BUGFIX-01 — Prevent false-positive redirect before hydration
+  const hydrated = useCartHydrated();
 
   const [activeTab, setActiveTab] = useState<PaymentMethod>('pix');
   const [email, setEmail] = useState('');
@@ -33,12 +35,13 @@ export default function CheckoutPage() {
   // INSANYCK STEP F-MP.2 — Card redirect state
   const [redirecting, setRedirecting] = useState(false);
 
-  // Redirecionar se carrinho vazio
+  // INSANYCK STEP F-MP.BUGFIX-01 — Redirecionar se carrinho vazio (apenas APÓS hidratação)
   useEffect(() => {
+    if (!hydrated) return; // Aguardar hidratação antes de decidir
     if (items.length === 0) {
       router.push('/loja');
     }
-  }, [items.length, router]);
+  }, [hydrated, items.length, router]);
 
   // Determinar métodos disponíveis baseado em locale e feature flag
   const locale = i18n.language === 'en' ? 'en' : 'pt';
@@ -209,6 +212,45 @@ export default function CheckoutPage() {
     }
   };
 
+  // INSANYCK STEP F-MP.BUGFIX-01 — Museum loading state enquanto não hidratou
+  if (!hydrated) {
+    return (
+      <>
+        <Head>
+          <title>{t('title')} — INSANYCK</title>
+          <meta name="robots" content="noindex" />
+        </Head>
+
+        <main className="min-h-screen pt-[120px] insanyck-bloom insanyck-bloom--soft">
+          <div className="mx-auto max-w-xl px-6 pb-12">
+            <GlassCard className="mt-8">
+              <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                {/* Museum spinner */}
+                <div
+                  className="w-12 h-12 border-2 rounded-full animate-spin"
+                  style={{
+                    borderColor: 'rgba(255, 255, 255, 0.15)',
+                    borderTopColor: 'rgba(255, 255, 255, 0.65)',
+                  }}
+                  aria-hidden="true"
+                />
+                <div className="text-center">
+                  <h2 className="text-lg font-semibold text-white/80">
+                    {t('loading.title', 'Preparando checkout')}
+                  </h2>
+                  <p className="text-sm text-white/50 mt-1">
+                    {t('loading.message', 'Aguarde um momento...')}
+                  </p>
+                </div>
+              </div>
+            </GlassCard>
+          </div>
+        </main>
+      </>
+    );
+  }
+
+  // INSANYCK STEP F-MP.BUGFIX-01 — Carrinho vazio APÓS hidratação: redirect via useEffect
   if (items.length === 0) {
     return null; // Will redirect via useEffect
   }

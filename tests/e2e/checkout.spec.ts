@@ -100,15 +100,15 @@ test.describe('Checkout Page', () => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ 
-          client_secret: 'pi_test_1234567890' 
+        body: JSON.stringify({
+          client_secret: 'pi_test_1234567890'
         }),
       });
     });
 
     await page.goto('/pt/checkout');
     await page.waitForLoadState('networkidle');
-    
+
     // Check for order summary or cart summary elements
     const summarySelectors = [
       '[data-testid="order-summary"]',
@@ -118,7 +118,7 @@ test.describe('Checkout Page', () => {
       'text="Total"',
       'text="Subtotal"'
     ];
-    
+
     let hasSummary = false;
     for (const selector of summarySelectors) {
       const element = page.locator(selector);
@@ -127,11 +127,66 @@ test.describe('Checkout Page', () => {
         break;
       }
     }
-    
+
     // Summary section should be present if we have items in cart
     // If cart is empty, this test is still valid as the page should handle it gracefully
     if (hasSummary) {
       expect(hasSummary).toBe(true);
     }
+  });
+
+  // INSANYCK STEP F-MP.BUGFIX-01 — Regression test for cart → checkout redirect bug
+  test('should not redirect when navigating to checkout with items in cart', async ({ page }) => {
+    // Simulate cart with items in localStorage (Zustand persist key: insanyck:cart:v2)
+    await page.addInitScript(() => {
+      const cartData = {
+        state: {
+          items: [
+            {
+              id: 'test-item-1',
+              slug: 'camiseta-insanyck',
+              title: 'Camiseta INSANYCK Test',
+              image: '/products/placeholder/front.webp',
+              variantId: 'variant-test-123',
+              sku: 'TEST-SKU-001',
+              priceCents: 19900,
+              currency: 'BRL',
+              qty: 1,
+            },
+          ],
+        },
+        version: 0,
+      };
+      localStorage.setItem('insanyck:cart:v2', JSON.stringify(cartData));
+    });
+
+    // Navigate directly to checkout
+    await page.goto('/pt/checkout');
+
+    // Wait for hydration to complete (wait for spinner to disappear or content to appear)
+    await page.waitForLoadState('networkidle');
+
+    // Assert: URL should still contain /pt/checkout (no bounce back to /loja)
+    await expect(page).toHaveURL(/\/pt\/checkout/);
+
+    // Assert: Checkout content should be visible (not empty state or redirect)
+    // Check for checkout-specific elements (payment tabs, checkout heading, etc.)
+    const checkoutIndicators = [
+      page.getByRole('heading', { name: /checkout/i }),
+      page.getByRole('heading', { name: /pagamento/i }),
+      page.getByRole('heading', { name: /payment/i }),
+      page.getByText(/pix/i),
+      page.getByText(/stripe/i),
+    ];
+
+    let hasCheckoutContent = false;
+    for (const locator of checkoutIndicators) {
+      if (await locator.count() > 0 && await locator.first().isVisible()) {
+        hasCheckoutContent = true;
+        break;
+      }
+    }
+
+    expect(hasCheckoutContent).toBe(true);
   });
 });
