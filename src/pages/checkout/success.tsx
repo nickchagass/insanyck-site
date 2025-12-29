@@ -229,8 +229,10 @@ export default function CheckoutSuccessPage({ sessionId, order, isProcessing }: 
 
 export const getServerSideProps: GetServerSideProps = async ({ query, locale }) => {
   const sessionId = query.session_id as string;
-  
-  if (!sessionId) {
+  // INSANYCK STEP F-MP — Suporte para MercadoPago payment_id
+  const paymentId = query.payment_id as string;
+
+  if (!sessionId && !paymentId) {
     return {
       redirect: {
         destination: "/loja",
@@ -243,20 +245,36 @@ export const getServerSideProps: GetServerSideProps = async ({ query, locale }) 
   let isProcessing = false;
 
   try {
-    // Buscar pedido pelo stripeSessionId
-    const foundOrder = await prisma.order.findUnique({
-      where: { stripeSessionId: sessionId },
-      include: {
-        items: {
-          select: {
-            slug: true,
-            title: true,
-            qty: true,
-            priceCents: true,
+    // INSANYCK STEP F-MP — Buscar pedido por stripeSessionId OU mpPaymentId
+    const foundOrder = sessionId
+      ? await prisma.order.findUnique({
+          where: { stripeSessionId: sessionId },
+          include: {
+            items: {
+              select: {
+                slug: true,
+                title: true,
+                qty: true,
+                priceCents: true,
+              },
+            },
           },
-        },
-      },
-    });
+        })
+      : paymentId
+      ? await prisma.order.findFirst({
+          where: { mpPaymentId: paymentId },
+          include: {
+            items: {
+              select: {
+                slug: true,
+                title: true,
+                qty: true,
+                priceCents: true,
+              },
+            },
+          },
+        })
+      : null;
 
     if (foundOrder) {
       order = {
@@ -279,7 +297,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query, locale }) 
   return {
     props: {
       ...(await serverSideTranslations(locale ?? "pt", ["common", "nav", "success"])),
-      sessionId,
+      sessionId: sessionId || paymentId || '',
       order,
       isProcessing,
     },

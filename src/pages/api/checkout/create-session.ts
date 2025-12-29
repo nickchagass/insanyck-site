@@ -5,6 +5,8 @@ import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+// INSANYCK STEP F-MP — Import para pagamento híbrido
+import { createPixPayment } from "@/lib/mp";
 
 const bodySchema = z.object({
   items: z.array(z.object({
@@ -14,6 +16,12 @@ const bodySchema = z.object({
   })).min(1),
   currency: z.literal('BRL'),
   successUrl: z.string().url().optional(),
+  // INSANYCK STEP F-MP — Provider opcional (stripe | mercadopago)
+  provider: z.enum(['stripe', 'mercadopago']).optional(),
+  // INSANYCK STEP F-MP.2 — Method para diferenciar PIX vs Card
+  method: z.enum(['pix', 'card']).optional(),
+  // INSANYCK STEP F-MP — Email obrigatório para MP quando usuário não estiver logado
+  email: z.string().email().optional(),
 });
 
 // INSANYCK HOTFIX 1.2 — Tipo inferido do schema
@@ -152,7 +160,130 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "No valid items" });
   }
 
+  // INSANYCK STEP F-MP — Decisão de provider baseada em feature flag
+  const featureFlag = process.env.NEXT_PUBLIC_CHECKOUT_PROVIDER || 'stripe';
+  const requestedProvider = body.provider || 'stripe';
+
+  // Se feature flag !== 'hybrid', forçar Stripe (rollback safety)
+  const finalProvider = featureFlag === 'hybrid' ? requestedProvider : 'stripe';
+
+  // INSANYCK STEP F-MP.2 — Email validation (HARDENED: no non-null assertions)
+  const payerEmail = session?.user?.email || body.email;
+
+  if (finalProvider === 'mercadopago' && !payerEmail) {
+    return res.status(400).json({
+      error: "Email is required for MercadoPago payments"
+    });
+  }
+
+  // INSANYCK STEP F-MP.2 — Email validation PASSED - safe to use
+  if (finalProvider === 'mercadopago' && typeof payerEmail !== 'string') {
+    return res.status(500).json({
+      error: "Internal error: email validation failed"
+    });
+  }
+
   try {
+    // INSANYCK STEP F-MP.2 — Fluxo híbrido: MercadoPago (PIX or Card)
+    if (finalProvider === 'mercadopago') {
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+
+      // Calcular total
+      const totalCents = resolved.reduce((sum, r) => sum + r.unit_amount * r.qty, 0);
+      const totalBRL = totalCents / 100;
+
+      // INSANYCK STEP F-MP.2 — Method default: pix
+      const method = body.method || 'pix';
+
+      // Criar Order no banco (status: pending)
+      // INSANYCK STEP F-MP.2 — Email agora é garantido (não usa !)
+      const order = await prisma.order.create({
+        data: {
+          status: 'pending',
+          amountTotal: totalCents,
+          currency: currency.toUpperCase(),
+          paymentProvider: 'mercadopago',
+          userId: session?.user?.id || null,
+          email: payerEmail as string,
+          items: {
+            create: resolved.map((r) => ({
+              slug: r.slug,
+              title: r.title,
+              qty: r.qty,
+              priceCents: r.unit_amount,
+              variantId: r.variantId,
+              sku: r.sku,
+            })),
+          },
+        },
+      });
+
+      // INSANYCK STEP F-MP.2 — Card redirect flow
+      if (method === 'card') {
+        // Chamar create-preference para obter init_point
+        const preferenceRes = await fetch(`${baseUrl}/api/mp/create-preference`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderId: order.id,
+            items: resolved.map((r) => ({
+              title: r.title,
+              quantity: r.qty,
+              unit_price: r.unit_amount / 100,
+              currency_id: 'BRL',
+            })),
+            payer: {
+              email: payerEmail as string,
+            },
+          }),
+        });
+
+        if (!preferenceRes.ok) {
+          throw new Error('Failed to create MP preference');
+        }
+
+        const preferenceData = await preferenceRes.json();
+
+        return res.status(200).json({
+          provider: 'mercadopago',
+          method: 'card',
+          orderId: order.id,
+          initPoint: preferenceData.init_point,
+        });
+      }
+
+      // INSANYCK STEP F-MP — PIX flow (original, mas sem !)
+      const pixPayment = await createPixPayment({
+        transaction_amount: totalBRL,
+        description: `INSANYCK Order ${order.id}`,
+        payment_method_id: 'pix',
+        payer: {
+          email: payerEmail as string,
+        },
+        external_reference: order.id,
+        notification_url: `${baseUrl}/api/mp/webhook`,
+      });
+
+      // Atualizar Order com mpPaymentId
+      await prisma.order.update({
+        where: { id: order.id },
+        data: { mpPaymentId: String(pixPayment.id) },
+      });
+
+      // Retornar dados do PIX para o frontend
+      return res.status(200).json({
+        provider: 'mercadopago',
+        method: 'pix',
+        paymentId: pixPayment.id,
+        orderId: order.id,
+        qrCode: pixPayment.point_of_interaction.transaction_data.qr_code,
+        qrCodeBase64: pixPayment.point_of_interaction.transaction_data.qr_code_base64,
+        expiresAt: pixPayment.date_of_expiration,
+        amount: totalBRL,
+      });
+    }
+
+    // INSANYCK STEP F-MP — Fluxo original: Stripe (preservado 100%)
     // INSANYCK HOTFIX STRIPE-IMG-URL-01 — obter origin confiável para URLs absolutas
     const origin =
       req.headers.origin ||

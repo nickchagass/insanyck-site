@@ -26,7 +26,39 @@
     "eta2": "2 business days"
   },
   "payment": {
-    "fake": "Demo mode: payment is simulated."
+    "fake": "Demo mode: payment is simulated.",
+    "title": "Payment",
+    "selectMethod": "Choose how to pay"
+  },
+  "tabs": {
+    "pix": "PIX (Brazil)",
+    "card": "Card",
+    "international": "International"
+  },
+  "pix": {
+    "title": "Pay with PIX",
+    "scanQr": "Scan the QR Code with your bank app",
+    "orCopy": "or copy the code below",
+    "copyCode": "Copy PIX code",
+    "copied": "Copied!",
+    "expires": "Expires in",
+    "waiting": "Waiting for payment...",
+    "approved": "Payment approved!",
+    "expired": "Code expired",
+    "generateNew": "Generate new code"
+  },
+  "card": {
+    "title": "Pay with card",
+    "processing": "Processing...",
+    "redirectTitle": "Redirecting to Mercado Pago",
+    "redirectMessage": "You will be taken to complete your payment securely",
+    "continueButton": "Continue to payment",
+    "secureNote": "100% secure payment via Mercado Pago"
+  },
+  "emailInput": {
+    "label": "Your email to receive the receipt",
+    "placeholder": "email@example.com",
+    "required": "Email is required to continue"
   },
   "placeOrder": "Place order",
   "processing": "Processing...",

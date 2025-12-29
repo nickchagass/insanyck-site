@@ -26,7 +26,39 @@
     "eta2": "2 dias úteis"
   },
   "payment": {
-    "fake": "Modo demonstração: o pagamento é simulado."
+    "fake": "Modo demonstração: o pagamento é simulado.",
+    "title": "Pagamento",
+    "selectMethod": "Escolha como pagar"
+  },
+  "tabs": {
+    "pix": "PIX",
+    "card": "Cartão",
+    "international": "Internacional"
+  },
+  "pix": {
+    "title": "Pague com PIX",
+    "scanQr": "Escaneie o QR Code com seu app de banco",
+    "orCopy": "ou copie o código abaixo",
+    "copyCode": "Copiar código PIX",
+    "copied": "Copiado!",
+    "expires": "Expira em",
+    "waiting": "Aguardando pagamento...",
+    "approved": "Pagamento aprovado!",
+    "expired": "Código expirado",
+    "generateNew": "Gerar novo código"
+  },
+  "card": {
+    "title": "Pague com cartão",
+    "processing": "Processando...",
+    "redirectTitle": "Redirecionando para Mercado Pago",
+    "redirectMessage": "Você será levado para finalizar o pagamento com segurança",
+    "continueButton": "Continuar para pagamento",
+    "secureNote": "Pagamento 100% seguro via Mercado Pago"
+  },
+  "emailInput": {
+    "label": "Seu e-mail para receber o comprovante",
+    "placeholder": "email@exemplo.com",
+    "required": "E-mail é obrigatório para continuar"
   },
   "placeOrder": "Finalizar pedido",
   "processing": "Processando...",
