@@ -1,266 +1,209 @@
-// INSANYCK STEP 10 — Admin Products List
-// src/pages/admin/products/index.tsx
-import { useState, useEffect, useCallback } from 'react';
-import { GetServerSideProps } from 'next';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import AdminLayout from '@/components/AdminLayout';
-import Link from 'next/link';
-import { Search, Plus, Edit, Trash2, Eye } from 'lucide-react';
+// INSANYCK STEP H1-05 — Admin Products Page (God View)
+// Visual-first catalog with inline stock editing
+// CEO-only access with SSR guard + SWR data fetching
 
-interface Product {
-  id: string;
-  title: string;
-  slug: string;
-  status: string;
-  isFeatured: boolean;
-  category?: {
-    name: string;
-  };
-  _count: {
-    variants: number;
-  };
-  createdAt: string;
-  updatedAt: string;
+import { GetServerSideProps } from "next";
+import Head from "next/head";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { isCEO, ADMIN_CONSOLE_META } from "@/lib/admin/constants";
+import AdminShell from "@/components/admin/AdminShell";
+import AdminProductList from "@/components/admin/products/AdminProductList";
+import { AdminProductCardData } from "@/components/admin/products/AdminProductCard";
+import useSWR from "swr";
+
+interface AdminProductsPageProps {
+  userEmail: string;
 }
 
-interface ProductsResponse {
-  products: Product[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-    hasNext: boolean;
-    hasPrev: boolean;
-  };
-}
+/**
+ * INSANYCK H1-05 — Fetcher for SWR
+ */
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Failed to fetch products');
+  }
+  return res.json();
+};
 
-export default function AdminProducts() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [pagination, setPagination] = useState<ProductsResponse['pagination'] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        limit: '10',
-      });
-
-      if (search.trim()) {
-        params.append('search', search.trim());
-      }
-
-      const response = await fetch(`/api/admin/products?${params}`);
-      if (response.ok) {
-        const data: ProductsResponse = await response.json();
-        setProducts(data.products);
-        setPagination(data.pagination);
-      }
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    } finally {
-      setLoading(false);
+/**
+ * INSANYCK H1-05 — Admin Products Page (God View)
+ * Features:
+ * - Visual catalog (large thumbnails)
+ * - Inline stock editing (fast, optimistic UI)
+ * - Search + filters
+ * - Mobile swipe gestures
+ * - Museum Edition styling
+ */
+export default function AdminProductsPage({ userEmail }: AdminProductsPageProps) {
+  // INSANYCK H1-05 — Fetch products via SWR (auto-revalidation)
+  const { data, error, isLoading, mutate } = useSWR(
+    '/api/admin/products?limit=100',
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: true,
     }
-  }, [currentPage, search]);
+  );
 
-  useEffect(() => {
-    fetchProducts();
-  }, [currentPage, search, fetchProducts]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCurrentPage(1);
-    fetchProducts();
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('pt-BR');
-  };
-
-  const getStatusBadge = (status: string) => {
-    const colors = {
-      active: 'bg-green-500/20 text-green-400 border-green-500/30',
-      draft: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-      archived: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
-    };
-
-    return (
-      <span className={`px-2 py-1 text-xs rounded-full border ${colors[status as keyof typeof colors] || colors.draft}`}>
-        {status}
-      </span>
-    );
-  };
+  const products: AdminProductCardData[] = data?.products ?? [];
 
   return (
-    <AdminLayout>
-      <div className="p-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+    <>
+      <Head>
+        <title>Products · {ADMIN_CONSOLE_META.name}</title>
+        <meta name="robots" content="noindex, nofollow" />
+      </Head>
+
+      <AdminShell title="Products · Catalog God View" hidePulse>
+        {/* Header Actions */}
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-white/[0.06]">
           <div>
-            <h1 className="text-3xl font-semibold text-white">Produtos</h1>
-            <p className="text-white/60 mt-2">Gerencie o catálogo de produtos</p>
+            <h2 className="text-2xl font-bold text-white/95 mb-1">
+              Catalog God View
+            </h2>
+            <p className="text-sm text-white/50">
+              Visual inventory management with inline editing
+            </p>
           </div>
-          <Link
-            href="/admin/products/new"
-            className="flex items-center px-4 py-2 bg-white text-black rounded-lg hover:bg-white/90 transition-colors font-medium"
+
+          {/* Future: Add Product button (H2) */}
+          <button
+            type="button"
+            disabled
+            className="
+              px-4 py-2
+              text-sm font-medium text-white/40
+              border border-white/[0.08]
+              rounded-[var(--ds-radius-md)]
+              cursor-not-allowed
+              opacity-50
+            "
           >
-            <Plus className="h-4 w-4 mr-2" />
-            Novo Produto
-          </Link>
+            + Add Product
+          </button>
         </div>
 
-        {/* Search */}
-        <div className="mb-6">
-          <form onSubmit={handleSearch} className="flex gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-white/40" />
-              <input
-                type="text"
-                placeholder="Buscar produtos..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/30"
-              />
+        {/* Error State */}
+        {error && (
+          <div className="glass-card-museum p-6 mb-6 border border-rose-400/30">
+            <div className="flex items-start gap-3">
+              <svg className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div>
+                <h3 className="text-sm font-semibold text-rose-400/90 mb-1">
+                  Failed to load products
+                </h3>
+                <p className="text-xs text-rose-400/70">
+                  {error.message}
+                </p>
+              </div>
             </div>
-            <button
-              type="submit"
-              className="px-6 py-3 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 transition-colors"
-            >
-              Buscar
-            </button>
-          </form>
-        </div>
+          </div>
+        )}
 
-        {/* Products table */}
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg overflow-hidden">
-          {loading ? (
-            <div className="p-8 text-center">
-              <div className="animate-spin h-8 w-8 border-2 border-white/20 border-t-white rounded-full mx-auto"></div>
-              <p className="text-white/60 mt-2">Carregando produtos...</p>
-            </div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-white/5 border-b border-white/10">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-white/80">Produto</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-white/80">Status</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-white/80">Categoria</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-white/80">Variantes</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-white/80">Atualizado</th>
-                      <th className="px-6 py-4 text-right text-sm font-medium text-white/80">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/10">
-                    {products.map((product) => (
-                      <tr key={product.id} className="hover:bg-white/5">
-                        <td className="px-6 py-4">
-                          <div>
-                            <p className="text-white font-medium">{product.title}</p>
-                            <p className="text-white/60 text-sm">/{product.slug}</p>
-                            {product.isFeatured && (
-                              <span className="inline-block mt-1 px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded">
-                                Destaque
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          {getStatusBadge(product.status)}
-                        </td>
-                        <td className="px-6 py-4 text-white/80">
-                          {product.category?.name || '—'}
-                        </td>
-                        <td className="px-6 py-4 text-white/80">
-                          {product._count.variants}
-                        </td>
-                        <td className="px-6 py-4 text-white/80">
-                          {formatDate(product.updatedAt)}
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center justify-end gap-2">
-                            <Link
-                              href={`/produto/${product.slug}`}
-                              target="_blank"
-                              className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-                              title="Ver produto"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Link>
-                            <Link
-                              href={`/admin/products/${product.id}`}
-                              className="p-2 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-                              title="Editar produto"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Link>
-                            <button
-                              className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
-                              title="Deletar produto"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+        {/* Product List */}
+        <AdminProductList
+          products={products}
+          isLoading={isLoading}
+          onStockUpdate={() => {
+            // Revalidate data after stock update
+            mutate();
+          }}
+        />
+
+        {/* Footer Stats */}
+        {!isLoading && !error && products.length > 0 && (
+          <div className="mt-8 pt-6 border-t border-white/[0.06]">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-white/90">
+                  {products.length}
+                </div>
+                <div className="text-xs text-white/45 uppercase tracking-wider mt-1">
+                  Total Products
+                </div>
               </div>
 
-              {/* Pagination */}
-              {pagination && pagination.totalPages > 1 && (
-                <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between">
-                  <div className="text-sm text-white/60">
-                    Mostrando {products.length} de {pagination.total} produtos
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setCurrentPage(currentPage - 1)}
-                      disabled={!pagination.hasPrev}
-                      className="px-3 py-1 bg-white/10 border border-white/20 rounded text-white disabled:opacity-50 hover:bg-white/20 transition-colors"
-                    >
-                      Anterior
-                    </button>
-                    <span className="px-3 py-1 text-white/80">
-                      {currentPage} de {pagination.totalPages}
-                    </span>
-                    <button
-                      onClick={() => setCurrentPage(currentPage + 1)}
-                      disabled={!pagination.hasNext}
-                      className="px-3 py-1 bg-white/10 border border-white/20 rounded text-white disabled:opacity-50 hover:bg-white/20 transition-colors"
-                    >
-                      Próximo
-                    </button>
-                  </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-emerald-400/90">
+                  {products.filter((p) => p.status === "active").length}
                 </div>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </AdminLayout>
+                <div className="text-xs text-white/45 uppercase tracking-wider mt-1">
+                  Active
+                </div>
+              </div>
+
+              <div className="text-center">
+                <div className="text-2xl font-bold text-white/50">
+                  {products.filter((p) => p.status === "draft").length}
+                </div>
+                <div className="text-xs text-white/45 uppercase tracking-wider mt-1">
+                  Draft
+                </div>
+              </div>
+
+              <div className="text-center">
+                <div className="text-2xl font-bold text-amber-400/90">
+                  {products.filter((p) => {
+                    const stock = p.variants.reduce((sum, v) => {
+                      if (!v.inventory) return sum;
+                      return sum + (v.inventory.quantity - v.inventory.reserved);
+                    }, 0);
+                    return stock > 0 && stock <= 10;
+                  }).length}
+                </div>
+                <div className="text-xs text-white/45 uppercase tracking-wider mt-1">
+                  Low Stock
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </AdminShell>
+    </>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+/**
+ * INSANYCK H1-05 — Server-side auth guard (CEO-only)
+ * Layer 2 security (defense-in-depth with middleware)
+ */
+export const getServerSideProps: GetServerSideProps<AdminProductsPageProps> = async (
+  context
+) => {
+  // Get session
   const session = await getServerSession(context.req, context.res, authOptions);
 
-  // INSANYCK STEP 10 — Verificar se é admin
-  if (!session?.user || (session.user as any)?.role !== 'admin') {
+  // Gate 1: Not logged in
+  if (!session || !session.user?.email) {
     return {
       redirect: {
-        destination: '/login',
+        destination: `/conta/login?callbackUrl=${encodeURIComponent(
+          context.resolvedUrl
+        )}`,
         permanent: false,
       },
     };
   }
 
-  return { props: {} };
+  // Gate 2: Not CEO
+  if (!isCEO(session.user.email)) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  // Authorized
+  return {
+    props: {
+      userEmail: session.user.email,
+    },
+  };
 };

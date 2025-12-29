@@ -27,7 +27,7 @@ export default function AdminShell({
 }: AdminShellProps) {
   return (
     <div className="min-h-screen museum-atmosphere">
-      {/* Sticky Header — INSANYCK STEP H0-POLISH: lighter blur, finer hairline */}
+      {/* Sticky Header — INSANYCK STEP H1-02: safe-area support + breathing */}
       <header
         className="
           sticky top-0 z-50
@@ -35,8 +35,11 @@ export default function AdminShell({
           backdrop-blur-md
           bg-black/40
         "
+        style={{
+          paddingTop: 'max(env(safe-area-inset-top), 1.5rem)',
+        }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between gap-4">
             {/* Left: Title + Badge */}
             <div className="flex items-center gap-3">
@@ -102,8 +105,13 @@ export default function AdminShell({
         </div>
       </header>
 
-      {/* Main Content — INSANYCK STEP H0-POLISH: increased spacing */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* Main Content — INSANYCK STEP H1-02: increased spacing + safe-area padding */}
+      <main
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+        style={{
+          paddingTop: 'calc(3rem + env(safe-area-inset-top))',
+        }}
+      >
         {/* The Pulse HUD */}
         {!hidePulse && (
           <div className="mb-10">

@@ -3,6 +3,7 @@
 
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { isCEO, ADMIN_CONSOLE_META } from "@/lib/admin/constants";
@@ -80,22 +81,25 @@ export default function AdminHome({ userEmail }: AdminHomeProps) {
                 Pedidos
               </DsButton>
 
-              <DsButton variant="secondary" size="md" disabled>
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                  />
-                </svg>
-                Produtos
-              </DsButton>
+              {/* INSANYCK STEP H1-06 — Products link (active) */}
+              <Link href="/admin/products">
+                <DsButton variant="secondary" size="md" className="w-full">
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                    />
+                  </svg>
+                  Produtos
+                </DsButton>
+              </Link>
 
               <DsButton variant="secondary" size="md" disabled>
                 <svg
