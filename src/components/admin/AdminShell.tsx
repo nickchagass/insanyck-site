@@ -1,6 +1,7 @@
 // INSANYCK STEP H0 — Admin Shell Layout
 // "The Black Box" — Museum Edition admin wrapper
 // Sticky header + The Pulse HUD + content area
+// INSANYCK STEP H0-POLISH — Refined visual details (quiet luxury)
 
 "use client";
 
@@ -9,7 +10,6 @@ import Link from "next/link";
 import { ADMIN_CONSOLE_META } from "@/lib/admin/constants";
 import PrivacyModeToggle from "./PrivacyModeToggle";
 import AdminPulseHUD from "./AdminPulseHUD";
-import DsBadge from "@/components/ds/DsBadge";
 import GlassCard from "@/components/ui/GlassCard";
 
 interface AdminShellProps {
@@ -27,25 +27,37 @@ export default function AdminShell({
 }: AdminShellProps) {
   return (
     <div className="min-h-screen museum-atmosphere">
-      {/* Sticky Header */}
+      {/* Sticky Header — INSANYCK STEP H0-POLISH: lighter blur, finer hairline */}
       <header
         className="
           sticky top-0 z-50
-          border-b border-[color:var(--ds-border-subtle)]
-          backdrop-blur-xl
-          bg-black/50
+          border-b border-white/[0.06]
+          backdrop-blur-md
+          bg-black/40
         "
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex items-center justify-between gap-4">
             {/* Left: Title + Badge */}
             <div className="flex items-center gap-3">
-              <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-semibold text-white/95 tracking-tight">
                 {title || ADMIN_CONSOLE_META.name}
               </h1>
-              <DsBadge variant="new">
+              {/* INSANYCK STEP H0-POLISH: custom badge (more jewel-like) */}
+              <span
+                className="
+                  inline-flex items-center
+                  px-2.5 py-0.5
+                  rounded-[var(--ds-radius-sm)]
+                  text-[0.6875rem] font-medium uppercase tracking-wider
+                  bg-gradient-to-br from-white/[0.08] to-white/[0.04]
+                  text-white/70
+                  border border-white/[0.12]
+                  backdrop-blur-sm
+                "
+              >
                 {ADMIN_CONSOLE_META.codename}
-              </DsBadge>
+              </span>
             </div>
 
             {/* Right: Actions */}
@@ -53,20 +65,21 @@ export default function AdminShell({
               {/* Privacy Mode Toggle */}
               <PrivacyModeToggle />
 
-              {/* Back to Store */}
+              {/* Back to Store — INSANYCK STEP H0-POLISH: refined hover */}
               <Link
                 href="/"
                 className="
                   hidden sm:flex items-center gap-2
                   px-3 py-1.5
                   text-sm font-medium
-                  text-[color:var(--ds-accent-soft)]
-                  border border-[color:var(--ds-border-subtle)]
+                  text-white/50
+                  border border-white/[0.08]
                   rounded-[var(--ds-radius-md)]
-                  hover:border-[color:var(--ds-border-strong)]
-                  hover:text-[color:var(--ds-accent)]
+                  hover:border-white/[0.16]
+                  hover:text-white/80
+                  hover:bg-white/[0.03]
                   transition-all duration-150
-                  active:scale-[0.97]
+                  active:scale-[0.98]
                 "
               >
                 <svg
@@ -78,7 +91,7 @@ export default function AdminShell({
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
+                    strokeWidth={1.5}
                     d="M10 19l-7-7m0 0l7-7m-7 7h18"
                   />
                 </svg>
@@ -89,11 +102,11 @@ export default function AdminShell({
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Main Content — INSANYCK STEP H0-POLISH: increased spacing */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* The Pulse HUD */}
         {!hidePulse && (
-          <div className="mb-8">
+          <div className="mb-10">
             <AdminPulseHUD />
           </div>
         )}
@@ -104,16 +117,22 @@ export default function AdminShell({
         </GlassCard>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-[color:var(--ds-border-subtle)] mt-16">
+      {/* Footer — INSANYCK STEP H0-POLISH: finer hairline, refined status pill */}
+      <footer className="border-t border-white/[0.06] mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[color:var(--ds-accent-soft)]">
-            <div>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/40">
+            <div className="text-xs tracking-wider">
               {ADMIN_CONSOLE_META.name} · {ADMIN_CONSOLE_META.version}
             </div>
-            <div className="flex items-center gap-4">
-              <span>CEO-Only Access</span>
-              <div className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            <div className="flex items-center gap-2.5">
+              <span className="text-xs tracking-wide text-white/50">CEO-Only Access</span>
+              <div
+                className="
+                  h-1.5 w-1.5 rounded-full
+                  bg-emerald-400/80
+                  shadow-[0_0_8px_rgba(52,211,153,0.4)]
+                "
+              />
             </div>
           </div>
         </div>

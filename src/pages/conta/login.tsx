@@ -1,9 +1,11 @@
 // src/pages/conta/login.tsx
 // INSANYCK LOGIN-MUSEUM — Private Club Login Experience
+// INSANYCK STEP H0-POLISH — Console-aware callbackUrl
 "use client";
 
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { GetStaticProps } from 'next';
@@ -51,10 +53,15 @@ const cardVariants = {
 } as const;
 
 export default function LoginPage() {
+  const router = useRouter();
   const { t } = useTranslation('common');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState<'email' | 'google' | null>(null);
+
+  // INSANYCK STEP H0-POLISH — Read callbackUrl from query
+  const callbackUrl = (router.query.callbackUrl as string) || '/';
+  const isConsoleAccess = callbackUrl.startsWith('/admin');
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,7 +73,7 @@ export default function LoginPage() {
     try {
       await signIn('email', {
         email: email.trim().toLowerCase(),
-        callbackUrl: '/'
+        callbackUrl, // INSANYCK STEP H0-POLISH — Dynamic callbackUrl
       });
     } catch (error) {
       console.error('[Login] Email error:', error);
@@ -83,7 +90,7 @@ export default function LoginPage() {
     setLoadingProvider('google');
 
     try {
-      await signIn('google', { callbackUrl: '/' });
+      await signIn('google', { callbackUrl }); // INSANYCK STEP H0-POLISH — Dynamic callbackUrl
     } catch (error) {
       console.error('[Login] Google error:', error);
     } finally {
@@ -118,7 +125,10 @@ export default function LoginPage() {
               INSANYCK
             </h2>
             <p className="mt-2 text-sm text-white/40 tracking-wide">
-              {t('auth.login.tagline', 'Bem-vindo ao clube')}
+              {/* INSANYCK STEP H0-POLISH — Console-aware tagline */}
+              {isConsoleAccess
+                ? 'The Black Box — Acesso Restrito'
+                : t('auth.login.tagline', 'Bem-vindo ao clube')}
             </p>
           </motion.div>
 
@@ -132,7 +142,8 @@ export default function LoginPage() {
               variants={itemVariants}
               className="text-2xl font-semibold text-white text-center mb-8"
             >
-              {t('auth.login.title', 'Entrar')}
+              {/* INSANYCK STEP H0-POLISH — Console-aware title */}
+              {isConsoleAccess ? 'Console Access' : t('auth.login.title', 'Entrar')}
             </motion.h1>
 
             {/* Email form */}
