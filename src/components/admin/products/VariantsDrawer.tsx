@@ -1,6 +1,6 @@
-// INSANYCK STEP H1.2 — Variants Drawer
+// INSANYCK STEP H1.1 GOLDEN BRUSH — Variants Drawer (THE VAULT · GOD TIER)
 // Right-side vault panel for managing product variants (Museum Edition)
-// Features: Framer Motion slide-in, backdrop, ESC close, focus trap, body scroll lock
+// Multi-layer shadow system, VAULT_EASE physics, content stagger, progressive blur
 
 "use client";
 
@@ -8,6 +8,7 @@ import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AdminProductCardData } from "./AdminProductCard";
 import AdminVitrineThumb from "./AdminVitrineThumb";
+import { VAULT_EASE, STAGGER_CONFIG } from "@/lib/admin/physics";
 
 interface VariantsDrawerProps {
   /** Drawer open state */
@@ -19,8 +20,15 @@ interface VariantsDrawerProps {
 }
 
 /**
- * INSANYCK STEP H1.2 — Variants Drawer
+ * INSANYCK STEP H1.1 GOLDEN BRUSH — Variants Drawer (THE VAULT)
  * Museum Edition right-side panel for variant management
+ *
+ * Visual Features:
+ * - Multi-layer shadow system (5 layers for depth)
+ * - Specular wire on top edge
+ * - Progressive backdrop blur (12px)
+ * - Content stagger animation
+ * - Heavy vault door animation with VAULT_EASE
  *
  * A11y features:
  * - ESC key closes
@@ -37,7 +45,7 @@ export default function VariantsDrawer({
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  // INSANYCK STEP H1.2 — ESC key handler
+  // INSANYCK STEP H1.1 — ESC key handler
   useEffect(() => {
     if (!open) return;
 
@@ -51,7 +59,7 @@ export default function VariantsDrawer({
     return () => document.removeEventListener("keydown", handleEscape);
   }, [open, onClose]);
 
-  // INSANYCK STEP H1.2 — Body scroll lock + focus management
+  // INSANYCK STEP H1.1 — Body scroll lock + focus management
   useEffect(() => {
     if (!open) return;
 
@@ -73,7 +81,7 @@ export default function VariantsDrawer({
     // Focus close button after animation
     setTimeout(() => {
       closeButtonRef.current?.focus();
-    }, 250);
+    }, 350);
 
     return () => {
       // Restore body scroll
@@ -89,7 +97,7 @@ export default function VariantsDrawer({
 
   if (!product) return null;
 
-  // INSANYCK STEP H1.2 — Calculate variant stats
+  // INSANYCK STEP H1.1 — Calculate variant stats
   const totalStock = product.variants.reduce((sum, v) => {
     if (!v.inventory) return sum;
     return sum + (v.inventory.quantity - v.inventory.reserved);
@@ -97,56 +105,106 @@ export default function VariantsDrawer({
 
   const primaryImage = product.images[0] || null;
 
+  // INSANYCK STEP H1.1 GOLDEN BRUSH — Animation Variants
+  const backdropVariants = {
+    hidden: {
+      opacity: 0,
+    },
+    visible: {
+      opacity: 1,
+      transition: { duration: 0.4, ease: VAULT_EASE },
+    },
+    exit: {
+      opacity: 0,
+      transition: { duration: 0.3 },
+    },
+  };
+
+  const drawerVariants = {
+    hidden: {
+      x: "100%",
+      opacity: 0.8,
+    },
+    visible: {
+      x: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.45,
+        ease: VAULT_EASE,
+      },
+    },
+    exit: {
+      x: "100%",
+      opacity: 0.8,
+      transition: {
+        duration: 0.35,
+        ease: VAULT_EASE,
+      },
+    },
+  };
+
+  const contentVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.06, delayChildren: 0.15 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: 20 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: { duration: 0.35, ease: VAULT_EASE },
+    },
+  };
+
   return (
     <AnimatePresence>
       {open && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop with Progressive Blur */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            variants={backdropVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
             onClick={onClose}
             className="
+              vault-backdrop
               fixed inset-0 z-[var(--z-modal)]
-              bg-black/60 backdrop-blur-sm
             "
             aria-hidden="true"
           />
 
-          {/* Drawer Panel */}
+          {/* Drawer Panel with Multi-Layer Depth System */}
           <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{
-              duration: 0.28,
-              ease: [0.16, 1, 0.3, 1], // expo easing
-            }}
+            variants={drawerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
             role="dialog"
             aria-modal="true"
             aria-labelledby="drawer-title"
             className="
+              vault-drawer
               fixed top-0 right-0 bottom-0 z-[var(--z-modal)]
               w-full sm:w-[480px] lg:w-[560px]
-              bg-black/95 backdrop-blur-xl
-              border-l border-white/[0.08]
               overflow-y-auto
-              shadow-[-20px_0_60px_rgba(0,0,0,0.6)]
             "
           >
-            {/* Specular Highlight (Museum Edition) */}
-            <div
-              className="absolute top-0 left-0 right-[10%] h-px"
-              style={{
-                background: "linear-gradient(90deg, rgba(255, 255, 255, 0.12), transparent)",
-              }}
-            />
+            {/* Specular Wire (Top Edge Catch Light) */}
+            <div className="vault-drawer-specular" />
 
             {/* Header */}
             <div className="sticky top-0 z-10 bg-black/90 backdrop-blur-md border-b border-white/[0.06] px-6 py-5">
-              <div className="flex items-start justify-between gap-4">
+              <motion.div
+                className="flex items-start justify-between gap-4"
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+              >
                 <div className="flex-1 min-w-0">
                   <h2
                     id="drawer-title"
@@ -160,7 +218,7 @@ export default function VariantsDrawer({
                 </div>
 
                 {/* Close Button */}
-                <button
+                <motion.button
                   ref={closeButtonRef}
                   type="button"
                   onClick={onClose}
@@ -174,22 +232,27 @@ export default function VariantsDrawer({
                     hover:text-white/90
                     hover:bg-white/[0.06]
                     transition-all duration-150
-                    active:scale-95
                     focus:outline-none
                     focus:ring-2 focus:ring-white/[0.15]
                   "
+                  whileTap={{ scale: 0.95 }}
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
-                </button>
-              </div>
+                </motion.button>
+              </motion.div>
             </div>
 
-            {/* Content */}
-            <div className="p-6 space-y-6">
+            {/* Content with Stagger Animation */}
+            <motion.div
+              className="p-6 space-y-6"
+              variants={contentVariants}
+              initial="hidden"
+              animate="visible"
+            >
               {/* Product Summary */}
-              <div className="glass-card-museum p-5">
+              <motion.div className="glass-card-museum p-5" variants={itemVariants}>
                 <div className="flex gap-4">
                   {/* Thumbnail */}
                   {primaryImage ? (
@@ -231,24 +294,26 @@ export default function VariantsDrawer({
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Variants List */}
-              <div>
+              <motion.div variants={itemVariants}>
                 <h3 className="text-sm font-semibold text-white/80 uppercase tracking-wider mb-3">
                   Variants ({product.variants.length})
                 </h3>
 
                 {product.variants.length > 0 ? (
                   <div className="space-y-3">
-                    {product.variants.map((variant) => {
+                    {product.variants.map((variant, index) => {
                       const available = variant.inventory
                         ? variant.inventory.quantity - variant.inventory.reserved
                         : 0;
 
                       return (
-                        <div
+                        <motion.div
                           key={variant.id}
+                          custom={index}
+                          variants={itemVariants}
                           className="
                             glass-card-museum p-4
                             border border-white/[0.06]
@@ -290,7 +355,7 @@ export default function VariantsDrawer({
                               </div>
                             </div>
                           </div>
-                        </div>
+                        </motion.div>
                       );
                     })}
                   </div>
@@ -309,10 +374,10 @@ export default function VariantsDrawer({
                     </p>
                   </div>
                 )}
-              </div>
+              </motion.div>
 
               {/* Actions Placeholder */}
-              <div className="pt-4 border-t border-white/[0.06]">
+              <motion.div className="pt-4 border-t border-white/[0.06]" variants={itemVariants}>
                 <button
                   type="button"
                   disabled
@@ -328,8 +393,8 @@ export default function VariantsDrawer({
                 >
                   + Add Variant (Coming Soon)
                 </button>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </motion.div>
         </>
       )}

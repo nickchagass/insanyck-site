@@ -1,12 +1,12 @@
-// INSANYCK STEP H1-04 — Admin Product Card
+// INSANYCK STEP H1.1 GOLDEN BRUSH — Admin Product Card (THE CELL · GOD TIER)
 // Visual-first card for God View catalog (Museum Edition)
-// Large thumbnail + inline stock + status badge + mobile swipe
-// INSANYCK STEP H1.1 — Added AdminVitrineThumb for premium thumbnail display
+// Multi-layer shadows, breathing animation, premium hover states
 
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import DsBadge from "@/components/ds/DsBadge";
 import InlineStockEditor from "./InlineStockEditor";
 import MobileSwipeActions from "./MobileSwipeActions";
@@ -38,19 +38,20 @@ interface AdminProductCardProps {
   enableSwipe?: boolean;
   /** Callback when stock updates */
   onStockUpdate?: (productId: string) => void;
-  /** INSANYCK STEP H1.2 — Callback when "Manage Variants" is clicked */
+  /** INSANYCK STEP H1.1 GOLDEN BRUSH — Callback when "Manage Variants" is clicked */
   onManageVariants?: (product: AdminProductCardData) => void;
+  /** INSANYCK STEP H1.1 GOLDEN BRUSH — Enable breathing animation (when low stock filter is active) */
+  isLowStockBreathing?: boolean;
 }
 
 /**
- * INSANYCK H1-04 — Admin Product Card
+ * INSANYCK STEP H1.1 GOLDEN BRUSH — Admin Product Card (THE CELL)
  * Features:
- * - Large thumbnail (1:1 or 3:4 aspect ratio)
- * - Status badge (draft/active/archived)
- * - Total stock display (sum of all variants)
- * - Inline stock editor (for single-variant products)
- * - Mobile swipe gestures (if enabled)
- * - Floor reflection/specular (Museum Edition)
+ * - Multi-layer shadow system (museum vitrine depth)
+ * - Premium hover state (translateY -3px + shadow expansion)
+ * - Breathing animation when low stock filter is active
+ * - Specular highlight overlay
+ * - Stock controls with micro-feedback
  */
 export default function AdminProductCard({
   product,
@@ -58,6 +59,7 @@ export default function AdminProductCard({
   enableSwipe = true,
   onStockUpdate,
   onManageVariants,
+  isLowStockBreathing = false,
 }: AdminProductCardProps) {
   const [localQuantity, setLocalQuantity] = useState<number | null>(null);
 
@@ -105,7 +107,14 @@ export default function AdminProductCard({
   };
 
   const CardContent = (
-    <div className="glass-card-museum p-4 sm:p-5 group hover:-translate-y-0.5 transition-transform duration-200">
+    <motion.div
+      className={`
+        admin-card p-4 sm:p-5 group
+        ${isLowStockBreathing && totalStock > 0 && totalStock <= 10 ? 'stock-badge-breathing' : ''}
+      `}
+      whileHover={{ y: -3 }}
+      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+    >
       {/* Specular Highlight (Museum Edition) */}
       <div
         className="absolute top-0 left-[10%] right-[10%] h-px rounded-t-[20px]"
@@ -185,9 +194,9 @@ export default function AdminProductCard({
               </div>
             )}
 
-            {/* INSANYCK STEP H1.2 — Multi-variant indicator (opens drawer) */}
+            {/* INSANYCK STEP H1.1 GOLDEN BRUSH — Multi-variant indicator (opens drawer) */}
             {!isSingleVariant && (
-              <button
+              <motion.button
                 type="button"
                 onClick={() => onManageVariants?.(product)}
                 className="
@@ -198,18 +207,18 @@ export default function AdminProductCard({
                   hover:border-white/[0.16] hover:text-white/80
                   hover:bg-white/[0.03]
                   transition-all duration-150
-                  active:scale-[0.98]
                   focus:outline-none
                   focus:ring-2 focus:ring-white/[0.08]
                 "
+                whileTap={{ scale: 0.98 }}
               >
                 Manage Variants
-              </button>
+              </motion.button>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 
   // INSANYCK H1-04 — Wrap with swipe actions on mobile (if enabled + single variant)

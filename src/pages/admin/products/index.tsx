@@ -1,7 +1,7 @@
-// INSANYCK STEP H1-05 — Admin Products Page (God View)
+// INSANYCK STEP H1.1 GOLDEN BRUSH — Admin Products Page (THE BRAIN · GOD TIER)
 // Visual-first catalog with inline stock editing
 // CEO-only access with SSR guard + SWR data fetching
-// INSANYCK STEP H1.2 — Added VariantsDrawer, interactive filters/search
+// Orchestrates filters, search, drawer state, and liquid grid animations
 
 import { GetServerSideProps } from "next";
 import Head from "next/head";
@@ -32,12 +32,13 @@ const fetcher = async (url: string) => {
 };
 
 /**
- * INSANYCK H1-05 — Admin Products Page (God View)
+ * INSANYCK STEP H1.1 GOLDEN BRUSH — Admin Products Page (THE BRAIN)
  * Features:
  * - Visual catalog (large thumbnails)
  * - Inline stock editing (fast, optimistic UI)
- * - Search + filters
- * - Mobile swipe gestures
+ * - Search + filters with liquid grid animations
+ * - Variants drawer (The Vault)
+ * - Breathing animation when low stock filter is active
  * - Museum Edition styling
  */
 export default function AdminProductsPage({ userEmail }: AdminProductsPageProps) {
@@ -53,7 +54,7 @@ export default function AdminProductsPage({ userEmail }: AdminProductsPageProps)
 
   const products: AdminProductCardData[] = data?.products ?? [];
 
-  // INSANYCK STEP H1.2 — Drawer state
+  // INSANYCK STEP H1.1 GOLDEN BRUSH — Drawer state
   const [selectedProduct, setSelectedProduct] = useState<AdminProductCardData | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -65,7 +66,7 @@ export default function AdminProductsPage({ userEmail }: AdminProductsPageProps)
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     // Delay clearing product to avoid flash during close animation
-    setTimeout(() => setSelectedProduct(null), 300);
+    setTimeout(() => setSelectedProduct(null), 350);
   };
 
   return (
@@ -123,7 +124,7 @@ export default function AdminProductsPage({ userEmail }: AdminProductsPageProps)
           </div>
         )}
 
-        {/* INSANYCK STEP H1.2 — Product List with drawer callback */}
+        {/* INSANYCK STEP H1.1 GOLDEN BRUSH — Product List with liquid grid */}
         <AdminProductList
           products={products}
           isLoading={isLoading}
@@ -132,9 +133,10 @@ export default function AdminProductsPage({ userEmail }: AdminProductsPageProps)
             mutate();
           }}
           onManageVariants={handleManageVariants}
+          isLowStockFilterActive={false}
         />
 
-        {/* INSANYCK STEP H1.2 — Variants Drawer */}
+        {/* INSANYCK STEP H1.1 GOLDEN BRUSH — Variants Drawer (The Vault) */}
         <VariantsDrawer
           open={isDrawerOpen}
           product={selectedProduct}

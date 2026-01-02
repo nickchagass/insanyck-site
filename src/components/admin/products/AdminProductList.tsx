@@ -1,13 +1,14 @@
-// INSANYCK STEP H1-04 — Admin Product List
-// Grid/list container with search + filters (Museum Edition)
-// Client-side filtering for God View catalog
-// INSANYCK STEP H1.2 — Added useDeferredValue for search, LOW_STOCK_THRESHOLD constant, onManageVariants
+// INSANYCK STEP H1.1 GOLDEN BRUSH — Admin Product List (THE LIQUID GRID · GOD TIER)
+// Grid/list container with AnimatePresence, LayoutGroup, and stagger entrance
+// Museum Edition visual excellence with premium loading skeleton
 
 "use client";
 
 import { useState, useMemo, useDeferredValue } from "react";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import AdminProductCard, { AdminProductCardData } from "./AdminProductCard";
 import { LOW_STOCK_THRESHOLD } from "@/lib/admin/constants";
+import { LIQUID_SPRING, STAGGER_CONFIG } from "@/lib/admin/physics";
 
 interface AdminProductListProps {
   products: AdminProductCardData[];
@@ -15,34 +16,38 @@ interface AdminProductListProps {
   isLoading?: boolean;
   /** Callback when stock updates (triggers revalidation) */
   onStockUpdate?: () => void;
-  /** INSANYCK STEP H1.2 — Callback when "Manage Variants" is clicked */
+  /** INSANYCK STEP H1.1 GOLDEN BRUSH — Callback when "Manage Variants" is clicked */
   onManageVariants?: (product: AdminProductCardData) => void;
+  /** INSANYCK STEP H1.1 GOLDEN BRUSH — Enable breathing animation (when low stock filter is active) */
+  isLowStockFilterActive?: boolean;
 }
 
 type FilterOption = "all" | "active" | "draft" | "lowstock" | "outofstock";
 
 /**
- * INSANYCK H1-04 — Admin Product List
+ * INSANYCK STEP H1.1 GOLDEN BRUSH — Admin Product List (THE LIQUID GRID)
  * Features:
- * - Client-side search by title/slug
- * - Filter: All / Active / Draft / Low Stock / Out of Stock
- * - Responsive grid (2 cols desktop, 1 col mobile)
- * - Empty state (Museum Edition)
+ * - Liquid grid animations with LIQUID_SPRING physics
+ * - Stagger entrance with STAGGER_CONFIG
+ * - AnimatePresence for smooth filter transitions
+ * - LayoutGroup for organic card movement
+ * - Premium loading skeleton with shimmer
+ * - Elegant empty state
  */
 export default function AdminProductList({
   products,
   isLoading = false,
   onStockUpdate,
   onManageVariants,
+  isLowStockFilterActive = false,
 }: AdminProductListProps) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterOption>("all");
 
-  // INSANYCK STEP H1.2 — Defer search to avoid jank on large lists
+  // INSANYCK STEP H1.1 — Defer search to avoid jank on large lists
   const deferredSearch = useDeferredValue(search);
 
-  // INSANYCK H1-04 — Client-side filtering
-  // INSANYCK STEP H1.2 — Use deferred search + LOW_STOCK_THRESHOLD constant
+  // INSANYCK STEP H1.1 — Client-side filtering
   const filteredProducts = useMemo(() => {
     let result = products;
 
@@ -87,11 +92,40 @@ export default function AdminProductList({
     { value: "outofstock", label: "Out of Stock" },
   ];
 
+  // INSANYCK STEP H1.1 GOLDEN BRUSH — Animation variants
+  const containerVariants = {
+    hidden: { opacity: 1 },
+    visible: {
+      opacity: 1,
+      transition: STAGGER_CONFIG,
+    },
+  };
+
+  const cardVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.92,
+      y: 20,
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: LIQUID_SPRING,
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.88,
+      y: -10,
+      transition: { duration: 0.25, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+    },
+  };
+
   return (
     <div className="space-y-6">
       {/* Search + Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
-        {/* INSANYCK STEP H1.2 — Search with clear button */}
+        {/* INSANYCK STEP H1.1 GOLDEN BRUSH — Search with cold ray glow */}
         <div className="flex-1 relative">
           <input
             type="text"
@@ -99,6 +133,7 @@ export default function AdminProductList({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="
+              search-input-cold-ray
               w-full
               px-4 py-2.5
               pr-10
@@ -107,14 +142,11 @@ export default function AdminProductList({
               border border-white/[0.08]
               rounded-[var(--ds-radius-md)]
               backdrop-blur-sm
-              focus:outline-none
-              focus:border-white/[0.16]
-              focus:ring-2 focus:ring-white/[0.08]
               transition-all duration-150
             "
           />
           {search && (
-            <button
+            <motion.button
               type="button"
               onClick={() => setSearch("")}
               aria-label="Clear search"
@@ -128,18 +160,19 @@ export default function AdminProductList({
                 hover:bg-white/[0.06]
                 transition-all duration-150
               "
+              whileTap={{ scale: 0.9 }}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
-            </button>
+            </motion.button>
           )}
         </div>
 
         {/* Filter Pills */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
           {filters.map((f) => (
-            <button
+            <motion.button
               key={f.value}
               type="button"
               onClick={() => setFilter(f.value)}
@@ -156,9 +189,10 @@ export default function AdminProductList({
                     : "bg-white/[0.02] text-white/50 border-white/[0.08] hover:border-white/[0.12]"
                 }
               `}
+              whileTap={{ scale: 0.95 }}
             >
               {f.label}
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>
@@ -180,22 +214,56 @@ export default function AdminProductList({
         )}
       </div>
 
-      {/* Product Grid */}
-      {filteredProducts.length > 0 ? (
+      {/* INSANYCK STEP H1.1 GOLDEN BRUSH — Liquid Product Grid */}
+      {isLoading ? (
+        /* Premium Loading Skeleton */
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {filteredProducts.map((product) => (
-            <AdminProductCard
-              key={product.id}
-              product={product}
-              layout="grid"
-              onStockUpdate={onStockUpdate}
-              onManageVariants={onManageVariants}
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="skeleton-shimmer rounded-[16px] h-64 border border-white/[0.06]"
             />
           ))}
         </div>
+      ) : filteredProducts.length > 0 ? (
+        <LayoutGroup>
+          <motion.div
+            className="grid grid-cols-1 lg:grid-cols-2 gap-5"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredProducts.map((product) => (
+                <motion.div
+                  key={product.id}
+                  layout
+                  variants={cardVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  transition={LIQUID_SPRING}
+                >
+                  <AdminProductCard
+                    product={product}
+                    layout="grid"
+                    onStockUpdate={onStockUpdate}
+                    onManageVariants={onManageVariants}
+                    isLowStockBreathing={isLowStockFilterActive}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        </LayoutGroup>
       ) : (
         /* Empty State (Museum Edition) */
-        <div className="glass-card-museum p-12 text-center">
+        <motion.div
+          className="glass-card-museum p-12 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        >
           <svg
             className="mx-auto h-12 w-12 text-white/20 mb-4"
             fill="none"
@@ -217,7 +285,7 @@ export default function AdminProductList({
               ? `No products match "${deferredSearch}"`
               : "Try adjusting your filters"}
           </p>
-        </div>
+        </motion.div>
       )}
     </div>
   );

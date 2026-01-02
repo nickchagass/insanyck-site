@@ -1,11 +1,12 @@
-// INSANYCK STEP H1.1 — Admin Vitrine Thumb
+// INSANYCK STEP H1.1 GOLDEN BRUSH — Admin Vitrine Thumb (GOD TIER)
 // "Mini Vitrine" thumbnail component for Admin catalog (Museum Edition)
-// Premium frame + specular highlight + floor reflection (no backdrop-blur per item)
+// Premium frame + specular highlight + floor reflection + MICRO_SPRING physics
 
 "use client";
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { MICRO_SPRING } from "@/lib/admin/physics";
 
 interface AdminVitrineThumbProps {
   /** Image URL */
@@ -19,12 +20,12 @@ interface AdminVitrineThumbProps {
 }
 
 /**
- * INSANYCK STEP H1.1 — Admin Vitrine Thumb
+ * INSANYCK STEP H1.1 GOLDEN BRUSH — Admin Vitrine Thumb
  * Visual anatomy:
  * - LAYER A: Frame (hairline border + subtle shadow)
  * - LAYER B: Specular (diagonal gradient highlight)
  * - LAYER C: Floor reflection (fake glow beneath)
- * - LAYER D: Hover (micro lift + intensified specular, desktop only)
+ * - LAYER D: Hover (micro lift with MICRO_SPRING, desktop only)
  *
  * Performance:
  * - NO backdrop-blur per item (only blur on parent GlassCard)
@@ -56,23 +57,16 @@ export default function AdminVitrineThumb({
           bg-black/30
           border border-white/[0.08]
           shadow-[0_2px_8px_rgba(0,0,0,0.25)]
-          admin-vitrine-frame
         "
         whileHover={
           noHover
             ? undefined
             : {
-                y: -1,
-                transition: {
-                  duration: 0.18,
-                  ease: [0.16, 1, 0.3, 1], // expo easing
-                },
+                y: -2,
+                transition: MICRO_SPRING,
               }
         }
-        transition={{
-          duration: 0.18,
-          ease: [0.16, 1, 0.3, 1],
-        }}
+        transition={MICRO_SPRING}
       >
         {/* Image */}
         <Image
@@ -96,7 +90,6 @@ export default function AdminVitrineThumb({
           className="
             absolute inset-0
             pointer-events-none
-            admin-vitrine-specular
           "
           style={{
             background: `linear-gradient(135deg,
@@ -122,7 +115,6 @@ export default function AdminVitrineThumb({
           absolute -bottom-2 left-0 right-0 h-4
           opacity-30 blur-sm
           pointer-events-none
-          admin-floor-glow
         "
         style={{
           background: "linear-gradient(to bottom, rgba(255, 255, 255, 0.04), transparent)",
