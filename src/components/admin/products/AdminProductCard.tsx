@@ -38,6 +38,8 @@ interface AdminProductCardProps {
   enableSwipe?: boolean;
   /** Callback when stock updates */
   onStockUpdate?: (productId: string) => void;
+  /** INSANYCK STEP H1.2 — Callback when "Manage Variants" is clicked */
+  onManageVariants?: (product: AdminProductCardData) => void;
 }
 
 /**
@@ -55,6 +57,7 @@ export default function AdminProductCard({
   layout = "grid",
   enableSwipe = true,
   onStockUpdate,
+  onManageVariants,
 }: AdminProductCardProps) {
   const [localQuantity, setLocalQuantity] = useState<number | null>(null);
 
@@ -182,21 +185,26 @@ export default function AdminProductCard({
               </div>
             )}
 
-            {/* Multi-variant indicator */}
+            {/* INSANYCK STEP H1.2 — Multi-variant indicator (opens drawer) */}
             {!isSingleVariant && (
-              <Link
-                href={`/admin/products/${product.id}`}
+              <button
+                type="button"
+                onClick={() => onManageVariants?.(product)}
                 className="
                   px-3 py-1.5
                   text-xs font-medium text-white/60
                   border border-white/[0.08]
                   rounded-md
                   hover:border-white/[0.16] hover:text-white/80
+                  hover:bg-white/[0.03]
                   transition-all duration-150
+                  active:scale-[0.98]
+                  focus:outline-none
+                  focus:ring-2 focus:ring-white/[0.08]
                 "
               >
                 Manage Variants
-              </Link>
+              </button>
             )}
           </div>
         </div>

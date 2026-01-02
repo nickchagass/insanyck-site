@@ -1,15 +1,18 @@
 // INSANYCK STEP H1-05 — Admin Products Page (God View)
 // Visual-first catalog with inline stock editing
 // CEO-only access with SSR guard + SWR data fetching
+// INSANYCK STEP H1.2 — Added VariantsDrawer, interactive filters/search
 
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import { useState } from "react";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-import { isCEO, ADMIN_CONSOLE_META } from "@/lib/admin/constants";
+import { isCEO, ADMIN_CONSOLE_META, LOW_STOCK_THRESHOLD } from "@/lib/admin/constants";
 import AdminShell from "@/components/admin/AdminShell";
 import AdminProductList from "@/components/admin/products/AdminProductList";
 import { AdminProductCardData } from "@/components/admin/products/AdminProductCard";
+import VariantsDrawer from "@/components/admin/products/VariantsDrawer";
 import useSWR from "swr";
 
 interface AdminProductsPageProps {
@@ -49,6 +52,21 @@ export default function AdminProductsPage({ userEmail }: AdminProductsPageProps)
   );
 
   const products: AdminProductCardData[] = data?.products ?? [];
+
+  // INSANYCK STEP H1.2 — Drawer state
+  const [selectedProduct, setSelectedProduct] = useState<AdminProductCardData | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const handleManageVariants = (product: AdminProductCardData) => {
+    setSelectedProduct(product);
+    setIsDrawerOpen(true);
+  };
+
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
+    // Delay clearing product to avoid flash during close animation
+    setTimeout(() => setSelectedProduct(null), 300);
+  };
 
   return (
     <>
@@ -105,7 +123,7 @@ export default function AdminProductsPage({ userEmail }: AdminProductsPageProps)
           </div>
         )}
 
-        {/* Product List */}
+        {/* INSANYCK STEP H1.2 — Product List with drawer callback */}
         <AdminProductList
           products={products}
           isLoading={isLoading}
@@ -113,6 +131,14 @@ export default function AdminProductsPage({ userEmail }: AdminProductsPageProps)
             // Revalidate data after stock update
             mutate();
           }}
+          onManageVariants={handleManageVariants}
+        />
+
+        {/* INSANYCK STEP H1.2 — Variants Drawer */}
+        <VariantsDrawer
+          open={isDrawerOpen}
+          product={selectedProduct}
+          onClose={handleCloseDrawer}
         />
 
         {/* Footer Stats */}
@@ -153,7 +179,7 @@ export default function AdminProductsPage({ userEmail }: AdminProductsPageProps)
                       if (!v.inventory) return sum;
                       return sum + (v.inventory.quantity - v.inventory.reserved);
                     }, 0);
-                    return stock > 0 && stock <= 10;
+                    return stock > 0 && stock <= LOW_STOCK_THRESHOLD;
                   }).length}
                 </div>
                 <div className="text-xs text-white/45 uppercase tracking-wider mt-1">

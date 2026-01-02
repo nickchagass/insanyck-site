@@ -1,11 +1,13 @@
 // INSANYCK STEP H1-04 — Admin Product List
 // Grid/list container with search + filters (Museum Edition)
 // Client-side filtering for God View catalog
+// INSANYCK STEP H1.2 — Added useDeferredValue for search, LOW_STOCK_THRESHOLD constant, onManageVariants
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useDeferredValue } from "react";
 import AdminProductCard, { AdminProductCardData } from "./AdminProductCard";
+import { LOW_STOCK_THRESHOLD } from "@/lib/admin/constants";
 
 interface AdminProductListProps {
   products: AdminProductCardData[];
@@ -13,6 +15,8 @@ interface AdminProductListProps {
   isLoading?: boolean;
   /** Callback when stock updates (triggers revalidation) */
   onStockUpdate?: () => void;
+  /** INSANYCK STEP H1.2 — Callback when "Manage Variants" is clicked */
+  onManageVariants?: (product: AdminProductCardData) => void;
 }
 
 type FilterOption = "all" | "active" | "draft" | "lowstock" | "outofstock";
@@ -29,17 +33,22 @@ export default function AdminProductList({
   products,
   isLoading = false,
   onStockUpdate,
+  onManageVariants,
 }: AdminProductListProps) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterOption>("all");
 
+  // INSANYCK STEP H1.2 — Defer search to avoid jank on large lists
+  const deferredSearch = useDeferredValue(search);
+
   // INSANYCK H1-04 — Client-side filtering
+  // INSANYCK STEP H1.2 — Use deferred search + LOW_STOCK_THRESHOLD constant
   const filteredProducts = useMemo(() => {
     let result = products;
 
-    // Search filter
-    if (search.trim()) {
-      const query = search.toLowerCase();
+    // Search filter (using deferred value)
+    if (deferredSearch.trim()) {
+      const query = deferredSearch.toLowerCase();
       result = result.filter(
         (p) =>
           p.title.toLowerCase().includes(query) ||
@@ -60,14 +69,14 @@ export default function AdminProductList({
         }, 0);
 
         if (filter === "outofstock") return totalStock === 0;
-        if (filter === "lowstock") return totalStock > 0 && totalStock <= 10;
+        if (filter === "lowstock") return totalStock > 0 && totalStock <= LOW_STOCK_THRESHOLD;
 
         return true;
       });
     }
 
     return result;
-  }, [products, search, filter]);
+  }, [products, deferredSearch, filter]);
 
   // Filter buttons config
   const filters: Array<{ value: FilterOption; label: string }> = [
@@ -82,8 +91,8 @@ export default function AdminProductList({
     <div className="space-y-6">
       {/* Search + Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
-        {/* Search */}
-        <div className="flex-1">
+        {/* INSANYCK STEP H1.2 — Search with clear button */}
+        <div className="flex-1 relative">
           <input
             type="text"
             placeholder="Search products..."
@@ -92,6 +101,7 @@ export default function AdminProductList({
             className="
               w-full
               px-4 py-2.5
+              pr-10
               text-sm text-white/90 placeholder:text-white/40
               bg-black/30
               border border-white/[0.08]
@@ -103,6 +113,27 @@ export default function AdminProductList({
               transition-all duration-150
             "
           />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch("")}
+              aria-label="Clear search"
+              className="
+                absolute right-2 top-1/2 -translate-y-1/2
+                w-6 h-6
+                flex items-center justify-center
+                rounded
+                text-white/40
+                hover:text-white/70
+                hover:bg-white/[0.06]
+                transition-all duration-150
+              "
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Filter Pills */}
@@ -136,7 +167,7 @@ export default function AdminProductList({
       <div className="flex items-center justify-between text-xs text-white/45">
         <span>
           {filteredProducts.length} {filteredProducts.length === 1 ? "product" : "products"}
-          {search && ` matching "${search}"`}
+          {deferredSearch && ` matching "${deferredSearch}"`}
         </span>
         {isLoading && (
           <span className="flex items-center gap-2">
@@ -158,6 +189,7 @@ export default function AdminProductList({
               product={product}
               layout="grid"
               onStockUpdate={onStockUpdate}
+              onManageVariants={onManageVariants}
             />
           ))}
         </div>
@@ -181,8 +213,8 @@ export default function AdminProductList({
             No products found
           </h3>
           <p className="text-sm text-white/45">
-            {search
-              ? `No products match "${search}"`
+            {deferredSearch
+              ? `No products match "${deferredSearch}"`
               : "Try adjusting your filters"}
           </p>
         </div>

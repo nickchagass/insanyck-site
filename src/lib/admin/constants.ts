@@ -33,3 +33,9 @@ export function isCEO(email: string | null | undefined): boolean {
   if (!email) return false;
   return CEO_ALLOWLIST.has(email.toLowerCase().trim());
 }
+
+/**
+ * INSANYCK STEP H1.2 — Admin Inventory Thresholds
+ * Low stock warning threshold for God View catalog
+ */
+export const LOW_STOCK_THRESHOLD = 10;
