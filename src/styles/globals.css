@@ -4148,11 +4148,11 @@ body::after {
 
 
 /* --------------------------------------------------------------------------
-   INSANYCK STEP H1.1 GOLDEN BRUSH — GOD TIER ADMIN ANIMATIONS
+   INSANYCK STEP H1.1 GOLDEN BRUSH ï¿½ GOD TIER ADMIN ANIMATIONS
    Stock pulse, breathing, cold ray glow, vault drawer depth
    -------------------------------------------------------------------------- */
 
-/* === STOCK PULSE — Micro-Feedback Animations === */
+/* === STOCK PULSE ï¿½ Micro-Feedback Animations === */
 /* Increment flash (emerald) */
 @keyframes stock-flash-up {
   0% {
@@ -4211,7 +4211,7 @@ body::after {
   }
 }
 
-/* === ADMIN PRODUCT CARD — Museum Vitrine Style === */
+/* === ADMIN PRODUCT CARD ï¿½ Museum Vitrine Style === */
 .admin-card {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -4259,7 +4259,7 @@ body::after {
   outline: none;
 }
 
-/* === VAULT DRAWER — Multi-Layer Glass Depth System === */
+/* === VAULT DRAWER ï¿½ Multi-Layer Glass Depth System === */
 .vault-drawer {
   background: linear-gradient(
     180deg,
