@@ -1,8 +1,10 @@
 // INSANYCK STEP 10 — RBAC Helper para Admin
 // src/lib/adminAuth.ts
+// INSANYCK STEP H1-FIX — Fixed CEO authorization (email-based allowlist)
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { isCEO } from '@/lib/admin/constants';
 
 export class UnauthorizedError extends Error {
   constructor(message = 'Unauthorized') {
@@ -13,17 +15,18 @@ export class UnauthorizedError extends Error {
 
 export async function requireAdmin(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions);
-  
+
   if (!session?.user) {
     throw new UnauthorizedError('Authentication required');
   }
-  
-  // INSANYCK STEP 10 — Verificar role admin
-  const userRole = (session.user as any)?.role;
-  if (userRole !== 'admin') {
-    throw new UnauthorizedError('Admin access required');
+
+  // INSANYCK STEP H1-FIX — Use email-based CEO allowlist (not role)
+  // CEO access is granted via allowlist in constants.ts, not Prisma role field
+  const userEmail = session.user.email;
+  if (!isCEO(userEmail)) {
+    throw new UnauthorizedError('CEO access required');
   }
-  
+
   return session;
 }
 
