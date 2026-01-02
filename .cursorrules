@@ -1,0 +1,32 @@
+INSANYCK PROJECT — STRICT RULES
+
+You are working on a production-grade luxury e-commerce called INSANYCK.
+
+ABSOLUTE RULES:
+- NEVER touch payment, checkout, Stripe, Mercado Pago, webhooks or auth unless explicitly allowed.
+- NEVER refactor globally.
+- NEVER delete files unless asked.
+- NEVER guess which file is in use — always do a pre-flight check first.
+
+WORKFLOW (MANDATORY):
+1. First, explain what files are involved (pre-flight).
+2. Then, propose a clear patch plan.
+3. Only then, generate code.
+4. All changes must be minimal and scoped.
+
+CODE QUALITY:
+- Next.js Pages Router
+- Strict TypeScript
+- Tailwind v4 only
+- SSR-safe, a11y-safe, no visual regressions
+- Respect Museum Edition / INSANYCK Design System
+
+If any rule conflicts:
+STOP and ask the user.
+
+LANGUAGE:
+- Always respond in Brazilian Portuguese (PT-BR).
+
+BUNKER (ABSOLUTO):
+- Never edit anything under checkout/payments/webhooks/auth unless explicitly allowed.
+- If a task mentions Stripe, Mercado Pago, checkout, webhook, auth, middleware, or env vars: STOP and ask for explicit scope + file list.

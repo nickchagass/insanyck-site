@@ -2,11 +2,14 @@
 // "The Black Box" — Museum Edition admin wrapper
 // Sticky header + The Pulse HUD + content area
 // INSANYCK STEP H0-POLISH — Refined visual details (quiet luxury)
+// INSANYCK STEP H1.1 — Added liquid-metal route transitions
 
 "use client";
 
 import { ReactNode } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { AnimatePresence, motion } from "framer-motion";
 import { ADMIN_CONSOLE_META } from "@/lib/admin/constants";
 import PrivacyModeToggle from "./PrivacyModeToggle";
 import AdminPulseHUD from "./AdminPulseHUD";
@@ -25,8 +28,10 @@ export default function AdminShell({
   title,
   hidePulse = false,
 }: AdminShellProps) {
+  const router = useRouter();
+
   return (
-    <div className="min-h-screen museum-atmosphere">
+    <div className="min-h-screen museum-atmosphere admin-safe-top">
       {/* Sticky Header — INSANYCK STEP H1-02: safe-area support + breathing */}
       <header
         className="
@@ -119,10 +124,23 @@ export default function AdminShell({
           </div>
         )}
 
-        {/* Content Area */}
-        <GlassCard className="min-h-[400px]">
-          {children}
-        </GlassCard>
+        {/* Content Area — INSANYCK STEP H1.1: Liquid-metal transitions */}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={router.asPath}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{
+              duration: 0.22,
+              ease: [0.16, 1, 0.3, 1], // expo easing
+            }}
+          >
+            <GlassCard className="min-h-[400px]">
+              {children}
+            </GlassCard>
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {/* Footer — INSANYCK STEP H0-POLISH: finer hairline, refined status pill */}

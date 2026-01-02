@@ -1,15 +1,16 @@
 // INSANYCK STEP H1-04 — Admin Product Card
 // Visual-first card for God View catalog (Museum Edition)
 // Large thumbnail + inline stock + status badge + mobile swipe
+// INSANYCK STEP H1.1 — Added AdminVitrineThumb for premium thumbnail display
 
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import DsBadge from "@/components/ds/DsBadge";
 import InlineStockEditor from "./InlineStockEditor";
 import MobileSwipeActions from "./MobileSwipeActions";
+import AdminVitrineThumb from "./AdminVitrineThumb";
 
 // INSANYCK H1-04 — Product type (matches API response)
 export interface AdminProductCardData {
@@ -111,34 +112,25 @@ export default function AdminProductCard({
       />
 
       <div className={`flex ${layout === "grid" ? "flex-col" : "flex-row"} gap-4`}>
-        {/* Thumbnail */}
-        <div className={`relative ${layout === "grid" ? "w-full" : "w-24 sm:w-32"} flex-shrink-0`}>
-          <div className="relative aspect-square rounded-[var(--ds-radius-md)] overflow-hidden bg-black/30 border border-white/[0.06]">
-            {primaryImage ? (
-              <Image
-                src={primaryImage.url}
-                alt={primaryImage.alt || product.title}
-                fill
-                sizes={layout === "grid" ? "(max-width: 768px) 100vw, 400px" : "128px"}
-                className="object-cover"
-              />
-            ) : (
+        {/* INSANYCK STEP H1.1 — Mini Vitrine Thumbnail */}
+        {primaryImage ? (
+          <AdminVitrineThumb
+            src={primaryImage.url}
+            alt={primaryImage.alt || product.title}
+            size={layout === "grid" ? "full" : "md"}
+          />
+        ) : (
+          // Fallback for no image (using same visual style)
+          <div className={`relative ${layout === "grid" ? "w-full" : "w-24 sm:w-32"} flex-shrink-0`}>
+            <div className="relative aspect-square rounded-[var(--ds-radius-md)] overflow-hidden bg-black/30 border border-white/[0.08]">
               <div className="absolute inset-0 flex items-center justify-center">
                 <svg className="w-12 h-12 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
-            )}
+            </div>
           </div>
-
-          {/* Floor Reflection (subtle) */}
-          <div
-            className="absolute -bottom-2 left-0 right-0 h-4 opacity-30 blur-sm pointer-events-none"
-            style={{
-              background: 'linear-gradient(to bottom, rgba(255,255,255,0.04), transparent)',
-            }}
-          />
-        </div>
+        )}
 
         {/* Info */}
         <div className="flex-1 flex flex-col gap-3 min-w-0">

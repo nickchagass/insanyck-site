@@ -1,6 +1,7 @@
 // INSANYCK STEP H1-04 — Inline Stock Editor
 // Stepper UI ([-][input][+]) with optimistic updates and debouncing
 // Museum Edition styling (ghost glass, hairlines, quiet luxury)
+// INSANYCK STEP H1.1 — Added live feedback: flash (green/amber) + micro-pop on stock change
 
 "use client";
 
@@ -40,6 +41,10 @@ export default function InlineStockEditor({
   const [isSaving, setIsSaving] = useState(false);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
   const lastSavedQuantity = useRef(initialQuantity);
+
+  // INSANYCK STEP H1.1 — Flash direction state (for live feedback)
+  const [flashDirection, setFlashDirection] = useState<"up" | "down" | null>(null);
+  const flashTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Sync with prop changes (e.g., from SWR revalidation)
   useEffect(() => {
@@ -83,12 +88,22 @@ export default function InlineStockEditor({
   };
 
   // INSANYCK H1-04 — Debounce handler
-  const handleQuantityChange = (newQuantity: number) => {
+  // INSANYCK H1.1 — Added flash feedback on change
+  const handleQuantityChange = (newQuantity: number, direction: "up" | "down") => {
     if (newQuantity < 0) return; // Never allow negative
 
     setQuantity(newQuantity);
 
-    // Clear previous timer
+    // INSANYCK STEP H1.1 — Trigger flash animation
+    setFlashDirection(direction);
+    if (flashTimer.current) {
+      clearTimeout(flashTimer.current);
+    }
+    flashTimer.current = setTimeout(() => {
+      setFlashDirection(null);
+    }, 200); // Flash duration: 200ms
+
+    // Clear previous debounce timer
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
     }
@@ -99,13 +114,14 @@ export default function InlineStockEditor({
     }, 800);
   };
 
-  const increment = () => handleQuantityChange(quantity + 1);
-  const decrement = () => handleQuantityChange(Math.max(0, quantity - 1));
+  const increment = () => handleQuantityChange(quantity + 1, "up");
+  const decrement = () => handleQuantityChange(Math.max(0, quantity - 1), "down");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value, 10);
     if (!isNaN(val)) {
-      handleQuantityChange(val);
+      const direction = val > quantity ? "up" : "down";
+      handleQuantityChange(val, direction);
     }
   };
 
@@ -130,12 +146,12 @@ export default function InlineStockEditor({
 
   return (
     <div className="flex items-center gap-2">
-      {/* Decrement Button */}
+      {/* Decrement Button — INSANYCK STEP H1.1: Enhanced press feedback */}
       <button
         type="button"
         onClick={decrement}
         disabled={isSaving || quantity <= 0}
-        aria-label="Decrease stock"
+        aria-label="Diminuir estoque"
         className="
           w-8 h-8
           flex items-center justify-center
@@ -147,7 +163,7 @@ export default function InlineStockEditor({
           hover:border-white/[0.12]
           disabled:opacity-40 disabled:cursor-not-allowed
           transition-all duration-150
-          active:scale-95
+          active:scale-[0.92]
         "
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -155,7 +171,7 @@ export default function InlineStockEditor({
         </svg>
       </button>
 
-      {/* Input */}
+      {/* Input — INSANYCK STEP H1.1: Added flash feedback via data-attribute */}
       <div className="relative">
         <input
           type="text"
@@ -165,6 +181,9 @@ export default function InlineStockEditor({
           onChange={handleInputChange}
           onBlur={handleInputBlur}
           disabled={isSaving}
+          data-flash={flashDirection}
+          aria-live="polite"
+          aria-atomic="true"
           className={`
             w-16 h-8
             px-2
@@ -177,6 +196,7 @@ export default function InlineStockEditor({
             focus:outline-none
             focus:ring-2 focus:ring-white/[0.15]
             disabled:opacity-50 disabled:cursor-wait
+            admin-stock-input
             ${stateStyles}
           `}
         />
@@ -205,12 +225,12 @@ export default function InlineStockEditor({
         )}
       </div>
 
-      {/* Increment Button */}
+      {/* Increment Button — INSANYCK STEP H1.1: Enhanced press feedback */}
       <button
         type="button"
         onClick={increment}
         disabled={isSaving}
-        aria-label="Increase stock"
+        aria-label="Aumentar estoque"
         className="
           w-8 h-8
           flex items-center justify-center
@@ -222,7 +242,7 @@ export default function InlineStockEditor({
           hover:border-white/[0.12]
           disabled:opacity-40 disabled:cursor-not-allowed
           transition-all duration-150
-          active:scale-95
+          active:scale-[0.92]
         "
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
