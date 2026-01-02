@@ -61,6 +61,15 @@ export default function CheckoutPage() {
     }
   }, [hydrated, items.length, router]);
 
+  // INSANYCK STEP CHECKOUT-UX-01 — Defensive scroll unlock (clear any stuck body overflow from drawers)
+  useEffect(() => {
+    // Clear any lingering scroll locks from previous pages (e.g., MiniCart, drawers)
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+  }, []);
+
   // Determinar métodos disponíveis baseado em locale e feature flag
   const locale = i18n.language === 'en' ? 'en' : 'pt';
   const featureFlag = process.env.NEXT_PUBLIC_CHECKOUT_PROVIDER || 'stripe';

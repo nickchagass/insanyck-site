@@ -43,11 +43,11 @@ export default function CheckoutSteps({ current }: CheckoutStepsProps) {
     }
   }, []);
 
-  // INSANYCK F-MP.POLISH — i18n labels
+  // INSANYCK F-MP.POLISH + CHECKOUT-UX-01 — i18n labels with fallbacks
   const steps = [
-    { id: 1, label: t('steps.identity') },
-    { id: 2, label: t('steps.shipping') },
-    { id: 3, label: t('steps.payment') },
+    { id: 1, label: t('steps.identity', 'Dados') },
+    { id: 2, label: t('steps.shipping', 'Entrega') },
+    { id: 3, label: t('steps.payment', 'Pagamento') },
   ] as const;
 
   return (

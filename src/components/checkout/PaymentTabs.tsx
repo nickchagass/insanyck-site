@@ -16,6 +16,7 @@ interface PaymentTabsProps {
 export default function PaymentTabs({ active, onChange, availableMethods }: PaymentTabsProps) {
   const { t } = useTranslation('checkout');
 
+  /* INSANYCK CHECKOUT-UX-01 — Ensure fallbacks for i18n */
   const getLabel = (method: PaymentMethod): string => {
     switch (method) {
       case 'pix':
