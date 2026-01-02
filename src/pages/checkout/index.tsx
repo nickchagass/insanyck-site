@@ -50,8 +50,11 @@ export default function CheckoutPage() {
     amount: number;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // INSANYCK STEP F-MP.2 — Card redirect state
-  const [redirecting, setRedirecting] = useState(false);
+  // INSANYCK MP-HOTFIX-01 — Card confirmation panel state (replaces auto-redirect)
+  const [mpCardData, setMpCardData] = useState<{
+    initPoint: string;
+    orderId: string;
+  } | null>(null);
 
   // INSANYCK STEP F-MP.BUGFIX-01 — Redirecionar se carrinho vazio (apenas APÓS hidratação)
   useEffect(() => {
@@ -97,7 +100,7 @@ export default function CheckoutPage() {
     setAddressData(data);
   }, []);
 
-  // === Payment Handlers (BUNKER: unchanged from original) ===
+  // === Payment Handlers (INSANYCK MP-HOTFIX-01 — Updated for stable contract) ===
   const handlePixPayment = async () => {
     const payerEmail = session?.user?.email || identityEmail;
 
@@ -132,9 +135,27 @@ export default function CheckoutPage() {
 
       const data = await res.json();
 
-      if (data.provider === 'mercadopago') {
-        setPixData(data);
+      // INSANYCK MP-HOTFIX-01 — Validate MP PIX response (snake_case fields)
+      if (data.provider === 'mercadopago' && data.method === 'pix') {
+        if (!data.payment_id || (!data.qr_code && !data.qr_code_base64)) {
+          if (process.env.NODE_ENV === 'development') {
+            console.error('[MP-HOTFIX-01] Invalid PIX response:', data);
+          }
+          throw new Error('Resposta de pagamento PIX inválida');
+        }
+        // Convert snake_case to camelCase for component compatibility
+        setPixData({
+          paymentId: data.payment_id,
+          orderId: data.order_id,
+          qrCode: data.qr_code || '',
+          qrCodeBase64: data.qr_code_base64 || '',
+          expiresAt: data.expires_at || '',
+          amount: data.amount || 0,
+        });
       } else {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('[MP-HOTFIX-01] Unexpected provider/method:', data);
+        }
         throw new Error('Provider inválido');
       }
     } catch (err) {
@@ -205,7 +226,7 @@ export default function CheckoutPage() {
   };
 
   const handleCardPayment = async () => {
-    // INSANYCK STEP F-MP.2 — Card MP redirect flow
+    // INSANYCK MP-HOTFIX-01 — Card MP confirmation flow (NO auto-redirect)
     const payerEmail = session?.user?.email || identityEmail;
 
     if (!payerEmail) {
@@ -240,17 +261,19 @@ export default function CheckoutPage() {
 
       const data = await res.json();
 
-      if (data.method === 'card' && data.initPoint) {
-        // INSANYCK STEP F-MP.2 — Museum pre-redirect screen
-        setRedirecting(true);
+      // INSANYCK MP-HOTFIX-01 — Validate MP Card response (snake_case fields)
+      if (data.method === 'card' && data.init_point) {
+        // Show premium confirmation panel (NO auto-redirect)
+        setMpCardData({
+          initPoint: data.init_point,
+          orderId: data.order_id,
+        });
         setIsLoading(false);
-
-        // Redirect após 800ms (permite animação Museum)
-        setTimeout(() => {
-          window.location.href = data.initPoint;
-        }, 800);
       } else {
-        throw new Error('Invalid card payment response');
+        if (process.env.NODE_ENV === 'development') {
+          console.error('[MP-HOTFIX-01] Invalid Card response:', data);
+        }
+        throw new Error('Resposta de pagamento com cartão inválida');
       }
     } catch (err) {
       // INSANYCK CHECKOUT-RESURRECTION — Better error messages
@@ -266,7 +289,33 @@ export default function CheckoutPage() {
 
       setError(errorMessage);
       setIsLoading(false);
-      setRedirecting(false);
+    }
+  };
+
+  // INSANYCK MP-HOTFIX-01 — Premium redirect handlers (explicit user action)
+  const handleMpCardRedirect = () => {
+    if (mpCardData?.initPoint) {
+      window.location.assign(mpCardData.initPoint);
+    }
+  };
+
+  const handleCopyMpLink = async () => {
+    if (mpCardData?.initPoint) {
+      try {
+        await navigator.clipboard.writeText(mpCardData.initPoint);
+        // Show subtle confirmation (reuse existing error state for simplicity)
+        const prevError = error;
+        setError(locale === 'pt' ? 'Link copiado!' : 'Link copied!');
+        setTimeout(() => setError(prevError), 2000);
+      } catch {
+        setError(locale === 'pt' ? 'Não foi possível copiar o link' : 'Could not copy link');
+      }
+    }
+  };
+
+  const handleOpenMpNewTab = () => {
+    if (mpCardData?.initPoint) {
+      window.open(mpCardData.initPoint, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -420,8 +469,8 @@ export default function CheckoutPage() {
               />
             )}
 
-            {/* Card Payment Content */}
-            {activeTab === 'card' && !redirecting && (
+            {/* Card Payment Content - INSANYCK MP-HOTFIX-01 */}
+            {activeTab === 'card' && !mpCardData && (
               <div className="space-y-4">
                 <p className="text-white/70 text-sm">
                   {t('card.title', 'Pague com cartão')}
@@ -446,18 +495,55 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {/* INSANYCK STEP F-MP.2 — Museum pre-redirect screen */}
-            {activeTab === 'card' && redirecting && (
-              <div className="space-y-6 text-center py-8">
-                <div className="mx-auto w-16 h-16 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                <div>
+            {/* INSANYCK MP-HOTFIX-01 — Premium Confirmation Panel (NO auto-redirect) */}
+            {activeTab === 'card' && mpCardData && (
+              <div className="space-y-6 py-6">
+                {/* Museum Edition confirmation with premium glassmorphism */}
+                <div className="text-center">
+                  <div className="mx-auto w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
+                    <svg className="w-8 h-8 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
                   <h3 className="text-xl font-semibold text-white mb-2">
-                    {t('card.redirectTitle', 'Redirecionando para Mercado Pago')}
+                    {locale === 'pt' ? 'Pronto para pagamento' : 'Ready for payment'}
                   </h3>
-                  <p className="text-white/60 text-sm">
-                    {t('card.redirectMessage', 'Você será levado para finalizar o pagamento com segurança')}
+                  <p className="text-white/60 text-sm mb-6">
+                    {locale === 'pt'
+                      ? 'Clique no botão abaixo para abrir o Mercado Pago e finalizar seu pagamento com segurança'
+                      : 'Click the button below to open Mercado Pago and complete your payment securely'}
                   </p>
                 </div>
+
+                {/* Primary CTA */}
+                <button
+                  onClick={handleMpCardRedirect}
+                  className="w-full px-6 py-4 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-semibold transition-all transform hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
+                >
+                  {locale === 'pt' ? 'Abrir Mercado Pago' : 'Open Mercado Pago'}
+                </button>
+
+                {/* Secondary Actions */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleCopyMpLink}
+                    className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/80 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+                  >
+                    {locale === 'pt' ? 'Copiar link' : 'Copy link'}
+                  </button>
+                  <button
+                    onClick={handleOpenMpNewTab}
+                    className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/80 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+                  >
+                    {locale === 'pt' ? 'Abrir em nova aba' : 'Open in new tab'}
+                  </button>
+                </div>
+
+                <p className="text-white/50 text-xs text-center mt-4">
+                  {locale === 'pt'
+                    ? 'Você será redirecionado para a plataforma segura do Mercado Pago'
+                    : 'You will be redirected to Mercado Pago\'s secure platform'}
+                </p>
               </div>
             )}
 
