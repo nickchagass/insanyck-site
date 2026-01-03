@@ -462,7 +462,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           });
         }
 
-        // INSANYCK MP-HOTFIX-03 — Dev diagnostics
+        // INSANYCK MP-HOTFIX-03 + MP-MOBILE-01 — Dev diagnostics including notification_url
         if (process.env.NODE_ENV === 'development') {
           console.log('[MP-PIX] Payment created successfully:', {
             payment_id: normalized.payment_id,
@@ -470,6 +470,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             has_qr_code: !!normalized.qr_code,
             has_qr_code_base64: !!normalized.qr_code_base64,
             expires_at: normalized.expires_at,
+            notification_url: `${baseUrl}/api/mp/webhook`,
+            amount_brl: totalBRL,
+            amount_cents: totalCents,
           });
         }
 
@@ -480,6 +483,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         // INSANYCK MP-HOTFIX-03 — Stable JSON contract (snake_case)
+        // INSANYCK MP-MOBILE-01 FIX A — Return BOTH amount fields for backward compatibility
         return res.status(200).json({
           provider: 'mercadopago',
           method: 'pix',
@@ -488,7 +492,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           qr_code: normalized.qr_code,
           qr_code_base64: normalized.qr_code_base64,
           expires_at: normalized.expires_at,
-          amount: totalBRL,
+          amount: totalBRL, // Kept for backward compatibility (BRL decimal)
+          amount_cents: totalCents, // INSANYCK MP-MOBILE-01 — Preferred: integer cents
         });
       } catch (pixError: any) {
         if (process.env.NODE_ENV === 'development') {

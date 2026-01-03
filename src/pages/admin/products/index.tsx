@@ -43,11 +43,13 @@ const fetcher = async (url: string) => {
  */
 export default function AdminProductsPage({ userEmail }: AdminProductsPageProps) {
   // INSANYCK H1-05 — Fetch products via SWR (auto-revalidation)
+  // INSANYCK STEP H2 — Added refreshInterval for realtime stock updates
   const { data, error, isLoading, mutate } = useSWR(
     '/api/admin/products?limit=100',
     fetcher,
     {
-      revalidateOnFocus: false,
+      refreshInterval: 5000, // INSANYCK STEP H2 — 5s auto-refresh for realtime updates
+      revalidateOnFocus: true, // INSANYCK STEP H2 — Revalidate on focus
       revalidateOnReconnect: true,
     }
   );

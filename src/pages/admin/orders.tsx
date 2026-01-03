@@ -1,11 +1,16 @@
-// INSANYCK ETAPA 11E — UI Admin Orders simples
-"use client";
+// INSANYCK STEP H2 — Admin Orders with Realtime Updates (Museum Edition)
+// SWR-powered auto-refresh (5s) for instant PIX approval reflection
+// CEO-only access with SSR guard + Museum Edition styling
 
-import React, { useState, useEffect, useCallback } from "react";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
+import { useState, useMemo, useDeferredValue } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { isCEO, ADMIN_CONSOLE_META } from "@/lib/admin/constants";
+import AdminShell from "@/components/admin/AdminShell";
+import useSWR from "swr";
 import { Search, Eye, Package } from "lucide-react";
 
 interface OrderItem {
@@ -47,15 +52,30 @@ interface OrdersResponse {
   };
 }
 
+interface AdminOrdersPageProps {
+  userEmail: string;
+}
+
+// INSANYCK STEP H2 — Fetcher for SWR
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Failed to fetch orders');
+  }
+  return res.json();
+};
+
+// INSANYCK STEP H2 — Status Badge (Museum Edition)
 const StatusBadge = ({ status }: { status: Order['status'] }) => {
   const colors = {
-    pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-    paid: 'bg-green-500/20 text-green-400 border-green-500/30',
-    shipped: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-    delivered: 'bg-green-600/20 text-green-300 border-green-600/30',
-    cancelled: 'bg-red-500/20 text-red-400 border-red-500/30',
+    pending: 'bg-amber-500/10 text-amber-400/90 border-amber-400/20',
+    paid: 'bg-emerald-500/10 text-emerald-400/90 border-emerald-400/20',
+    shipped: 'bg-blue-500/10 text-blue-400/90 border-blue-400/20',
+    delivered: 'bg-emerald-600/10 text-emerald-300/90 border-emerald-600/20',
+    cancelled: 'bg-rose-500/10 text-rose-400/90 border-rose-400/20',
   };
-  
+
   const labels = {
     pending: 'Pendente',
     paid: 'Pago',
@@ -65,109 +85,56 @@ const StatusBadge = ({ status }: { status: Order['status'] }) => {
   };
 
   return (
-    <span className={`px-2 py-1 rounded-lg text-xs font-medium border ${colors[status]}`}>
+    <span className={`px-2.5 py-1 rounded-md text-xs font-semibold border ${colors[status]}`}>
       {labels[status]}
     </span>
   );
 };
 
-AdminOrdersPage.getInitialProps = async () => {
-  return {};
-};
-
-export default function AdminOrdersPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [pagination, setPagination] = useState<OrdersResponse['pagination'] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [isRefreshing, setIsRefreshing] = useState(false); // INSANYCK MP-HOTFIX-05 — Visual feedback
-
-  // Filtros
+/**
+ * INSANYCK STEP H2 — Admin Orders Page (Realtime)
+ * Features:
+ * - SWR with 5s auto-refresh (reflects PIX approvals without manual refresh)
+ * - Live indicator (Museum Edition subtle pulse)
+ * - Instant client-side filters (status + email search)
+ * - Museum Edition styling (glass cards, hairline borders, premium feel)
+ * - CEO-only access with allowlist gating
+ */
+export default function AdminOrdersPage({ userEmail }: AdminOrdersPageProps) {
+  // INSANYCK STEP H2 — Filter state
   const [statusFilter, setStatusFilter] = useState('');
   const [emailFilter, setEmailFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Verificar autenticação admin
-  useEffect(() => {
-    if (status === 'loading') return;
-    
-    if (!session?.user) {
-      router.push('/admin/login');
-      return;
+  // INSANYCK STEP H2 — Deferred search to avoid jank
+  const deferredEmailFilter = useDeferredValue(emailFilter);
+
+  // INSANYCK STEP H2 — Build query params
+  const buildQueryParams = () => {
+    const params = new URLSearchParams({
+      page: currentPage.toString(),
+      limit: '10',
+    });
+    if (statusFilter) params.append('status', statusFilter);
+    if (deferredEmailFilter) params.append('email', deferredEmailFilter);
+    return params.toString();
+  };
+
+  // INSANYCK STEP H2 — SWR with auto-refresh (5s)
+  const { data, error, isLoading, isValidating } = useSWR<OrdersResponse>(
+    `/api/admin/orders?${buildQueryParams()}`,
+    fetcher,
+    {
+      refreshInterval: 5000, // 5s auto-refresh for realtime PIX updates
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
     }
-    
-    // Verificar role admin (mock check - adaptar conforme sua estrutura)
-    const userRole = (session.user as any)?.role;
-    if (userRole !== 'admin') {
-      router.push('/');
-      return;
-    }
-  }, [session, status, router]);
+  );
 
-  const fetchOrders = useCallback(async (isAutoRefresh = false) => {
-    try {
-      // INSANYCK MP-HOTFIX-05 — Não mostrar spinner em auto-refresh, apenas em carregamento inicial
-      if (!isAutoRefresh) {
-        setLoading(true);
-      } else {
-        setIsRefreshing(true);
-      }
+  const orders = data?.orders ?? [];
+  const pagination = data?.pagination ?? null;
 
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        limit: '10',
-      });
-
-      if (statusFilter) params.append('status', statusFilter);
-      if (emailFilter) params.append('email', emailFilter);
-
-      const response = await fetch(`/api/admin/orders?${params}`);
-
-      if (!response.ok) {
-        throw new Error('Erro ao carregar pedidos');
-      }
-
-      const data: OrdersResponse = await response.json();
-      setOrders(data.orders);
-      setPagination(data.pagination);
-      setError('');
-
-    } catch (err) {
-      setError('Erro ao carregar pedidos');
-      console.error(err);
-    } finally {
-      setLoading(false);
-      setIsRefreshing(false);
-    }
-  }, [currentPage, statusFilter, emailFilter]);
-
-  // Carregar orders
-  useEffect(() => {
-    if (!session?.user) return;
-
-    fetchOrders();
-  }, [session, currentPage, statusFilter, emailFilter, fetchOrders]);
-
-  // INSANYCK MP-HOTFIX-05 — Auto-refresh polling (10s interval) para refletir atualizações de webhook
-  useEffect(() => {
-    if (!session?.user) return;
-
-    // Polling a cada 10 segundos para atualizar status automaticamente
-    const intervalId = setInterval(() => {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('[Admin Orders] Auto-refreshing orders...');
-      }
-      fetchOrders(true); // INSANYCK MP-HOTFIX-05 — Pass true to indicate auto-refresh
-    }, 10000); // 10s
-
-    // Cleanup: limpar interval ao desmontar para evitar memory leaks
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [session, fetchOrders]);
-
+  // INSANYCK STEP H2 — Format helpers
   const formatCurrency = (cents: number) => {
     return (cents / 100).toLocaleString('pt-BR', {
       style: 'currency',
@@ -185,170 +152,350 @@ export default function AdminOrdersPage() {
     });
   };
 
-  if (status === 'loading' || !session) {
-    return <div className="min-h-screen bg-black flex items-center justify-center text-white">Carregando...</div>;
-  }
-
   return (
     <>
       <Head>
-        <title>Admin - Pedidos — INSANYCK</title>
-        <meta name="robots" content="noindex,nofollow" />
+        <title>Orders · {ADMIN_CONSOLE_META.name}</title>
+        <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <main className="min-h-screen bg-black text-white pt-[120px] pb-20">
-        <div className="mx-auto max-w-[1400px] px-6">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-semibold">Pedidos</h1>
-              {/* INSANYCK MP-HOTFIX-05 — Visual indicator de auto-refresh */}
-              {isRefreshing && (
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
-                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                  <span className="text-xs text-white/60">Atualizando...</span>
-                </div>
-              )}
+      <AdminShell title="Orders · Realtime View" hidePulse>
+        {/* Header with Live Indicator */}
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-white/[0.06]">
+          <div className="flex items-center gap-3">
+            <div>
+              <h2 className="text-2xl font-bold text-white/95 mb-1">
+                Orders
+              </h2>
+              <p className="text-sm text-white/50">
+                Realtime order tracking with auto-refresh
+              </p>
             </div>
-            <Link
-              href="/admin"
-              className="px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10 transition"
-            >
-              ← Admin
-            </Link>
-          </div>
 
-          {/* Filtros */}
-          <div className="mb-6 flex flex-wrap gap-4">
-            <div className="flex items-center gap-2">
-              <Search className="w-4 h-4 text-white/60" />
-              <input
-                type="text"
-                placeholder="Buscar por email..."
-                value={emailFilter}
-                onChange={(e) => setEmailFilter(e.target.value)}
-                className="px-3 py-2 rounded-xl bg-black/40 border border-white/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/30"
-              />
-            </div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-black/40 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-white/30"
-            >
-              <option value="">Todos os status</option>
-              <option value="pending">Pendente</option>
-              <option value="paid">Pago</option>
-              <option value="shipped">Enviado</option>
-              <option value="delivered">Entregue</option>
-              <option value="cancelled">Cancelado</option>
-            </select>
-          </div>
-
-          {/* Lista de Orders */}
-          {loading ? (
-            <div className="text-center py-12">
-              <div className="animate-spin w-8 h-8 border-2 border-white/20 border-t-white rounded-full mx-auto"></div>
-            </div>
-          ) : error ? (
-            <div className="text-center py-12 text-red-400">{error}</div>
-          ) : orders.length === 0 ? (
-            <div className="text-center py-12 text-white/60">Nenhum pedido encontrado</div>
-          ) : (
-            <>
-              <div className="space-y-4">
-                {orders.map((order) => (
-                  <div
-                    key={order.id}
-                    className="rounded-2xl border border-white/12 bg-black/40 backdrop-blur-md p-6"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-semibold text-lg">#{order.id.slice(0, 8)}</h3>
-                          <StatusBadge status={order.status} />
-                        </div>
-                        <div className="text-white/70 text-sm space-y-1">
-                          <div>Email: {order.email}</div>
-                          <div>Data: {formatDate(order.createdAt)}</div>
-                          {order.stripeSessionId && (
-                            <div className="font-mono text-xs">Stripe: {order.stripeSessionId.slice(0, 20)}...</div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-white">
-                          {formatCurrency(order.amountTotal)}
-                        </div>
-                        <div className="text-white/60 text-sm">
-                          {order.items.reduce((acc, item) => acc + item.qty, 0)} {order.items.length === 1 ? 'item' : 'itens'}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Items preview */}
-                    <div className="border-t border-white/10 pt-4 mb-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {order.items.slice(0, 3).map((item, idx) => (
-                          <div key={idx} className="flex items-center gap-3 p-3 rounded-xl bg-white/5">
-                            <div className="w-12 h-12 rounded-lg bg-white/10 flex items-center justify-center">
-                              <Package className="w-6 h-6 text-white/60" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="text-sm font-medium truncate">{item.title}</div>
-                              <div className="text-xs text-white/60">
-                                {item.qty}x {formatCurrency(item.priceCents)}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                        {order.items.length > 3 && (
-                          <div className="flex items-center justify-center text-white/60 text-sm">
-                            +{order.items.length - 3} mais
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex gap-2">
-                      <Link
-                        href={`/admin/orders/${order.id}`}
-                        className="flex items-center gap-2 px-3 py-2 rounded-xl border border-white/20 hover:bg-white/10 transition text-sm"
-                      >
-                        <Eye className="w-4 h-4" />
-                        Ver detalhes
-                      </Link>
-                    </div>
-                  </div>
-                ))}
+            {/* INSANYCK STEP H2 — Live Indicator (Museum Edition subtle) */}
+            {isValidating && !isLoading && (
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/5 border border-emerald-400/10">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-[0.6875rem] text-emerald-400/80 uppercase tracking-wider font-medium">
+                  Live
+                </span>
               </div>
+            )}
+          </div>
 
-              {/* Paginação */}
-              {pagination && pagination.totalPages > 1 && (
-                <div className="flex items-center justify-center gap-4 mt-8">
-                  <button
-                    disabled={!pagination.hasPrev}
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                    className="px-4 py-2 rounded-xl border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition"
-                  >
-                    Anterior
-                  </button>
-                  <span className="text-white/70">
-                    Página {pagination.page} de {pagination.totalPages}
-                  </span>
-                  <button
-                    disabled={!pagination.hasNext}
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                    className="px-4 py-2 rounded-xl border border-white/20 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-white/10 transition"
-                  >
-                    Próxima
-                  </button>
-                </div>
-              )}
-            </>
+          <Link
+            href="/admin"
+            className="
+              px-4 py-2
+              text-sm font-medium text-white/60
+              border border-white/[0.08]
+              rounded-[var(--ds-radius-md)]
+              hover:border-white/[0.12] hover:text-white/80
+              hover:bg-white/[0.03]
+              transition-all duration-150
+            "
+          >
+            ← Admin Home
+          </Link>
+        </div>
+
+        {/* INSANYCK STEP H2 — Filters (Museum Edition) */}
+        <div className="mb-6 flex flex-col sm:flex-row gap-4">
+          {/* Email Search */}
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search by email..."
+              value={emailFilter}
+              onChange={(e) => setEmailFilter(e.target.value)}
+              className="
+                w-full
+                pl-10 pr-4 py-2.5
+                text-sm text-white/90 placeholder:text-white/40
+                bg-black/30
+                border border-white/[0.08]
+                rounded-[var(--ds-radius-md)]
+                backdrop-blur-sm
+                transition-all duration-150
+                focus:outline-none
+                focus:ring-2 focus:ring-white/[0.12]
+                focus:border-white/[0.16]
+              "
+            />
+          </div>
+
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="
+              px-4 py-2.5
+              text-sm text-white/90
+              bg-black/30
+              border border-white/[0.08]
+              rounded-[var(--ds-radius-md)]
+              backdrop-blur-sm
+              transition-all duration-150
+              focus:outline-none
+              focus:ring-2 focus:ring-white/[0.12]
+              focus:border-white/[0.16]
+            "
+          >
+            <option value="">All statuses</option>
+            <option value="pending">Pendente</option>
+            <option value="paid">Pago</option>
+            <option value="shipped">Enviado</option>
+            <option value="delivered">Entregue</option>
+            <option value="cancelled">Cancelado</option>
+          </select>
+        </div>
+
+        {/* Results Count */}
+        <div className="flex items-center justify-between text-xs text-white/45 mb-4">
+          <span>
+            {orders.length} {orders.length === 1 ? "order" : "orders"}
+            {deferredEmailFilter && ` matching "${deferredEmailFilter}"`}
+          </span>
+          {isLoading && (
+            <span className="flex items-center gap-2">
+              <svg className="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+              Loading...
+            </span>
           )}
         </div>
-      </main>
+
+        {/* Error State */}
+        {error && (
+          <div className="glass-card-museum p-6 mb-6 border border-rose-400/30">
+            <div className="flex items-start gap-3">
+              <svg className="w-5 h-5 text-rose-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div>
+                <h3 className="text-sm font-semibold text-rose-400/90 mb-1">
+                  Failed to load orders
+                </h3>
+                <p className="text-xs text-rose-400/70">
+                  {error.message}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Orders List */}
+        {isLoading ? (
+          <div className="space-y-4">
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                className="skeleton-shimmer rounded-[16px] h-64 border border-white/[0.06]"
+              />
+            ))}
+          </div>
+        ) : orders.length === 0 ? (
+          <div className="glass-card-museum p-12 text-center">
+            <svg
+              className="mx-auto h-12 w-12 text-white/20 mb-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
+            </svg>
+            <h3 className="text-lg font-semibold text-white/70 mb-2">
+              No orders found
+            </h3>
+            <p className="text-sm text-white/45">
+              {deferredEmailFilter || statusFilter
+                ? "Try adjusting your filters"
+                : "Orders will appear here when customers complete checkout"}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {orders.map((order) => (
+              <div
+                key={order.id}
+                className="glass-card-museum p-6 border border-white/[0.06] hover:border-white/[0.10] transition-all duration-150"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="font-semibold text-lg text-white/90">
+                        #{order.id.slice(0, 8)}
+                      </h3>
+                      <StatusBadge status={order.status} />
+                    </div>
+                    <div className="text-white/60 text-sm space-y-1">
+                      <div>Email: {order.email}</div>
+                      <div>Date: {formatDate(order.createdAt)}</div>
+                      {order.stripeSessionId && (
+                        <div className="font-mono text-xs text-white/45">
+                          Stripe: {order.stripeSessionId.slice(0, 20)}...
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-white/90">
+                      {formatCurrency(order.amountTotal)}
+                    </div>
+                    <div className="text-white/50 text-sm">
+                      {order.items.reduce((acc, item) => acc + item.qty, 0)}{" "}
+                      {order.items.length === 1 ? "item" : "items"}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Items preview */}
+                <div className="border-t border-white/[0.06] pt-4 mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {order.items.slice(0, 3).map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/[0.06]"
+                      >
+                        <div className="w-12 h-12 rounded-lg bg-black/30 border border-white/[0.08] flex items-center justify-center flex-shrink-0">
+                          <Package className="w-6 h-6 text-white/40" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-white/80 truncate">
+                            {item.title}
+                          </div>
+                          <div className="text-xs text-white/50">
+                            {item.qty}x {formatCurrency(item.priceCents)}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {order.items.length > 3 && (
+                      <div className="flex items-center justify-center text-white/50 text-sm">
+                        +{order.items.length - 3} more
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2">
+                  <Link
+                    href={`/admin/orders/${order.id}`}
+                    className="
+                      flex items-center gap-2
+                      px-3 py-2
+                      rounded-xl
+                      border border-white/[0.08]
+                      hover:border-white/[0.12]
+                      hover:bg-white/[0.03]
+                      transition-all duration-150
+                      text-sm text-white/70
+                      hover:text-white/90
+                    "
+                  >
+                    <Eye className="w-4 h-4" />
+                    View details
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {pagination && pagination.totalPages > 1 && (
+          <div className="flex items-center justify-center gap-4 mt-8 pt-6 border-t border-white/[0.06]">
+            <button
+              disabled={!pagination.hasPrev}
+              onClick={() => setCurrentPage(currentPage - 1)}
+              className="
+                px-4 py-2
+                rounded-xl
+                border border-white/[0.08]
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+                hover:bg-white/[0.03]
+                hover:border-white/[0.12]
+                transition-all duration-150
+                text-sm text-white/70
+                hover:text-white/90
+              "
+            >
+              Previous
+            </button>
+            <span className="text-white/60 text-sm">
+              Page {pagination.page} of {pagination.totalPages}
+            </span>
+            <button
+              disabled={!pagination.hasNext}
+              onClick={() => setCurrentPage(currentPage + 1)}
+              className="
+                px-4 py-2
+                rounded-xl
+                border border-white/[0.08]
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+                hover:bg-white/[0.03]
+                hover:border-white/[0.12]
+                transition-all duration-150
+                text-sm text-white/70
+                hover:text-white/90
+              "
+            >
+              Next
+            </button>
+          </div>
+        )}
+      </AdminShell>
     </>
   );
 }
+
+/**
+ * INSANYCK STEP H2 — Server-side auth guard (CEO-only)
+ * Layer 2 security (defense-in-depth with middleware)
+ */
+export const getServerSideProps: GetServerSideProps<AdminOrdersPageProps> = async (
+  context
+) => {
+  // Get session
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  // Gate 1: Not logged in
+  if (!session || !session.user?.email) {
+    return {
+      redirect: {
+        destination: `/conta/login?callbackUrl=${encodeURIComponent(
+          context.resolvedUrl
+        )}`,
+        permanent: false,
+      },
+    };
+  }
+
+  // Gate 2: Not CEO
+  if (!isCEO(session.user.email)) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  // Authorized
+  return {
+    props: {
+      userEmail: session.user.email,
+    },
+  };
+};

@@ -11,7 +11,8 @@ interface MercadoPagoPixPanelProps {
   qrCode: string;
   qrCodeBase64: string;
   expiresAt: string;
-  amount: number;
+  amount: number; // BRL (backward compat)
+  amountCents?: number; // INSANYCK MP-MOBILE-01 — Preferred: integer cents
 }
 
 export default function MercadoPagoPixPanel({
@@ -21,10 +22,15 @@ export default function MercadoPagoPixPanel({
   qrCodeBase64,
   expiresAt,
   amount,
+  amountCents,
 }: MercadoPagoPixPanelProps) {
   const { t, i18n } = useTranslation('checkout');
   const locale = i18n.language === 'en' ? 'en' : 'pt';
   const [copied, setCopied] = useState(false);
+
+  // INSANYCK MP-MOBILE-01 FIX A — Prefer amount_cents (integer) as source of truth
+  // Fallback to amount (BRL decimal) * 100 for backward compatibility
+  const displayAmountCents = amountCents ?? (amount ? Math.round(amount * 100) : 0);
 
   const handleCopy = async () => {
     if (!qrCode) return;
@@ -103,10 +109,10 @@ export default function MercadoPagoPixPanel({
       <div className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl text-sm">
         <div>
           <div className="text-white/50 text-xs mb-1">
-            {locale === 'pt' ? 'Valor' : 'Amount'}
+            {locale === 'pt' ? 'Valor do pagamento' : 'Payment amount'}
           </div>
           <div className="text-white font-semibold text-lg">
-            R$ {(amount / 100).toFixed(2)}
+            R$ {(displayAmountCents / 100).toFixed(2)}
           </div>
         </div>
         {expirationText && (

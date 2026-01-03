@@ -44,19 +44,49 @@ export default function VariantsDrawer({
 }: VariantsDrawerProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
 
   // INSANYCK STEP H1.1 — ESC key handler
+  // INSANYCK STEP H2 — Enhanced with focus trap (Tab key cycling)
   useEffect(() => {
     if (!open) return;
 
-    const handleEscape = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // ESC to close
       if (e.key === "Escape") {
         onClose();
+        return;
+      }
+
+      // INSANYCK STEP H2 — Focus trap: Tab key cycling
+      if (e.key === "Tab") {
+        if (!drawerRef.current) return;
+
+        const focusableElements = drawerRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])'
+        );
+
+        const firstFocusable = focusableElements[0];
+        const lastFocusable = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey) {
+          // Shift+Tab: if on first element, cycle to last
+          if (document.activeElement === firstFocusable) {
+            e.preventDefault();
+            lastFocusable?.focus();
+          }
+        } else {
+          // Tab: if on last element, cycle to first
+          if (document.activeElement === lastFocusable) {
+            e.preventDefault();
+            firstFocusable?.focus();
+          }
+        }
       }
     };
 
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open, onClose]);
 
   // INSANYCK STEP H1.1 — Body scroll lock + focus management
@@ -180,6 +210,7 @@ export default function VariantsDrawer({
 
           {/* Drawer Panel with Multi-Layer Depth System */}
           <motion.div
+            ref={drawerRef}
             variants={drawerVariants}
             initial="hidden"
             animate="visible"

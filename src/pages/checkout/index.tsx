@@ -51,7 +51,8 @@ export default function CheckoutPage() {
     qrCode: string;
     qrCodeBase64: string;
     expiresAt: string;
-    amount: number;
+    amount: number; // BRL (backward compat)
+    amountCents?: number; // INSANYCK MP-MOBILE-01 — Preferred source of truth
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
   // INSANYCK MP-HOTFIX-03 — Bricks card state (in-page card form)
@@ -157,6 +158,27 @@ export default function CheckoutPage() {
           }
           throw new Error('Resposta de pagamento PIX inválida');
         }
+
+        // INSANYCK MP-MOBILE-01 FIX A — Dev-only diagnostics: compare cart total vs backend amount
+        if (process.env.NODE_ENV === 'development') {
+          const cartTotalCents = items.reduce((sum, item) => sum + item.priceCents * item.qty, 0);
+          const backendAmountCents = data.amount_cents || (data.amount ? data.amount * 100 : 0);
+
+          if (cartTotalCents !== backendAmountCents) {
+            console.warn('[MP-MOBILE-01] amount_mismatch:', {
+              cart_total_cents: cartTotalCents,
+              cart_total_brl: (cartTotalCents / 100).toFixed(2),
+              backend_amount_cents: backendAmountCents,
+              backend_amount_brl: (backendAmountCents / 100).toFixed(2),
+              diff_cents: backendAmountCents - cartTotalCents,
+              order_id: data.order_id,
+              payment_id: data.payment_id,
+              has_amount_cents: !!data.amount_cents,
+              has_amount: !!data.amount,
+            });
+          }
+        }
+
         // Convert snake_case to camelCase for component compatibility
         setPixData({
           paymentId: data.payment_id,
@@ -165,6 +187,7 @@ export default function CheckoutPage() {
           qrCodeBase64: data.qr_code_base64 || '',
           expiresAt: data.expires_at || '',
           amount: data.amount || 0,
+          amountCents: data.amount_cents, // INSANYCK MP-MOBILE-01 — Preferred field
         });
       } else {
         if (process.env.NODE_ENV === 'development') {
@@ -480,6 +503,7 @@ export default function CheckoutPage() {
                 qrCodeBase64={pixData.qrCodeBase64}
                 expiresAt={pixData.expiresAt}
                 amount={pixData.amount}
+                amountCents={pixData.amountCents}
               />
             )}
 
