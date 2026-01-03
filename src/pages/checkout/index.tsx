@@ -129,6 +129,7 @@ export default function CheckoutPage() {
           })),
           currency: 'BRL',
           provider: 'mercadopago',
+          method: 'pix', // INSANYCK MP-HOTFIX-04 — Explicit method field
           email: payerEmail,
         }),
       });
