@@ -5,6 +5,34 @@ import { backendDisabled } from '@/lib/backendGuard';
 import { env } from '@/lib/env.server';
 import { prisma } from '@/lib/prisma';
 
+// INSANYCK MP-HOTFIX-05 — Helper para obter baseUrl confiável (headers > env > erro)
+function getBaseUrl(req: NextApiRequest): string | null {
+  // 1. Tentar headers (mais confiável em Vercel/proxies)
+  const protocol = req.headers['x-forwarded-proto'] || 'https';
+  const host = req.headers['x-forwarded-host'] || req.headers['host'];
+
+  if (host && typeof host === 'string') {
+    return `${protocol}://${host}`;
+  }
+
+  // 2. Fallback para env vars
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL;
+  }
+
+  if (process.env.NEXT_PUBLIC_URL) {
+    return process.env.NEXT_PUBLIC_URL;
+  }
+
+  // 3. Vercel URL (preview deploys)
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+
+  // 4. Nenhuma fonte confiável disponível
+  return null;
+}
+
 const bodySchema = z.object({
   formData: z.object({
     token: z.string(),
@@ -49,7 +77,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Order is not pending' });
     }
 
-    // INSANYCK MP-HOTFIX-03 — Process payment with Mercado Pago API
+    // INSANYCK MP-HOTFIX-05 — Get reliable baseUrl for webhook notification
+    const baseUrl = getBaseUrl(req);
+
+    if (!baseUrl) {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('[MP-HOTFIX-05] Cannot determine baseUrl for notification_url. Check env vars or headers.');
+      }
+      return res.status(500).json({
+        error: 'Server configuration error. Please contact support.',
+      });
+    }
+
+    // INSANYCK MP-HOTFIX-03 + MP-HOTFIX-05 — Process payment with Mercado Pago API
     const paymentPayload = {
       token: formData.token,
       issuer_id: formData.issuer_id,
@@ -64,7 +104,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }),
       },
       external_reference: orderId,
-      notification_url: `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_URL}/api/mp/webhook`,
+      notification_url: `${baseUrl}/api/mp/webhook`, // INSANYCK MP-HOTFIX-05 — Use dynamic baseUrl
     };
 
     const mpResponse = await fetch('https://api.mercadopago.com/v1/payments', {

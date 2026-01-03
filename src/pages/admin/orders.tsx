@@ -82,7 +82,8 @@ export default function AdminOrdersPage() {
   const [pagination, setPagination] = useState<OrdersResponse['pagination'] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+  const [isRefreshing, setIsRefreshing] = useState(false); // INSANYCK MP-HOTFIX-05 — Visual feedback
+
   // Filtros
   const [statusFilter, setStatusFilter] = useState('');
   const [emailFilter, setEmailFilter] = useState('');
@@ -105,42 +106,67 @@ export default function AdminOrdersPage() {
     }
   }, [session, status, router]);
 
-  const fetchOrders = useCallback(async () => {
+  const fetchOrders = useCallback(async (isAutoRefresh = false) => {
     try {
-      setLoading(true);
+      // INSANYCK MP-HOTFIX-05 — Não mostrar spinner em auto-refresh, apenas em carregamento inicial
+      if (!isAutoRefresh) {
+        setLoading(true);
+      } else {
+        setIsRefreshing(true);
+      }
+
       const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: '10',
       });
-      
+
       if (statusFilter) params.append('status', statusFilter);
       if (emailFilter) params.append('email', emailFilter);
-      
+
       const response = await fetch(`/api/admin/orders?${params}`);
-      
+
       if (!response.ok) {
         throw new Error('Erro ao carregar pedidos');
       }
-      
+
       const data: OrdersResponse = await response.json();
       setOrders(data.orders);
       setPagination(data.pagination);
       setError('');
-      
+
     } catch (err) {
       setError('Erro ao carregar pedidos');
       console.error(err);
     } finally {
       setLoading(false);
+      setIsRefreshing(false);
     }
   }, [currentPage, statusFilter, emailFilter]);
 
   // Carregar orders
   useEffect(() => {
     if (!session?.user) return;
-    
+
     fetchOrders();
   }, [session, currentPage, statusFilter, emailFilter, fetchOrders]);
+
+  // INSANYCK MP-HOTFIX-05 — Auto-refresh polling (10s interval) para refletir atualizações de webhook
+  useEffect(() => {
+    if (!session?.user) return;
+
+    // Polling a cada 10 segundos para atualizar status automaticamente
+    const intervalId = setInterval(() => {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[Admin Orders] Auto-refreshing orders...');
+      }
+      fetchOrders(true); // INSANYCK MP-HOTFIX-05 — Pass true to indicate auto-refresh
+    }, 10000); // 10s
+
+    // Cleanup: limpar interval ao desmontar para evitar memory leaks
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [session, fetchOrders]);
 
   const formatCurrency = (cents: number) => {
     return (cents / 100).toLocaleString('pt-BR', {
@@ -174,7 +200,16 @@ export default function AdminOrdersPage() {
         <div className="mx-auto max-w-[1400px] px-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-semibold">Pedidos</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-semibold">Pedidos</h1>
+              {/* INSANYCK MP-HOTFIX-05 — Visual indicator de auto-refresh */}
+              {isRefreshing && (
+                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10">
+                  <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+                  <span className="text-xs text-white/60">Atualizando...</span>
+                </div>
+              )}
+            </div>
             <Link
               href="/admin"
               className="px-4 py-2 rounded-xl border border-white/20 hover:bg-white/10 transition"

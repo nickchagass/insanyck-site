@@ -50,8 +50,17 @@ export async function middleware(request: NextRequest) {
         secret: process.env.NEXTAUTH_SECRET,
       });
     } catch (authError) {
-      // Se auth falhar, permitir acesso (fail-open)
-      console.error("[INSANYCK MW] Auth check failed, failing open:", authError);
+      // INSANYCK MP-HOTFIX-05 — FAIL-CLOSED: Se auth crashar, redirecionar para login (segurança)
+      console.error("[INSANYCK MW] Auth check failed, failing closed for protected route:", authError);
+
+      // Fail-closed: redirecionar para login se for rota protegida
+      if (pathname.startsWith("/admin") || pathname.startsWith("/conta") || pathname.startsWith("/checkout")) {
+        const loginUrl = new URL("/conta/login", request.url);
+        loginUrl.searchParams.set("callbackUrl", pathname);
+        return NextResponse.redirect(loginUrl);
+      }
+
+      // Rotas não protegidas podem continuar
       return NextResponse.next();
     }
 
@@ -92,8 +101,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
 
   } catch (error) {
-    // ===== FAIL-OPEN: Qualquer erro = permitir acesso =====
-    console.error("[INSANYCK MW] Unexpected error, failing open:", error);
+    // INSANYCK MP-HOTFIX-05 — FAIL-CLOSED: Qualquer erro inesperado = redirecionar para login
+    console.error("[INSANYCK MW] Unexpected error, failing closed for protected route:", error);
+
+    // Fail-closed: redirecionar para login se for rota protegida
+    if (pathname.startsWith("/admin") || pathname.startsWith("/conta") || pathname.startsWith("/checkout")) {
+      const loginUrl = new URL("/conta/login", request.url);
+      loginUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Rotas não protegidas podem continuar
     return NextResponse.next();
   }
 }
