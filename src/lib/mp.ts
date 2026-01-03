@@ -129,3 +129,30 @@ export async function createPixPayment(payload: MPPixPaymentPayload): Promise<MP
 
   return response.json();
 }
+
+// INSANYCK MP-HOTFIX-03 — Normalized PIX response extractor (robust field validation)
+export interface NormalizedPixResponse {
+  payment_id: number;
+  qr_code: string;
+  qr_code_base64: string;
+  expires_at: string;
+}
+
+export function normalizePixResponse(raw: MPPixPaymentResponse): NormalizedPixResponse | null {
+  const qrCode = raw?.point_of_interaction?.transaction_data?.qr_code;
+  const qrCodeBase64 = raw?.point_of_interaction?.transaction_data?.qr_code_base64;
+  const expiresAt = raw?.date_of_expiration;
+  const paymentId = raw?.id;
+
+  // INSANYCK MP-HOTFIX-03 — Strict validation: must have payment_id AND at least one QR field
+  if (!paymentId || (!qrCode && !qrCodeBase64)) {
+    return null;
+  }
+
+  return {
+    payment_id: paymentId,
+    qr_code: qrCode || '',
+    qr_code_base64: qrCodeBase64 || '',
+    expires_at: expiresAt || '',
+  };
+}

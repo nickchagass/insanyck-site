@@ -93,14 +93,15 @@ const baseConfig: NextConfig = {
         value: [
           "default-src 'self'",
           // Em dev adicionamos 'unsafe-eval' para HMR/webpack
-          `script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.googletagmanager.com https://www.google-analytics.com https://*.vercel-insights.com${!isProd ? " 'unsafe-eval'" : ""}`,
+          // INSANYCK MP-HOTFIX-03 — Add Mercado Pago SDK domain
+          `script-src 'self' 'unsafe-inline' https://js.stripe.com https://sdk.mercadopago.com https://www.googletagmanager.com https://www.google-analytics.com https://*.vercel-insights.com${!isProd ? " 'unsafe-eval'" : ""}`,
           "style-src 'self' 'unsafe-inline'",
           // Permitimos https para imagens CDN futuras + data/blob locais
           "img-src 'self' https: data: blob:",
-          // APIs: Stripe + Vercel insights; em dev também ws: para HMR
-          `connect-src 'self' https://api.stripe.com https://*.vercel-insights.com https://www.google-analytics.com https://www.googletagmanager.com${!isProd ? " ws:" : ""}`,
-          // Stripe embeda <iframe>
-          "frame-src https://js.stripe.com",
+          // INSANYCK MP-HOTFIX-03 — Add Mercado Pago API domains
+          `connect-src 'self' https://api.stripe.com https://api.mercadopago.com https://*.mercadopago.com https://*.vercel-insights.com https://www.google-analytics.com https://www.googletagmanager.com${!isProd ? " ws:" : ""}`,
+          // INSANYCK MP-HOTFIX-03 — Add Mercado Pago Bricks iframe support
+          "frame-src https://js.stripe.com https://*.mercadopago.com https://mercadopago.com",
           "font-src 'self' data:",
           "object-src 'none'",
           "base-uri 'self'",

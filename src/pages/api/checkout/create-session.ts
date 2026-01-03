@@ -5,8 +5,8 @@ import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-// INSANYCK STEP F-MP — Import para pagamento híbrido
-import { createPixPayment } from "@/lib/mp";
+// INSANYCK STEP F-MP + MP-HOTFIX-03 — Import para pagamento híbrido
+import { createPixPayment, normalizePixResponse } from "@/lib/mp";
 
 const bodySchema = z.object({
   items: z.array(z.object({
@@ -18,8 +18,8 @@ const bodySchema = z.object({
   successUrl: z.string().url().optional(),
   // INSANYCK STEP F-MP — Provider opcional (stripe | mercadopago)
   provider: z.enum(['stripe', 'mercadopago']).optional(),
-  // INSANYCK STEP F-MP.2 — Method para diferenciar PIX vs Card
-  method: z.enum(['pix', 'card']).optional(),
+  // INSANYCK STEP F-MP.2 + MP-HOTFIX-03 — Method para diferenciar PIX vs Card vs Card Bricks
+  method: z.enum(['pix', 'card', 'card_bricks']).optional(),
   // INSANYCK STEP F-MP — Email obrigatório para MP quando usuário não estiver logado
   email: z.string().email().optional(),
 });
@@ -219,7 +219,91 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       });
 
-      // INSANYCK STEP F-MP.2 + MP-HOTFIX-01 — Card redirect flow (hardened)
+      // INSANYCK MP-HOTFIX-03 — Card Bricks flow (in-page card form, preferred)
+      if (method === 'card_bricks') {
+        try {
+          // Chamar create-preference para obter preference_id (needed by Bricks)
+          const preferenceRes = await fetch(`${baseUrl}/api/mp/create-preference`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              orderId: order.id,
+              items: resolved.map((r) => ({
+                title: r.title,
+                quantity: r.qty,
+                unit_price: r.unit_amount / 100,
+                currency_id: 'BRL',
+              })),
+              payer: {
+                email: payerEmail as string,
+              },
+            }),
+          });
+
+          if (!preferenceRes.ok) {
+            const errorText = await preferenceRes.text();
+            if (process.env.NODE_ENV === 'development') {
+              console.error('[MP-BRICKS] Preference creation failed:', {
+                status: preferenceRes.status,
+                statusText: preferenceRes.statusText,
+                body: errorText,
+              });
+            }
+            return res.status(500).json({
+              error: 'Failed to create MercadoPago preference for Bricks',
+              details: process.env.NODE_ENV === 'development' ? errorText : undefined,
+            });
+          }
+
+          const preferenceData = await preferenceRes.json();
+
+          if (!preferenceData.id || typeof preferenceData.id !== 'string') {
+            if (process.env.NODE_ENV === 'development') {
+              console.error('[MP-BRICKS] Invalid preference response (missing id):', {
+                status: preferenceRes.status,
+                preferenceData: {
+                  id: preferenceData.id,
+                  received_fields: Object.keys(preferenceData),
+                },
+              });
+            }
+            return res.status(500).json({
+              error: 'MercadoPago preference missing ID',
+              details: process.env.NODE_ENV === 'development'
+                ? { received_fields: Object.keys(preferenceData) }
+                : undefined,
+            });
+          }
+
+          // INSANYCK MP-HOTFIX-03 — Dev diagnostics
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[MP-BRICKS] Preference created successfully:', {
+              preference_id: preferenceData.id,
+              order_id: order.id,
+              amount_cents: totalCents,
+            });
+          }
+
+          // INSANYCK MP-HOTFIX-03 — Return preference_id for Bricks initialization
+          return res.status(200).json({
+            provider: 'mercadopago',
+            method: 'card_bricks',
+            order_id: order.id,
+            preference_id: preferenceData.id,
+            amount: totalCents,
+          });
+        } catch (bricksError: any) {
+          if (process.env.NODE_ENV === 'development') {
+            console.error('[MP-BRICKS] Card Bricks preparation error:', bricksError);
+          }
+          return res.status(500).json({
+            error: 'Failed to prepare Bricks card payment',
+            details: process.env.NODE_ENV === 'development' ? bricksError.message : undefined,
+          });
+        }
+      }
+
+      // INSANYCK STEP F-MP.2 + MP-HOTFIX-01 — Card redirect flow (legacy, kept for backward compat)
       if (method === 'card') {
         try {
           // Chamar create-preference para obter init_point
@@ -257,23 +341,44 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
           const preferenceData = await preferenceRes.json();
 
-          // INSANYCK MP-HOTFIX-01 — Validate init_point exists
-          if (!preferenceData.init_point || typeof preferenceData.init_point !== 'string') {
+          // INSANYCK MP-HOTFIX-02 — Normalize init_point (sandbox fallback)
+          const initPoint = preferenceData.init_point || preferenceData.sandbox_init_point;
+
+          if (!initPoint || typeof initPoint !== 'string') {
             if (process.env.NODE_ENV === 'development') {
-              console.error('[MP-HOTFIX-01] Invalid preference response:', preferenceData);
+              console.error('[MP-HOTFIX-02] Invalid preference response (missing init_point and sandbox_init_point):', {
+                status: preferenceRes.status,
+                statusText: preferenceRes.statusText,
+                preferenceData: {
+                  id: preferenceData.id,
+                  init_point: preferenceData.init_point,
+                  sandbox_init_point: preferenceData.sandbox_init_point,
+                },
+              });
             }
             return res.status(500).json({
               error: 'MercadoPago preference missing init_point',
-              details: process.env.NODE_ENV === 'development' ? preferenceData : undefined,
+              details: process.env.NODE_ENV === 'development'
+                ? { received_fields: Object.keys(preferenceData) }
+                : undefined,
             });
           }
 
-          // INSANYCK MP-HOTFIX-01 — Stable JSON contract (snake_case to match MP conventions)
+          // INSANYCK MP-HOTFIX-02 — Dev diagnostics
+          if (process.env.NODE_ENV === 'development') {
+            console.log('[MP-HOTFIX-02] Card preference created successfully:', {
+              preference_id: preferenceData.id,
+              init_point: initPoint,
+              is_sandbox: !!preferenceData.sandbox_init_point,
+            });
+          }
+
+          // INSANYCK MP-HOTFIX-02 — Stable JSON contract (snake_case to match MP conventions)
           return res.status(200).json({
             provider: 'mercadopago',
             method: 'card',
             order_id: order.id,
-            init_point: preferenceData.init_point,
+            init_point: initPoint,
             preference_id: preferenceData.id || undefined,
           });
         } catch (cardError: any) {
@@ -287,7 +392,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
       }
 
-      // INSANYCK STEP F-MP + MP-HOTFIX-01 — PIX flow (hardened)
+      // INSANYCK STEP F-MP + MP-HOTFIX-03 — PIX flow (normalized + robust)
       try {
         const pixPayment = await createPixPayment({
           transaction_amount: totalBRL,
@@ -300,40 +405,68 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           notification_url: `${baseUrl}/api/mp/webhook`,
         });
 
-        // INSANYCK MP-HOTFIX-01 — Validate PIX response structure
-        const qrCode = pixPayment?.point_of_interaction?.transaction_data?.qr_code;
-        const qrCodeBase64 = pixPayment?.point_of_interaction?.transaction_data?.qr_code_base64;
+        // INSANYCK MP-HOTFIX-03 — Use normalized extractor
+        const normalized = normalizePixResponse(pixPayment);
 
-        if (!qrCode && !qrCodeBase64) {
+        if (!normalized) {
           if (process.env.NODE_ENV === 'development') {
-            console.error('[MP-HOTFIX-01] PIX payment missing QR code data:', pixPayment);
+            console.error('[MP-PIX] Invalid PIX response (missing required fields):', {
+              payment_id: pixPayment?.id,
+              status: pixPayment?.status,
+              has_qr_code: !!pixPayment?.point_of_interaction?.transaction_data?.qr_code,
+              has_qr_code_base64: !!pixPayment?.point_of_interaction?.transaction_data?.qr_code_base64,
+              point_of_interaction_keys: pixPayment?.point_of_interaction
+                ? Object.keys(pixPayment.point_of_interaction)
+                : 'missing',
+              transaction_data_keys: pixPayment?.point_of_interaction?.transaction_data
+                ? Object.keys(pixPayment.point_of_interaction.transaction_data)
+                : 'missing',
+            });
           }
           return res.status(500).json({
             error: 'MercadoPago PIX payment missing QR code',
-            details: process.env.NODE_ENV === 'development' ? pixPayment : undefined,
+            details: process.env.NODE_ENV === 'development'
+              ? { payment_status: pixPayment?.status }
+              : undefined,
+          });
+        }
+
+        // INSANYCK MP-HOTFIX-03 — Dev diagnostics
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[MP-PIX] Payment created successfully:', {
+            payment_id: normalized.payment_id,
+            order_id: order.id,
+            has_qr_code: !!normalized.qr_code,
+            has_qr_code_base64: !!normalized.qr_code_base64,
+            expires_at: normalized.expires_at,
           });
         }
 
         // Atualizar Order com mpPaymentId
         await prisma.order.update({
           where: { id: order.id },
-          data: { mpPaymentId: String(pixPayment.id) },
+          data: { mpPaymentId: String(normalized.payment_id) },
         });
 
-        // INSANYCK MP-HOTFIX-01 — Stable JSON contract (snake_case)
+        // INSANYCK MP-HOTFIX-03 — Stable JSON contract (snake_case)
         return res.status(200).json({
           provider: 'mercadopago',
           method: 'pix',
-          payment_id: pixPayment.id,
+          payment_id: normalized.payment_id,
           order_id: order.id,
-          qr_code: qrCode || undefined,
-          qr_code_base64: qrCodeBase64 || undefined,
-          expires_at: pixPayment.date_of_expiration || undefined,
+          qr_code: normalized.qr_code,
+          qr_code_base64: normalized.qr_code_base64,
+          expires_at: normalized.expires_at,
           amount: totalBRL,
         });
       } catch (pixError: any) {
         if (process.env.NODE_ENV === 'development') {
-          console.error('[MP-HOTFIX-01] PIX payment creation error:', pixError);
+          console.error('[MP-PIX] Payment creation error:', {
+            error_name: pixError?.name,
+            error_message: pixError?.message,
+            error_cause: pixError?.cause,
+            error_stack: pixError?.stack?.split('\n').slice(0, 3),
+          });
         }
         return res.status(500).json({
           error: 'Failed to create PIX payment',

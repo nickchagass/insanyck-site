@@ -1,6 +1,7 @@
-// INSANYCK STEP F-MP + F-MP.POLISH — Página de checkout híbrida (Museum Edition One-Page)
+// INSANYCK STEP F-MP + F-MP.POLISH + MP-HOTFIX-03 — Página de checkout híbrida (Museum Edition One-Page + Bricks)
 // INSANYCK CHECKOUT-FIX-NOW-01 — Verified i18n compliance + clean payment flow
 import { useState, useEffect, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -11,9 +12,12 @@ import { useCartStore, useCartHydrated } from '@/store/cart';
 import GlassCard from '@/components/ui/GlassCard';
 import CheckoutSteps from '@/components/checkout/CheckoutSteps';
 import PaymentTabs, { PaymentMethod } from '@/components/checkout/PaymentTabs';
-import PixPayment from '@/components/checkout/PixPayment';
 import IdentityPanel from '@/components/checkout/IdentityPanel';
 import AddressPanel, { AddressData } from '@/components/checkout/AddressPanel';
+
+// INSANYCK MP-HOTFIX-03 — Dynamic imports for MP components (SSR-safe)
+const MercadoPagoPixPanel = dynamic(() => import('@/components/checkout/MercadoPagoPixPanel'), { ssr: false });
+const MercadoPagoBricksCard = dynamic(() => import('@/components/checkout/MercadoPagoBricksCard'), { ssr: false });
 
 export default function CheckoutPage() {
   const { t, i18n } = useTranslation('checkout');
@@ -38,7 +42,7 @@ export default function CheckoutPage() {
     state: '',
   });
 
-  // === Payment State (existing logic preserved) ===
+  // === Payment State (INSANYCK MP-HOTFIX-03 — Updated for Bricks) ===
   const [activeTab, setActiveTab] = useState<PaymentMethod>('pix');
   const [isLoading, setIsLoading] = useState(false);
   const [pixData, setPixData] = useState<{
@@ -50,10 +54,11 @@ export default function CheckoutPage() {
     amount: number;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // INSANYCK MP-HOTFIX-01 — Card confirmation panel state (replaces auto-redirect)
-  const [mpCardData, setMpCardData] = useState<{
-    initPoint: string;
+  // INSANYCK MP-HOTFIX-03 — Bricks card state (in-page card form)
+  const [bricksData, setBricksData] = useState<{
+    preferenceId: string;
     orderId: string;
+    amount: number;
   } | null>(null);
 
   // INSANYCK STEP F-MP.BUGFIX-01 — Redirecionar se carrinho vazio (apenas APÓS hidratação)
@@ -135,11 +140,19 @@ export default function CheckoutPage() {
 
       const data = await res.json();
 
-      // INSANYCK MP-HOTFIX-01 — Validate MP PIX response (snake_case fields)
+      // INSANYCK MP-HOTFIX-02 — Validate MP PIX response (snake_case fields)
       if (data.provider === 'mercadopago' && data.method === 'pix') {
         if (!data.payment_id || (!data.qr_code && !data.qr_code_base64)) {
           if (process.env.NODE_ENV === 'development') {
-            console.error('[MP-HOTFIX-01] Invalid PIX response:', data);
+            console.error('[MP-HOTFIX-02] Invalid PIX response received from API:', {
+              provider: data.provider,
+              method: data.method,
+              has_payment_id: !!data.payment_id,
+              has_qr_code: !!data.qr_code,
+              has_qr_code_base64: !!data.qr_code_base64,
+              order_id: data.order_id,
+              all_fields: Object.keys(data),
+            });
           }
           throw new Error('Resposta de pagamento PIX inválida');
         }
@@ -154,7 +167,11 @@ export default function CheckoutPage() {
         });
       } else {
         if (process.env.NODE_ENV === 'development') {
-          console.error('[MP-HOTFIX-01] Unexpected provider/method:', data);
+          console.error('[MP-HOTFIX-02] Unexpected provider/method in PIX flow:', {
+            provider: data.provider,
+            method: data.method,
+            expected: { provider: 'mercadopago', method: 'pix' },
+          });
         }
         throw new Error('Provider inválido');
       }
@@ -226,7 +243,7 @@ export default function CheckoutPage() {
   };
 
   const handleCardPayment = async () => {
-    // INSANYCK MP-HOTFIX-01 — Card MP confirmation flow (NO auto-redirect)
+    // INSANYCK MP-HOTFIX-03 — Card Bricks flow (in-page card form)
     const payerEmail = session?.user?.email || identityEmail;
 
     if (!payerEmail) {
@@ -249,7 +266,7 @@ export default function CheckoutPage() {
           })),
           currency: 'BRL',
           provider: 'mercadopago',
-          method: 'card',
+          method: 'card_bricks',
           email: payerEmail,
         }),
       });
@@ -261,17 +278,25 @@ export default function CheckoutPage() {
 
       const data = await res.json();
 
-      // INSANYCK MP-HOTFIX-01 — Validate MP Card response (snake_case fields)
-      if (data.method === 'card' && data.init_point) {
-        // Show premium confirmation panel (NO auto-redirect)
-        setMpCardData({
-          initPoint: data.init_point,
+      // INSANYCK MP-HOTFIX-03 — Validate Bricks response
+      if (data.provider === 'mercadopago' && data.method === 'card_bricks' && data.preference_id && data.order_id) {
+        // Show in-page Bricks card form (NO redirect)
+        setBricksData({
+          preferenceId: data.preference_id,
           orderId: data.order_id,
+          amount: data.amount || 0,
         });
         setIsLoading(false);
       } else {
         if (process.env.NODE_ENV === 'development') {
-          console.error('[MP-HOTFIX-01] Invalid Card response:', data);
+          console.error('[MP-BRICKS] Invalid response received from API:', {
+            provider: data.provider,
+            method: data.method,
+            has_preference_id: !!data.preference_id,
+            has_order_id: !!data.order_id,
+            all_fields: Object.keys(data),
+            full_response: data,
+          });
         }
         throw new Error('Resposta de pagamento com cartão inválida');
       }
@@ -292,30 +317,17 @@ export default function CheckoutPage() {
     }
   };
 
-  // INSANYCK MP-HOTFIX-01 — Premium redirect handlers (explicit user action)
-  const handleMpCardRedirect = () => {
-    if (mpCardData?.initPoint) {
-      window.location.assign(mpCardData.initPoint);
-    }
+  // INSANYCK MP-HOTFIX-03 — Bricks payment success/error handlers
+  const handleBricksSuccess = (paymentId: string) => {
+    // Redirect to success page
+    router.push(`/checkout/success?payment_id=${paymentId}&order_id=${bricksData?.orderId}`);
   };
 
-  const handleCopyMpLink = async () => {
-    if (mpCardData?.initPoint) {
-      try {
-        await navigator.clipboard.writeText(mpCardData.initPoint);
-        // Show subtle confirmation (reuse existing error state for simplicity)
-        const prevError = error;
-        setError(locale === 'pt' ? 'Link copiado!' : 'Link copied!');
-        setTimeout(() => setError(prevError), 2000);
-      } catch {
-        setError(locale === 'pt' ? 'Não foi possível copiar o link' : 'Could not copy link');
-      }
-    }
-  };
-
-  const handleOpenMpNewTab = () => {
-    if (mpCardData?.initPoint) {
-      window.open(mpCardData.initPoint, '_blank', 'noopener,noreferrer');
+  const handleBricksError = (errorMsg: string) => {
+    setError(errorMsg);
+    // Optionally reset Bricks state to allow retry
+    if (process.env.NODE_ENV === 'development') {
+      console.error('[MP-BRICKS] Payment error:', errorMsg);
     }
   };
 
@@ -458,8 +470,9 @@ export default function CheckoutPage() {
               </div>
             )}
 
+            {/* INSANYCK MP-HOTFIX-03 — PIX with new Museum panel */}
             {activeTab === 'pix' && pixData && (
-              <PixPayment
+              <MercadoPagoPixPanel
                 paymentId={pixData.paymentId}
                 orderId={pixData.orderId}
                 qrCode={pixData.qrCode}
@@ -469,8 +482,8 @@ export default function CheckoutPage() {
               />
             )}
 
-            {/* Card Payment Content - INSANYCK MP-HOTFIX-01 */}
-            {activeTab === 'card' && !mpCardData && (
+            {/* INSANYCK MP-HOTFIX-03 — Card Payment with Bricks (in-page) */}
+            {activeTab === 'card' && !bricksData && (
               <div className="space-y-4">
                 <p className="text-white/70 text-sm">
                   {t('card.title', 'Pague com cartão')}
@@ -495,56 +508,15 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {/* INSANYCK MP-HOTFIX-01 — Premium Confirmation Panel (NO auto-redirect) */}
-            {activeTab === 'card' && mpCardData && (
-              <div className="space-y-6 py-6">
-                {/* Museum Edition confirmation with premium glassmorphism */}
-                <div className="text-center">
-                  <div className="mx-auto w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
-                    <svg className="w-8 h-8 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    {locale === 'pt' ? 'Pronto para pagamento' : 'Ready for payment'}
-                  </h3>
-                  <p className="text-white/60 text-sm mb-6">
-                    {locale === 'pt'
-                      ? 'Clique no botão abaixo para abrir o Mercado Pago e finalizar seu pagamento com segurança'
-                      : 'Click the button below to open Mercado Pago and complete your payment securely'}
-                  </p>
-                </div>
-
-                {/* Primary CTA */}
-                <button
-                  onClick={handleMpCardRedirect}
-                  className="w-full px-6 py-4 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-semibold transition-all transform hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
-                >
-                  {locale === 'pt' ? 'Abrir Mercado Pago' : 'Open Mercado Pago'}
-                </button>
-
-                {/* Secondary Actions */}
-                <div className="flex gap-3">
-                  <button
-                    onClick={handleCopyMpLink}
-                    className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/80 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
-                  >
-                    {locale === 'pt' ? 'Copiar link' : 'Copy link'}
-                  </button>
-                  <button
-                    onClick={handleOpenMpNewTab}
-                    className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/80 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
-                  >
-                    {locale === 'pt' ? 'Abrir em nova aba' : 'Open in new tab'}
-                  </button>
-                </div>
-
-                <p className="text-white/50 text-xs text-center mt-4">
-                  {locale === 'pt'
-                    ? 'Você será redirecionado para a plataforma segura do Mercado Pago'
-                    : 'You will be redirected to Mercado Pago\'s secure platform'}
-                </p>
-              </div>
+            {/* INSANYCK MP-HOTFIX-03 — Bricks Card Form (in-page, NO redirect) */}
+            {activeTab === 'card' && bricksData && (
+              <MercadoPagoBricksCard
+                preferenceId={bricksData.preferenceId}
+                amount={bricksData.amount}
+                orderId={bricksData.orderId}
+                onSuccess={handleBricksSuccess}
+                onError={handleBricksError}
+              />
             )}
 
             {/* Stripe Payment Content (INSANYCK F-MP.POLISH — i18n subtitle) */}
