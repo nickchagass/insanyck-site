@@ -38,10 +38,10 @@ function LayoutShell({ children }: { children: React.ReactNode }) {
   // INSANYCK STEP 4 · Lote 4 — hide SW banner under test
   const hideUpdateBanner = process.env.INSANYCK_TEST_HIDE_UPDATE_BANNER === '1';
 
-  // INSANYCK TITANIUM SHADOW UX — Aplicar fundo global exceto em /checkout e /conta/pagamento
+  // INSANYCK VAULT EDITION — Activate God Tier atmosphere
   const router = useRouter();
   const hideTitaniumBg = router.pathname.startsWith('/checkout') || router.pathname.startsWith('/conta/pagamento');
-  const wrapperClass = hideTitaniumBg ? '' : 'app-bg-titanium';
+  const wrapperClass = hideTitaniumBg ? '' : 'vault-atmosphere';
 
   if (isDev) {
     console.warn('[dev] LayoutShell mounted');
