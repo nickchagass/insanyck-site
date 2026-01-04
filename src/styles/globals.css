@@ -4330,3 +4330,68 @@ body::after {
   );
   animation: shimmer 2s infinite;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   INSANYCK GOD TIER — VAULT EDITION CSS
+   Premium Museum Vitrine Aesthetic
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --vault-noise-opacity: 0.025;
+  --vault-noise-opacity-strong: 0.04;
+  --vault-noise-blend: overlay;
+  --vault-noise-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='noise' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.12' intercept='0'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+
+  --vault-bg-base: #050507;
+  --vault-spot-color: 240, 245, 255;
+  --vault-spot-warm: 255, 252, 248;
+  --vault-glass-tint: rgba(255, 255, 255, 0.018);
+  --vault-glass-tint-hover: rgba(255, 255, 255, 0.028);
+  --vault-glass-border: rgba(255, 255, 255, 0.08);
+  --vault-glass-border-hover: rgba(255, 255, 255, 0.14);
+  --vault-specular-peak: rgba(255, 255, 255, 0.85);
+  --vault-bevel-highlight: rgba(255, 255, 255, 0.06);
+  --vault-bevel-shadow: rgba(0, 0, 0, 0.25);
+  --vault-bevel-inner: rgba(0, 0, 0, 0.18);
+  --vault-shadow-close: 0 4px 12px -4px rgba(0, 0, 0, 0.35);
+  --vault-shadow-mid: 0 12px 32px -8px rgba(0, 0, 0, 0.45);
+  --vault-shadow-far: 0 24px 48px -12px rgba(0, 0, 0, 0.40);
+  --vault-radius-sm: 14px;
+  --vault-radius-md: 20px;
+  --vault-radius-lg: 24px;
+  --vault-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --vault-duration-fast: 180ms;
+  --vault-duration-normal: 280ms;
+}
+
+.vault-atmosphere {
+  position: relative;
+  min-height: 100vh;
+  background: linear-gradient(180deg, rgba(15, 18, 25, 0.4) 0%, var(--vault-bg-base) 30%, var(--vault-bg-base) 70%, rgba(8, 10, 15, 1) 100%), var(--vault-bg-base);
+  isolation: isolate;
+}
+.vault-atmosphere::before {
+  content: ""; position: fixed; top: -20%; left: 50%; transform: translateX(-50%); width: 120%; height: 70%; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse 60% 45% at 50% 0%, rgba(var(--vault-spot-color), 0.08) 0%, rgba(var(--vault-spot-color), 0.03) 40%, transparent 70%);
+}
+.vault-atmosphere::after {
+  content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background-image: var(--vault-noise-svg); background-repeat: repeat; opacity: var(--vault-noise-opacity); mix-blend-mode: var(--vault-noise-blend); image-rendering: pixelated;
+}
+
+.vault-glass-card {
+  position: relative;
+  background: var(--vault-glass-tint);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid var(--vault-glass-border);
+  border-radius: var(--vault-radius-md);
+  box-shadow: inset 0 1px 0 var(--vault-bevel-highlight), inset 0 0 0 1px rgba(255, 255, 255, 0.03), inset 0 -20px 40px var(--vault-bevel-inner), var(--vault-shadow-close), var(--vault-shadow-mid), var(--vault-shadow-far);
+  isolation: isolate;
+  overflow: visible;
+  transition: all var(--vault-duration-normal) var(--vault-ease);
+}
+.vault-glass-card:hover {
+  background: var(--vault-glass-tint-hover); border-color: var(--vault-glass-border-hover); transform: translateY(-3px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), inset 0 0 0 1px rgba(255, 255, 255, 0.04), inset 0 -22px 44px var(--vault-bevel-inner), 0 6px 16px -4px rgba(0, 0, 0, 0.40), 0 16px 40px -8px rgba(0, 0, 0, 0.50), 0 32px 64px -16px rgba(0, 0, 0, 0.45);
+}
