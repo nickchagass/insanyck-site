@@ -1,7 +1,7 @@
-// INSANYCK MP-HOTFIX-03 — Premium PIX Panel (Museum Edition)
+// INSANYCK MP-HOTFIX-03 + MP-MOBILE-01 — Premium PIX Panel (Museum Edition, Production-Grade)
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
 import { motion } from 'framer-motion';
 
@@ -28,9 +28,37 @@ export default function MercadoPagoPixPanel({
   const locale = i18n.language === 'en' ? 'en' : 'pt';
   const [copied, setCopied] = useState(false);
 
-  // INSANYCK MP-MOBILE-01 FIX A — Prefer amount_cents (integer) as source of truth
+  // INSANYCK MP-MOBILE-01 FIX B — Prefer amount_cents (integer) as source of truth
   // Fallback to amount (BRL decimal) * 100 for backward compatibility
   const displayAmountCents = amountCents ?? (amount ? Math.round(amount * 100) : 0);
+
+  // INSANYCK MP-MOBILE-01 FIX B — Dev-only mount diagnostic: amount mismatch detection
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      const backendCents = amountCents;
+      const legacyCents = amount ? Math.round(amount * 100) : 0;
+      const hasMismatch = backendCents && legacyCents && backendCents !== legacyCents;
+
+      console.log('[MP-MOBILE-01] PIX amount_display_diagnostic:', {
+        backend_amount_cents: backendCents,
+        legacy_amount_brl: amount,
+        legacy_amount_cents: legacyCents,
+        display_amount_cents: displayAmountCents,
+        has_mismatch: hasMismatch,
+        mismatch_delta_cents: hasMismatch ? Math.abs(backendCents - legacyCents) : 0,
+        order_id: orderId,
+        payment_id: paymentId,
+      });
+
+      if (hasMismatch) {
+        console.warn('[MP-MOBILE-01] amount_mismatch', {
+          cart_amount_cents: legacyCents,
+          backend_amount_cents: backendCents,
+          order_id: orderId,
+        });
+      }
+    }
+  }, [amountCents, amount, displayAmountCents, orderId, paymentId]);
 
   const handleCopy = async () => {
     if (!qrCode) return;

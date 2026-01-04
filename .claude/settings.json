@@ -4,40 +4,67 @@
     "allow": [
       "Read(./**)",
       "Edit(./**)",
+
       "Bash(ls:*)",
       "Bash(cat:*)",
+      "Bash(echo:*)",
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+
       "Bash(npm run lint)",
       "Bash(npm run lint:*)",
       "Bash(npm run test)",
       "Bash(npm run test:*)",
-      "Bash(npm run test:e2e)",
-      "Bash(npm run test:e2e:*)",
       "Bash(npm run typecheck)",
       "Bash(npm run typecheck:*)",
       "Bash(npm run build)",
       "Bash(npm run build:*)",
-      "Bash(git status*)",
-      "Bash(git diff*)"
+
+      "Bash(git status)",
+      "Bash(git status:*)",
+      "Bash(git diff)",
+      "Bash(git diff:*)",
+      "Bash(git log)",
+      "Bash(git log:*)"
     ],
     "ask": [
       "Bash(npm run dev)",
       "Bash(npm run dev:*)",
+
+      "Bash(rm -rf .next)",
+      "Bash(rm -rf .next:*)",
+      "Bash(rm -rf node_modules)",
+      "Bash(rm -rf node_modules:*)",
+
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)"
     ],
     "deny": [
-      "Bash(npm install*)",
-      "Bash(pnpm install*)",
-      "Bash(yarn install*)",
+      "Bash(npm install:*)",
+      "Bash(pnpm install:*)",
+      "Bash(yarn install:*)",
+
       "Bash(rm:*)",
       "Bash(del:*)",
       "Bash(rmdir:*)",
       "Bash(mkfs:*)",
       "Bash(format:*)",
       "Bash(sudo:*)",
-      "Read(./.env)",
-      "Read(./.env.*)",
+
+      "Edit(./.env)",
+      "Edit(./.env.*)",
+      "Edit(./**/.env)",
+      "Edit(./**/.env.*)",
+
+      "Edit(./src/pages/api/stripe/**)",
+      "Edit(./src/lib/stripe.ts)",
+      "Edit(./src/lib/stripe/**)",
+      "Edit(./src/pages/api/webhooks/**)",
+      "Edit(./src/pages/api/checkout/stripe/**)",
+
+      "Edit(./src/pages/api/mp/**)",
+
       "Read(./secrets/**)",
       "Read(./config/credentials.json)"
     ],

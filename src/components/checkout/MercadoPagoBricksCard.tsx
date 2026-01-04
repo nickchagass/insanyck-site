@@ -1,7 +1,8 @@
-// INSANYCK MP-HOTFIX-03 + MP-MOBILE-01 FIX B — Mercado Pago Bricks Card Payment (Museum Edition, SSR-safe, with Timeout Watchdog)
+// INSANYCK MP-HOTFIX-03 + MP-MOBILE-01 FINAL — Mercado Pago Bricks Card Payment (Museum Edition, Production-Grade)
+// CRITICAL FIXES: No throws in event handlers, deterministic retry, proper error paths
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useTranslation } from 'next-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -32,6 +33,9 @@ export default function MercadoPagoBricksCard({
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const onReadyFiredRef = useRef(false);
 
+  // INSANYCK MP-MOBILE-01 FINAL — Deterministic retry via key change
+  const [retryKey, setRetryKey] = useState(0);
+
   useEffect(() => {
     // INSANYCK MP-HOTFIX-03 — SSR guard: only run in browser
     if (typeof window === 'undefined') return;
@@ -47,6 +51,7 @@ export default function MercadoPagoBricksCard({
         order_id: orderId,
         amount_cents: amount,
         locale,
+        retry_attempt: retryKey,
       });
     }
 
@@ -65,8 +70,8 @@ export default function MercadoPagoBricksCard({
     timeoutRef.current = setTimeout(() => {
       if (!onReadyFiredRef.current) {
         const errorMsg = locale === 'pt'
-          ? 'Tempo esgotado ao carregar formulário de pagamento'
-          : 'Payment form loading timeout';
+          ? 'Não foi possível carregar o formulário'
+          : 'Could not load payment form';
         setLoadError(errorMsg);
         setIsLoading(false);
         onError?.(errorMsg);
@@ -77,47 +82,57 @@ export default function MercadoPagoBricksCard({
       }
     }, 12000); // 12s timeout
 
-    // INSANYCK MP-HOTFIX-03 — Load Mercado Pago SDK dynamically
-    const loadMercadoPagoSDK = async () => {
-      try {
-        // INSANYCK MP-MOBILE-01 FIX B — Dev diagnostic: script loading start
+    // INSANYCK MP-MOBILE-01 FINAL — Load Mercado Pago SDK (NO throws in event handlers)
+    const loadMercadoPagoSDK = () => {
+      // INSANYCK MP-MOBILE-01 FIX B — Dev diagnostic: script loading start
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[MP-BRICKS] Starting SDK load...');
+      }
+
+      // Check if SDK is already loaded
+      if ((window as any).MercadoPago) {
         if (process.env.NODE_ENV === 'development') {
-          console.log('[MP-BRICKS] Starting SDK load...');
+          console.log('[MP-BRICKS] SDK already loaded, initializing Bricks...');
+        }
+        initBricks((window as any).MercadoPago);
+        return;
+      }
+
+      // Load SDK script
+      const script = document.createElement('script');
+      script.src = 'https://sdk.mercadopago.com/js/v2';
+      script.async = true;
+
+      // INSANYCK MP-MOBILE-01 FINAL — Script onload (NO throw, proper error state)
+      script.onload = () => {
+        if (process.env.NODE_ENV === 'development') {
+          console.log('[MP-BRICKS] SDK script loaded successfully');
         }
 
-        // Check if SDK is already loaded
         if ((window as any).MercadoPago) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('[MP-BRICKS] SDK already loaded, initializing Bricks...');
-          }
           initBricks((window as any).MercadoPago);
-          return;
-        }
+        } else {
+          // CRITICAL FIX: NO throw here - set error state instead
+          const errorMsg = locale === 'pt'
+            ? 'SDK carregado mas não disponível'
+            : 'SDK loaded but unavailable';
+          setLoadError(errorMsg);
+          setIsLoading(false);
+          onError?.(errorMsg);
 
-        // Load SDK script
-        const script = document.createElement('script');
-        script.src = 'https://sdk.mercadopago.com/js/v2';
-        script.async = true;
-
-        script.onload = () => {
           if (process.env.NODE_ENV === 'development') {
-            console.log('[MP-BRICKS] SDK script loaded successfully');
+            console.error('[MP-MOBILE-01] sdk_blocked', {
+              script_src: 'https://sdk.mercadopago.com/js/v2',
+              public_key_present: !!publicKey,
+              ready_fired: false,
+            });
           }
+        }
+      };
 
-          if ((window as any).MercadoPago) {
-            initBricks((window as any).MercadoPago);
-          } else {
-            throw new Error('MercadoPago SDK not available after script load');
-          }
-        };
-
-        // INSANYCK MP-MOBILE-01 FIX B — Robust script.onerror handler
-        script.onerror = (error) => {
-          throw new Error('Failed to load MercadoPago SDK script');
-        };
-
-        document.body.appendChild(script);
-      } catch (err) {
+      // INSANYCK MP-MOBILE-01 FINAL — Script onerror (NO throw, proper error state)
+      script.onerror = () => {
+        // CRITICAL FIX: NO throw here - set error state instead
         const errorMsg = locale === 'pt'
           ? 'Erro ao carregar sistema de pagamento'
           : 'Failed to load payment system';
@@ -126,9 +141,15 @@ export default function MercadoPagoBricksCard({
         onError?.(errorMsg);
 
         if (process.env.NODE_ENV === 'development') {
-          console.error('[MP-BRICKS] SDK load error:', err);
+          console.error('[MP-MOBILE-01] sdk_blocked', {
+            script_src: 'https://sdk.mercadopago.com/js/v2',
+            public_key_present: !!publicKey,
+            ready_fired: false,
+          });
         }
-      }
+      };
+
+      document.body.appendChild(script);
     };
 
     const initBricks = async (MercadoPago: any) => {
@@ -294,22 +315,44 @@ export default function MercadoPagoBricksCard({
         }
       }
     };
-  }, [preferenceId, amount, orderId, locale, onSuccess, onError]);
+  }, [preferenceId, amount, orderId, locale, onSuccess, onError, retryKey]); // INSANYCK MP-MOBILE-01 FINAL — retryKey forces re-init
 
-  // INSANYCK MP-MOBILE-01 FIX B — Retry handler
-  const handleRetry = () => {
+  // INSANYCK MP-MOBILE-01 FINAL — Deterministic retry (surgical re-init via key change)
+  const handleRetry = useCallback(() => {
+    // Destroy existing brick instance
+    if (brickInstanceRef.current) {
+      try {
+        brickInstanceRef.current.unmount();
+        brickInstanceRef.current = null;
+      } catch (err) {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('[MP-BRICKS] Brick unmount during retry:', err);
+        }
+      }
+    }
+
+    // Clear brick container
+    if (brickContainerRef.current) {
+      brickContainerRef.current.innerHTML = '';
+    }
+
+    // Reset state and trigger re-init via key change
     setLoadError(null);
     setIsLoading(true);
     onReadyFiredRef.current = false;
-    // Force re-render to trigger useEffect
-    window.location.reload();
-  };
+    setRetryKey(k => k + 1); // Force useEffect re-run
+
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[MP-BRICKS] Retry initiated (deterministic re-init)');
+    }
+  }, []);
 
   // INSANYCK MP-MOBILE-01 FIX B — Premium error state with retry (Museum Edition with Framer Motion)
   if (loadError) {
     return (
       <AnimatePresence mode="wait">
         <motion.div
+          key={`error-${retryKey}`}
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
@@ -327,10 +370,10 @@ export default function MercadoPagoBricksCard({
               </svg>
               <div>
                 <h3 className="text-sm font-semibold text-red-400/90 mb-1.5 tracking-tight">
-                  {locale === 'pt' ? 'Não foi possível carregar o formulário de cartão' : 'Could not load card form'}
+                  {locale === 'pt' ? 'Não foi possível carregar o formulário' : 'Could not load payment form'}
                 </h3>
                 <p className="text-xs text-red-400/60 leading-relaxed">
-                  {loadError}
+                  {locale === 'pt' ? 'Toque em "Tentar novamente" para recarregar.' : 'Tap "Try again" to reload.'}
                 </p>
               </div>
             </div>

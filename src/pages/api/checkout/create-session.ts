@@ -218,7 +218,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     // INSANYCK STEP F-MP.2 — Fluxo híbrido: MercadoPago (PIX or Card)
     if (finalProvider === 'mercadopago') {
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_URL || "http://localhost:3000";
+      // INSANYCK MP-MOBILE-01 FIX C — Hard requirement for NEXT_PUBLIC_SITE_URL in production
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
+
+      if (process.env.NODE_ENV === 'production' && !baseUrl) {
+        console.error('[MP-MOBILE-01] CRITICAL missing_site_url');
+        return res.status(500).json({
+          error: 'Payment configuration error',
+        });
+      }
+
+      // Development fallback (permissive, localhost only allowed in dev)
+      const finalBaseUrl = baseUrl || "http://localhost:3000";
 
       // Calcular total
       const totalCents = resolved.reduce((sum, r) => sum + r.unit_amount * r.qty, 0);
@@ -254,7 +265,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (method === 'card_bricks') {
         try {
           // Chamar create-preference para obter preference_id (needed by Bricks)
-          const preferenceRes = await fetch(`${baseUrl}/api/mp/create-preference`, {
+          const preferenceRes = await fetch(`${finalBaseUrl}/api/mp/create-preference`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -338,7 +349,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (method === 'card') {
         try {
           // Chamar create-preference para obter init_point
-          const preferenceRes = await fetch(`${baseUrl}/api/mp/create-preference`, {
+          const preferenceRes = await fetch(`${finalBaseUrl}/api/mp/create-preference`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -433,8 +444,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             email: payerEmail as string,
           },
           external_reference: order.id,
-          notification_url: `${baseUrl}/api/mp/webhook`,
+          notification_url: `${finalBaseUrl}/api/mp/webhook`,
         });
+
+        // INSANYCK MP-MOBILE-01 DO/DIE — Money destination verification (dev-only)
+        if (process.env.NODE_ENV === 'development') {
+          const collectorId = (pixPayment as any).collector_id || (pixPayment as any).merchant_account_id;
+          console.log('[MP-MOBILE-01] collector_check', {
+            collector_id_present: !!collectorId,
+            value_redacted: true,
+          });
+        }
 
         // INSANYCK MP-HOTFIX-03 — Use normalized extractor
         const normalized = normalizePixResponse(pixPayment);
@@ -470,7 +490,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             has_qr_code: !!normalized.qr_code,
             has_qr_code_base64: !!normalized.qr_code_base64,
             expires_at: normalized.expires_at,
-            notification_url: `${baseUrl}/api/mp/webhook`,
+            notification_url: `${finalBaseUrl}/api/mp/webhook`,
             amount_brl: totalBRL,
             amount_cents: totalCents,
           });
