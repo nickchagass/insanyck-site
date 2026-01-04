@@ -103,48 +103,53 @@ export default function MercadoPagoBricksCard({
       script.src = 'https://sdk.mercadopago.com/js/v2';
       script.async = true;
 
-      // INSANYCK MP-MOBILE-01 FINAL — Script onload (NO throw, proper error state)
+      // INSANYCK MP-MOBILE-01 FINAL + MP-DESKTOP-02 FIX C — Script onload with CSP/block detection
       script.onload = () => {
         if (process.env.NODE_ENV === 'development') {
           console.log('[MP-BRICKS] SDK script loaded successfully');
         }
 
-        if ((window as any).MercadoPago) {
-          initBricks((window as any).MercadoPago);
-        } else {
-          // CRITICAL FIX: NO throw here - set error state instead
+        // INSANYCK MP-DESKTOP-02 FIX C — Verify window.MercadoPago exists (CSP/adblock detection)
+        if (!(window as any).MercadoPago) {
+          // CRITICAL: SDK script loaded but MercadoPago object not available (CSP violation or adblock)
           const errorMsg = locale === 'pt'
-            ? 'SDK carregado mas não disponível'
-            : 'SDK loaded but unavailable';
+            ? 'Não foi possível carregar o pagamento'
+            : 'Could not load payment';
           setLoadError(errorMsg);
           setIsLoading(false);
           onError?.(errorMsg);
 
           if (process.env.NODE_ENV === 'development') {
-            console.error('[MP-MOBILE-01] sdk_blocked', {
+            console.error('[MP-DESKTOP-02] sdk_blocked:', {
+              script_loaded: true,
+              window_mp_present: false,
               script_src: 'https://sdk.mercadopago.com/js/v2',
               public_key_present: !!publicKey,
-              ready_fired: false,
+              possible_cause: 'CSP_violation_or_adblock',
             });
           }
+          return;
         }
+
+        // SDK verified, proceed to init
+        initBricks((window as any).MercadoPago);
       };
 
-      // INSANYCK MP-MOBILE-01 FINAL — Script onerror (NO throw, proper error state)
+      // INSANYCK MP-MOBILE-01 FINAL + MP-DESKTOP-02 FIX C — Script onerror (NO throw, proper error state)
       script.onerror = () => {
         // CRITICAL FIX: NO throw here - set error state instead
         const errorMsg = locale === 'pt'
-          ? 'Erro ao carregar sistema de pagamento'
-          : 'Failed to load payment system';
+          ? 'Não foi possível carregar o pagamento'
+          : 'Could not load payment';
         setLoadError(errorMsg);
         setIsLoading(false);
         onError?.(errorMsg);
 
         if (process.env.NODE_ENV === 'development') {
-          console.error('[MP-MOBILE-01] sdk_blocked', {
+          console.error('[MP-DESKTOP-02] sdk_load_failed:', {
             script_src: 'https://sdk.mercadopago.com/js/v2',
             public_key_present: !!publicKey,
-            ready_fired: false,
+            possible_cause: 'network_error_or_blocked',
           });
         }
       };
@@ -370,10 +375,10 @@ export default function MercadoPagoBricksCard({
               </svg>
               <div>
                 <h3 className="text-sm font-semibold text-red-400/90 mb-1.5 tracking-tight">
-                  {locale === 'pt' ? 'Não foi possível carregar o formulário' : 'Could not load payment form'}
+                  {locale === 'pt' ? 'Não foi possível carregar o pagamento' : 'Could not load payment'}
                 </h3>
                 <p className="text-xs text-red-400/60 leading-relaxed">
-                  {locale === 'pt' ? 'Toque em "Tentar novamente" para recarregar.' : 'Tap "Try again" to reload.'}
+                  {locale === 'pt' ? 'Verifique bloqueadores e toque em "Tentar novamente".' : 'Check blockers and tap "Try again".'}
                 </p>
               </div>
             </div>

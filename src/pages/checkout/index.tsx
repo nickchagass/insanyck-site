@@ -267,7 +267,7 @@ export default function CheckoutPage() {
   };
 
   const handleCardPayment = async () => {
-    // INSANYCK MP-HOTFIX-03 — Card Bricks flow (in-page card form)
+    // INSANYCK MP-HOTFIX-03 + MP-DESKTOP-02 — Card Bricks flow (in-page card form)
     const payerEmail = session?.user?.email || identityEmail;
 
     if (!payerEmail) {
@@ -277,6 +277,19 @@ export default function CheckoutPage() {
 
     setIsLoading(true);
     setError(null);
+
+    // INSANYCK MP-DESKTOP-02 FIX B — DO/DIE diagnostics: frontend submit payload
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[MP-DESKTOP-02] submit:', {
+        selected_tab: activeTab,
+        provider_sent: 'mercadopago',
+        method_sent: 'card_bricks',
+        locale,
+        is_hybrid: featureFlag === 'hybrid',
+        has_email: !!payerEmail,
+        item_count: items.length,
+      });
+    }
 
     try {
       const res = await fetch('/api/checkout/create-session', {

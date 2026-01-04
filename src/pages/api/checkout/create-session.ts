@@ -161,42 +161,54 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "No valid items" });
   }
 
-  // INSANYCK STEP F-MP + MP-HOTFIX-04 — Decisão de provider baseada em feature flag
+  // INSANYCK STEP F-MP + MP-HOTFIX-04 + MP-DESKTOP-02 — Decisão de provider baseada em feature flag
   const featureFlag = process.env.NEXT_PUBLIC_CHECKOUT_PROVIDER || 'stripe';
   const requestedProvider = body.provider || 'stripe';
+  const requestedMethod = body.method;
 
-  // INSANYCK MP-HOTFIX-04 — Debug logging to diagnose routing issues
+  // INSANYCK MP-DESKTOP-02 FIX B — DO/DIE diagnostics: input state
   if (process.env.NODE_ENV === 'development') {
-    console.log('[CreateSession] Payment Router Debug:', {
-      featureFlag,
-      requestedProvider,
-      method: body.method,
-      hasEmail: !!body.email,
-      itemCount: items.length,
+    console.log('[MP-DESKTOP-02] create_session_input:', {
+      feature_flag: featureFlag,
+      requested_provider: requestedProvider,
+      requested_method: requestedMethod,
+      has_email: !!body.email,
+      item_count: items.length,
+      is_hybrid_enabled: featureFlag === 'hybrid',
     });
   }
 
   // Se feature flag !== 'hybrid', forçar Stripe (rollback safety)
   const finalProvider = featureFlag === 'hybrid' ? requestedProvider : 'stripe';
 
-  // INSANYCK MP-HOTFIX-04 — Warn if MP was requested but feature flag is off
+  // INSANYCK MP-DESKTOP-02 FIX A — Provider correctness: explicit guard with diagnostics
   if (requestedProvider === 'mercadopago' && finalProvider !== 'mercadopago') {
     if (process.env.NODE_ENV === 'development') {
-      console.warn('[CreateSession] WARNING: MercadoPago requested but feature flag is not "hybrid". Falling back to Stripe.', {
-        featureFlag,
-        requestedProvider,
-        finalProvider,
+      console.error('[MP-DESKTOP-02] forced_stripe_reason:', {
+        is_hybrid_flag_on: featureFlag === 'hybrid',
+        feature_flag_value: featureFlag,
+        provider_requested: requestedProvider,
+        method_requested: requestedMethod,
+        final_provider: finalProvider,
+        blocked_reason: 'feature_flag_not_hybrid',
       });
     }
     return res.status(400).json({
       error: 'MercadoPago payments not enabled. Please set NEXT_PUBLIC_CHECKOUT_PROVIDER=hybrid',
-      details: process.env.NODE_ENV === 'development' ? { featureFlag, requestedProvider } : undefined,
+      details: process.env.NODE_ENV === 'development' ? { featureFlag, requestedProvider, requestedMethod } : undefined,
     });
   }
 
-  // INSANYCK MP-HOTFIX-04 — Additional debug: final routing decision
+  // INSANYCK MP-DESKTOP-02 FIX B — DO/DIE diagnostics: routing decision
   if (process.env.NODE_ENV === 'development') {
-    console.log('[CreateSession] Final Provider:', finalProvider);
+    console.log('[MP-DESKTOP-02] create_session_decision:', {
+      provider: finalProvider,
+      method: requestedMethod,
+      is_hybrid: featureFlag === 'hybrid',
+      result_kind: finalProvider === 'mercadopago'
+        ? (requestedMethod === 'pix' ? 'mp_pix' : requestedMethod === 'card_bricks' ? 'mp_card_bricks' : 'mp_card_redirect')
+        : 'stripe_url',
+    });
   }
 
   // INSANYCK STEP F-MP.2 — Email validation (HARDENED: no non-null assertions)
