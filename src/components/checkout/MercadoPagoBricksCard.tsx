@@ -378,7 +378,14 @@ export default function MercadoPagoBricksCard({
                   {locale === 'pt' ? 'Não foi possível carregar o pagamento' : 'Could not load payment'}
                 </h3>
                 <p className="text-xs text-red-400/60 leading-relaxed">
-                  {locale === 'pt' ? 'Verifique bloqueadores e toque em "Tentar novamente".' : 'Check blockers and tap "Try again".'}
+                  {locale === 'pt'
+                    ? 'Parece que um bloqueador de conteúdo impediu o pagamento seguro.'
+                    : 'A content blocker may have prevented secure payment.'}
+                </p>
+                <p className="text-xs text-red-400/50 leading-relaxed mt-1.5">
+                  {locale === 'pt'
+                    ? 'Se estiver usando Brave/AdBlock, desative para este site ou escolha PIX.'
+                    : 'If using Brave/AdBlock, disable for this site or choose PIX.'}
                 </p>
               </div>
             </div>
@@ -458,7 +465,7 @@ export default function MercadoPagoBricksCard({
         </motion.div>
       )}
 
-      {/* INSANYCK MP-MOBILE-01 — Vault Drawer Container (Museum Edition: inset shadow, hairlines) */}
+      {/* INSANYCK MP-MOBILE-01 + MP-PROD-LOCK-01 FIX D — Vault Drawer Container (stable height, no CLS) */}
       <div
         ref={brickContainerRef}
         className="
@@ -469,7 +476,7 @@ export default function MercadoPagoBricksCard({
           shadow-[inset_0_1px_1px_rgba(255,255,255,0.03),inset_0_-1px_1px_rgba(0,0,0,0.3)]
           backdrop-blur-sm
         "
-        style={{ minHeight: isLoading ? '0' : '400px' }}
+        style={{ minHeight: '420px' }}
       />
 
       {/* Order Reference */}

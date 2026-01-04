@@ -83,7 +83,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       );
     }
 
-    // INSANYCK HOTFIX 1.2 — Construir fallback body tolerante
+    // INSANYCK HOTFIX 1.2 + MP-PROD-LOCK-01 FIX A — Construir fallback body tolerante (preserve provider/method/email)
     const fallback = rawBody as any;
     const itemsFromBody = Array.isArray(fallback.items) ? fallback.items : [];
 
@@ -94,6 +94,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
+    // INSANYCK MP-PROD-LOCK-01 FIX A — Preserve critical payment routing fields
     body = {
       items: itemsFromBody.map((it: any) => ({
         variantId: typeof it.variantId === "string" ? it.variantId : undefined,
@@ -105,6 +106,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       })),
       currency: "BRL",
       successUrl: typeof fallback.successUrl === "string" ? fallback.successUrl : undefined,
+      // CRITICAL: Preserve provider/method/email to prevent silent Stripe fallback
+      provider: (fallback.provider === 'stripe' || fallback.provider === 'mercadopago')
+        ? fallback.provider
+        : undefined,
+      method: (fallback.method === 'pix' || fallback.method === 'card' || fallback.method === 'card_bricks')
+        ? fallback.method
+        : undefined,
+      email: typeof fallback.email === "string" ? fallback.email : undefined,
     };
   }
 
@@ -228,8 +237,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // INSANYCK STEP F-MP.2 — Fluxo híbrido: MercadoPago (PIX or Card)
+    // INSANYCK STEP F-MP.2 + MP-PROD-LOCK-01 — Fluxo híbrido: MercadoPago (PIX or Card)
     if (finalProvider === 'mercadopago') {
+      // INSANYCK MP-PROD-LOCK-01 FIX B — Hard-fail guard: MP_ACCESS_TOKEN required
+      if (!process.env.MP_ACCESS_TOKEN || process.env.MP_ACCESS_TOKEN === '') {
+        console.error('[MP-PROD-LOCK-01] CRITICAL mp_token_missing', {
+          provider: finalProvider,
+          method: requestedMethod,
+          has_public_key: !!process.env.NEXT_PUBLIC_MP_PUBLIC_KEY,
+        });
+        return res.status(500).json({
+          error: 'Payment configuration error',
+        });
+      }
+
       // INSANYCK MP-MOBILE-01 FIX C — Hard requirement for NEXT_PUBLIC_SITE_URL in production
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
 
