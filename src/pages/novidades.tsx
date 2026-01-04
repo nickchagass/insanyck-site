@@ -1,5 +1,6 @@
 // src/pages/novidades.tsx
 // INSANYCK NEWS-MUSEUM — Editorial Updates & Collections
+// INSANYCK VAULT EDITION — Upgraded to God Tier glassmorphism
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -15,6 +16,7 @@ import {
   Tag,
 } from 'lucide-react';
 import { seoNews } from '@/lib/seo';
+import GlassCard from '@/components/ui/GlassCard';
 
 // Animation variants (Museum Edition standard)
 const containerVariants = {
@@ -59,8 +61,13 @@ function NewsCard({
     <motion.article variants={itemVariants}>
       <Link
         href={href}
-        className="block glass-card-museum p-6 hover:border-white/[0.12] transition-all duration-300 group"
+        className="block group"
       >
+        <GlassCard
+          className="hover:border-white/[0.12] transition-all duration-300"
+          spotlightIntensity={0.8}
+          size="md"
+        >
         {/* Tag & Date */}
         <div className="flex items-center gap-3 mb-4">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-white/60 text-[0.7rem] font-medium tracking-wide uppercase">
@@ -88,6 +95,7 @@ function NewsCard({
           <span>Ler mais</span>
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" strokeWidth={2} />
         </div>
+        </GlassCard>
       </Link>
     </motion.article>
   );
@@ -201,9 +209,12 @@ export default function NewsPage() {
             </motion.div>
 
             {/* === HEADER CARD === */}
-            <motion.div
+            <GlassCard
               variants={itemVariants}
-              className="glass-card-museum p-8 sm:p-10 mb-12"
+              className="mb-12"
+              size="lg"
+              spotlightIntensity={1.2}
+              specularIntensity={1.1}
             >
               {/* Icon */}
               <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center mb-6">
@@ -221,7 +232,7 @@ export default function NewsPage() {
                   ? 'Editorial content, collections, and cultural insights from INSANYCK.'
                   : 'Conteúdo editorial, coleções e insights culturais da INSANYCK.'}
               </p>
-            </motion.div>
+            </GlassCard>
 
             {/* === NEWS GRID === */}
             <motion.div
@@ -234,9 +245,11 @@ export default function NewsPage() {
             </motion.div>
 
             {/* === EXPLORE MORE === */}
-            <motion.div
+            <GlassCard
               variants={itemVariants}
-              className="glass-card-museum p-8 text-center"
+              className="text-center"
+              size="lg"
+              spotlightIntensity={0.9}
             >
               <h2 className="text-xl font-semibold text-white mb-4">
                 {locale === 'en' ? 'Explore INSANYCK' : 'Explore a INSANYCK'}
@@ -261,7 +274,7 @@ export default function NewsPage() {
                   {locale === 'en' ? 'Browse Store' : 'Explorar Loja'} →
                 </Link>
               </div>
-            </motion.div>
+            </GlassCard>
 
           </motion.div>
         </div>
