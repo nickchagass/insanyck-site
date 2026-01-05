@@ -1,5 +1,6 @@
 // INSANYCK STEP 11 — ProductGrid with Real Prisma Types
-import ProductCard from "@/components/ProductCard";
+// INSANYCK VAULT EDITION MV-01 — Unified ProductCard (catalog version)
+import ProductCard from "@/components/catalog/ProductCard";
 import Skeleton from "@/components/Skeleton";
 import { ProductCardData } from "@/types/product";
 

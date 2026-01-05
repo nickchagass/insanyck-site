@@ -63,7 +63,8 @@ export default function FavoritosPage() {
         />
       </Head>
 
-      <main className="pt-[120px] insanyck-bloom insanyck-bloom--soft">
+      {/* INSANYCK VAULT EDITION MV-01 — .plp-scope ativa regras CSS do sistema Vault */}
+      <main className="plp-scope pt-[120px] insanyck-bloom insanyck-bloom--soft">
         <div className="mx-auto max-w-[1280px] px-6">
           <h1 className="text-white/90 text-2xl font-semibold">
             {t("wishlist:title", "Favoritos")}{" "}

@@ -1,6 +1,8 @@
 // INSANYCK STEP 4 · Lote 3 — Dynamic sitemap with hreflang alternates
+// INSANYCK HOTFIX VAULT-PROD-01 — Use canonical base URL
 import { GetServerSideProps } from 'next';
 import { prisma } from '@/lib/prisma';
+import { getPublicBaseUrl } from '@/lib/env.public';
 
 // INSANYCK STEP 4 · Lote 3 — Static routes configuration
 const STATIC_ROUTES = [
@@ -55,7 +57,8 @@ function generateUrlEntry({
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_URL || 'https://insanyck.com';
+    // INSANYCK HOTFIX VAULT-PROD-01 — Use canonical base URL (never localhost in prod)
+    const baseUrl = getPublicBaseUrl();
     const lastmod = new Date().toISOString().split('T')[0];
     const urls: string[] = [];
 
@@ -158,9 +161,10 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     console.error('Sitemap generation error:', error);
     
     // INSANYCK STEP 4 · Lote 3 — Minimal fallback sitemap
+    // INSANYCK HOTFIX VAULT-PROD-01 — Use canonical base URL in fallback
     const fallbackSitemap = generateSitemapXML([
       generateUrlEntry({
-        loc: `${process.env.NEXT_PUBLIC_URL || 'https://insanyck.com'}/pt`,
+        loc: `${getPublicBaseUrl()}/pt`,
         lastmod: new Date().toISOString().split('T')[0],
         priority: 1.0
       })

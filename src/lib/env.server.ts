@@ -29,8 +29,11 @@ const serverEnvSchema = z.object({
   // INSANYCK STEP C-fix — backend toggle
   BACKEND_DISABLED: z.enum(["0","1"]).default("0"),
 
-  // URLs (must be coherent)
-  NEXT_PUBLIC_URL: z.string().url('NEXT_PUBLIC_URL must be a valid URL'),
+  // INSANYCK HOTFIX VAULT-PROD-01 — Canonical env contract
+  // NEXT_PUBLIC_SITE_URL is canonical (required in prod, used by checkout/webhooks)
+  // NEXT_PUBLIC_URL is legacy fallback for backward compatibility
+  NEXT_PUBLIC_SITE_URL: z.string().optional(),
+  NEXT_PUBLIC_URL: z.string().optional(),
 
   // Optional
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
@@ -39,24 +42,67 @@ const serverEnvSchema = z.object({
 // Parse and validate environment variables once
 let _env: z.infer<typeof serverEnvSchema> | null = null;
 
+// INSANYCK HOTFIX VAULT-PROD-01 — Resolve canonical base URL
+export const getCanonicalBaseUrl = (): string => {
+  // Canonical: NEXT_PUBLIC_SITE_URL (used by checkout/webhooks)
+  // Fallback: NEXT_PUBLIC_URL (legacy)
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  const legacyUrl = process.env.NEXT_PUBLIC_URL?.trim();
+  const resolved = siteUrl || legacyUrl;
+
+  // INSANYCK HOTFIX VAULT-PROD-01.1 — Distinguish build-time vs runtime
+  // During build, allow localhost (user may be building locally)
+  // At runtime in production (Vercel/deployed), reject localhost
+  const isDeployedProd = process.env.NODE_ENV === 'production' &&
+    (process.env.VERCEL === '1' || process.env.RAILWAY_ENVIRONMENT || process.env.RENDER);
+
+  // Strict validation only in deployed production
+  if (isDeployedProd && resolved) {
+    if (!resolved.startsWith('https://')) {
+      throw new Error(
+        `[INSANYCK][ENV] Production URL must use https://. Got: ${resolved}`
+      );
+    }
+    if (resolved.includes('localhost')) {
+      throw new Error(
+        `[INSANYCK][ENV] Production URL cannot be localhost. Got: ${resolved}`
+      );
+    }
+  }
+
+  // Fallback handling
+  const fallback = process.env.NODE_ENV === 'production'
+    ? 'https://insanyck.com'
+    : 'http://localhost:3000';
+
+  return (resolved || fallback).replace(/\/$/, '');
+};
+
 export const env = (() => {
   if (_env) return _env;
-  
+
   try {
     _env = serverEnvSchema.parse(process.env);
-    
-    // Validate coherence between URLs
+
+    // INSANYCK HOTFIX VAULT-PROD-01 — Validate canonical base URL
+    const baseUrl = getCanonicalBaseUrl();
+
+    // Validate coherence between NEXTAUTH_URL and public base URL
     if (_env.NODE_ENV === 'production') {
       const nextAuthUrl = new URL(_env.NEXTAUTH_URL);
-      const publicUrl = new URL(_env.NEXT_PUBLIC_URL);
-      
+      const publicUrl = new URL(baseUrl);
+
       if (nextAuthUrl.origin !== publicUrl.origin) {
-        throw new Error('NEXTAUTH_URL and NEXT_PUBLIC_URL must have the same origin in production');
+        throw new Error(
+          `[INSANYCK][ENV] NEXTAUTH_URL and base URL must have same origin in production.\n` +
+          `  NEXTAUTH_URL: ${nextAuthUrl.origin}\n` +
+          `  Base URL:     ${publicUrl.origin}`
+        );
       }
     }
-    
+
     // Environment validation successful (log removed for ESLint)
-    
+
     return _env;
   } catch (error) {
     if (error instanceof z.ZodError) {
