@@ -1,4 +1,4 @@
-// INSANYCK STEP 11 — Collection Page with Real Prisma Integration  
+// INSANYCK STEP PLP-03 — Collection Page with Real Prisma Integration + Ferrari PLP Scope
 import useSWR from "swr";
 import ProductGrid from "@/components/ProductGrid";
 import { ProductCardData } from "@/types/product";
@@ -16,9 +16,12 @@ export default function ColecaoPage() {
   if (!produtos) return <div className="p-8 text-white">Carregando...</div>;
 
   return (
-    <section className="p-8">
-      <h1 className="text-3xl font-bold text-white mb-8">Coleção</h1>
-      <ProductGrid items={produtos as ProductCardData[]} />
-    </section>
+    // INSANYCK STEP PLP-03 — .plp-scope ativa regras CSS do Ferrari PLP Vault
+    <main className="plp-scope min-h-screen pt-24 lg:pt-32">
+      <section className="px-8">
+        <h1 className="text-3xl font-bold text-white mb-8">Coleção</h1>
+        <ProductGrid items={produtos as ProductCardData[]} />
+      </section>
+    </main>
   );
 }

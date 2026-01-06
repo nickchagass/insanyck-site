@@ -1,4 +1,4 @@
-// INSANYCK STEP G-11 — Museum Showcase Edition: ProductCard as jewelry vitrine
+// INSANYCK STEP PLP-01 — Museum Showcase Edition: Ferrari PLP Migration
 "use client";
 
 import Link from "next/link";
@@ -8,7 +8,7 @@ import OptimizedImage from "@/components/ui/OptimizedImage";
 import AddToCartButton from "@/components/AddToCartButton";
 import WishlistButton from "@/components/WishlistButton";
 
-// FIX GPT: Adicionamos 'priority' para performance (LCP)
+// INSANYCK STEP PLP-01 — Backwards-compatible props (priority for LCP)
 type Props = {
   product: ProductCardData;
   priority?: boolean;
@@ -36,26 +36,28 @@ export default function ProductCard({ product, priority = false }: Props) {
         })();
 
   return (
-    <article className="ins-simple-reflection group">
+    // INSANYCK STEP PLP-01 — FERRARI PLP: plp-gallery-card (container + wire + floor reflection)
+    <article className="plp-gallery-card group">
       <Link
         href={`/produto/${product.slug}`}
         prefetch
         className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded-2xl"
         aria-label={`Ver detalhes de ${product.title}`}
       >
-        <div className="ins-vitrine ins-spotlight">
+        {/* INSANYCK STEP PLP-01 — FERRARI PLP: plp-image-stage (image area + corner prism + spotlight) */}
+        <div className="plp-image-stage">
           {product.status === "new" && (
             <span className="absolute top-3 right-3 z-10 text-xs rounded-full px-3 py-1 bg-white/10 text-white/80 backdrop-blur-sm">
               {t("plp:badge.new", "Novo")}
             </span>
           )}
           {product.status === "soldout" && (
-            <span className="absolute top-3 right-3 z-10 ins-chip">
+            <span className="absolute top-3 right-3 z-10 text-xs rounded-full px-3 py-1 bg-white/10 text-white/60 backdrop-blur-sm">
               {t("plp:badge.soldout", "Esgotado")}
             </span>
           )}
 
-          <div className="relative aspect-[3/4] overflow-hidden">
+          <div className="relative aspect-[3/4]">
             <OptimizedImage
               src={img}
               alt={`${product.title}`}
@@ -63,7 +65,7 @@ export default function ProductCard({ product, priority = false }: Props) {
               fallbackSrc="/products/placeholder/front.webp"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="object-contain p-6 transition-transform duration-300 group-hover:scale-[1.02]"
-              // FIX GPT: Repassa a prioridade para o Next.js Image
+              // INSANYCK STEP PLP-01 — LCP priority preserved
               priority={priority}
               loading={priority ? "eager" : "lazy"}
             />
@@ -71,9 +73,10 @@ export default function ProductCard({ product, priority = false }: Props) {
         </div>
       </Link>
 
-      <div className="ins-pedestal">
-        <h3 className="ins-pedestal__name">{product.title}</h3>
-        <p className="ins-pedestal__price">{product.price}</p>
+      {/* INSANYCK STEP PLP-01 — FERRARI PLP: plp-content-pedestal (info section) */}
+      <div className="plp-content-pedestal">
+        <h3 className="plp-content-pedestal__title">{product.title}</h3>
+        <p className="plp-content-pedestal__price">{product.price}</p>
 
         <div className="mt-4 flex gap-2 items-center">
           <Link
