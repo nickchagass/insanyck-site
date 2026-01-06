@@ -2,7 +2,7 @@
 // Resolve o erro "initialProducts does not exist" e mantém o visual Museum.
 
 import { ProductCardData } from "@/types/product";
-import ProductCard from "./ProductCard"; // Nosso Adaptador Blindado
+import ProductCard from "@/components/ProductCard"; // Direct Import (No Adapter)
 import { useTranslation } from "next-i18next";
 
 // Interface exata que a página loja.tsx exige
@@ -43,7 +43,6 @@ export default function ShowroomGrid({
             product={product}
             // As 4 primeiras carregam instantâneo (LCP), o resto lazy
             priority={index < 4}
-            variant="standard"
           />
         ))}
       </div>

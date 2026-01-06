@@ -121,15 +121,16 @@ body {
   --ins-corner-alpha: 0.30;            /* Cantos Marcados */
   --ins-corner-alpha-top: 0.40;
 
-  /* === VITRINE — CAIXA DE VIDRO === */
-  --ins-vitrine-bg: rgba(255, 255, 255, 0.06);     /* Vidro Leitoso */
-  --ins-vitrine-border: rgba(255, 255, 255, 0.25); /* Borda Nítida */
-  --ins-vitrine-radius: 18px;
+  /* === VITRINE — CAIXA DE VIDRO (CLEAN) === */
+  /* Removemos o fundo leitoso forte para tirar o "negócio escuro" */
+  --ins-vitrine-bg: rgba(255, 255, 255, 0.01);
+  --ins-vitrine-border: rgba(255, 255, 255, 0.15); /* Borda mais fina e elegante */
+  --ins-vitrine-radius: 20px;
 
-  /* === REFLEXO NO PISO === */
-  --ins-reflect-alpha: 0.40;           /* Chão Molhado */
-  --ins-reflect-height: 35%;
-  --ins-reflect-gap: 6px;
+  /* === REFLEXO NO PISO (MOLDADO) === */
+  --ins-reflect-alpha: 0.25;           /* Reflexo mais sutil (Premium) */
+  --ins-reflect-height: 40%;
+  --ins-reflect-gap: 4px;
 
   /* === PEDESTAL === */
   --ins-pedestal-bg: rgba(255, 255, 255, 0.08);    /* Contraste Fundo */
