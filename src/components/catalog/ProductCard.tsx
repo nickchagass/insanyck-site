@@ -1,16 +1,20 @@
-// INSANYCK STEP MV-01 — Unificação Definitiva (Museum Edition)
-// Fix: Importamos o tipo de dados base para criar a definição aqui mesmo.
+// INSANYCK STEP MV-02 — Adaptador de Compatibilidade (Bridge)
+// Este componente serve de "ponte" entre o ShowroomGrid (antigo) e a Vitrine Museum (nova).
+// Ele aceita as props 'variant' e 'priority' para não quebrar o build, mas renderiza o card oficial.
 
-import type { ProductCardData } from "@/types/product";
+import { ProductCardData } from "@/types/product";
+import OfficialProductCard from "@/components/ProductCard";
 
-// 1. Exporta o componente visual (A Vitrine de Vidro)
-export { default } from "@/components/ProductCard";
-
-// 2. Cria e exporta o Tipo compatível para acalmar o TypeScript
-// (Isso evita o erro de "membro não exportado")
-export type ProductCardProps = {
+// 1. Definimos o contrato que o ShowroomGrid espera (com as props extras)
+export interface ProductCardProps {
   product: ProductCardData;
-  // Mantemos opcionais para não quebrar grids antigos que mandam essas props
-  variant?: "standard" | "wide"; 
+  variant?: "standard" | "wide" | string;
   priority?: boolean;
-};
+}
+
+// 2. O Componente Adaptador
+export default function ProductCardAdapter({ product, variant, priority }: ProductCardProps) {
+  // A mágica: Recebemos tudo, mas repassamos APENAS o 'product' para a vitrine oficial.
+  // Isso elimina o erro de "propriedade não existe".
+  return <OfficialProductCard product={product} />;
+}
