@@ -98,6 +98,44 @@ body {
   --ease-premium: cubic-bezier(.2,0,0,1);
   --spring: cubic-bezier(.34,1.56,.64,1);
 
+  /* ══════════════════════════════════════════════════════════════
+     INSANYCK STEP G-11 HYBRID: MUSEUM SHOWCASE TOKENS — FORCE VISIBLE
+     ══════════════════════════════════════════════════════════════ */
+
+  /* === SPOTLIGHT — LUZ DESCENDENTE DE MUSEU === */
+  --ins-spot-color: 255, 255, 255;
+  --ins-spot-alpha: 0.80;              /* Luz Forte */
+  --ins-spot-alpha-hover: 0.90;
+  --ins-spot-alpha-mobile: 0.60;
+  --ins-spot-size: 85% 65%;
+  --ins-spot-position: 50% 5%;
+
+  /* === SPECULAR WIRE — FIO DE LUZ NO TOPO === */
+  --ins-wire-alpha: 0.85;              /* Fio Visível */
+  --ins-wire-alpha-hover: 1.0;
+  --ins-wire-width: 65%;
+  --ins-wire-height: 1px;
+
+  /* === CORNER PRISM — REFRAÇÃO NOS CANTOS === */
+  --ins-corner-size: 90px;
+  --ins-corner-alpha: 0.30;            /* Cantos Marcados */
+  --ins-corner-alpha-top: 0.40;
+
+  /* === VITRINE — CAIXA DE VIDRO === */
+  --ins-vitrine-bg: rgba(255, 255, 255, 0.06);     /* Vidro Leitoso */
+  --ins-vitrine-border: rgba(255, 255, 255, 0.25); /* Borda Nítida */
+  --ins-vitrine-radius: 18px;
+
+  /* === REFLEXO NO PISO === */
+  --ins-reflect-alpha: 0.40;           /* Chão Molhado */
+  --ins-reflect-height: 35%;
+  --ins-reflect-gap: 6px;
+
+  /* === PEDESTAL === */
+  --ins-pedestal-bg: rgba(255, 255, 255, 0.08);    /* Contraste Fundo */
+  --ins-pedestal-border: rgba(255, 255, 255, 0.12);
+  --ins-pedestal-gap: 14px;
+
   /* ===== INSANYCK STEP G-EXEC-P2-D — Z-Index Scale (Museum Edition Stacking Context) ===== */
   /*
    * Hierarquia de profundidade consistente para todos os overlays/drawers/modais.
@@ -760,9 +798,8 @@ body::after {
    INSANYCK STEP 9 — Botões premium (glass + hairline + micro-elevation)
    (Compatível com Tailwind v4: sem @apply de classe custom)
    ========================================================= */
-   @layer components {
-    /* Base (se quiser usar junto no futuro) */
-    .btn-insanyck {
+@layer components {
+  .btn-insanyck {
       @apply inline-flex items-center justify-center rounded-xl px-5 py-2.5
              text-[14px] font-semibold tracking-wide select-none
              border transition-all duration-150 ease-out
