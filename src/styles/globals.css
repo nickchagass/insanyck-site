@@ -121,16 +121,15 @@ body {
   --ins-corner-alpha: 0.30;            /* Cantos Marcados */
   --ins-corner-alpha-top: 0.40;
 
-  /* === VITRINE — CAIXA DE VIDRO (CLEAN) === */
-  /* Removemos o fundo leitoso forte para tirar o "negócio escuro" */
-  --ins-vitrine-bg: rgba(255, 255, 255, 0.01);
-  --ins-vitrine-border: rgba(255, 255, 255, 0.15); /* Borda mais fina e elegante */
-  --ins-vitrine-radius: 20px;
+  /* === VITRINE — CAIXA DE VIDRO (INVISIBLE) === */
+  --ins-vitrine-bg: rgba(255, 255, 255, 0.00);     /* 100% Transparente */
+  --ins-vitrine-border: rgba(255, 255, 255, 0.10); /* Borda ultra fina */
+  --ins-vitrine-radius: 24px;                      /* Cantos bem arredondados (Apple style) */
 
-  /* === REFLEXO NO PISO (MOLDADO) === */
-  --ins-reflect-alpha: 0.25;           /* Reflexo mais sutil (Premium) */
-  --ins-reflect-height: 40%;
-  --ins-reflect-gap: 4px;
+  /* === REFLEXO NO PISO (HIGH GLOSS) === */
+  --ins-reflect-alpha: 0.55;           /* AUMENTADO: Reflexo bem visível */
+  --ins-reflect-height: 60%;           /* AUMENTADO: Reflexo longo */
+  --ins-reflect-gap: 2px;              /* Colado no card */
 
   /* === PEDESTAL === */
   --ins-pedestal-bg: rgba(255, 255, 255, 0.08);    /* Contraste Fundo */
@@ -1219,11 +1218,15 @@ body::after {
     transparent 100%
   );
 
-  mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+  /* Máscara alongada para reflexo profundo */
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, rgba(0,0,0,0) 100%);
 
-  border-radius: 0 0 var(--ins-vitrine-radius) var(--ins-vitrine-radius);
-  opacity: 0.85;
+  /* Transformação para inverter a imagem (espelho real) */
+  /* Nota: O box-reflect já faz isso em alguns browsers, mas o gradiente ajuda no fade */
+
+  opacity: 1;
+  mix-blend-mode: overlay; /* Faz o reflexo fundir com o chão preto */
   transition: opacity var(--ins-transition-fast);
 }
 
@@ -1246,19 +1249,10 @@ body::after {
   min-height: 140px;
 }
 
-/* Premium background gradient enquanto imagem carrega */
+/* FIX: Removemos o background do placeholder para a roupa flutuar no "nada" */
 .ins-vitrine [class*="aspect-"]::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.03) 0%,
-    rgba(255, 255, 255, 0.01) 100%
-  );
-  opacity: 1;
-  transition: opacity 0.3s ease;
+  content: none;
+  display: none;
 }
 
 /* Shimmer sutil enquanto carrega */
