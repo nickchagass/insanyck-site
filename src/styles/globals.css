@@ -3613,39 +3613,54 @@ body::after {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   INSANYCK STEP MUSEUM-VAULT — PLP Gallery Tokens (SCOPED)
-   All tokens scoped to .plp-scope to prevent global pollution
+   INSANYCK MUSEUM EDITION v4.0 — ZERO DIRTY GLASS SYSTEM
+
+   PHYSICS-BASED VISUAL MODEL:
+   - Glass is 99.5% transparent (transmittance = 0.995)
+   - Glass only visible through edge reflections
+   - Floor is continuous polished marble
+   - Light is physical, not decorative
+
+   CRITICAL RULES:
+   ❌ NO background-color with alpha > 0 on cards
+   ❌ NO inset shadows anywhere
+   ❌ NO per-card floor rectangles
+   ✅ Environmental floor on .plp-scope
+   ✅ Card glow (not floor) on card::after
+   ✅ Specular wire on card::before
    ══════════════════════════════════════════════════════════════ */
 
 .plp-scope {
-  /* === GALLERY CARD (vitrine refinada) === */
-  --plp-card-bg: rgba(255, 255, 255, 0.012);
-  --plp-card-bg-hover: rgba(255, 255, 255, 0.024);
+  /* === ZERO-GRAVITY GLASS (CRITICAL — NO OPACITY) === */
+  --plp-card-bg: rgba(0, 0, 0, 0);           /* MUSEUM-v4: MUST be zero */
+  --plp-card-bg-hover: rgba(0, 0, 0, 0);     /* MUSEUM-v4: MUST be zero */
+  --plp-image-bg: transparent;                /* MUSEUM-v4: MUST be transparent */
+
+  /* === GLASS EDGE (hair-thin) === */
   --plp-card-border: rgba(255, 255, 255, 0.06);
   --plp-card-border-hover: rgba(255, 255, 255, 0.12);
   --plp-card-radius: 20px;
 
-  /* INSANYCK STEP VAULT-PLP-01 — Specular wire FORCE-VISIBLE (top edge catch light) */
+  /* === SPECULAR WIRE (Fresnel edge reflection) === */
   --plp-wire-gradient: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.25) 15%,
-    rgba(255, 255, 255, 0.70) 40%,
-    rgba(255, 255, 255, 0.95) 50%,
-    rgba(255, 255, 255, 0.70) 60%,
-    rgba(255, 255, 255, 0.25) 85%,
+    rgba(255, 255, 255, 0.15) 10%,
+    rgba(255, 255, 255, 0.50) 30%,
+    rgba(255, 255, 255, 0.85) 50%,
+    rgba(255, 255, 255, 0.50) 70%,
+    rgba(255, 255, 255, 0.15) 90%,
     transparent 100%
   );
-  --plp-wire-glow: 0 0 8px 2px rgba(255, 255, 255, 0.20), 0 0 20px 4px rgba(255, 255, 255, 0.10);
+  --plp-wire-glow: 0 0 8px 1px rgba(255, 255, 255, 0.15), 0 0 20px 3px rgba(255, 255, 255, 0.06);
 
-  /* INSANYCK STEP PLP-02 — SCRATCH KILLER: Remove inset layers from PLP shadows */
-  /* Shadow system (floating depth) — CLEAN GLASS (no internal scratches) */
+  /* === EXTERNAL SHADOWS ONLY (NO INSET) === */
   --plp-shadow-rest:
-    0 4px 12px -4px rgba(0, 0, 0, 0.25),
-    0 12px 32px -8px rgba(0, 0, 0, 0.35);
+    0 8px 32px -8px rgba(0, 0, 0, 0.35),
+    0 4px 16px -4px rgba(0, 0, 0, 0.25);
   --plp-shadow-hover:
-    0 8px 20px -4px rgba(0, 0, 0, 0.30),
-    0 20px 48px -12px rgba(0, 0, 0, 0.40);
+    0 16px 48px -12px rgba(0, 0, 0, 0.40),
+    0 8px 24px -8px rgba(0, 0, 0, 0.30);
 
   /* === TYPOGRAPHY HIERARCHY === */
   --plp-title-size: 0.9375rem;
@@ -3669,7 +3684,6 @@ body::after {
   --plp-gap-xl: 28px;
 
   /* === IMAGE PRESENTATION === */
-  --plp-image-bg: rgba(255, 255, 255, 0.015);
   --plp-image-radius: 16px;
   --plp-image-padding: 24px;
 
@@ -3678,7 +3692,7 @@ body::after {
   --plp-cta-radius: 10px;
   --plp-cta-primary-bg: rgba(255, 255, 255, 0.92);
   --plp-cta-primary-text: #0a0a0b;
-  --plp-cta-ghost-bg: rgba(255, 255, 255, 0.04);
+  --plp-cta-ghost-bg: transparent;
   --plp-cta-ghost-border: rgba(255, 255, 255, 0.10);
   --plp-cta-ghost-text: rgba(255, 255, 255, 0.75);
 
@@ -3691,6 +3705,75 @@ body::after {
   /* === SKELETON === */
   --plp-skeleton-base: rgba(255, 255, 255, 0.03);
   --plp-skeleton-shimmer: rgba(255, 255, 255, 0.06);
+
+  /* === POSITIONING CONTEXT FOR ENVIRONMENTAL FLOOR === */
+  position: relative;
+  isolation: isolate;
+}
+
+/* ═══ ENVIRONMENTAL FLOOR (Global, Continuous) ═══ */
+/* INSANYCK MUSEUM-v4: Single floor layer under ALL cards */
+.plp-scope::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 55%;
+  z-index: 0;
+  pointer-events: none;
+
+  /* Polished marble reflection */
+  background:
+    /* Vertical fade — reflection weakens with distance */
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 10%,
+      rgba(255, 255, 255, 0.003) 20%,
+      rgba(255, 255, 255, 0.008) 35%,
+      rgba(255, 255, 255, 0.015) 50%,
+      rgba(255, 255, 255, 0.010) 65%,
+      rgba(255, 255, 255, 0.005) 80%,
+      transparent 100%
+    ),
+    /* Horizontal specular streaks — ceiling light bars */
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 150px,
+      rgba(255, 255, 255, 0.004) 150px,
+      rgba(255, 255, 255, 0.008) 152px,
+      rgba(255, 255, 255, 0.004) 154px,
+      transparent 154px,
+      transparent 350px
+    );
+
+  /* Mask — fade out at top */
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.05) 15%,
+    rgba(0, 0, 0, 0.25) 35%,
+    rgba(0, 0, 0, 0.60) 55%,
+    rgba(0, 0, 0, 0.85) 75%,
+    black 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.05) 15%,
+    rgba(0, 0, 0, 0.25) 35%,
+    rgba(0, 0, 0, 0.60) 55%,
+    rgba(0, 0, 0, 0.85) 75%,
+    black 100%
+  );
+}
+
+/* All content above the floor */
+.plp-scope > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -3752,29 +3835,33 @@ body::after {
   box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.25), 0 0 24px 5px rgba(255, 255, 255, 0.12);
 }
 
-/* INSANYCK STEP VAULT-PLP-01 — Floor reflection FORCE-VISIBLE (polished museum floor) */
+/* INSANYCK MUSEUM-v4 — Card Glow (Light scatter, NOT floor) */
+/* This is supplementary glow, NOT fake floor — environmental floor is on .plp-scope::after */
 .plp-scope .plp-gallery-card::after {
   content: "";
   position: absolute;
   top: 100%;
-  left: 8%;
-  right: 8%;
-  height: 35%;
+  left: 10%;
+  right: 10%;
+  height: 30%;
   margin-top: 6px;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.22) 0%,
-    rgba(255, 255, 255, 0.08) 30%,
-    rgba(255, 255, 255, 0.02) 60%,
-    transparent 100%
+  z-index: -1;
+  pointer-events: none;
+
+  /* Radial glow — NOT a rectangle */
+  background: radial-gradient(
+    ellipse 80% 50% at 50% 0%,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.015) 40%,
+    transparent 80%
   );
+
   mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
-  border-radius: 0 0 var(--plp-card-radius) var(--plp-card-radius);
+
+  filter: blur(2px);
   opacity: 0.85;
-  pointer-events: none;
-  transition: opacity var(--ins-transition-normal, 300ms cubic-bezier(0.16, 1, 0.3, 1));
-  z-index: -1;
+  transition: opacity 250ms ease;
 }
 
 .plp-scope .plp-gallery-card:hover::after {
@@ -3782,83 +3869,68 @@ body::after {
 }
 
 /* === IMAGE AREA === */
-/* INSANYCK STEP VAULT-PLP-01 — Isolation for corner prism */
+/* INSANYCK MUSEUM-v4 — Transparent container for products */
 .plp-scope .plp-image-stage {
   position: relative;
-  background: var(--plp-image-bg);
+  background: var(--plp-image-bg); /* transparent */
   border-radius: var(--plp-image-radius);
   margin: 12px;
   overflow: hidden;
-  isolation: isolate; /* Cria stacking context para pseudo-elementos */
+  isolation: isolate;
 }
 
-/* INSANYCK STEP VAULT-PLP-01 — Corner prism (refração de luz nos cantos) */
+/* INSANYCK MUSEUM-v4 — Corner prism (subtle light refraction at edges) */
 .plp-scope .plp-image-stage::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 1;
   pointer-events: none;
   border-radius: inherit;
+
   background:
-    radial-gradient(
-      circle at 0% 0%,
-      rgba(255, 255, 255, 0.28) 0%,
-      transparent 90px
-    ),
-    radial-gradient(
-      circle at 100% 0%,
-      rgba(255, 255, 255, 0.28) 0%,
-      transparent 90px
-    ),
-    radial-gradient(
-      circle at 0% 100%,
-      rgba(255, 255, 255, 0.10) 0%,
-      transparent 90px
-    ),
-    radial-gradient(
-      circle at 100% 100%,
-      rgba(255, 255, 255, 0.10) 0%,
-      transparent 90px
-    );
-  opacity: 0.9;
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.15) 0%, transparent 70px),
+    radial-gradient(circle at 100% 0%, rgba(255, 255, 255, 0.15) 0%, transparent 70px),
+    radial-gradient(circle at 0% 100%, rgba(255, 255, 255, 0.05) 0%, transparent 50px),
+    radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.05) 0%, transparent 50px);
+
+  opacity: 0.85;
 }
 
-/* INSANYCK STEP VAULT-PLP-01 — Museum spotlight FORCE-VISIBLE (descendant light from above) */
+/* INSANYCK MUSEUM-v4 — Ceiling spotlight (soft, physical, not bloom) */
 .plp-scope .plp-image-stage::after {
   content: "";
   position: absolute;
-  top: -15%;
+  top: -10%;
   left: -5%;
   right: -5%;
   bottom: 20%;
-  background: radial-gradient(
-    ellipse 85% 55% at 50% 5%,
-    rgba(255, 255, 255, 0.50) 0%,
-    rgba(255, 255, 255, 0.20) 35%,
-    rgba(255, 255, 255, 0.05) 60%,
-    transparent 85%
-  );
+  z-index: 2;
   pointer-events: none;
-  z-index: 2; /* CHANGE: acima do corner prism (z:0) mas abaixo da imagem (z:5) */
+
+  background: radial-gradient(
+    ellipse 70% 45% at 50% 0%,
+    rgba(255, 255, 255, 0.10) 0%,
+    rgba(255, 255, 255, 0.03) 40%,
+    transparent 70%
+  );
+
   opacity: 1;
-  transition: opacity var(--ins-transition-fast, 180ms cubic-bezier(0.16, 1, 0.3, 1));
+  transition: opacity 180ms ease;
 }
 
-/* INSANYCK STEP VAULT-PLP-01 — Garantir que imagem fique acima dos efeitos de luz */
+/* INSANYCK MUSEUM-v4 — Image above all effects */
 .plp-scope .plp-image-stage > * {
   position: relative;
   z-index: 5;
 }
 
-.plp-scope .plp-image-stage:hover::after {
-  opacity: 1;
+.plp-scope .plp-gallery-card:hover .plp-image-stage::after {
   background: radial-gradient(
-    ellipse 85% 55% at 50% 5%,
-    rgba(255, 255, 255, 0.70) 0%,
-    rgba(255, 255, 255, 0.28) 35%,
-    rgba(255, 255, 255, 0.08) 60%,
-    transparent 85%
+    ellipse 70% 45% at 50% 0%,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    transparent 70%
   );
 }
 

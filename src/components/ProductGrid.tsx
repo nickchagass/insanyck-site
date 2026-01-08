@@ -11,8 +11,8 @@ export default function ProductGrid({ items = [], className, showSkeleton = fals
   
   if (showSkeleton && !list.length) {
     return (
-      // INSANYCK STEP 4 · Lote 3 — Lista semântica para produtos + neutralização de defaults
-      <ul role="list" className={`ins-grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 list-none p-0 m-0 ${className || ''}`} aria-live="polite">
+      // INSANYCK MUSEUM-v4: Lista semântica + overflow-visible
+      <ul role="list" className={`ins-grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 list-none p-0 m-0 overflow-visible pb-20 ${className || ''}`} aria-live="polite">
         {Array.from({ length: skeletonCount }).map((_, i) => (
           <li key={i} role="listitem" className="contents">
             <article className="card-insanyck p-3">
@@ -33,8 +33,8 @@ export default function ProductGrid({ items = [], className, showSkeleton = fals
   }
   
   return (
-    // INSANYCK STEP 4 · Lote 3 — Lista semântica para produtos + neutralização de defaults
-    <ul role="list" className={`ins-grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 list-none p-0 m-0 ${className || ''}`}>
+    // INSANYCK MUSEUM-v4: Lista semântica + overflow-visible para card glows
+    <ul role="list" className={`ins-grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 list-none p-0 m-0 overflow-visible pb-20 ${className || ''}`}>
       {list.map((p) => (
         <li key={p.id ?? p.slug} role="listitem" className="contents">
           <ProductCard product={p} />

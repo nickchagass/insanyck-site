@@ -35,8 +35,8 @@ export default function ShowroomGrid({
 
   return (
     <div className="w-full space-y-16">
-      {/* Grid Responsivo Museum Edition */}
-      <div className="grid grid-cols-1 gap-y-12 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+      {/* INSANYCK MUSEUM-v4: Grid with overflow-visible for card glows */}
+      <div className="grid grid-cols-1 gap-y-12 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8 overflow-visible pb-20">
         {products.map((product, index) => (
           <ProductCard
             key={product.id || product.slug || index}
